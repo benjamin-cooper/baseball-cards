@@ -4,7 +4,7 @@ Interactive network visualization showing player-to-player connections through s
 
 ## 🚀 Live Demo
 
-[View Live](https://yourusername.github.io/baseball-card-network/)
+[View Live](https://benjamin-cooper.github.io/baseball-cards/)
 
 ## 🎯 Features
 
