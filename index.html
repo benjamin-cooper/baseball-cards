@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baseball Card Collection Network</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+</head>
+<body>
+    <div id="app"></div>
+    
+    <!-- Load data files -->
+    <script>
+        const DATA_URLS = {
+            network: 'data/network_data.json',
+            players: 'data/players.json',
+            teams: 'data/teams.json',
+            colors: 'data/team_colors.json'
+        };
+    </script>
+    
+    <!-- Load app scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/network.js"></script>
+    <script src="js/export.js"></script>
+</body>
+</html>
