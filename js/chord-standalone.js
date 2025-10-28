@@ -293,11 +293,11 @@ function drawChordDiagram(container, teams, matrix) {
     const containerWidth = container.clientWidth;
     const containerHeight = Math.max(container.clientHeight, 1000);
     
-    // Reserve space for title at top
-    const titleHeight = 100;
-    const availableHeight = containerHeight - titleHeight - 100; // Extra padding at bottom
+    // Reserve MORE space for title at top
+    const titleHeight = 150; // Increased from 100
+    const availableHeight = containerHeight - titleHeight - 100;
     
-    const size = Math.min(containerWidth - 100, availableHeight, 1000);
+    const size = Math.min(containerWidth - 100, availableHeight, 900); // Reduced max size
     const outerRadius = size * 0.45;
     const innerRadius = outerRadius - 30;
     
@@ -315,7 +315,37 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("height", containerHeight)
         .attr("fill", "#1a2332");
     
-    // Title at top (before diagram)
+    // Dynamic title based on filters
+    let titleText = "Team Connection Chord Diagram";
+    let subtitleParts = [];
+    
+    // Add year info
+    if (selectedYears.size > 0) {
+        const years = Array.from(selectedYears).sort((a, b) => a - b);
+        if (years.length === 1) {
+            subtitleParts.push(`Year: ${years[0]}`);
+        } else if (years.length <= 3) {
+            subtitleParts.push(`Years: ${years.join(', ')}`);
+        } else {
+            subtitleParts.push(`${years.length} years selected (${years[0]}-${years[years.length-1]})`);
+        }
+    }
+    
+    // Add team info
+    if (selectedTeams.size > 0) {
+        subtitleParts.push(`${selectedTeams.size} team${selectedTeams.size === 1 ? '' : 's'} filtered`);
+    }
+    
+    // Add connection filter
+    if (minConnections > 1) {
+        subtitleParts.push(`${minConnections}+ connections`);
+    }
+    
+    const subtitle = subtitleParts.length > 0 
+        ? subtitleParts.join(' • ') 
+        : `${teams.length} teams • Hover over ribbons to see player movement`;
+    
+    // Title at top
     svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 40)
@@ -323,17 +353,27 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("fill", "white")
         .attr("font-size", "28px")
         .attr("font-weight", "bold")
-        .text("Team Connection Chord Diagram");
+        .text(titleText);
     
+    // Subtitle with filter info
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 70)
+        .attr("y", 75)
         .attr("text-anchor", "middle")
         .attr("fill", "#aaa")
         .attr("font-size", "16px")
-        .text(`${teams.length} teams • Hover over ribbons to see player movement`);
+        .text(subtitle);
     
-    // Main group centered BELOW title
+    // Additional info line
+    svg.append("text")
+        .attr("x", containerWidth / 2)
+        .attr("y", 105)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#888")
+        .attr("font-size", "14px")
+        .text(`${teams.length} teams shown • Hover over ribbons to see player movement`);
+    
+    // Main group centered BELOW title (moved down more)
     const centerY = titleHeight + (availableHeight / 2);
     const g = svg.append("g")
         .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
