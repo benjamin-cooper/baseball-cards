@@ -88,12 +88,36 @@ function updateNetwork(edges, players) {
         name: player
     }));
     
-    const links = edges.map(e => ({
-        source: e.from,
-        target: e.to,
-        team: e.team,
-        year: e.year
-    }));
+    // Transform player-team edges into player-player connections
+    // Players are connected if they played on the same team in the same year
+    const playerTeamYears = {};
+    
+    edges.forEach(e => {
+        const key = `${e.team}-${e.year}`;
+        if (!playerTeamYears[key]) {
+            playerTeamYears[key] = [];
+        }
+        playerTeamYears[key].push(e.from);
+    });
+    
+    // Create links between players on the same team
+    const links = [];
+    Object.entries(playerTeamYears).forEach(([teamYear, playerList]) => {
+        // Connect each pair of players on this team
+        for (let i = 0; i < playerList.length; i++) {
+            for (let j = i + 1; j < playerList.length; j++) {
+                const [team, year] = teamYear.split('-');
+                links.push({
+                    source: playerList[i],
+                    target: playerList[j],
+                    team: team,
+                    year: parseInt(year)
+                });
+            }
+        }
+    });
+    
+    console.log(`🔗 Created ${links.length} player-to-player connections from ${edges.length} player-team edges`);
     
     // Show loading message with progress
     const container = document.getElementById('network-container');
