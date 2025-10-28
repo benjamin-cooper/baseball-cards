@@ -85,6 +85,7 @@ function updateNetwork(edges, players) {
         .force("charge", d3.forceManyBody().strength(-300))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(35))
+        .force("radial", d3.forceRadial(Math.min(width, height) / 3, width / 2, height / 2).strength(0.05)) // Keep isolated groups from drifting too far
         .alphaDecay(0.02)  // Faster convergence
         .velocityDecay(0.3) // More friction = faster settling
         .stop(); // Stop initially so we can warm it up
