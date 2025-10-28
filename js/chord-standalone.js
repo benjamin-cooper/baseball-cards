@@ -61,6 +61,14 @@ function showChordDiagram() {
     modal.appendChild(container);
     document.body.appendChild(modal);
     
+    // Show loading
+    container.innerHTML += `
+        <div id="chord-loading" style="text-align: center; padding: 100px; color: white;">
+            <h2 style="font-size: 2em; margin-bottom: 20px;">🔄 Analyzing Player Movement...</h2>
+            <p style="font-size: 1.2em; color: #aaa;">Processing ${selectedYears.size} year${selectedYears.size !== 1 ? 's' : ''} of data</p>
+        </div>
+    `;
+    
     // Close on escape key
     const handleEscape = (e) => {
         if (e.key === 'Escape') {
@@ -79,7 +87,13 @@ function showChordDiagram() {
     });
     
     // Generate the chord diagram
-    generateChordDiagram(container);
+    setTimeout(() => {
+        // Remove loading message
+        const loading = container.querySelector('#chord-loading');
+        if (loading) loading.remove();
+        
+        generateChordDiagram(container);
+    }, 100);
 }
 
 // Generate chord diagram
@@ -110,45 +124,125 @@ function generateChordDiagram(container) {
     
     if (filteredEdges.length === 0) {
         container.innerHTML = `
-            <div style="text-align: center; padding: 100px; color: white;">
-                <h2>No connections found</h2>
-                <p>Try adjusting your filters or selecting more years.</p>
+            <div style="text-align: center; padding: 100px 40px; color: white;">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">📊 No Connections Found</h2>
+                <p style="font-size: 1.2em; color: #aaa; margin-bottom: 30px;">
+                    The chord diagram shows players who moved between teams.
+                </p>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; text-align: left;">
+                    <strong style="display: block; margin-bottom: 10px;">Try this:</strong>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">✓ Select multiple teams (need at least 2-3 teams)</li>
+                        <li style="padding: 5px 0;">✓ Select more years (more years = more player movement)</li>
+                        <li style="padding: 5px 0;">✓ Lower minimum connections filter</li>
+                        <li style="padding: 5px 0;">✓ Try "All Years" for the full picture</li>
+                    </ul>
+                </div>
             </div>
         `;
         return;
     }
     
     // Build team-to-team connection matrix
-    const playerTeams = {};
-    const teams = new Set();
+    // We need to track which players appeared on which teams
+    const playerToTeams = {};
     
-    // Track which teams each player was on
+    // First pass: collect all player-team relationships
     filteredEdges.forEach(e => {
-        teams.add(e.team);
-        
-        if (!playerTeams[e.from]) playerTeams[e.from] = new Set();
-        if (!playerTeams[e.to]) playerTeams[e.to] = new Set();
-        playerTeams[e.from].add(e.team);
-        playerTeams[e.to].add(e.team);
+        // Both players in the edge were on this team together
+        if (!playerToTeams[e.from]) playerToTeams[e.from] = new Set();
+        if (!playerToTeams[e.to]) playerToTeams[e.to] = new Set();
+        playerToTeams[e.from].add(e.team);
+        playerToTeams[e.to].add(e.team);
     });
     
-    // Count connections between teams (players who played for both)
-    const teamArray = Array.from(teams).sort();
+    // Get all unique teams
+    const allTeams = new Set();
+    Object.values(playerToTeams).forEach(teamSet => {
+        teamSet.forEach(team => allTeams.add(team));
+    });
+    
+    const teamArray = Array.from(allTeams).sort();
+    
+    // Check if we have enough teams
+    if (teamArray.length < 2) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 100px 40px; color: white;">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">📊 Need More Teams</h2>
+                <p style="font-size: 1.2em; color: #aaa; margin-bottom: 30px;">
+                    Found only ${teamArray.length} team${teamArray.length !== 1 ? 's' : ''}: <strong>${teamArray.join(', ')}</strong>
+                </p>
+                <p style="font-size: 1.1em; color: #aaa;">
+                    The chord diagram needs at least 2 teams to show player movement between them.
+                </p>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; max-width: 600px; margin: 20px auto; text-align: left;">
+                    <strong style="display: block; margin-bottom: 10px;">Quick Fixes:</strong>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">✓ Clear team filters (or select more teams)</li>
+                        <li style="padding: 5px 0;">✓ Select more years</li>
+                        <li style="padding: 5px 0;">✓ Lower minimum connections</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Count connections between teams (players who played for multiple teams)
     const matrix = Array(teamArray.length).fill(0).map(() => Array(teamArray.length).fill(0));
     
-    Object.values(playerTeams).forEach(playerTeamSet => {
-        const playerTeamArray = Array.from(playerTeamSet);
-        for (let i = 0; i < playerTeamArray.length; i++) {
-            for (let j = i + 1; j < playerTeamArray.length; j++) {
-                const idx1 = teamArray.indexOf(playerTeamArray[i]);
-                const idx2 = teamArray.indexOf(playerTeamArray[j]);
-                matrix[idx1][idx2]++;
-                matrix[idx2][idx1]++;
+    // For each player, if they played for multiple teams, that's a connection
+    Object.values(playerToTeams).forEach(teamSet => {
+        const teams = Array.from(teamSet);
+        if (teams.length > 1) {
+            // This player connects multiple teams
+            for (let i = 0; i < teams.length; i++) {
+                for (let j = i + 1; j < teams.length; j++) {
+                    const idx1 = teamArray.indexOf(teams[i]);
+                    const idx2 = teamArray.indexOf(teams[j]);
+                    if (idx1 !== -1 && idx2 !== -1) {
+                        matrix[idx1][idx2]++;
+                        matrix[idx2][idx1]++;
+                    }
+                }
             }
         }
     });
     
-    // Draw chord diagram
+    // Check if there are any connections
+    const totalConnections = matrix.reduce((sum, row) => sum + row.reduce((s, val) => s + val, 0), 0) / 2;
+    
+    if (totalConnections === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 100px 40px; color: white;">
+                <h2 style="font-size: 2em; margin-bottom: 20px;">📊 No Team Connections</h2>
+                <p style="font-size: 1.2em; color: #aaa; margin-bottom: 30px;">
+                    Found ${teamArray.length} teams, but no players moved between them in the selected time period.
+                </p>
+                <p style="font-size: 1.1em; color: #aaa; margin-bottom: 20px;">
+                    Teams: <strong>${teamArray.join(', ')}</strong>
+                </p>
+                <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 10px; max-width: 600px; margin: 0 auto; text-align: left;">
+                    <strong style="display: block; margin-bottom: 10px;">This might mean:</strong>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">• Players in your collection didn't move between these specific teams</li>
+                        <li style="padding: 5px 0;">• Time period is too narrow to capture movement</li>
+                        <li style="padding: 5px 0;">• Minimum connections filter is too high</li>
+                    </ul>
+                    <strong style="display: block; margin: 20px 0 10px;">Try:</strong>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 5px 0;">✓ Select "All Years" for maximum coverage</li>
+                        <li style="padding: 5px 0;">✓ Lower minimum connections to 1</li>
+                        <li style="padding: 5px 0;">✓ Try different teams (AL East, NL West, etc.)</li>
+                    </ul>
+                </div>
+            </div>
+        `;
+        return;
+    }
+    
+    // Success! Draw the diagram
+    console.log(`✅ Chord diagram data ready: ${teamArray.length} teams, ${totalConnections} connections`);
     drawChordDiagram(container, teamArray, matrix);
 }
 
