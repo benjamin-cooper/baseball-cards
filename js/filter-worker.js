@@ -43,12 +43,13 @@ self.onmessage = function(e) {
         }
         
         // Get unique players and teams
+        // NOTE: e.from = player, e.to = team, e.team = team
         const players = new Set();
         const teams = new Set();
         filteredEdges.forEach(e => {
-            players.add(e.from);
-            players.add(e.to);
+            players.add(e.from);  // Only e.from is a player
             teams.add(e.team);
+            teams.add(e.to);      // e.to is also a team
         });
         
         // Count unique teams per player
@@ -71,12 +72,13 @@ self.onmessage = function(e) {
         );
         
         // Recalculate after player connection filter
+        // NOTE: Only e.from is a player, e.to and e.team are teams
         const finalPlayers = new Set();
         const finalTeams = new Set();
         filteredEdges.forEach(e => {
-            finalPlayers.add(e.from);
-            finalPlayers.add(e.to);
+            finalPlayers.add(e.from);  // Only e.from is a player
             finalTeams.add(e.team);
+            finalTeams.add(e.to);      // e.to is also a team
         });
         
         // ✨ NEW: Filter teams by minimum qualified players
@@ -104,12 +106,13 @@ self.onmessage = function(e) {
         );
         
         // Final recalculation
+        // NOTE: Only e.from is a player, e.to and e.team are teams
         finalPlayers.clear();
         finalTeams.clear();
         filteredEdges.forEach(e => {
-            finalPlayers.add(e.from);
-            finalPlayers.add(e.to);
+            finalPlayers.add(e.from);  // Only e.from is a player
             finalTeams.add(e.team);
+            finalTeams.add(e.to);      // e.to is also a team
         });
         
         // Send results back

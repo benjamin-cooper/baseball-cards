@@ -270,12 +270,14 @@ function updateDiagramImmediate() {
     }
     
     // Get unique players and teams
+    // NOTE: e.from = player, e.to = team, e.team = team
+    // DO NOT add e.to to players set - it's a team, not a player!
     const players = new Set();
     const teams = new Set();
     filteredEdges.forEach(e => {
-        players.add(e.from);
-        players.add(e.to);
-        teams.add(e.team);
+        players.add(e.from);  // Only e.from is a player
+        teams.add(e.team);    // e.team is the team
+        teams.add(e.to);      // e.to is also a team (redundant but safe)
     });
     
     // Count unique teams per player (this is the real "connection" count)
@@ -308,12 +310,13 @@ function updateDiagramImmediate() {
     }
     
     // Recount after filtering
+    // NOTE: Only e.from is a player, e.to and e.team are both teams
     players.clear();
     teams.clear();
     filteredEdges.forEach(e => {
-        players.add(e.from);
-        players.add(e.to);
+        players.add(e.from);  // Only e.from is a player
         teams.add(e.team);
+        teams.add(e.to);      // e.to is also a team
     });
     
     // ✨ NEW: Filter teams by minimum qualified players
@@ -350,12 +353,13 @@ function updateDiagramImmediate() {
     }
     
     // Final recount after team filtering
+    // NOTE: Only e.from is a player, e.to and e.team are both teams
     players.clear();
     teams.clear();
     filteredEdges.forEach(e => {
-        players.add(e.from);
-        players.add(e.to);
+        players.add(e.from);  // Only e.from is a player
         teams.add(e.team);
+        teams.add(e.to);      // e.to is also a team
     });
     
     // Cache results for future use
