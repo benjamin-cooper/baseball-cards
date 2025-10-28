@@ -292,7 +292,12 @@ function drawChordDiagram(container, teams, matrix) {
     
     const containerWidth = container.clientWidth;
     const containerHeight = Math.max(container.clientHeight, 1000);
-    const size = Math.min(containerWidth - 100, containerHeight - 200, 1200);
+    
+    // Reserve space for title at top
+    const titleHeight = 100;
+    const availableHeight = containerHeight - titleHeight - 100; // Extra padding at bottom
+    
+    const size = Math.min(containerWidth - 100, availableHeight, 1000);
     const outerRadius = size * 0.45;
     const innerRadius = outerRadius - 30;
     
@@ -310,9 +315,28 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("height", containerHeight)
         .attr("fill", "#1a2332");
     
-    // Main group centered
+    // Title at top (before diagram)
+    svg.append("text")
+        .attr("x", containerWidth / 2)
+        .attr("y", 40)
+        .attr("text-anchor", "middle")
+        .attr("fill", "white")
+        .attr("font-size", "28px")
+        .attr("font-weight", "bold")
+        .text("Team Connection Chord Diagram");
+    
+    svg.append("text")
+        .attr("x", containerWidth / 2)
+        .attr("y", 70)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#aaa")
+        .attr("font-size", "16px")
+        .text(`${teams.length} teams • Hover over ribbons to see player movement`);
+    
+    // Main group centered BELOW title
+    const centerY = titleHeight + (availableHeight / 2);
     const g = svg.append("g")
-        .attr("transform", `translate(${containerWidth / 2}, ${containerHeight / 2})`);
+        .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
     
     // Create chord layout
     const chord = d3.chord()
@@ -435,24 +459,6 @@ function drawChordDiagram(container, teams, matrix) {
             d3.select(this).style("opacity", 0.75).style("stroke-width", 1);
             tooltip.style("opacity", 0);
         });
-    
-    // Title
-    svg.append("text")
-        .attr("x", containerWidth / 2)
-        .attr("y", 40)
-        .attr("text-anchor", "middle")
-        .attr("fill", "white")
-        .attr("font-size", "28px")
-        .attr("font-weight", "bold")
-        .text("Team Connection Chord Diagram");
-    
-    svg.append("text")
-        .attr("x", containerWidth / 2)
-        .attr("y", 70)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#aaa")
-        .attr("font-size", "16px")
-        .text(`${teams.length} teams • Hover over ribbons to see player movement`);
     
     // Export button
     const exportDiv = document.createElement('div');
