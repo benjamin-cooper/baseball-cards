@@ -1,34 +1,89 @@
-// Chord Diagram for Team Connections
+// Standalone Chord Diagram - Separate feature (not a toggle)
 
-let chordDiagramVisible = false;
-
-// Toggle between player network and team chord diagram
-function toggleVisualization() {
-    chordDiagramVisible = !chordDiagramVisible;
-    const btn = document.getElementById('toggle-viz-btn');
-    
-    if (chordDiagramVisible) {
-        btn.textContent = '🔄 Show Player Network';
-        btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
-        showChordDiagram();
-    } else {
-        btn.textContent = '🔄 Show Team Connections';
-        btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
-        // Redraw player network
-        if (selectedYears.size > 0) {
-            updateDiagram();
-        }
-    }
-}
-
-// Create chord diagram showing team-to-team connections
+// Show chord diagram in a new window/view
 function showChordDiagram() {
     if (selectedYears.size === 0) {
-        document.getElementById('network-container').innerHTML = 
-            '<div class="loading">Select at least one year to view team connections...</div>';
+        alert('⚠️ Please select at least one year first!\n\nThe chord diagram shows player movement between teams for the selected years.');
         return;
     }
     
+    // Create a modal/overlay for the chord diagram
+    const modal = document.createElement('div');
+    modal.id = 'chord-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.9);
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    `;
+    
+    const container = document.createElement('div');
+    container.id = 'chord-container';
+    container.style.cssText = `
+        background: #1a2332;
+        border-radius: 20px;
+        padding: 20px;
+        max-width: 1400px;
+        max-height: 90vh;
+        width: 100%;
+        overflow: auto;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        position: relative;
+    `;
+    
+    const closeBtn = document.createElement('button');
+    closeBtn.textContent = '✕ Close';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        z-index: 10001;
+    `;
+    closeBtn.onclick = () => modal.remove();
+    
+    container.appendChild(closeBtn);
+    modal.appendChild(container);
+    document.body.appendChild(modal);
+    
+    // Close on escape key
+    const handleEscape = (e) => {
+        if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    };
+    document.addEventListener('keydown', handleEscape);
+    
+    // Close on backdrop click
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+            document.removeEventListener('keydown', handleEscape);
+        }
+    });
+    
+    // Generate the chord diagram
+    generateChordDiagram(container);
+}
+
+// Generate chord diagram
+function generateChordDiagram(container) {
     // Filter edges by selected years
     let filteredEdges = networkData.edges.filter(e => selectedYears.has(e.year));
     
@@ -54,21 +109,23 @@ function showChordDiagram() {
     }
     
     if (filteredEdges.length === 0) {
-        document.getElementById('network-container').innerHTML = 
-            '<div class="loading">No connections found for current filters.</div>';
+        container.innerHTML = `
+            <div style="text-align: center; padding: 100px; color: white;">
+                <h2>No connections found</h2>
+                <p>Try adjusting your filters or selecting more years.</p>
+            </div>
+        `;
         return;
     }
     
     // Build team-to-team connection matrix
-    const teamConnections = {};
+    const playerTeams = {};
     const teams = new Set();
     
-    // Group edges by players to find team transitions
-    const playerTeams = {};
+    // Track which teams each player was on
     filteredEdges.forEach(e => {
         teams.add(e.team);
         
-        // Track which teams each player was on
         if (!playerTeams[e.from]) playerTeams[e.from] = new Set();
         if (!playerTeams[e.to]) playerTeams[e.to] = new Set();
         playerTeams[e.from].add(e.team);
@@ -92,22 +149,20 @@ function showChordDiagram() {
     });
     
     // Draw chord diagram
-    drawChordDiagram(teamArray, matrix);
+    drawChordDiagram(container, teamArray, matrix);
 }
 
 // Draw the chord diagram using D3
-function drawChordDiagram(teams, matrix) {
-    document.getElementById('network-container').innerHTML = '';
-    
-    const width = 1200;
-    const height = 1200;
+function drawChordDiagram(container, teams, matrix) {
+    const width = Math.min(container.clientWidth - 40, 1200);
+    const height = Math.min(container.clientHeight - 40, 1200);
     const outerRadius = Math.min(width, height) * 0.5 - 100;
     const innerRadius = outerRadius - 30;
     
-    const svg = d3.select("#network-container")
+    const svg = d3.select(container)
         .append("svg")
-        .attr("width", "100%")
-        .attr("height", "100%")
+        .attr("width", width)
+        .attr("height", height)
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("id", "chord-svg");
     
@@ -115,7 +170,8 @@ function drawChordDiagram(teams, matrix) {
     svg.append("rect")
         .attr("width", width)
         .attr("height", height)
-        .attr("fill", "#0a1929");
+        .attr("fill", "#1a2332")
+        .attr("rx", 15);
     
     const g = svg.append("g")
         .attr("transform", `translate(${width / 2},${height / 2})`);
@@ -139,6 +195,19 @@ function drawChordDiagram(teams, matrix) {
         teamColorsData.teamColors[team] || teamColorsData.defaultColor
     );
     
+    // Create tooltip
+    const tooltip = d3.select("body")
+        .append("div")
+        .attr("class", "chord-tooltip")
+        .style("position", "absolute")
+        .style("background", "rgba(0, 0, 0, 0.9)")
+        .style("color", "white")
+        .style("padding", "10px 15px")
+        .style("border-radius", "8px")
+        .style("pointer-events", "none")
+        .style("opacity", 0)
+        .style("z-index", 10002);
+    
     // Draw outer arcs (team segments)
     const group = g.append("g")
         .selectAll("g")
@@ -157,7 +226,7 @@ function drawChordDiagram(teams, matrix) {
                 );
             tooltip
                 .style("opacity", 1)
-                .html(`<strong>${teams[d.index]}</strong><br>${d.value} connections`);
+                .html(`<strong>${teams[d.index]}</strong><br>${d.value} total connections`);
         })
         .on("mousemove", function(event) {
             tooltip
@@ -180,7 +249,7 @@ function drawChordDiagram(teams, matrix) {
         `)
         .attr("text-anchor", d => d.angle > Math.PI ? "end" : "start")
         .attr("fill", "white")
-        .attr("font-size", "12px")
+        .attr("font-size", "13px")
         .attr("font-weight", "bold")
         .text(d => teams[d.index]);
     
@@ -199,7 +268,10 @@ function drawChordDiagram(teams, matrix) {
             d3.select(this).style("opacity", 1);
             tooltip
                 .style("opacity", 1)
-                .html(`<strong>${teams[d.source.index]}</strong> ↔ <strong>${teams[d.target.index]}</strong><br>${d.source.value} shared players`);
+                .html(`
+                    <strong>${teams[d.source.index]}</strong> ↔ <strong>${teams[d.target.index]}</strong>
+                    <br>${d.source.value} shared players
+                `);
         })
         .on("mousemove", function(event) {
             tooltip
@@ -214,7 +286,7 @@ function drawChordDiagram(teams, matrix) {
     // Add title
     svg.append("text")
         .attr("x", width / 2)
-        .attr("y", 40)
+        .attr("y", 35)
         .attr("text-anchor", "middle")
         .attr("fill", "white")
         .attr("font-size", "24px")
@@ -223,11 +295,52 @@ function drawChordDiagram(teams, matrix) {
     
     svg.append("text")
         .attr("x", width / 2)
-        .attr("y", 70)
+        .attr("y", 60)
         .attr("text-anchor", "middle")
         .attr("fill", "#aaa")
-        .attr("font-size", "16px")
-        .text("Ribbons show players who moved between teams");
+        .attr("font-size", "14px")
+        .text(`Showing ${teams.length} teams • Ribbons represent players who moved between teams`);
+    
+    // Add export button
+    const exportBtn = document.createElement('button');
+    exportBtn.textContent = '💾 Download SVG';
+    exportBtn.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+    `;
+    exportBtn.onclick = () => exportChordDiagram(svg.node());
+    container.appendChild(exportBtn);
     
     console.log(`✅ Chord diagram created with ${teams.length} teams`);
+}
+
+// Export chord diagram as SVG
+function exportChordDiagram(svgElement) {
+    const serializer = new XMLSerializer();
+    let source = serializer.serializeToString(svgElement);
+    
+    if (!source.match(/^<\?xml/)) {
+        source = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\r\n' + source;
+    }
+    
+    const blob = new Blob([source], {type: "image/svg+xml;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `team-chord-diagram-${Date.now()}.svg`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    showNotification('✅ Chord diagram downloaded!', 2000);
 }

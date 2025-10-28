@@ -1,35 +1,84 @@
 // Export functions for SVG and PNG
 
-// Create legend SVG
-function createLegendSVG(teams) {
+// Create legend SVG with smart placement
+function createLegendSVG(teams, nodes = []) {
     const legendWidth = 2400;
-    const legendHeight = Math.ceil(teams.length / 6) * 40 + 60; // 6 teams per row
-    
-    let legendSVG = `
-        <g class="legend-group" transform="translate(0, 0)">
-            <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(15, 32, 39, 0.95)" rx="10"/>
-            <text x="${legendWidth / 2}" y="30" text-anchor="middle" font-size="24" fill="white" font-weight="bold">Team Color Legend</text>
-    `;
-    
     const itemsPerRow = 6;
-    const itemWidth = legendWidth / itemsPerRow;
+    const legendHeight = Math.ceil(teams.length / itemsPerRow) * 40 + 60;
     
-    teams.sort().forEach((team, i) => {
-        const row = Math.floor(i / itemsPerRow);
-        const col = i % itemsPerRow;
-        const x = col * itemWidth + 20;
-        const y = row * 40 + 60;
+    // Determine best placement (top, bottom, or side) based on node positions
+    let placement = 'top'; // default
+    
+    if (nodes && nodes.length > 0) {
+        // Calculate node density in different areas
+        const topDensity = nodes.filter(n => n.y < 300).length;
+        const bottomDensity = nodes.filter(n => n.y > 1500).length;
+        const middleDensity = nodes.filter(n => n.y >= 300 && n.y <= 1500).length;
         
-        const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+        // Choose placement with least density
+        if (bottomDensity < topDensity && bottomDensity < middleDensity) {
+            placement = 'bottom';
+        } else if (middleDensity < topDensity && middleDensity < bottomDensity) {
+            placement = 'side';
+        } else {
+            placement = 'top';
+        }
         
-        legendSVG += `
-            <rect x="${x}" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
-            <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Segoe UI, sans-serif">${team}</text>
+        console.log(`📍 Legend placement: ${placement} (top: ${topDensity}, bottom: ${bottomDensity}, middle: ${middleDensity})`);
+    }
+    
+    let legendSVG = '';
+    
+    if (placement === 'side') {
+        // Vertical legend on the right side
+        const legendWidth = 350;
+        const legendHeight = teams.length * 30 + 60;
+        
+        legendSVG = `
+            <g class="legend-group" transform="translate(2050, 100)">
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="20" fill="white" font-weight="bold">Team Colors</text>
         `;
-    });
-    
-    legendSVG += `</g>`;
-    return { svg: legendSVG, height: legendHeight };
+        
+        teams.sort().forEach((team, i) => {
+            const y = i * 30 + 65;
+            const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+            
+            legendSVG += `
+                <rect x="15" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
+                <text x="45" y="${y + 15}" font-size="13" fill="white" font-family="Segoe UI, sans-serif">${team}</text>
+            `;
+        });
+        
+        legendSVG += `</g>`;
+        return { svg: legendSVG, height: 0, placement: 'side', width: legendWidth };
+    } else {
+        // Horizontal legend (top or bottom)
+        legendSVG = `
+            <g class="legend-group" transform="translate(0, 0)">
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold">Team Color Legend</text>
+        `;
+        
+        const itemWidth = legendWidth / itemsPerRow;
+        
+        teams.sort().forEach((team, i) => {
+            const row = Math.floor(i / itemsPerRow);
+            const col = i % itemsPerRow;
+            const x = col * itemWidth + 20;
+            const y = row * 40 + 60;
+            
+            const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+            
+            legendSVG += `
+                <rect x="${x}" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
+                <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Segoe UI, sans-serif">${team}</text>
+            `;
+        });
+        
+        legendSVG += `</g>`;
+        return { svg: legendSVG, height: legendHeight, placement: placement, width: legendWidth };
+    }
 }
 
 // Export network as SVG
@@ -47,39 +96,74 @@ function exportAsSVG(includeNames = true) {
             .map(e => e.team)
     ));
     
+    // Get node positions for smart placement
+    const nodes = simulation ? simulation.nodes() : [];
+    
     const svgClone = svgElement.cloneNode(true);
-    const legend = createLegendSVG(teams);
+    const legend = createLegendSVG(teams, nodes);
     
     // Remove labels if not requested
     if (!includeNames) {
         svgClone.querySelectorAll('.node-label').forEach(label => label.remove());
     }
     
-    const totalHeight = parseInt(svgClone.getAttribute('height') || 1800) + legend.height + 40;
+    const currentHeight = parseInt(svgClone.getAttribute('viewBox').split(' ')[3]) || 1800;
+    let totalHeight, totalWidth;
     
-    svgClone.setAttribute('width', '2400');
+    if (legend.placement === 'side') {
+        // Side legend - expand width
+        totalWidth = 2400 + legend.width + 50;
+        totalHeight = currentHeight;
+    } else if (legend.placement === 'bottom') {
+        // Bottom legend
+        totalWidth = 2400;
+        totalHeight = currentHeight + legend.height + 40;
+    } else {
+        // Top legend (default)
+        totalWidth = 2400;
+        totalHeight = currentHeight + legend.height + 40;
+    }
+    
+    svgClone.setAttribute('width', totalWidth);
     svgClone.setAttribute('height', totalHeight);
-    svgClone.setAttribute('viewBox', `0 0 2400 ${totalHeight}`);
+    svgClone.setAttribute('viewBox', `0 0 ${totalWidth} ${totalHeight}`);
     svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
     
     // Add background
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-    rect.setAttribute("width", "2400");
+    rect.setAttribute("width", totalWidth);
     rect.setAttribute("height", totalHeight);
-    rect.setAttribute("fill", "#0f2027");
+    rect.setAttribute("fill", "#1a2332");
     svgClone.insertBefore(rect, svgClone.firstChild);
     
-    // Shift main content down to make room for legend
+    // Position main content based on legend placement
     const mainGroup = svgClone.querySelector('g');
     if (mainGroup) {
-        const currentTransform = mainGroup.getAttribute('transform') || '';
-        mainGroup.setAttribute('transform', `translate(0, ${legend.height + 20}) ${currentTransform}`);
+        if (legend.placement === 'top') {
+            // Shift main content down
+            const currentTransform = mainGroup.getAttribute('transform') || '';
+            mainGroup.setAttribute('transform', `translate(0, ${legend.height + 20}) ${currentTransform}`);
+        }
+        // For 'bottom' and 'side', no shift needed
     }
     
-    // Add legend at top
+    // Add legend
     const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
-    legendGroup.innerHTML = legend.svg;
-    svgClone.insertBefore(legendGroup, svgClone.children[1]);
+    if (legend.placement === 'bottom') {
+        // Position at bottom
+        legendGroup.innerHTML = legend.svg.replace(
+            'transform="translate(0, 0)"',
+            `transform="translate(0, ${currentHeight + 20})"`
+        );
+    } else {
+        legendGroup.innerHTML = legend.svg;
+    }
+    
+    if (legend.placement === 'side') {
+        svgClone.appendChild(legendGroup);
+    } else {
+        svgClone.insertBefore(legendGroup, mainGroup);
+    }
     
     // Add embedded styles
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
@@ -109,7 +193,7 @@ function exportAsSVG(includeNames = true) {
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    alert(`✅ SVG downloaded ${includeNames ? 'with' : 'without'} player names!`);
+    showNotification(`✅ SVG downloaded ${includeNames ? 'with' : 'without'} names! Legend placed at ${legend.placement}.`, 3000);
 }
 
 // Export network as PNG
@@ -142,11 +226,11 @@ function exportAsPNG(includeNames = true) {
             const ctx = canvas.getContext('2d');
             
             // Fill background
-            ctx.fillStyle = '#0f2027';
+            ctx.fillStyle = '#1a2332';
             ctx.fillRect(0, 0, width, totalHeight);
             
             // Draw legend
-            ctx.fillStyle = 'rgba(15, 32, 39, 0.95)';
+            ctx.fillStyle = 'rgba(26, 35, 50, 0.95)';
             ctx.fillRect(0, 0, width, legend.height);
             
             ctx.fillStyle = 'white';

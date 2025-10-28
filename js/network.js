@@ -46,7 +46,7 @@ function updateNetwork(edges, players) {
     svg.append("rect")
         .attr("width", width)
         .attr("height", height)
-        .attr("fill", "#0a1929");
+        .attr("fill", "#1a2332");
     
     g = svg.append("g");
     

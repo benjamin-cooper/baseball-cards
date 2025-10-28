@@ -171,7 +171,6 @@ function createUI() {
                 <div class="filter-section">
                     <label>🎛️ Quick Filters:</label>
                     <div class="quick-filters">
-                        <button class="quick-filter-btn" id="toggle-viz-btn" onclick="toggleVisualization()">🔄 Show Team Connections</button>
                         <button class="quick-filter-btn" onclick="selectAllYears()">📅 All Years</button>
                         <button class="quick-filter-btn" onclick="selectDecade(1950)">1950s</button>
                         <button class="quick-filter-btn" onclick="selectDecade(1960)">1960s</button>
@@ -181,7 +180,6 @@ function createUI() {
                         <button class="quick-filter-btn" onclick="selectDecade(2000)">2000s</button>
                         <button class="quick-filter-btn" onclick="selectYear(1991)">🎯 1991 Only</button>
                         <button class="quick-filter-btn" onclick="clearSelection()">🔄 Clear Years</button>
-                        <button class="quick-filter-btn" id="toggle-labels-btn" onclick="toggleLabels()">🏷️ Show Names</button>
                         <button class="export-btn" onclick="fitToScreen()">📐 Fit to Screen</button>
                         <button class="export-btn" onclick="exportAsSVG(true)">💾 SVG (With Names)</button>
                         <button class="export-btn" onclick="exportAsSVG(false)">💾 SVG (No Names)</button>
@@ -243,6 +241,11 @@ function createUI() {
                             <span class="plot-title">West Coast Battle</span>
                             <span class="plot-desc">Dodgers, Giants, Athletics rivalry</span>
                         </button>
+                        <button class="plot-btn" onclick="showChordDiagram()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                            <span class="plot-icon">🔄</span>
+                            <span class="plot-title">Team Chord Diagram</span>
+                            <span class="plot-desc">View team-to-team player movement</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -277,6 +280,15 @@ function createUI() {
             
             <div class="instructions">
                 🔍 Search for players above • Drag to pan • Scroll to zoom • Drag players to rearrange • Hover for details
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 10px;">
+                <div style="color: #aaa; font-size: 1em;">
+                    💡 <strong>Tip:</strong> Toggle player names on/off, or zoom in to see them automatically
+                </div>
+                <button class="quick-filter-btn" id="toggle-labels-btn" onclick="toggleLabels()" style="margin: 0;">
+                    🏷️ Show Names
+                </button>
             </div>
             
             <div id="network-container">
