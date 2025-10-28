@@ -33,7 +33,7 @@ function createLegendSVG(teams) {
 }
 
 // Export network as SVG
-function exportAsSVG() {
+function exportAsSVG(includeNames = true) {
     const svgElement = document.getElementById('poster-svg');
     if (!svgElement) {
         alert('Please select at least one year first!');
@@ -50,7 +50,12 @@ function exportAsSVG() {
     const svgClone = svgElement.cloneNode(true);
     const legend = createLegendSVG(teams);
     
-    const totalHeight = 1800 + legend.height + 40;
+    // Remove labels if not requested
+    if (!includeNames) {
+        svgClone.querySelectorAll('.node-label').forEach(label => label.remove());
+    }
+    
+    const totalHeight = parseInt(svgClone.getAttribute('height') || 1800) + legend.height + 40;
     
     svgClone.setAttribute('width', '2400');
     svgClone.setAttribute('height', totalHeight);
@@ -98,24 +103,24 @@ function exportAsSVG() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = 'baseball-player-network.svg';
+    link.download = includeNames ? 'baseball-player-network-with-names.svg' : 'baseball-player-network-no-names.svg';
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     URL.revokeObjectURL(url);
     
-    alert('✅ SVG downloaded with team legend!');
+    alert(`✅ SVG downloaded ${includeNames ? 'with' : 'without'} player names!`);
 }
 
 // Export network as PNG
-function exportAsPNG() {
+function exportAsPNG(includeNames = true) {
     const svgElement = document.getElementById('poster-svg');
     if (!svgElement) {
         alert('Please select at least one year first!');
         return;
     }
     
-    alert('⏳ Preparing PNG export... This may take a few seconds.\n\nClick OK and wait for the download.');
+    alert(`⏳ Preparing PNG export ${includeNames ? 'with' : 'without'} names... This may take a few seconds.\n\nClick OK and wait for the download.`);
     
     setTimeout(() => {
         try {
@@ -232,30 +237,32 @@ function exportAsPNG() {
                 ctx.stroke();
             });
             
-            // Draw labels
-            ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.fillStyle = 'white';
-            ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-            ctx.shadowBlur = 4;
-            ctx.shadowOffsetX = 2;
-            ctx.shadowOffsetY = 2;
-            
-            labels.forEach(label => {
-                const parent = label.parentElement;
-                const transform = parent.getAttribute('transform');
-                const match = transform.match(/translate\(([^,]+),([^)]+)\)/);
-                if (!match) return;
+            // Draw labels (if requested)
+            if (includeNames) {
+                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'white';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
                 
-                const text = label.textContent;
-                const x = parseFloat(match[1]) + parseFloat(label.getAttribute('dx') || 0);
-                const y = parseFloat(match[2]) + parseFloat(label.getAttribute('dy') || 0);
-                
-                if (text && !isNaN(x) && !isNaN(y)) {
-                    ctx.fillText(text, x, y);
-                }
-            });
+                labels.forEach(label => {
+                    const parent = label.parentElement;
+                    const transform = parent.getAttribute('transform');
+                    const match = transform.match(/translate\(([^,]+),([^)]+)\)/);
+                    if (!match) return;
+                    
+                    const text = label.textContent;
+                    const x = parseFloat(match[1]) + parseFloat(label.getAttribute('dx') || 0);
+                    const y = parseFloat(match[2]) + parseFloat(label.getAttribute('dy') || 0);
+                    
+                    if (text && !isNaN(x) && !isNaN(y)) {
+                        ctx.fillText(text, x, y);
+                    }
+                });
+            }
             
             ctx.restore();
             
@@ -269,7 +276,8 @@ function exportAsPNG() {
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement('a');
                 link.href = url;
-                link.download = 'baseball-player-network-' + Date.now() + '.png';
+                const suffix = includeNames ? 'with-names' : 'no-names';
+                link.download = `baseball-player-network-${suffix}-${Date.now()}.png`;
                 document.body.appendChild(link);
                 link.click();
                 
@@ -278,7 +286,7 @@ function exportAsPNG() {
                     URL.revokeObjectURL(url);
                 }, 100);
                 
-                alert('✅ PNG downloaded successfully with team legend!');
+                alert(`✅ PNG downloaded successfully ${includeNames ? 'with' : 'without'} player names!`);
             }, 'image/png');
             
         } catch (error) {

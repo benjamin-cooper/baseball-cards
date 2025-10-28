@@ -19,8 +19,21 @@ function updateNetwork(edges, players) {
         console.log('💡 Tip: Use filters to reduce network size for better performance');
     }
     
-    const width = 2400;
-    const height = 1800;
+    // Adaptive canvas size based on network size
+    let width, height;
+    if (players.length < 50) {
+        // Small network - use more space per node
+        width = 2400;
+        height = 2400;
+    } else if (players.length < 150) {
+        // Medium network
+        width = 2400;
+        height = 2000;
+    } else {
+        // Large network
+        width = 2400;
+        height = 1800;
+    }
     
     svg = d3.select("#network-container")
         .append("svg")
@@ -28,6 +41,12 @@ function updateNetwork(edges, players) {
         .attr("height", "100%")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("id", "poster-svg");
+    
+    // Set background color for better contrast
+    svg.append("rect")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "#0a1929");
     
     g = svg.append("g");
     
@@ -210,28 +229,31 @@ function updateNetwork(edges, players) {
             tooltip.style("opacity", 0);
         });
     
-    // Add labels - initially hidden for performance
+    // Add labels - show for small networks, hide for large
+    const showLabelsInitially = players.length <= 100;
+    
     label = node.append("text")
         .attr("dx", 0)
         .attr("dy", 25)
         .attr("text-anchor", "middle")
-        .attr("font-size", "12px")
+        .attr("font-size", players.length < 50 ? "14px" : "12px")
         .attr("fill", "white")
         .attr("stroke", "#000")
         .attr("stroke-width", 0.5)
         .attr("paint-order", "stroke")
         .attr("class", "node-label")
-        .style("display", nodes.length > 100 ? "none" : "block") // Hide labels if too many nodes
+        .style("display", showLabelsInitially || labelsVisible ? "block" : "none")
         .text(d => d.name);
     
-    // Show labels on zoom or when fewer nodes
-    svg.on("zoom", function() {
-        const transform = d3.zoomTransform(this);
-        if (nodes.length > 100) {
-            // Only show labels when zoomed in
-            label.style("display", transform.k > 1.5 ? "block" : "none");
+    // Update global label visibility state
+    if (showLabelsInitially && !labelsVisible) {
+        labelsVisible = true;
+        const btn = document.getElementById('toggle-labels-btn');
+        if (btn) {
+            btn.textContent = '🏷️ Hide Names';
+            btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
         }
-    });
+    }
     
     // Update positions on each tick - throttled for performance
     let tickCount = 0;

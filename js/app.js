@@ -168,6 +168,7 @@ function createUI() {
                 <div class="filter-section">
                     <label>🎛️ Quick Filters:</label>
                     <div class="quick-filters">
+                        <button class="quick-filter-btn" id="toggle-viz-btn" onclick="toggleVisualization()">🔄 Show Team Connections</button>
                         <button class="quick-filter-btn" onclick="selectAllYears()">📅 All Years</button>
                         <button class="quick-filter-btn" onclick="selectDecade(1950)">1950s</button>
                         <button class="quick-filter-btn" onclick="selectDecade(1960)">1960s</button>
@@ -177,9 +178,12 @@ function createUI() {
                         <button class="quick-filter-btn" onclick="selectDecade(2000)">2000s</button>
                         <button class="quick-filter-btn" onclick="selectYear(1991)">🎯 1991 Only</button>
                         <button class="quick-filter-btn" onclick="clearSelection()">🔄 Clear Years</button>
+                        <button class="quick-filter-btn" id="toggle-labels-btn" onclick="toggleLabels()">🏷️ Show Names</button>
                         <button class="export-btn" onclick="fitToScreen()">📐 Fit to Screen</button>
-                        <button class="export-btn" onclick="exportAsSVG()">💾 Download SVG</button>
-                        <button class="export-btn" onclick="exportAsPNG()">📸 Download PNG</button>
+                        <button class="export-btn" onclick="exportAsSVG(true)">💾 SVG (With Names)</button>
+                        <button class="export-btn" onclick="exportAsSVG(false)">💾 SVG (No Names)</button>
+                        <button class="export-btn" onclick="exportAsPNG(true)">📸 PNG (With Names)</button>
+                        <button class="export-btn" onclick="exportAsPNG(false)">📸 PNG (No Names)</button>
                     </div>
                 </div>
                 
@@ -739,16 +743,24 @@ function loadSuggestedPlot(plotId) {
     document.getElementById('mode-show').classList.toggle('active', playerFilterMode === 'show');
     document.getElementById('mode-hide').classList.toggle('active', playerFilterMode === 'hide');
     document.getElementById('team-mode-show').classList.toggle('active', teamFilterMode === 'show');
-    document.getElementById('team-mode-hide').classList.toggle('active', teamFilterMode === 'hide');
-    
-    // Load the network
-    updateDiagram();
-    
-    // Show notification
-    setTimeout(() => {
-        alert(`✨ Loaded: ${plot.name}\n\nExplore this curated view of your collection!`);
-    }, 100);
-}
+    document.getElementById('team-mode-hide').
+// Toggle player name labels
+let labelsVisible = false;
 
-// Start the application when DOM is ready
-window.addEventListener('DOMContentLoaded', loadAllData);
+function toggleLabels() {
+    labelsVisible = !labelsVisible;
+    const btn = document.getElementById('toggle-labels-btn');
+    
+    if (labelsVisible) {
+        btn.textContent = '🏷️ Hide Names';
+        btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+    } else {
+        btn.textContent = '🏷️ Show Names';
+        btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    }
+    
+    // Update labels visibility
+    if (label) {
+        label.style('display', labelsVisible ? 'block' : 'none');
+    }
+}

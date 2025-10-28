@@ -202,9 +202,21 @@
         
         .slider-container {
             display: flex;
-            align-items: center;
-            gap: 15px;
+            flex-direction: column;
+            gap: 5px;
             margin: 10px 0;
+        }
+        
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            font-size: 12px;
+            color: #aaa;
+        }
+        
+        .slider-labels span {
+            flex: 0 0 auto;
         }
         
         .slider {
@@ -352,7 +364,7 @@
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            background: rgba(0, 0, 0, 0.3);
+            background: #0a1929;
             border-radius: 15px;
             padding: 20px;
             min-height: 1000px;
