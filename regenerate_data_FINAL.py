@@ -122,8 +122,8 @@ def generate_network_data(cards):
     # Collect all unique years
     all_years = set()
     
-    # Group cards by player
-    player_info = defaultdict(lambda: {'teams': set(), 'years': set()})
+    # Group cards by player and team to track years
+    player_team_years = defaultdict(lambda: defaultdict(set))
     
     for card in cards:
         player = card['Player']
@@ -131,30 +131,24 @@ def generate_network_data(cards):
         try:
             year = int(card['Year'])
             all_years.add(year)
-            player_info[player]['years'].add(year)
+            player_team_years[player][team].add(year)
         except:
-            year = None
-        
-        if team:
-            player_info[player]['teams'].add(team)
+            pass
     
     edges = []
     
     # Create edges: one edge per player-team combination
-    for player, info in player_info.items():
-        teams = list(info['teams'])
-        years = list(info['years'])
-        
-        # Get the most recent year for this player
-        player_year = max(years) if years else None
-        
-        # Create one edge for each team the player was on
-        for team in teams:
+    # Use the most recent year for that specific player-team combo
+    for player, team_years in player_team_years.items():
+        for team, years in team_years.items():
+            # Use the most recent year this player was on this team
+            most_recent_year = max(years) if years else None
+            
             edges.append({
                 'from': player,
                 'to': player,  # In this structure, from=to=player
                 'team': team,
-                'year': player_year
+                'year': most_recent_year
             })
     
     # Return proper format with years array and edges array
@@ -164,7 +158,7 @@ def generate_network_data(cards):
     }
     
     print(f"   Created {len(edges)} player-team connections")
-    print(f"   {len(player_info)} unique players")
+    print(f"   {len(player_team_years)} unique players")
     print(f"   Years range: {min(all_years) if all_years else 'N/A'} - {max(all_years) if all_years else 'N/A'}")
     return result
 

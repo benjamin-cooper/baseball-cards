@@ -209,13 +209,13 @@
     {
       "from": "Dan Quisenberry",
       "to": "Dan Quisenberry",
-      "team": "St. Louis Cardinals",
-      "year": 1990
+      "team": "Kansas City Royals",
+      "year": 1988
     },
     {
       "from": "Dan Quisenberry",
       "to": "Dan Quisenberry",
-      "team": "Kansas City Royals",
+      "team": "St. Louis Cardinals",
       "year": 1990
     },
     {
@@ -234,7 +234,7 @@
       "from": "Carney Lansford",
       "to": "Carney Lansford",
       "team": "Anaheim Angels",
-      "year": 1991
+      "year": 1981
     },
     {
       "from": "Carney Lansford",
@@ -269,13 +269,13 @@
     {
       "from": "Don Sutton",
       "to": "Don Sutton",
-      "team": "Anaheim Angels",
-      "year": 1986
+      "team": "Houston Astros",
+      "year": 1982
     },
     {
       "from": "Don Sutton",
       "to": "Don Sutton",
-      "team": "Houston Astros",
+      "team": "Anaheim Angels",
       "year": 1986
     },
     {
@@ -287,26 +287,38 @@
     {
       "from": "Brett Butler",
       "to": "Brett Butler",
-      "team": "Los Angeles Dodgers",
-      "year": 1991
-    },
-    {
-      "from": "Brett Butler",
-      "to": "Brett Butler",
-      "team": "San Francisco Giants",
-      "year": 1991
-    },
-    {
-      "from": "Brett Butler",
-      "to": "Brett Butler",
       "team": "Atlanta Braves",
-      "year": 1991
+      "year": 1983
     },
     {
       "from": "Brett Butler",
       "to": "Brett Butler",
       "team": "Cleveland Indians",
+      "year": 1988
+    },
+    {
+      "from": "Brett Butler",
+      "to": "Brett Butler",
+      "team": "San Francisco Giants",
+      "year": 1989
+    },
+    {
+      "from": "Brett Butler",
+      "to": "Brett Butler",
+      "team": "Los Angeles Dodgers",
       "year": 1991
+    },
+    {
+      "from": "Mark Davis",
+      "to": "Mark Davis",
+      "team": "San Francisco Giants",
+      "year": 1984
+    },
+    {
+      "from": "Mark Davis",
+      "to": "Mark Davis",
+      "team": "San Diego Padres",
+      "year": 1990
     },
     {
       "from": "Mark Davis",
@@ -315,22 +327,10 @@
       "year": 1992
     },
     {
-      "from": "Mark Davis",
-      "to": "Mark Davis",
-      "team": "San Francisco Giants",
-      "year": 1992
-    },
-    {
-      "from": "Mark Davis",
-      "to": "Mark Davis",
-      "team": "San Diego Padres",
-      "year": 1992
-    },
-    {
       "from": "Bert Blyleven",
       "to": "Bert Blyleven",
-      "team": "Anaheim Angels",
-      "year": 1989
+      "team": "Cleveland Indians",
+      "year": 1984
     },
     {
       "from": "Bert Blyleven",
@@ -341,7 +341,7 @@
     {
       "from": "Bert Blyleven",
       "to": "Bert Blyleven",
-      "team": "Cleveland Indians",
+      "team": "Anaheim Angels",
       "year": 1989
     },
     {
@@ -359,19 +359,19 @@
     {
       "from": "Vance Law",
       "to": "Vance Law",
-      "team": "Chicago Cubs",
-      "year": 1989
+      "team": "Chicago White Sox",
+      "year": 1985
     },
     {
       "from": "Vance Law",
       "to": "Vance Law",
       "team": "Montreal Expos",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Vance Law",
       "to": "Vance Law",
-      "team": "Chicago White Sox",
+      "team": "Chicago Cubs",
       "year": 1989
     },
     {
@@ -395,13 +395,13 @@
     {
       "from": "Dave Von Ohlen",
       "to": "Dave Von Ohlen",
-      "team": "Oakland Athletics",
-      "year": 1987
+      "team": "Cleveland Indians",
+      "year": 1985
     },
     {
       "from": "Dave Von Ohlen",
       "to": "Dave Von Ohlen",
-      "team": "Cleveland Indians",
+      "team": "Oakland Athletics",
       "year": 1987
     },
     {
@@ -414,7 +414,7 @@
       "from": "Jesse Orosco",
       "to": "Jesse Orosco",
       "team": "New York Mets",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Jesse Orosco",
@@ -426,7 +426,7 @@
       "from": "Storm Davis",
       "to": "Storm Davis",
       "team": "Baltimore Orioles",
-      "year": 1990
+      "year": 1985
     },
     {
       "from": "Storm Davis",
@@ -449,14 +449,20 @@
     {
       "from": "Jose Rijo",
       "to": "Jose Rijo",
-      "team": "Cincinnati Reds",
-      "year": 1993
+      "team": "Oakland Athletics",
+      "year": 1986
     },
     {
       "from": "Jose Rijo",
       "to": "Jose Rijo",
-      "team": "Oakland Athletics",
+      "team": "Cincinnati Reds",
       "year": 1993
+    },
+    {
+      "from": "Johnny Ray",
+      "to": "Johnny Ray",
+      "team": "Pittsburgh Pirates",
+      "year": 1986
     },
     {
       "from": "Johnny Ray",
@@ -465,16 +471,10 @@
       "year": 1991
     },
     {
-      "from": "Johnny Ray",
-      "to": "Johnny Ray",
-      "team": "Pittsburgh Pirates",
-      "year": 1991
-    },
-    {
       "from": "Don Aase",
       "to": "Don Aase",
       "team": "Baltimore Orioles",
-      "year": 1991
+      "year": 1986
     },
     {
       "from": "Don Aase",
@@ -491,14 +491,14 @@
     {
       "from": "Jeff Reardon",
       "to": "Jeff Reardon",
-      "team": "Minnesota Twins",
-      "year": 1992
+      "team": "Montreal Expos",
+      "year": 1986
     },
     {
       "from": "Jeff Reardon",
       "to": "Jeff Reardon",
-      "team": "Montreal Expos",
-      "year": 1992
+      "team": "Minnesota Twins",
+      "year": 1990
     },
     {
       "from": "Jeff Reardon",
@@ -521,31 +521,31 @@
     {
       "from": "Rick Rhoden",
       "to": "Rick Rhoden",
-      "team": "New York Yankees",
-      "year": 1990
+      "team": "Pittsburgh Pirates",
+      "year": 1987
     },
     {
       "from": "Rick Rhoden",
       "to": "Rick Rhoden",
-      "team": "Pittsburgh Pirates",
-      "year": 1990
+      "team": "New York Yankees",
+      "year": 1989
     },
     {
       "from": "Rick Rhoden",
       "to": "Rick Rhoden",
       "team": "Houston Astros",
       "year": 1990
+    },
+    {
+      "from": "Kevin Bass",
+      "to": "Kevin Bass",
+      "team": "Houston Astros",
+      "year": 1989
     },
     {
       "from": "Kevin Bass",
       "to": "Kevin Bass",
       "team": "San Francisco Giants",
-      "year": 1992
-    },
-    {
-      "from": "Kevin Bass",
-      "to": "Kevin Bass",
-      "team": "Houston Astros",
       "year": 1992
     },
     {
@@ -564,7 +564,7 @@
       "from": "Scott Fletcher",
       "to": "Scott Fletcher",
       "team": "Texas Rangers",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Scott Fletcher",
@@ -594,7 +594,7 @@
       "from": "Steve Carlton",
       "to": "Steve Carlton",
       "team": "San Francisco Giants",
-      "year": 1987
+      "year": 1986
     },
     {
       "from": "Steve Carlton",
@@ -606,7 +606,7 @@
       "from": "Mike Witt",
       "to": "Mike Witt",
       "team": "Anaheim Angels",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Mike Witt",
@@ -623,26 +623,26 @@
     {
       "from": "Bill Gullickson",
       "to": "Bill Gullickson",
-      "team": "Detroit Tigers",
-      "year": 1993
-    },
-    {
-      "from": "Bill Gullickson",
-      "to": "Bill Gullickson",
       "team": "Cincinnati Reds",
-      "year": 1993
+      "year": 1986
     },
     {
       "from": "Bill Gullickson",
       "to": "Bill Gullickson",
       "team": "Houston Astros",
+      "year": 1991
+    },
+    {
+      "from": "Bill Gullickson",
+      "to": "Bill Gullickson",
+      "team": "Detroit Tigers",
       "year": 1993
     },
     {
       "from": "Dale Murphy",
       "to": "Dale Murphy",
       "team": "Atlanta Braves",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Dale Murphy",
@@ -672,7 +672,7 @@
       "from": "Bruce Hurst",
       "to": "Bruce Hurst",
       "team": "Boston Red Sox",
-      "year": 1993
+      "year": 1988
     },
     {
       "from": "Bruce Hurst",
@@ -690,7 +690,7 @@
       "from": "Steve Sax",
       "to": "Steve Sax",
       "team": "Los Angeles Dodgers",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Steve Sax",
@@ -703,6 +703,12 @@
       "to": "Steve Sax",
       "team": "Chicago White Sox",
       "year": 1992
+    },
+    {
+      "from": "John Cangelosi",
+      "to": "John Cangelosi",
+      "team": "Chicago White Sox",
+      "year": 1986
     },
     {
       "from": "John Cangelosi",
@@ -711,16 +717,10 @@
       "year": 1989
     },
     {
-      "from": "John Cangelosi",
-      "to": "John Cangelosi",
-      "team": "Chicago White Sox",
-      "year": 1989
-    },
-    {
       "from": "Dave Righetti",
       "to": "Dave Righetti",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Dave Righetti",
@@ -731,20 +731,20 @@
     {
       "from": "Lance Parrish",
       "to": "Lance Parrish",
+      "team": "Detroit Tigers",
+      "year": 1986
+    },
+    {
+      "from": "Lance Parrish",
+      "to": "Lance Parrish",
       "team": "Anaheim Angels",
       "year": 1992
     },
     {
       "from": "Lance Parrish",
       "to": "Lance Parrish",
-      "team": "Detroit Tigers",
-      "year": 1992
-    },
-    {
-      "from": "Lance Parrish",
-      "to": "Lance Parrish",
       "team": "Philadelphia Phillies",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Tim Raines / Ryne Sandberg / Keith Hernandez",
@@ -755,8 +755,14 @@
     {
       "from": "Ken Phelps",
       "to": "Ken Phelps",
+      "team": "Seattle Mariners",
+      "year": 1989
+    },
+    {
+      "from": "Ken Phelps",
+      "to": "Ken Phelps",
       "team": "New York Yankees",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Ken Phelps",
@@ -765,27 +771,21 @@
       "year": 1990
     },
     {
-      "from": "Ken Phelps",
-      "to": "Ken Phelps",
-      "team": "Seattle Mariners",
-      "year": 1990
-    },
-    {
       "from": "Billy Hatcher",
       "to": "Billy Hatcher",
       "team": "Chicago Cubs",
-      "year": 1992
-    },
-    {
-      "from": "Billy Hatcher",
-      "to": "Billy Hatcher",
-      "team": "Cincinnati Reds",
-      "year": 1992
+      "year": 1986
     },
     {
       "from": "Billy Hatcher",
       "to": "Billy Hatcher",
       "team": "Houston Astros",
+      "year": 1989
+    },
+    {
+      "from": "Billy Hatcher",
+      "to": "Billy Hatcher",
+      "team": "Cincinnati Reds",
       "year": 1992
     },
     {
@@ -810,7 +810,7 @@
       "from": "Chris Brown",
       "to": "Chris Brown",
       "team": "San Francisco Giants",
-      "year": 1989
+      "year": 1986
     },
     {
       "from": "Chris Brown",
@@ -822,13 +822,13 @@
       "from": "Scott Sanderson",
       "to": "Scott Sanderson",
       "team": "Chicago Cubs",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Scott Sanderson",
       "to": "Scott Sanderson",
       "team": "Oakland Athletics",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Scott Sanderson",
@@ -852,13 +852,13 @@
       "from": "Wally Joyner",
       "to": "Wally Joyner",
       "team": "Anaheim Angels",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Wally Joyner",
       "to": "Wally Joyner",
       "team": "Kansas City Royals",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "Wally Joyner",
@@ -869,25 +869,25 @@
     {
       "from": "BJ Surhoff",
       "to": "BJ Surhoff",
-      "team": "Baltimore Orioles",
-      "year": 1999
+      "team": "Milwaukee Brewers",
+      "year": 1991
     },
     {
       "from": "BJ Surhoff",
       "to": "BJ Surhoff",
-      "team": "Milwaukee Brewers",
-      "year": 1999
-    },
-    {
-      "from": "Randy Myers",
-      "to": "Randy Myers",
       "team": "Baltimore Orioles",
-      "year": 1997
+      "year": 1999
     },
     {
       "from": "Randy Myers",
       "to": "Randy Myers",
       "team": "New York Mets",
+      "year": 1990
+    },
+    {
+      "from": "Randy Myers",
+      "to": "Randy Myers",
+      "team": "Baltimore Orioles",
       "year": 1997
     },
     {
@@ -905,19 +905,19 @@
     {
       "from": "Jerry Browne",
       "to": "Jerry Browne",
-      "team": "Oakland Athletics",
-      "year": 1993
+      "team": "Texas Rangers",
+      "year": 1988
     },
     {
       "from": "Jerry Browne",
       "to": "Jerry Browne",
       "team": "Cleveland Indians",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Jerry Browne",
       "to": "Jerry Browne",
-      "team": "Texas Rangers",
+      "team": "Oakland Athletics",
       "year": 1993
     },
     {
@@ -935,6 +935,12 @@
     {
       "from": "Rick Dempsey",
       "to": "Rick Dempsey",
+      "team": "Cleveland Indians",
+      "year": 1987
+    },
+    {
+      "from": "Rick Dempsey",
+      "to": "Rick Dempsey",
       "team": "Los Angeles Dodgers",
       "year": 1991
     },
@@ -945,21 +951,15 @@
       "year": 1991
     },
     {
-      "from": "Rick Dempsey",
-      "to": "Rick Dempsey",
-      "team": "Cleveland Indians",
-      "year": 1991
+      "from": "Gene Nelson",
+      "to": "Gene Nelson",
+      "team": "Chicago White Sox",
+      "year": 1987
     },
     {
       "from": "Gene Nelson",
       "to": "Gene Nelson",
       "team": "Oakland Athletics",
-      "year": 1991
-    },
-    {
-      "from": "Gene Nelson",
-      "to": "Gene Nelson",
-      "team": "Chicago White Sox",
       "year": 1991
     },
     {
@@ -971,26 +971,26 @@
     {
       "from": "Dwight Evans",
       "to": "Dwight Evans",
-      "team": "Baltimore Orioles",
-      "year": 1992
+      "team": "Boston Red Sox",
+      "year": 1990
     },
     {
       "from": "Dwight Evans",
       "to": "Dwight Evans",
-      "team": "Boston Red Sox",
-      "year": 1992
-    },
-    {
-      "from": "Pete O'Brien",
-      "to": "Pete O'Brien",
-      "team": "Cleveland Indians",
+      "team": "Baltimore Orioles",
       "year": 1992
     },
     {
       "from": "Pete O'Brien",
       "to": "Pete O'Brien",
       "team": "Texas Rangers",
-      "year": 1992
+      "year": 1989
+    },
+    {
+      "from": "Pete O'Brien",
+      "to": "Pete O'Brien",
+      "team": "Cleveland Indians",
+      "year": 1990
     },
     {
       "from": "Pete O'Brien",
@@ -1002,7 +1002,7 @@
       "from": "Tim Raines",
       "to": "Tim Raines",
       "team": "Montreal Expos",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Tim Raines",
@@ -1014,7 +1014,7 @@
       "from": "Andy Van Slyke",
       "to": "Andy Van Slyke",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1987
     },
     {
       "from": "Andy Van Slyke",
@@ -1062,7 +1062,7 @@
       "from": "John Morris",
       "to": "John Morris",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "John Morris",
@@ -1115,13 +1115,13 @@
     {
       "from": "Sal Butera",
       "to": "Sal Butera",
-      "team": "Minnesota Twins",
-      "year": 1988
+      "team": "Cincinnati Reds",
+      "year": 1987
     },
     {
       "from": "Sal Butera",
       "to": "Sal Butera",
-      "team": "Cincinnati Reds",
+      "team": "Minnesota Twins",
       "year": 1988
     },
     {
@@ -1133,20 +1133,20 @@
     {
       "from": "Scott Terry",
       "to": "Scott Terry",
-      "team": "St. Louis Cardinals",
-      "year": 1992
+      "team": "Cincinnati Reds",
+      "year": 1987
     },
     {
       "from": "Scott Terry",
       "to": "Scott Terry",
-      "team": "Cincinnati Reds",
+      "team": "St. Louis Cardinals",
       "year": 1992
     },
     {
       "from": "Dennis Eckersley",
       "to": "Dennis Eckersley",
       "team": "Chicago Cubs",
-      "year": 1991
+      "year": 1987
     },
     {
       "from": "Dennis Eckersley",
@@ -1157,13 +1157,13 @@
     {
       "from": "Carmen Castillo",
       "to": "Carmen Castillo",
-      "team": "Minnesota Twins",
-      "year": 1991
+      "team": "Cleveland Indians",
+      "year": 1989
     },
     {
       "from": "Carmen Castillo",
       "to": "Carmen Castillo",
-      "team": "Cleveland Indians",
+      "team": "Minnesota Twins",
       "year": 1991
     },
     {
@@ -1175,14 +1175,26 @@
     {
       "from": "Reid Nichols",
       "to": "Reid Nichols",
-      "team": "Montreal Expos",
-      "year": 1988
+      "team": "Chicago White Sox",
+      "year": 1987
     },
     {
       "from": "Reid Nichols",
       "to": "Reid Nichols",
-      "team": "Chicago White Sox",
+      "team": "Montreal Expos",
       "year": 1988
+    },
+    {
+      "from": "Zane Smith",
+      "to": "Zane Smith",
+      "team": "Atlanta Braves",
+      "year": 1989
+    },
+    {
+      "from": "Zane Smith",
+      "to": "Zane Smith",
+      "team": "Montreal Expos",
+      "year": 1990
     },
     {
       "from": "Zane Smith",
@@ -1191,27 +1203,15 @@
       "year": 1992
     },
     {
-      "from": "Zane Smith",
-      "to": "Zane Smith",
-      "team": "Montreal Expos",
-      "year": 1992
-    },
-    {
-      "from": "Zane Smith",
-      "to": "Zane Smith",
-      "team": "Atlanta Braves",
-      "year": 1992
-    },
-    {
       "from": "John Cerutti",
       "to": "John Cerutti",
-      "team": "Detroit Tigers",
+      "team": "Toronto Blue Jays",
       "year": 1991
     },
     {
       "from": "John Cerutti",
       "to": "John Cerutti",
-      "team": "Toronto Blue Jays",
+      "team": "Detroit Tigers",
       "year": 1991
     },
     {
@@ -1229,26 +1229,26 @@
     {
       "from": "Jose Uribe",
       "to": "Jose Uribe",
-      "team": "Oakland Athletics",
-      "year": 1991
+      "team": "San Francisco Giants",
+      "year": 1990
     },
     {
       "from": "Jose Uribe",
       "to": "Jose Uribe",
-      "team": "San Francisco Giants",
+      "team": "Oakland Athletics",
       "year": 1991
+    },
+    {
+      "from": "Mickey Tettleton",
+      "to": "Mickey Tettleton",
+      "team": "Oakland Athletics",
+      "year": 1987
     },
     {
       "from": "Mickey Tettleton",
       "to": "Mickey Tettleton",
       "team": "Baltimore Orioles",
-      "year": 1993
-    },
-    {
-      "from": "Mickey Tettleton",
-      "to": "Mickey Tettleton",
-      "team": "Oakland Athletics",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Mickey Tettleton",
@@ -1295,13 +1295,13 @@
     {
       "from": "Mark McGwire",
       "to": "Mark McGwire",
-      "team": "St. Louis Cardinals",
-      "year": 1999
+      "team": "Oakland Athletics",
+      "year": 1992
     },
     {
       "from": "Mark McGwire",
       "to": "Mark McGwire",
-      "team": "Oakland Athletics",
+      "team": "St. Louis Cardinals",
       "year": 1999
     },
     {
@@ -1331,14 +1331,20 @@
     {
       "from": "Kal Daniels",
       "to": "Kal Daniels",
-      "team": "Los Angeles Dodgers",
-      "year": 1990
+      "team": "Cincinnati Reds",
+      "year": 1988
     },
     {
       "from": "Kal Daniels",
       "to": "Kal Daniels",
-      "team": "Cincinnati Reds",
+      "team": "Los Angeles Dodgers",
       "year": 1990
+    },
+    {
+      "from": "Gary Gaetti",
+      "to": "Gary Gaetti",
+      "team": "Minnesota Twins",
+      "year": 1991
     },
     {
       "from": "Gary Gaetti",
@@ -1347,16 +1353,10 @@
       "year": 1992
     },
     {
-      "from": "Gary Gaetti",
-      "to": "Gary Gaetti",
-      "team": "Minnesota Twins",
-      "year": 1992
-    },
-    {
       "from": "Bob Welch",
       "to": "Bob Welch",
       "team": "Los Angeles Dodgers",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Bob Welch",
@@ -1367,13 +1367,13 @@
     {
       "from": "Ivan Calderon",
       "to": "Ivan Calderon",
-      "team": "Montreal Expos",
-      "year": 1992
+      "team": "Chicago White Sox",
+      "year": 1991
     },
     {
       "from": "Ivan Calderon",
       "to": "Ivan Calderon",
-      "team": "Chicago White Sox",
+      "team": "Montreal Expos",
       "year": 1992
     },
     {
@@ -1386,7 +1386,7 @@
       "from": "Lance Johnson",
       "to": "Lance Johnson",
       "team": "St. Louis Cardinals",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Lance Johnson",
@@ -1409,37 +1409,37 @@
     {
       "from": "Roberto Alomar",
       "to": "Roberto Alomar",
-      "team": "Baltimore Orioles",
-      "year": 1999
+      "team": "San Diego Padres",
+      "year": 1991
     },
     {
       "from": "Roberto Alomar",
       "to": "Roberto Alomar",
       "team": "Toronto Blue Jays",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Roberto Alomar",
       "to": "Roberto Alomar",
-      "team": "San Diego Padres",
+      "team": "Baltimore Orioles",
       "year": 1999
     },
     {
       "from": "Shawn Hillegas",
       "to": "Shawn Hillegas",
       "team": "Los Angeles Dodgers",
-      "year": 1991
-    },
-    {
-      "from": "Shawn Hillegas",
-      "to": "Shawn Hillegas",
-      "team": "Cleveland Indians",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Shawn Hillegas",
       "to": "Shawn Hillegas",
       "team": "Chicago White Sox",
+      "year": 1990
+    },
+    {
+      "from": "Shawn Hillegas",
+      "to": "Shawn Hillegas",
+      "team": "Cleveland Indians",
       "year": 1991
     },
     {
@@ -1469,26 +1469,26 @@
     {
       "from": "Roger Clemens",
       "to": "Roger Clemens",
-      "team": "Toronto Blue Jays",
-      "year": 1999
+      "team": "Boston Red Sox",
+      "year": 1992
     },
     {
       "from": "Roger Clemens",
       "to": "Roger Clemens",
-      "team": "Boston Red Sox",
+      "team": "Toronto Blue Jays",
       "year": 1999
-    },
-    {
-      "from": "Jeff Reed",
-      "to": "Jeff Reed",
-      "team": "Cincinnati Reds",
-      "year": 1993
     },
     {
       "from": "Jeff Reed",
       "to": "Jeff Reed",
       "team": "Montreal Expos",
-      "year": 1993
+      "year": 1988
+    },
+    {
+      "from": "Jeff Reed",
+      "to": "Jeff Reed",
+      "team": "Cincinnati Reds",
+      "year": 1991
     },
     {
       "from": "Jeff Reed",
@@ -1499,25 +1499,25 @@
     {
       "from": "Ted Power",
       "to": "Ted Power",
-      "team": "Pittsburgh Pirates",
-      "year": 1991
+      "team": "Cincinnati Reds",
+      "year": 1988
     },
     {
       "from": "Ted Power",
       "to": "Ted Power",
       "team": "Kansas City Royals",
-      "year": 1991
-    },
-    {
-      "from": "Ted Power",
-      "to": "Ted Power",
-      "team": "Cincinnati Reds",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Ted Power",
       "to": "Ted Power",
       "team": "Texas Rangers",
+      "year": 1989
+    },
+    {
+      "from": "Ted Power",
+      "to": "Ted Power",
+      "team": "Pittsburgh Pirates",
       "year": 1991
     },
     {
@@ -1530,7 +1530,7 @@
       "from": "Felix Fermin",
       "to": "Felix Fermin",
       "team": "Pittsburgh Pirates",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Felix Fermin",
@@ -1560,7 +1560,7 @@
       "from": "Frank Viola",
       "to": "Frank Viola",
       "team": "Minnesota Twins",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Frank Viola",
@@ -1572,7 +1572,7 @@
       "from": "Terry Kennedy",
       "to": "Terry Kennedy",
       "team": "Baltimore Orioles",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Terry Kennedy",
@@ -1590,7 +1590,7 @@
       "from": "Matt Nokes",
       "to": "Matt Nokes",
       "team": "Detroit Tigers",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Matt Nokes",
@@ -1608,7 +1608,7 @@
       "from": "Mariano Duncan",
       "to": "Mariano Duncan",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Mariano Duncan",
@@ -1619,20 +1619,20 @@
     {
       "from": "Julio Franco",
       "to": "Julio Franco",
-      "team": "Texas Rangers",
+      "team": "Cleveland Indians",
       "year": 1997
     },
     {
       "from": "Julio Franco",
       "to": "Julio Franco",
-      "team": "Cleveland Indians",
-      "year": 1997
+      "team": "Texas Rangers",
+      "year": 1993
     },
     {
       "from": "Charlie Leibrandt",
       "to": "Charlie Leibrandt",
       "team": "Kansas City Royals",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Charlie Leibrandt",
@@ -1686,7 +1686,7 @@
       "from": "Ron Robinson",
       "to": "Ron Robinson",
       "team": "Cincinnati Reds",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Ron Robinson",
@@ -1703,26 +1703,26 @@
     {
       "from": "Jamie Moyer",
       "to": "Jamie Moyer",
-      "team": "St. Louis Cardinals",
-      "year": 1991
-    },
-    {
-      "from": "Jamie Moyer",
-      "to": "Jamie Moyer",
       "team": "Chicago Cubs",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Jamie Moyer",
       "to": "Jamie Moyer",
       "team": "Texas Rangers",
+      "year": 1989
+    },
+    {
+      "from": "Jamie Moyer",
+      "to": "Jamie Moyer",
+      "team": "St. Louis Cardinals",
       "year": 1991
     },
     {
       "from": "Tony Pena",
       "to": "Tony Pena",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Tony Pena",
@@ -1740,7 +1740,7 @@
       "from": "Ellis Burks",
       "to": "Ellis Burks",
       "team": "Boston Red Sox",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "Ellis Burks",
@@ -1758,13 +1758,13 @@
       "from": "Danny Tartabull",
       "to": "Danny Tartabull",
       "team": "Kansas City Royals",
-      "year": 1997
+      "year": 1992
     },
     {
       "from": "Danny Tartabull",
       "to": "Danny Tartabull",
       "team": "New York Yankees",
-      "year": 1997
+      "year": 1993
     },
     {
       "from": "Danny Tartabull",
@@ -1776,7 +1776,7 @@
       "from": "Casey Candaele",
       "to": "Casey Candaele",
       "team": "Montreal Expos",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Casey Candaele",
@@ -1788,7 +1788,7 @@
       "from": "Mark McLemore",
       "to": "Mark McLemore",
       "team": "Anaheim Angels",
-      "year": 1999
+      "year": 1988
     },
     {
       "from": "Mark McLemore",
@@ -1800,18 +1800,18 @@
       "from": "Jack Clark",
       "to": "Jack Clark",
       "team": "St. Louis Cardinals",
-      "year": 1992
-    },
-    {
-      "from": "Jack Clark",
-      "to": "Jack Clark",
-      "team": "Boston Red Sox",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Jack Clark",
       "to": "Jack Clark",
       "team": "San Diego Padres",
+      "year": 1990
+    },
+    {
+      "from": "Jack Clark",
+      "to": "Jack Clark",
+      "team": "Boston Red Sox",
       "year": 1992
     },
     {
@@ -1823,8 +1823,8 @@
     {
       "from": "Luis Aguayo",
       "to": "Luis Aguayo",
-      "team": "New York Yankees",
-      "year": 1989
+      "team": "Philadelphia Phillies",
+      "year": 1988
     },
     {
       "from": "Luis Aguayo",
@@ -1835,7 +1835,7 @@
     {
       "from": "Luis Aguayo",
       "to": "Luis Aguayo",
-      "team": "Philadelphia Phillies",
+      "team": "New York Yankees",
       "year": 1989
     },
     {
@@ -1847,20 +1847,20 @@
     {
       "from": "Stan Jefferson",
       "to": "Stan Jefferson",
-      "team": "New York Yankees",
-      "year": 1989
+      "team": "San Diego Padres",
+      "year": 1988
     },
     {
       "from": "Stan Jefferson",
       "to": "Stan Jefferson",
-      "team": "San Diego Padres",
+      "team": "New York Yankees",
       "year": 1989
     },
     {
       "from": "Sid Bream",
       "to": "Sid Bream",
       "team": "Pittsburgh Pirates",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Sid Bream",
@@ -1896,7 +1896,13 @@
       "from": "Fred McGriff",
       "to": "Fred McGriff",
       "team": "Toronto Blue Jays",
-      "year": 1999
+      "year": 1991
+    },
+    {
+      "from": "Fred McGriff",
+      "to": "Fred McGriff",
+      "team": "San Diego Padres",
+      "year": 1992
     },
     {
       "from": "Fred McGriff",
@@ -1905,16 +1911,10 @@
       "year": 1999
     },
     {
-      "from": "Fred McGriff",
-      "to": "Fred McGriff",
-      "team": "San Diego Padres",
-      "year": 1999
-    },
-    {
       "from": "Steve Lombardozzi",
       "to": "Steve Lombardozzi",
       "team": "Minnesota Twins",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Steve Lombardozzi",
@@ -1931,8 +1931,8 @@
     {
       "from": "Gary Carter",
       "to": "Gary Carter",
-      "team": "Los Angeles Dodgers",
-      "year": 1991
+      "team": "New York Mets",
+      "year": 1990
     },
     {
       "from": "Gary Carter",
@@ -1943,7 +1943,7 @@
     {
       "from": "Gary Carter",
       "to": "Gary Carter",
-      "team": "New York Mets",
+      "team": "Los Angeles Dodgers",
       "year": 1991
     },
     {
@@ -1955,20 +1955,14 @@
     {
       "from": "Ken Griffey Sr",
       "to": "Ken Griffey Sr",
-      "team": "Los Angeles Dodgers",
-      "year": 1992
+      "team": "Atlanta Braves",
+      "year": 1988
     },
     {
       "from": "Ken Griffey Sr",
       "to": "Ken Griffey Sr",
       "team": "Cincinnati Reds",
-      "year": 1992
-    },
-    {
-      "from": "Ken Griffey Sr",
-      "to": "Ken Griffey Sr",
-      "team": "Atlanta Braves",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Ken Griffey Sr",
@@ -1977,10 +1971,16 @@
       "year": 1992
     },
     {
+      "from": "Ken Griffey Sr",
+      "to": "Ken Griffey Sr",
+      "team": "Los Angeles Dodgers",
+      "year": 1991
+    },
+    {
       "from": "Tommy Gregg",
       "to": "Tommy Gregg",
       "team": "Pittsburgh Pirates",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Tommy Gregg",
@@ -1992,7 +1992,7 @@
       "from": "Will Clark",
       "to": "Will Clark",
       "team": "San Francisco Giants",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Will Clark",
@@ -2003,26 +2003,26 @@
     {
       "from": "John Kruk",
       "to": "John Kruk",
-      "team": "Philadelphia Phillies",
-      "year": 1991
+      "team": "San Diego Padres",
+      "year": 1988
     },
     {
       "from": "John Kruk",
       "to": "John Kruk",
-      "team": "San Diego Padres",
+      "team": "Philadelphia Phillies",
       "year": 1991
     },
     {
       "from": "Gary Pettis",
       "to": "Gary Pettis",
       "team": "Anaheim Angels",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Gary Pettis",
       "to": "Gary Pettis",
       "team": "Detroit Tigers",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Gary Pettis",
@@ -2033,13 +2033,13 @@
     {
       "from": "Harold Baines",
       "to": "Harold Baines",
-      "team": "Oakland Athletics",
-      "year": 1993
+      "team": "Chicago White Sox",
+      "year": 1990
     },
     {
       "from": "Harold Baines",
       "to": "Harold Baines",
-      "team": "Chicago White Sox",
+      "team": "Oakland Athletics",
       "year": 1993
     },
     {
@@ -2075,19 +2075,19 @@
     {
       "from": "Pat Tabler",
       "to": "Pat Tabler",
+      "team": "Cleveland Indians",
+      "year": 1988
+    },
+    {
+      "from": "Pat Tabler",
+      "to": "Pat Tabler",
       "team": "Kansas City Royals",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Pat Tabler",
       "to": "Pat Tabler",
       "team": "New York Mets",
-      "year": 1991
-    },
-    {
-      "from": "Pat Tabler",
-      "to": "Pat Tabler",
-      "team": "Cleveland Indians",
       "year": 1991
     },
     {
@@ -2099,14 +2099,14 @@
     {
       "from": "Tony Phillips",
       "to": "Tony Phillips",
-      "team": "Detroit Tigers",
-      "year": 1997
+      "team": "Oakland Athletics",
+      "year": 1988
     },
     {
       "from": "Tony Phillips",
       "to": "Tony Phillips",
-      "team": "Oakland Athletics",
-      "year": 1997
+      "team": "Detroit Tigers",
+      "year": 1993
     },
     {
       "from": "Tony Phillips",
@@ -2129,13 +2129,13 @@
     {
       "from": "Steve Buechele",
       "to": "Steve Buechele",
-      "team": "Pittsburgh Pirates",
-      "year": 1992
+      "team": "Texas Rangers",
+      "year": 1991
     },
     {
       "from": "Steve Buechele",
       "to": "Steve Buechele",
-      "team": "Texas Rangers",
+      "team": "Pittsburgh Pirates",
       "year": 1992
     },
     {
@@ -2148,7 +2148,7 @@
       "from": "Mike Marshall",
       "to": "Mike Marshall",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Mike Marshall",
@@ -2177,14 +2177,20 @@
     {
       "from": "Bill Doran",
       "to": "Bill Doran",
-      "team": "Cincinnati Reds",
-      "year": 1991
+      "team": "Houston Astros",
+      "year": 1990
     },
     {
       "from": "Bill Doran",
       "to": "Bill Doran",
-      "team": "Houston Astros",
+      "team": "Cincinnati Reds",
       "year": 1991
+    },
+    {
+      "from": "Milt Thompson",
+      "to": "Milt Thompson",
+      "team": "Philadelphia Phillies",
+      "year": 1988
     },
     {
       "from": "Milt Thompson",
@@ -2193,21 +2199,15 @@
       "year": 1990
     },
     {
-      "from": "Milt Thompson",
-      "to": "Milt Thompson",
-      "team": "Philadelphia Phillies",
-      "year": 1990
+      "from": "Marvell Wynne",
+      "to": "Marvell Wynne",
+      "team": "San Diego Padres",
+      "year": 1989
     },
     {
       "from": "Marvell Wynne",
       "to": "Marvell Wynne",
       "team": "Chicago Cubs",
-      "year": 1991
-    },
-    {
-      "from": "Marvell Wynne",
-      "to": "Marvell Wynne",
-      "team": "San Diego Padres",
       "year": 1991
     },
     {
@@ -2225,31 +2225,31 @@
     {
       "from": "Glenn Braggs",
       "to": "Glenn Braggs",
-      "team": "Cincinnati Reds",
-      "year": 1992
+      "team": "Milwaukee Brewers",
+      "year": 1988
     },
     {
       "from": "Glenn Braggs",
       "to": "Glenn Braggs",
-      "team": "Milwaukee Brewers",
+      "team": "Cincinnati Reds",
       "year": 1992
-    },
-    {
-      "from": "Wally Backman",
-      "to": "Wally Backman",
-      "team": "Minnesota Twins",
-      "year": 1991
-    },
-    {
-      "from": "Wally Backman",
-      "to": "Wally Backman",
-      "team": "Pittsburgh Pirates",
-      "year": 1991
     },
     {
       "from": "Wally Backman",
       "to": "Wally Backman",
       "team": "New York Mets",
+      "year": 1989
+    },
+    {
+      "from": "Wally Backman",
+      "to": "Wally Backman",
+      "team": "Minnesota Twins",
+      "year": 1989
+    },
+    {
+      "from": "Wally Backman",
+      "to": "Wally Backman",
+      "team": "Pittsburgh Pirates",
       "year": 1991
     },
     {
@@ -2261,19 +2261,19 @@
     {
       "from": "Phil Bradley",
       "to": "Phil Bradley",
-      "team": "Chicago White Sox",
-      "year": 1991
-    },
-    {
-      "from": "Phil Bradley",
-      "to": "Phil Bradley",
       "team": "Seattle Mariners",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Phil Bradley",
       "to": "Phil Bradley",
       "team": "Philadelphia Phillies",
+      "year": 1989
+    },
+    {
+      "from": "Phil Bradley",
+      "to": "Phil Bradley",
+      "team": "Chicago White Sox",
       "year": 1991
     },
     {
@@ -2285,14 +2285,14 @@
     {
       "from": "Tom Brunansky",
       "to": "Tom Brunansky",
-      "team": "St. Louis Cardinals",
-      "year": 1991
+      "team": "Minnesota Twins",
+      "year": 1988
     },
     {
       "from": "Tom Brunansky",
       "to": "Tom Brunansky",
-      "team": "Minnesota Twins",
-      "year": 1991
+      "team": "St. Louis Cardinals",
+      "year": 1989
     },
     {
       "from": "Tom Brunansky",
@@ -2316,7 +2316,7 @@
       "from": "Fred Lynn",
       "to": "Fred Lynn",
       "team": "Baltimore Orioles",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Fred Lynn",
@@ -2328,7 +2328,7 @@
       "from": "Darrell Evans",
       "to": "Darrell Evans",
       "team": "Detroit Tigers",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Darrell Evans",
@@ -2345,14 +2345,8 @@
     {
       "from": "Joe Carter",
       "to": "Joe Carter",
-      "team": "Toronto Blue Jays",
-      "year": 1991
-    },
-    {
-      "from": "Joe Carter",
-      "to": "Joe Carter",
       "team": "Cleveland Indians",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Joe Carter",
@@ -2361,10 +2355,16 @@
       "year": 1991
     },
     {
+      "from": "Joe Carter",
+      "to": "Joe Carter",
+      "team": "Toronto Blue Jays",
+      "year": 1991
+    },
+    {
       "from": "Willie Wilson",
       "to": "Willie Wilson",
       "team": "Kansas City Royals",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Willie Wilson",
@@ -2375,14 +2375,14 @@
     {
       "from": "Mitch Webster",
       "to": "Mitch Webster",
-      "team": "Chicago Cubs",
-      "year": 1990
+      "team": "Montreal Expos",
+      "year": 1988
     },
     {
       "from": "Mitch Webster",
       "to": "Mitch Webster",
-      "team": "Montreal Expos",
-      "year": 1990
+      "team": "Chicago Cubs",
+      "year": 1989
     },
     {
       "from": "Mitch Webster",
@@ -2394,7 +2394,7 @@
       "from": "Brian Downing",
       "to": "Brian Downing",
       "team": "Anaheim Angels",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Brian Downing",
@@ -2405,13 +2405,13 @@
     {
       "from": "Mike Stanley",
       "to": "Mike Stanley",
-      "team": "New York Yankees",
-      "year": 1993
+      "team": "Texas Rangers",
+      "year": 1992
     },
     {
       "from": "Mike Stanley",
       "to": "Mike Stanley",
-      "team": "Texas Rangers",
+      "team": "New York Yankees",
       "year": 1993
     },
     {
@@ -2423,13 +2423,13 @@
     {
       "from": "Glenn Wilson",
       "to": "Glenn Wilson",
-      "team": "Houston Astros",
-      "year": 1990
+      "team": "Philadelphia Phillies",
+      "year": 1988
     },
     {
       "from": "Glenn Wilson",
       "to": "Glenn Wilson",
-      "team": "Philadelphia Phillies",
+      "team": "Houston Astros",
       "year": 1990
     },
     {
@@ -2447,14 +2447,14 @@
     {
       "from": "Kurt Stillwell",
       "to": "Kurt Stillwell",
-      "team": "Kansas City Royals",
-      "year": 1992
+      "team": "Cincinnati Reds",
+      "year": 1988
     },
     {
       "from": "Kurt Stillwell",
       "to": "Kurt Stillwell",
-      "team": "Cincinnati Reds",
-      "year": 1992
+      "team": "Kansas City Royals",
+      "year": 1991
     },
     {
       "from": "Kurt Stillwell",
@@ -2483,13 +2483,13 @@
     {
       "from": "Lee Guetterman",
       "to": "Lee Guetterman",
-      "team": "New York Yankees",
-      "year": 1992
+      "team": "Seattle Mariners",
+      "year": 1988
     },
     {
       "from": "Lee Guetterman",
       "to": "Lee Guetterman",
-      "team": "Seattle Mariners",
+      "team": "New York Yankees",
       "year": 1992
     },
     {
@@ -2519,32 +2519,32 @@
     {
       "from": "Rob Deer",
       "to": "Rob Deer",
-      "team": "Detroit Tigers",
-      "year": 1992
+      "team": "Milwaukee Brewers",
+      "year": 1990
     },
     {
       "from": "Rob Deer",
       "to": "Rob Deer",
-      "team": "Milwaukee Brewers",
+      "team": "Detroit Tigers",
       "year": 1992
     },
     {
       "from": "Kirk Gibson",
       "to": "Kirk Gibson",
       "team": "Detroit Tigers",
-      "year": 1995
-    },
-    {
-      "from": "Kirk Gibson",
-      "to": "Kirk Gibson",
-      "team": "Kansas City Royals",
       "year": 1995
     },
     {
       "from": "Kirk Gibson",
       "to": "Kirk Gibson",
       "team": "Los Angeles Dodgers",
-      "year": 1995
+      "year": 1991
+    },
+    {
+      "from": "Kirk Gibson",
+      "to": "Kirk Gibson",
+      "team": "Kansas City Royals",
+      "year": 1992
     },
     {
       "from": "Ricky Henderson",
@@ -2555,13 +2555,13 @@
     {
       "from": "Pedro Guerrero",
       "to": "Pedro Guerrero",
-      "team": "St. Louis Cardinals",
-      "year": 1992
+      "team": "Los Angeles Dodgers",
+      "year": 1988
     },
     {
       "from": "Pedro Guerrero",
       "to": "Pedro Guerrero",
-      "team": "Los Angeles Dodgers",
+      "team": "St. Louis Cardinals",
       "year": 1992
     },
     {
@@ -2573,26 +2573,26 @@
     {
       "from": "Mike Davis",
       "to": "Mike Davis",
-      "team": "Los Angeles Dodgers",
-      "year": 1990
+      "team": "Oakland Athletics",
+      "year": 1988
     },
     {
       "from": "Mike Davis",
       "to": "Mike Davis",
-      "team": "Oakland Athletics",
+      "team": "Los Angeles Dodgers",
       "year": 1990
-    },
-    {
-      "from": "Andres Galarraga",
-      "to": "Andres Galarraga",
-      "team": "Colorado Rockies",
-      "year": 1999
     },
     {
       "from": "Andres Galarraga",
       "to": "Andres Galarraga",
       "team": "Montreal Expos",
-      "year": 1999
+      "year": 1991
+    },
+    {
+      "from": "Andres Galarraga",
+      "to": "Andres Galarraga",
+      "team": "Colorado Rockies",
+      "year": 1996
     },
     {
       "from": "Andres Galarraga",
@@ -2609,26 +2609,26 @@
     {
       "from": "Juan Samuel",
       "to": "Juan Samuel",
-      "team": "Los Angeles Dodgers",
-      "year": 1992
+      "team": "Philadelphia Phillies",
+      "year": 1988
     },
     {
       "from": "Juan Samuel",
       "to": "Juan Samuel",
       "team": "New York Mets",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Juan Samuel",
       "to": "Juan Samuel",
-      "team": "Philadelphia Phillies",
+      "team": "Los Angeles Dodgers",
       "year": 1992
     },
     {
       "from": "Tom Niedenfuer",
       "to": "Tom Niedenfuer",
       "team": "Baltimore Orioles",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Tom Niedenfuer",
@@ -2640,13 +2640,13 @@
       "from": "Jeff Robinson",
       "to": "Jeff Robinson",
       "team": "Detroit Tigers",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Jeff Robinson",
       "to": "Jeff Robinson",
       "team": "Pittsburgh Pirates",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Jeff Robinson",
@@ -2658,7 +2658,13 @@
       "from": "Jeff Robinson",
       "to": "Jeff Robinson",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1991
+    },
+    {
+      "from": "Todd Benzinger",
+      "to": "Todd Benzinger",
+      "team": "Boston Red Sox",
+      "year": 1989
     },
     {
       "from": "Todd Benzinger",
@@ -2667,21 +2673,15 @@
       "year": 1990
     },
     {
-      "from": "Todd Benzinger",
-      "to": "Todd Benzinger",
-      "team": "Boston Red Sox",
-      "year": 1990
+      "from": "Dave Winfield",
+      "to": "Dave Winfield",
+      "team": "New York Yankees",
+      "year": 1989
     },
     {
       "from": "Dave Winfield",
       "to": "Dave Winfield",
       "team": "Anaheim Angels",
-      "year": 1991
-    },
-    {
-      "from": "Dave Winfield",
-      "to": "Dave Winfield",
-      "team": "New York Yankees",
       "year": 1991
     },
     {
@@ -2694,7 +2694,13 @@
       "from": "Bud Black",
       "to": "Bud Black",
       "team": "Kansas City Royals",
-      "year": 1991
+      "year": 1988
+    },
+    {
+      "from": "Bud Black",
+      "to": "Bud Black",
+      "team": "Cleveland Indians",
+      "year": 1989
     },
     {
       "from": "Bud Black",
@@ -2703,16 +2709,10 @@
       "year": 1991
     },
     {
-      "from": "Bud Black",
-      "to": "Bud Black",
-      "team": "Cleveland Indians",
-      "year": 1991
-    },
-    {
       "from": "Jose Canseco",
       "to": "Jose Canseco",
       "team": "Oakland Athletics",
-      "year": 1993
+      "year": 1992
     },
     {
       "from": "Jose Canseco",
@@ -2736,7 +2736,7 @@
       "from": "Bob Boone",
       "to": "Bob Boone",
       "team": "Anaheim Angels",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Bob Boone",
@@ -2754,7 +2754,7 @@
       "from": "Willie McGee",
       "to": "Willie McGee",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Willie McGee",
@@ -2771,14 +2771,14 @@
     {
       "from": "Tracy Jones",
       "to": "Tracy Jones",
-      "team": "Montreal Expos",
-      "year": 1992
+      "team": "Cincinnati Reds",
+      "year": 1988
     },
     {
       "from": "Tracy Jones",
       "to": "Tracy Jones",
-      "team": "Cincinnati Reds",
-      "year": 1992
+      "team": "Montreal Expos",
+      "year": 1989
     },
     {
       "from": "Tracy Jones",
@@ -2801,19 +2801,19 @@
     {
       "from": "Chili Davis",
       "to": "Chili Davis",
+      "team": "San Francisco Giants",
+      "year": 1988
+    },
+    {
+      "from": "Chili Davis",
+      "to": "Chili Davis",
       "team": "Anaheim Angels",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Chili Davis",
       "to": "Chili Davis",
       "team": "Minnesota Twins",
-      "year": 1992
-    },
-    {
-      "from": "Chili Davis",
-      "to": "Chili Davis",
-      "team": "San Francisco Giants",
       "year": 1992
     },
     {
@@ -2832,7 +2832,7 @@
       "from": "Keith Hernandez",
       "to": "Keith Hernandez",
       "team": "New York Mets",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Keith Hernandez",
@@ -2843,20 +2843,20 @@
     {
       "from": "Mark Langston",
       "to": "Mark Langston",
-      "team": "Anaheim Angels",
-      "year": 1992
+      "team": "Seattle Mariners",
+      "year": 1989
     },
     {
       "from": "Mark Langston",
       "to": "Mark Langston",
-      "team": "Seattle Mariners",
+      "team": "Anaheim Angels",
       "year": 1992
     },
     {
       "from": "Keith Atherton",
       "to": "Keith Atherton",
       "team": "Minnesota Twins",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Keith Atherton",
@@ -2879,13 +2879,13 @@
     {
       "from": "Mike Kingery",
       "to": "Mike Kingery",
-      "team": "San Francisco Giants",
-      "year": 1991
+      "team": "Seattle Mariners",
+      "year": 1988
     },
     {
       "from": "Mike Kingery",
       "to": "Mike Kingery",
-      "team": "Seattle Mariners",
+      "team": "San Francisco Giants",
       "year": 1991
     },
     {
@@ -2898,13 +2898,13 @@
       "from": "Rafael Palmeiro",
       "to": "Rafael Palmeiro",
       "team": "Chicago Cubs",
-      "year": 1998
+      "year": 1988
     },
     {
       "from": "Rafael Palmeiro",
       "to": "Rafael Palmeiro",
       "team": "Texas Rangers",
-      "year": 1998
+      "year": 1992
     },
     {
       "from": "Rafael Palmeiro",
@@ -2922,7 +2922,7 @@
       "from": "Barry Bonds",
       "to": "Barry Bonds",
       "team": "Pittsburgh Pirates",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "Barry Bonds",
@@ -2933,20 +2933,20 @@
     {
       "from": "Jeffrey Leonard",
       "to": "Jeffrey Leonard",
-      "team": "Milwaukee Brewers",
-      "year": 1991
-    },
-    {
-      "from": "Jeffrey Leonard",
-      "to": "Jeffrey Leonard",
       "team": "San Francisco Giants",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Jeffrey Leonard",
       "to": "Jeffrey Leonard",
       "team": "Seattle Mariners",
       "year": 1991
+    },
+    {
+      "from": "Jeffrey Leonard",
+      "to": "Jeffrey Leonard",
+      "team": "Milwaukee Brewers",
+      "year": 1989
     },
     {
       "from": "Tim Flannery",
@@ -2987,25 +2987,25 @@
     {
       "from": "Ken Williams",
       "to": "Ken Williams",
-      "team": "Toronto Blue Jays",
-      "year": 1991
+      "team": "Chicago White Sox",
+      "year": 1989
     },
     {
       "from": "Ken Williams",
       "to": "Ken Williams",
-      "team": "Chicago White Sox",
+      "team": "Toronto Blue Jays",
       "year": 1991
-    },
-    {
-      "from": "Bryn Smith",
-      "to": "Bryn Smith",
-      "team": "St. Louis Cardinals",
-      "year": 1992
     },
     {
       "from": "Bryn Smith",
       "to": "Bryn Smith",
       "team": "Montreal Expos",
+      "year": 1990
+    },
+    {
+      "from": "Bryn Smith",
+      "to": "Bryn Smith",
+      "team": "St. Louis Cardinals",
       "year": 1992
     },
     {
@@ -3030,13 +3030,13 @@
       "from": "Rick Cerone",
       "to": "Rick Cerone",
       "team": "Boston Red Sox",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "John Shelby",
       "to": "John Shelby",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "John Shelby",
@@ -3060,7 +3060,7 @@
       "from": "Alex Trevino",
       "to": "Alex Trevino",
       "team": "Los Angeles Dodgers",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Alex Trevino",
@@ -3077,8 +3077,14 @@
     {
       "from": "Rick Schu",
       "to": "Rick Schu",
+      "team": "Philadelphia Phillies",
+      "year": 1988
+    },
+    {
+      "from": "Rick Schu",
+      "to": "Rick Schu",
       "team": "Baltimore Orioles",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Rick Schu",
@@ -3087,21 +3093,15 @@
       "year": 1990
     },
     {
-      "from": "Rick Schu",
-      "to": "Rick Schu",
-      "team": "Philadelphia Phillies",
-      "year": 1990
+      "from": "Paul O'Neill",
+      "to": "Paul O'Neill",
+      "team": "Cincinnati Reds",
+      "year": 1989
     },
     {
       "from": "Paul O'Neill",
       "to": "Paul O'Neill",
       "team": "New York Yankees",
-      "year": 1999
-    },
-    {
-      "from": "Paul O'Neill",
-      "to": "Paul O'Neill",
-      "team": "Cincinnati Reds",
       "year": 1999
     },
     {
@@ -3113,19 +3113,31 @@
     {
       "from": "Gerald Perry",
       "to": "Gerald Perry",
-      "team": "St. Louis Cardinals",
-      "year": 1992
+      "team": "Atlanta Braves",
+      "year": 1988
     },
     {
       "from": "Gerald Perry",
       "to": "Gerald Perry",
       "team": "Kansas City Royals",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Gerald Perry",
       "to": "Gerald Perry",
-      "team": "Atlanta Braves",
+      "team": "St. Louis Cardinals",
+      "year": 1992
+    },
+    {
+      "from": "Dave Martinez",
+      "to": "Dave Martinez",
+      "team": "Chicago Cubs",
+      "year": 1988
+    },
+    {
+      "from": "Dave Martinez",
+      "to": "Dave Martinez",
+      "team": "Montreal Expos",
       "year": 1992
     },
     {
@@ -3135,52 +3147,40 @@
       "year": 1993
     },
     {
-      "from": "Dave Martinez",
-      "to": "Dave Martinez",
-      "team": "Chicago Cubs",
-      "year": 1993
-    },
-    {
-      "from": "Dave Martinez",
-      "to": "Dave Martinez",
-      "team": "Montreal Expos",
-      "year": 1993
+      "from": "Darryl Strawberry",
+      "to": "Darryl Strawberry",
+      "team": "New York Mets",
+      "year": 1991
     },
     {
       "from": "Darryl Strawberry",
       "to": "Darryl Strawberry",
       "team": "Los Angeles Dodgers",
-      "year": 1999
-    },
-    {
-      "from": "Darryl Strawberry",
-      "to": "Darryl Strawberry",
-      "team": "New York Mets",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "Darryl Strawberry",
       "to": "Darryl Strawberry",
       "team": "New York Yankees",
       "year": 1999
-    },
-    {
-      "from": "John Moses",
-      "to": "John Moses",
-      "team": "Minnesota Twins",
-      "year": 1991
     },
     {
       "from": "John Moses",
       "to": "John Moses",
       "team": "Seattle Mariners",
+      "year": 1988
+    },
+    {
+      "from": "John Moses",
+      "to": "John Moses",
+      "team": "Minnesota Twins",
       "year": 1991
     },
     {
       "from": "Greg Gagne",
       "to": "Greg Gagne",
       "team": "Minnesota Twins",
-      "year": 1995
+      "year": 1989
     },
     {
       "from": "Greg Gagne",
@@ -3191,13 +3191,13 @@
     {
       "from": "Jesse Barfield",
       "to": "Jesse Barfield",
-      "team": "New York Yankees",
-      "year": 1992
+      "team": "Toronto Blue Jays",
+      "year": 1989
     },
     {
       "from": "Jesse Barfield",
       "to": "Jesse Barfield",
-      "team": "Toronto Blue Jays",
+      "team": "New York Yankees",
       "year": 1992
     },
     {
@@ -3215,20 +3215,20 @@
     {
       "from": "Ed Nunez",
       "to": "Ed Nunez",
-      "team": "Texas Rangers",
-      "year": 1993
+      "team": "Seattle Mariners",
+      "year": 1988
     },
     {
       "from": "Ed Nunez",
       "to": "Ed Nunez",
-      "team": "Seattle Mariners",
+      "team": "Texas Rangers",
       "year": 1993
     },
     {
       "from": "Rafael Ramirez",
       "to": "Rafael Ramirez",
       "team": "Atlanta Braves",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Rafael Ramirez",
@@ -3240,7 +3240,7 @@
       "from": "John Smiley",
       "to": "John Smiley",
       "team": "Pittsburgh Pirates",
-      "year": 1998
+      "year": 1992
     },
     {
       "from": "John Smiley",
@@ -3257,20 +3257,20 @@
     {
       "from": "Chris James",
       "to": "Chris James",
-      "team": "Cleveland Indians",
-      "year": 1992
+      "team": "Philadelphia Phillies",
+      "year": 1988
     },
     {
       "from": "Chris James",
       "to": "Chris James",
-      "team": "Philadelphia Phillies",
+      "team": "Cleveland Indians",
       "year": 1992
     },
     {
       "from": "Terry Pendleton",
       "to": "Terry Pendleton",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Terry Pendleton",
@@ -3288,7 +3288,7 @@
       "from": "Bill Buckner",
       "to": "Bill Buckner",
       "team": "Anaheim Angels",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Bill Buckner",
@@ -3300,7 +3300,7 @@
       "from": "Dan Pasqua",
       "to": "Dan Pasqua",
       "team": "New York Yankees",
-      "year": 1993
+      "year": 1988
     },
     {
       "from": "Dan Pasqua",
@@ -3329,13 +3329,13 @@
     {
       "from": "Paul Kilgus",
       "to": "Paul Kilgus",
-      "team": "Chicago Cubs",
-      "year": 1990
+      "team": "Texas Rangers",
+      "year": 1988
     },
     {
       "from": "Paul Kilgus",
       "to": "Paul Kilgus",
-      "team": "Texas Rangers",
+      "team": "Chicago Cubs",
       "year": 1990
     },
     {
@@ -3353,32 +3353,26 @@
     {
       "from": "Dave Clark",
       "to": "Dave Clark",
-      "team": "Chicago Cubs",
-      "year": 1991
+      "team": "Cleveland Indians",
+      "year": 1990
     },
     {
       "from": "Dave Clark",
       "to": "Dave Clark",
-      "team": "Cleveland Indians",
+      "team": "Chicago Cubs",
       "year": 1991
     },
     {
       "from": "Joel Skinner",
       "to": "Joel Skinner",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Joel Skinner",
       "to": "Joel Skinner",
       "team": "Cleveland Indians",
       "year": 1992
-    },
-    {
-      "from": "Dan Petry",
-      "to": "Dan Petry",
-      "team": "Anaheim Angels",
-      "year": 1991
     },
     {
       "from": "Dan Petry",
@@ -3387,10 +3381,16 @@
       "year": 1991
     },
     {
+      "from": "Dan Petry",
+      "to": "Dan Petry",
+      "team": "Anaheim Angels",
+      "year": 1990
+    },
+    {
       "from": "Carl Nichols",
       "to": "Carl Nichols",
       "team": "Baltimore Orioles",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Carl Nichols",
@@ -3402,13 +3402,13 @@
       "from": "Ernie Riles",
       "to": "Ernie Riles",
       "team": "Milwaukee Brewers",
-      "year": 1991
+      "year": 1988
     },
     {
       "from": "Ernie Riles",
       "to": "Ernie Riles",
       "team": "San Francisco Giants",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Ernie Riles",
@@ -3425,13 +3425,13 @@
     {
       "from": "Mike Bielecki",
       "to": "Mike Bielecki",
-      "team": "Chicago Cubs",
-      "year": 1990
+      "team": "Pittsburgh Pirates",
+      "year": 1988
     },
     {
       "from": "Mike Bielecki",
       "to": "Mike Bielecki",
-      "team": "Pittsburgh Pirates",
+      "team": "Chicago Cubs",
       "year": 1990
     },
     {
@@ -3462,7 +3462,7 @@
       "from": "Dan Gladden",
       "to": "Dan Gladden",
       "team": "Minnesota Twins",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Dan Gladden",
@@ -3479,8 +3479,8 @@
     {
       "from": "Fred Manrique",
       "to": "Fred Manrique",
-      "team": "Minnesota Twins",
-      "year": 1990
+      "team": "Chicago White Sox",
+      "year": 1989
     },
     {
       "from": "Fred Manrique",
@@ -3491,7 +3491,7 @@
     {
       "from": "Fred Manrique",
       "to": "Fred Manrique",
-      "team": "Chicago White Sox",
+      "team": "Minnesota Twins",
       "year": 1990
     },
     {
@@ -3546,18 +3546,18 @@
       "from": "Joe Hesketh",
       "to": "Joe Hesketh",
       "team": "Montreal Expos",
-      "year": 1992
-    },
-    {
-      "from": "Joe Hesketh",
-      "to": "Joe Hesketh",
-      "team": "Boston Red Sox",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Joe Hesketh",
       "to": "Joe Hesketh",
       "team": "Atlanta Braves",
+      "year": 1990
+    },
+    {
+      "from": "Joe Hesketh",
+      "to": "Joe Hesketh",
+      "team": "Boston Red Sox",
       "year": 1992
     },
     {
@@ -3569,14 +3569,14 @@
     {
       "from": "Gregg Jefferies",
       "to": "Gregg Jefferies",
-      "team": "Kansas City Royals",
-      "year": 1996
+      "team": "New York Mets",
+      "year": 1992
     },
     {
       "from": "Gregg Jefferies",
       "to": "Gregg Jefferies",
-      "team": "New York Mets",
-      "year": 1996
+      "team": "Kansas City Royals",
+      "year": 1993
     },
     {
       "from": "Gregg Jefferies",
@@ -3599,13 +3599,13 @@
     {
       "from": "Andy Allanson",
       "to": "Andy Allanson",
-      "team": "Detroit Tigers",
-      "year": 1992
+      "team": "Cleveland Indians",
+      "year": 1988
     },
     {
       "from": "Andy Allanson",
       "to": "Andy Allanson",
-      "team": "Cleveland Indians",
+      "team": "Detroit Tigers",
       "year": 1992
     },
     {
@@ -3617,13 +3617,13 @@
     {
       "from": "Domingo Ramos",
       "to": "Domingo Ramos",
-      "team": "Chicago Cubs",
-      "year": 1991
+      "team": "Cleveland Indians",
+      "year": 1988
     },
     {
       "from": "Domingo Ramos",
       "to": "Domingo Ramos",
-      "team": "Cleveland Indians",
+      "team": "Chicago Cubs",
       "year": 1991
     },
     {
@@ -3665,20 +3665,20 @@
     {
       "from": "Nolan Ryan",
       "to": "Nolan Ryan",
-      "team": "Texas Rangers",
-      "year": 1991
+      "team": "Houston Astros",
+      "year": 1990
     },
     {
       "from": "Nolan Ryan",
       "to": "Nolan Ryan",
-      "team": "Houston Astros",
+      "team": "Texas Rangers",
       "year": 1991
     },
     {
       "from": "Darnell Coles",
       "to": "Darnell Coles",
       "team": "Pittsburgh Pirates",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Darnell Coles",
@@ -3689,14 +3689,14 @@
     {
       "from": "Curt Wilkerson",
       "to": "Curt Wilkerson",
-      "team": "Chicago Cubs",
-      "year": 1993
+      "team": "Texas Rangers",
+      "year": 1988
     },
     {
       "from": "Curt Wilkerson",
       "to": "Curt Wilkerson",
-      "team": "Texas Rangers",
-      "year": 1993
+      "team": "Chicago Cubs",
+      "year": 1990
     },
     {
       "from": "Curt Wilkerson",
@@ -3707,19 +3707,19 @@
     {
       "from": "Ken Oberkfell",
       "to": "Ken Oberkfell",
-      "team": "Pittsburgh Pirates",
+      "team": "Atlanta Braves",
       "year": 1990
+    },
+    {
+      "from": "Ken Oberkfell",
+      "to": "Ken Oberkfell",
+      "team": "Pittsburgh Pirates",
+      "year": 1989
     },
     {
       "from": "Ken Oberkfell",
       "to": "Ken Oberkfell",
       "team": "San Francisco Giants",
-      "year": 1990
-    },
-    {
-      "from": "Ken Oberkfell",
-      "to": "Ken Oberkfell",
-      "team": "Atlanta Braves",
       "year": 1990
     },
     {
@@ -3761,18 +3761,12 @@
     {
       "from": "Donell Nixon",
       "to": "Donell Nixon",
-      "team": "San Francisco Giants",
-      "year": 1990
+      "team": "Seattle Mariners",
+      "year": 1988
     },
     {
       "from": "Donell Nixon",
       "to": "Donell Nixon",
-      "team": "Seattle Mariners",
-      "year": 1990
-    },
-    {
-      "from": "Bob Knepper",
-      "to": "Bob Knepper",
       "team": "San Francisco Giants",
       "year": 1990
     },
@@ -3780,6 +3774,12 @@
       "from": "Bob Knepper",
       "to": "Bob Knepper",
       "team": "Houston Astros",
+      "year": 1988
+    },
+    {
+      "from": "Bob Knepper",
+      "to": "Bob Knepper",
+      "team": "San Francisco Giants",
       "year": 1990
     },
     {
@@ -3797,19 +3797,19 @@
     {
       "from": "David Cone",
       "to": "David Cone",
-      "team": "New York Yankees",
-      "year": 1999
+      "team": "New York Mets",
+      "year": 1992
     },
     {
       "from": "David Cone",
       "to": "David Cone",
       "team": "Toronto Blue Jays",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "David Cone",
       "to": "David Cone",
-      "team": "New York Mets",
+      "team": "New York Yankees",
       "year": 1999
     },
     {
@@ -3828,7 +3828,7 @@
       "from": "Jerry Reuss",
       "to": "Jerry Reuss",
       "team": "Anaheim Angels",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "Jerry Reuss",
@@ -3869,13 +3869,13 @@
     {
       "from": "Jim Presley",
       "to": "Jim Presley",
-      "team": "Atlanta Braves",
-      "year": 1991
+      "team": "Seattle Mariners",
+      "year": 1989
     },
     {
       "from": "Jim Presley",
       "to": "Jim Presley",
-      "team": "Seattle Mariners",
+      "team": "Atlanta Braves",
       "year": 1991
     },
     {
@@ -3888,7 +3888,7 @@
       "from": "Dave Parker",
       "to": "Dave Parker",
       "team": "Cincinnati Reds",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Dave Parker",
@@ -3900,7 +3900,7 @@
       "from": "Rick Leach",
       "to": "Rick Leach",
       "team": "Toronto Blue Jays",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Rick Leach",
@@ -3923,14 +3923,8 @@
     {
       "from": "Greg Harris",
       "to": "Greg Harris",
-      "team": "Boston Red Sox",
-      "year": 1992
-    },
-    {
-      "from": "Greg Harris",
-      "to": "Greg Harris",
       "team": "Texas Rangers",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Greg Harris",
@@ -3939,10 +3933,16 @@
       "year": 1992
     },
     {
+      "from": "Greg Harris",
+      "to": "Greg Harris",
+      "team": "Boston Red Sox",
+      "year": 1992
+    },
+    {
       "from": "Matt Williams",
       "to": "Matt Williams",
       "team": "San Francisco Giants",
-      "year": 1998
+      "year": 1997
     },
     {
       "from": "Matt Williams",
@@ -3959,13 +3959,13 @@
     {
       "from": "Ron Hassey",
       "to": "Ron Hassey",
-      "team": "Oakland Athletics",
-      "year": 1991
+      "team": "Chicago White Sox",
+      "year": 1988
     },
     {
       "from": "Ron Hassey",
       "to": "Ron Hassey",
-      "team": "Chicago White Sox",
+      "team": "Oakland Athletics",
       "year": 1991
     },
     {
@@ -3984,7 +3984,7 @@
       "from": "Danny Gladden",
       "to": "Danny Gladden",
       "team": "Minnesota Twins",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Danny Gladden",
@@ -4013,13 +4013,13 @@
     {
       "from": "Lloyd Moseby",
       "to": "Lloyd Moseby",
-      "team": "Detroit Tigers",
-      "year": 1992
+      "team": "Toronto Blue Jays",
+      "year": 1990
     },
     {
       "from": "Lloyd Moseby",
       "to": "Lloyd Moseby",
-      "team": "Toronto Blue Jays",
+      "team": "Detroit Tigers",
       "year": 1992
     },
     {
@@ -4038,7 +4038,7 @@
       "from": "Curt Ford",
       "to": "Curt Ford",
       "team": "St. Louis Cardinals",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Curt Ford",
@@ -4049,13 +4049,13 @@
     {
       "from": "Oddibe McDowell",
       "to": "Oddibe McDowell",
-      "team": "Cleveland Indians",
+      "team": "Texas Rangers",
       "year": 1989
     },
     {
       "from": "Oddibe McDowell",
       "to": "Oddibe McDowell",
-      "team": "Texas Rangers",
+      "team": "Cleveland Indians",
       "year": 1989
     },
     {
@@ -4067,25 +4067,25 @@
     {
       "from": "Steve Shields",
       "to": "Steve Shields",
-      "team": "New York Yankees",
-      "year": 1989
+      "team": "Seattle Mariners",
+      "year": 1988
     },
     {
       "from": "Steve Shields",
       "to": "Steve Shields",
-      "team": "Seattle Mariners",
-      "year": 1989
-    },
-    {
-      "from": "Jose DeLeon",
-      "to": "Jose DeLeon",
-      "team": "St. Louis Cardinals",
+      "team": "New York Yankees",
       "year": 1989
     },
     {
       "from": "Jose DeLeon",
       "to": "Jose DeLeon",
       "team": "Chicago White Sox",
+      "year": 1988
+    },
+    {
+      "from": "Jose DeLeon",
+      "to": "Jose DeLeon",
+      "team": "St. Louis Cardinals",
       "year": 1989
     },
     {
@@ -4115,20 +4115,20 @@
     {
       "from": "Gary Redus",
       "to": "Gary Redus",
-      "team": "Pittsburgh Pirates",
-      "year": 1992
+      "team": "Chicago White Sox",
+      "year": 1988
     },
     {
       "from": "Gary Redus",
       "to": "Gary Redus",
-      "team": "Chicago White Sox",
+      "team": "Pittsburgh Pirates",
       "year": 1992
     },
     {
       "from": "Luis Quinones",
       "to": "Luis Quinones",
       "team": "Chicago Cubs",
-      "year": 1992
+      "year": 1988
     },
     {
       "from": "Luis Quinones",
@@ -4145,13 +4145,13 @@
     {
       "from": "Jay Howell",
       "to": "Jay Howell",
-      "team": "Los Angeles Dodgers",
-      "year": 1992
+      "team": "Oakland Athletics",
+      "year": 1988
     },
     {
       "from": "Jay Howell",
       "to": "Jay Howell",
-      "team": "Oakland Athletics",
+      "team": "Los Angeles Dodgers",
       "year": 1992
     },
     {
@@ -4176,7 +4176,7 @@
       "from": "Mike Felder",
       "to": "Mike Felder",
       "team": "Milwaukee Brewers",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Mike Felder",
@@ -4187,20 +4187,20 @@
     {
       "from": "Neal Heaton",
       "to": "Neal Heaton",
-      "team": "Pittsburgh Pirates",
-      "year": 1992
+      "team": "Montreal Expos",
+      "year": 1989
     },
     {
       "from": "Neal Heaton",
       "to": "Neal Heaton",
-      "team": "Montreal Expos",
+      "team": "Pittsburgh Pirates",
       "year": 1992
     },
     {
       "from": "Lonnie Smith",
       "to": "Lonnie Smith",
       "team": "Kansas City Royals",
-      "year": 1990
+      "year": 1988
     },
     {
       "from": "Lonnie Smith",
@@ -4217,20 +4217,20 @@
     {
       "from": "Joe Price",
       "to": "Joe Price",
-      "team": "Baltimore Orioles",
-      "year": 1991
+      "team": "San Francisco Giants",
+      "year": 1989
     },
     {
       "from": "Joe Price",
       "to": "Joe Price",
-      "team": "San Francisco Giants",
+      "team": "Baltimore Orioles",
       "year": 1991
     },
     {
       "from": "John Tudor",
       "to": "John Tudor",
       "team": "St. Louis Cardinals",
-      "year": 1989
+      "year": 1988
     },
     {
       "from": "John Tudor",
@@ -4241,19 +4241,19 @@
     {
       "from": "Ron Kittle",
       "to": "Ron Kittle",
-      "team": "Baltimore Orioles",
-      "year": 1991
-    },
-    {
-      "from": "Ron Kittle",
-      "to": "Ron Kittle",
       "team": "Cleveland Indians",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Ron Kittle",
       "to": "Ron Kittle",
       "team": "Chicago White Sox",
+      "year": 1989
+    },
+    {
+      "from": "Ron Kittle",
+      "to": "Ron Kittle",
+      "team": "Baltimore Orioles",
       "year": 1991
     },
     {
@@ -4272,13 +4272,13 @@
       "from": "Brian Holton",
       "to": "Brian Holton",
       "team": "Los Angeles Dodgers",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Dave Schmidt",
       "to": "Dave Schmidt",
       "team": "Baltimore Orioles",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Dave Schmidt",
@@ -4295,26 +4295,26 @@
     {
       "from": "Mike Boddicker",
       "to": "Mike Boddicker",
-      "team": "Kansas City Royals",
-      "year": 1992
+      "team": "Boston Red Sox",
+      "year": 1991
     },
     {
       "from": "Mike Boddicker",
       "to": "Mike Boddicker",
-      "team": "Boston Red Sox",
+      "team": "Kansas City Royals",
       "year": 1992
+    },
+    {
+      "from": "Rob Murphy",
+      "to": "Rob Murphy",
+      "team": "Boston Red Sox",
+      "year": 1991
     },
     {
       "from": "Rob Murphy",
       "to": "Rob Murphy",
       "team": "Cincinnati Reds",
-      "year": 1991
-    },
-    {
-      "from": "Rob Murphy",
-      "to": "Rob Murphy",
-      "team": "Boston Red Sox",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Wes Gardner",
@@ -4325,13 +4325,13 @@
     {
       "from": "Rich Gedman",
       "to": "Rich Gedman",
-      "team": "St. Louis Cardinals",
-      "year": 1992
+      "team": "Boston Red Sox",
+      "year": 1990
     },
     {
       "from": "Rich Gedman",
       "to": "Rich Gedman",
-      "team": "Boston Red Sox",
+      "team": "St. Louis Cardinals",
       "year": 1992
     },
     {
@@ -4356,7 +4356,7 @@
       "from": "Kirk McCaskill",
       "to": "Kirk McCaskill",
       "team": "Anaheim Angels",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Kirk McCaskill",
@@ -4392,7 +4392,7 @@
       "from": "Bill Schroeder",
       "to": "Bill Schroeder",
       "team": "Milwaukee Brewers",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Tony Armas",
@@ -4410,7 +4410,7 @@
       "from": "Claudell Washington",
       "to": "Claudell Washington",
       "team": "New York Yankees",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Devon White",
@@ -4433,13 +4433,13 @@
     {
       "from": "Jack McDowell",
       "to": "Jack McDowell",
-      "team": "New York Yankees",
-      "year": 1996
+      "team": "Chicago White Sox",
+      "year": 1991
     },
     {
       "from": "Jack McDowell",
       "to": "Jack McDowell",
-      "team": "Chicago White Sox",
+      "team": "New York Yankees",
       "year": 1996
     },
     {
@@ -4476,18 +4476,18 @@
       "from": "Bret Saberhagen",
       "to": "Bret Saberhagen",
       "team": "Kansas City Royals",
-      "year": 2000
-    },
-    {
-      "from": "Bret Saberhagen",
-      "to": "Bret Saberhagen",
-      "team": "Boston Red Sox",
-      "year": 2000
+      "year": 1991
     },
     {
       "from": "Bret Saberhagen",
       "to": "Bret Saberhagen",
       "team": "New York Mets",
+      "year": 1993
+    },
+    {
+      "from": "Bret Saberhagen",
+      "to": "Bret Saberhagen",
+      "team": "Boston Red Sox",
       "year": 2000
     },
     {
@@ -4523,13 +4523,13 @@
     {
       "from": "Gary Sheffield",
       "to": "Gary Sheffield",
-      "team": "Florida Marlins",
-      "year": 1996
+      "team": "Milwaukee Brewers",
+      "year": 1991
     },
     {
       "from": "Gary Sheffield",
       "to": "Gary Sheffield",
-      "team": "Milwaukee Brewers",
+      "team": "Florida Marlins",
       "year": 1996
     },
     {
@@ -4548,7 +4548,7 @@
       "from": "Juan Berenguer",
       "to": "Juan Berenguer",
       "team": "Minnesota Twins",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Juan Berenguer",
@@ -4584,13 +4584,13 @@
       "from": "Andy Hawkins",
       "to": "Andy Hawkins",
       "team": "San Diego Padres",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Lance McCullers",
       "to": "Lance McCullers",
       "team": "New York Yankees",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Lance McCullers",
@@ -4602,18 +4602,18 @@
       "from": "Jimmy Jones",
       "to": "Jimmy Jones",
       "team": "New York Yankees",
-      "year": 1992
-    },
-    {
-      "from": "Jimmy Jones",
-      "to": "Jimmy Jones",
-      "team": "Houston Astros",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Jimmy Jones",
       "to": "Jimmy Jones",
       "team": "San Diego Padres",
+      "year": 1989
+    },
+    {
+      "from": "Jimmy Jones",
+      "to": "Jimmy Jones",
+      "team": "Houston Astros",
       "year": 1992
     },
     {
@@ -4644,7 +4644,7 @@
       "from": "Mike Moore",
       "to": "Mike Moore",
       "team": "Seattle Mariners",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Ken Griffey Jr",
@@ -4655,26 +4655,26 @@
     {
       "from": "Charlie Hough",
       "to": "Charlie Hough",
-      "team": "Florida Marlins",
-      "year": 1993
-    },
-    {
-      "from": "Charlie Hough",
-      "to": "Charlie Hough",
       "team": "Texas Rangers",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Charlie Hough",
       "to": "Charlie Hough",
       "team": "Chicago White Sox",
+      "year": 1991
+    },
+    {
+      "from": "Charlie Hough",
+      "to": "Charlie Hough",
+      "team": "Florida Marlins",
       "year": 1993
     },
     {
       "from": "Jeff Musselman",
       "to": "Jeff Musselman",
       "team": "Toronto Blue Jays",
-      "year": 1990
+      "year": 1989
     },
     {
       "from": "Jeff Musselman",
@@ -4698,13 +4698,13 @@
       "from": "Tony Castillo",
       "to": "Tony Castillo",
       "team": "Toronto Blue Jays",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Tony Castillo",
       "to": "Tony Castillo",
       "team": "Atlanta Braves",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Tony Castillo",
@@ -4752,7 +4752,7 @@
       "from": "Greg Maddux",
       "to": "Greg Maddux",
       "team": "Chicago Cubs",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Greg Maddux",
@@ -4764,7 +4764,7 @@
       "from": "Damon Berryhill",
       "to": "Damon Berryhill",
       "team": "Chicago Cubs",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Damon Berryhill",
@@ -4776,7 +4776,7 @@
       "from": "John Franco",
       "to": "John Franco",
       "team": "Cincinnati Reds",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "John Franco",
@@ -4823,20 +4823,26 @@
     {
       "from": "Tim Belcher",
       "to": "Tim Belcher",
-      "team": "Anaheim Angels",
-      "year": 1999
-    },
-    {
-      "from": "Tim Belcher",
-      "to": "Tim Belcher",
       "team": "Los Angeles Dodgers",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Tim Belcher",
       "to": "Tim Belcher",
       "team": "Cincinnati Reds",
+      "year": 1992
+    },
+    {
+      "from": "Tim Belcher",
+      "to": "Tim Belcher",
+      "team": "Anaheim Angels",
       "year": 1999
+    },
+    {
+      "from": "Ricky Horton",
+      "to": "Ricky Horton",
+      "team": "Los Angeles Dodgers",
+      "year": 1989
     },
     {
       "from": "Ricky Horton",
@@ -4845,22 +4851,16 @@
       "year": 1990
     },
     {
-      "from": "Ricky Horton",
-      "to": "Ricky Horton",
-      "team": "Los Angeles Dodgers",
-      "year": 1990
-    },
-    {
       "from": "Tim Leary",
       "to": "Tim Leary",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Tim Leary",
       "to": "Tim Leary",
       "team": "Cincinnati Reds",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Tim Leary",
@@ -4890,7 +4890,7 @@
       "from": "Tim Burke",
       "to": "Tim Burke",
       "team": "Montreal Expos",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Tim Burke",
@@ -4907,14 +4907,14 @@
     {
       "from": "Sid Fernandez",
       "to": "Sid Fernandez",
-      "team": "Los Angeles Dodgers",
+      "team": "New York Mets",
       "year": 1991
     },
     {
       "from": "Sid Fernandez",
       "to": "Sid Fernandez",
-      "team": "New York Mets",
-      "year": 1991
+      "team": "Los Angeles Dodgers",
+      "year": 1990
     },
     {
       "from": "Keith Miller",
@@ -4926,13 +4926,13 @@
       "from": "Keith Miller",
       "to": "Keith Miller",
       "team": "Philadelphia Phillies",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Tim Teufel",
       "to": "Tim Teufel",
       "team": "New York Mets",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Tim Teufel",
@@ -4943,13 +4943,13 @@
     {
       "from": "Mookie Wilson",
       "to": "Mookie Wilson",
-      "team": "Toronto Blue Jays",
-      "year": 1991
+      "team": "New York Mets",
+      "year": 1989
     },
     {
       "from": "Mookie Wilson",
       "to": "Mookie Wilson",
-      "team": "New York Mets",
+      "team": "Toronto Blue Jays",
       "year": 1991
     },
     {
@@ -4986,7 +4986,7 @@
       "from": "Ken Dayley",
       "to": "Ken Dayley",
       "team": "St. Louis Cardinals",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Ken Dayley",
@@ -5004,13 +5004,13 @@
       "from": "Vince Coleman",
       "to": "Vince Coleman",
       "team": "St. Louis Cardinals",
-      "year": 1996
+      "year": 1991
     },
     {
       "from": "Vince Coleman",
       "to": "Vince Coleman",
       "team": "New York Mets",
-      "year": 1996
+      "year": 1993
     },
     {
       "from": "Vince Coleman",
@@ -5046,7 +5046,7 @@
       "from": "Craig Lefferts",
       "to": "Craig Lefferts",
       "team": "San Francisco Giants",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Craig Lefferts",
@@ -5087,19 +5087,19 @@
     {
       "from": "Candy Maldonado",
       "to": "Candy Maldonado",
-      "team": "Toronto Blue Jays",
-      "year": 1992
-    },
-    {
-      "from": "Candy Maldonado",
-      "to": "Candy Maldonado",
       "team": "San Francisco Giants",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Candy Maldonado",
       "to": "Candy Maldonado",
       "team": "Cleveland Indians",
+      "year": 1991
+    },
+    {
+      "from": "Candy Maldonado",
+      "to": "Candy Maldonado",
+      "team": "Toronto Blue Jays",
       "year": 1992
     },
     {
@@ -5111,13 +5111,13 @@
     {
       "from": "Dave West",
       "to": "Dave West",
-      "team": "Minnesota Twins",
-      "year": 1992
+      "team": "New York Mets",
+      "year": 1989
     },
     {
       "from": "Dave West",
       "to": "Dave West",
-      "team": "New York Mets",
+      "team": "Minnesota Twins",
       "year": 1992
     },
     {
@@ -5135,20 +5135,20 @@
     {
       "from": "Steve Balboni",
       "to": "Steve Balboni",
-      "team": "New York Yankees",
-      "year": 1990
+      "team": "Seattle Mariners",
+      "year": 1989
     },
     {
       "from": "Steve Balboni",
       "to": "Steve Balboni",
-      "team": "Seattle Mariners",
+      "team": "New York Yankees",
       "year": 1990
     },
     {
       "from": "George Bell",
       "to": "George Bell",
       "team": "Toronto Blue Jays",
-      "year": 1993
+      "year": 1991
     },
     {
       "from": "George Bell",
@@ -5243,13 +5243,13 @@
     {
       "from": "Daryl Boston",
       "to": "Daryl Boston",
-      "team": "New York Mets",
-      "year": 1992
+      "team": "Chicago White Sox",
+      "year": 1989
     },
     {
       "from": "Daryl Boston",
       "to": "Daryl Boston",
-      "team": "Chicago White Sox",
+      "team": "New York Mets",
       "year": 1992
     },
     {
@@ -5262,7 +5262,7 @@
       "from": "Jack Armstrong",
       "to": "Jack Armstrong",
       "team": "Cincinnati Reds",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Jack Armstrong",
@@ -5333,13 +5333,13 @@
     {
       "from": "Lloyd McClendon",
       "to": "Lloyd McClendon",
-      "team": "Chicago Cubs",
-      "year": 1990
+      "team": "Cincinnati Reds",
+      "year": 1989
     },
     {
       "from": "Lloyd McClendon",
       "to": "Lloyd McClendon",
-      "team": "Cincinnati Reds",
+      "team": "Chicago Cubs",
       "year": 1990
     },
     {
@@ -5352,7 +5352,7 @@
       "from": "Mike Devereaux",
       "to": "Mike Devereaux",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Mike Devereaux",
@@ -5375,13 +5375,13 @@
     {
       "from": "Barry Jones",
       "to": "Barry Jones",
-      "team": "Montreal Expos",
-      "year": 1992
+      "team": "Chicago White Sox",
+      "year": 1991
     },
     {
       "from": "Barry Jones",
       "to": "Barry Jones",
-      "team": "Chicago White Sox",
+      "team": "Montreal Expos",
       "year": 1992
     },
     {
@@ -5411,13 +5411,13 @@
     {
       "from": "Mike Roesler",
       "to": "Mike Roesler",
-      "team": "Cincinnati Reds",
-      "year": 1990
+      "team": "Nashville Sounds",
+      "year": 1989
     },
     {
       "from": "Mike Roesler",
       "to": "Mike Roesler",
-      "team": "Nashville Sounds",
+      "team": "Cincinnati Reds",
       "year": 1990
     },
     {
@@ -5430,18 +5430,18 @@
       "from": "Eddie Murray",
       "to": "Eddie Murray",
       "team": "Baltimore Orioles",
-      "year": 1993
-    },
-    {
-      "from": "Eddie Murray",
-      "to": "Eddie Murray",
-      "team": "New York Mets",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Eddie Murray",
       "to": "Eddie Murray",
       "team": "Los Angeles Dodgers",
+      "year": 1991
+    },
+    {
+      "from": "Eddie Murray",
+      "to": "Eddie Murray",
+      "team": "New York Mets",
       "year": 1993
     },
     {
@@ -5459,38 +5459,38 @@
     {
       "from": "Dickie Thon",
       "to": "Dickie Thon",
-      "team": "Philadelphia Phillies",
-      "year": 1990
+      "team": "San Diego Padres",
+      "year": 1989
     },
     {
       "from": "Dickie Thon",
       "to": "Dickie Thon",
-      "team": "San Diego Padres",
+      "team": "Philadelphia Phillies",
       "year": 1990
-    },
-    {
-      "from": "Dennis Boyd",
-      "to": "Dennis Boyd",
-      "team": "Montreal Expos",
-      "year": 1991
     },
     {
       "from": "Dennis Boyd",
       "to": "Dennis Boyd",
       "team": "Boston Red Sox",
+      "year": 1989
+    },
+    {
+      "from": "Dennis Boyd",
+      "to": "Dennis Boyd",
+      "team": "Montreal Expos",
       "year": 1991
     },
     {
       "from": "John Candelaria",
       "to": "John Candelaria",
       "team": "New York Yankees",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "John Candelaria",
       "to": "John Candelaria",
       "team": "Montreal Expos",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "John Candelaria",
@@ -5663,14 +5663,26 @@
     {
       "from": "Mike Jackson",
       "to": "Mike Jackson",
-      "team": "Cleveland Indians",
-      "year": 1998
+      "team": "Seattle Mariners",
+      "year": 1991
     },
     {
       "from": "Mike Jackson",
       "to": "Mike Jackson",
-      "team": "Seattle Mariners",
+      "team": "Cleveland Indians",
       "year": 1998
+    },
+    {
+      "from": "Jeff Parrett",
+      "to": "Jeff Parrett",
+      "team": "Montreal Expos",
+      "year": 1989
+    },
+    {
+      "from": "Jeff Parrett",
+      "to": "Jeff Parrett",
+      "team": "Atlanta Braves",
+      "year": 1991
     },
     {
       "from": "Jeff Parrett",
@@ -5679,27 +5691,15 @@
       "year": 1993
     },
     {
-      "from": "Jeff Parrett",
-      "to": "Jeff Parrett",
-      "team": "Montreal Expos",
-      "year": 1993
-    },
-    {
-      "from": "Jeff Parrett",
-      "to": "Jeff Parrett",
-      "team": "Atlanta Braves",
-      "year": 1993
-    },
-    {
-      "from": "Mark Grant",
-      "to": "Mark Grant",
-      "team": "Atlanta Braves",
-      "year": 1991
-    },
-    {
       "from": "Mark Grant",
       "to": "Mark Grant",
       "team": "San Diego Padres",
+      "year": 1989
+    },
+    {
+      "from": "Mark Grant",
+      "to": "Mark Grant",
+      "team": "Atlanta Braves",
       "year": 1991
     },
     {
@@ -5760,7 +5760,7 @@
       "from": "Mike Pagliarulo",
       "to": "Mike Pagliarulo",
       "team": "New York Yankees",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Mike Pagliarulo",
@@ -5772,18 +5772,18 @@
       "from": "Eric King",
       "to": "Eric King",
       "team": "Detroit Tigers",
+      "year": 1989
+    },
+    {
+      "from": "Eric King",
+      "to": "Eric King",
+      "team": "Chicago White Sox",
       "year": 1991
     },
     {
       "from": "Eric King",
       "to": "Eric King",
       "team": "Cleveland Indians",
-      "year": 1991
-    },
-    {
-      "from": "Eric King",
-      "to": "Eric King",
-      "team": "Chicago White Sox",
       "year": 1991
     },
     {
@@ -5801,13 +5801,13 @@
     {
       "from": "Rick Aguilera",
       "to": "Rick Aguilera",
-      "team": "Minnesota Twins",
-      "year": 1991
+      "team": "New York Mets",
+      "year": 1989
     },
     {
       "from": "Rick Aguilera",
       "to": "Rick Aguilera",
-      "team": "New York Mets",
+      "team": "Minnesota Twins",
       "year": 1991
     },
     {
@@ -5837,25 +5837,25 @@
     {
       "from": "Mark Eichhorn",
       "to": "Mark Eichhorn",
-      "team": "Anaheim Angels",
-      "year": 1991
+      "team": "Toronto Blue Jays",
+      "year": 1989
     },
     {
       "from": "Mark Eichhorn",
       "to": "Mark Eichhorn",
-      "team": "Toronto Blue Jays",
-      "year": 1991
-    },
-    {
-      "from": "Andy McGaffigan",
-      "to": "Andy McGaffigan",
-      "team": "Kansas City Royals",
+      "team": "Anaheim Angels",
       "year": 1991
     },
     {
       "from": "Andy McGaffigan",
       "to": "Andy McGaffigan",
       "team": "Montreal Expos",
+      "year": 1989
+    },
+    {
+      "from": "Andy McGaffigan",
+      "to": "Andy McGaffigan",
+      "team": "Kansas City Royals",
       "year": 1991
     },
     {
@@ -5874,7 +5874,7 @@
       "from": "Darrin Jackson",
       "to": "Darrin Jackson",
       "team": "Chicago Cubs",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Darrin Jackson",
@@ -5909,13 +5909,13 @@
     {
       "from": "Bob Melvin",
       "to": "Bob Melvin",
-      "team": "Baltimore Orioles",
-      "year": 1992
+      "team": "San Francisco Giants",
+      "year": 1989
     },
     {
       "from": "Bob Melvin",
       "to": "Bob Melvin",
-      "team": "San Francisco Giants",
+      "team": "Baltimore Orioles",
       "year": 1992
     },
     {
@@ -5934,7 +5934,7 @@
       "from": "Calvin Schiraldi",
       "to": "Calvin Schiraldi",
       "team": "Chicago Cubs",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Calvin Schiraldi",
@@ -5964,7 +5964,7 @@
       "from": "Herm Winningham",
       "to": "Herm Winningham",
       "team": "Cincinnati Reds",
-      "year": 1993
+      "year": 1989
     },
     {
       "from": "Herm Winningham",
@@ -5993,25 +5993,25 @@
     {
       "from": "Luis Polonia",
       "to": "Luis Polonia",
-      "team": "Anaheim Angels",
-      "year": 1993
+      "team": "Oakland Athletics",
+      "year": 1989
     },
     {
       "from": "Luis Polonia",
       "to": "Luis Polonia",
-      "team": "Oakland Athletics",
-      "year": 1993
-    },
-    {
-      "from": "Chad Kreuter",
-      "to": "Chad Kreuter",
-      "team": "Detroit Tigers",
+      "team": "Anaheim Angels",
       "year": 1993
     },
     {
       "from": "Chad Kreuter",
       "to": "Chad Kreuter",
       "team": "Texas Rangers",
+      "year": 1990
+    },
+    {
+      "from": "Chad Kreuter",
+      "to": "Chad Kreuter",
+      "team": "Detroit Tigers",
       "year": 1993
     },
     {
@@ -6036,7 +6036,7 @@
       "from": "Mark Davidson",
       "to": "Mark Davidson",
       "team": "Minnesota Twins",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Mark Davidson",
@@ -6053,13 +6053,13 @@
     {
       "from": "Paul Assenmacher",
       "to": "Paul Assenmacher",
-      "team": "Chicago Cubs",
-      "year": 1990
+      "team": "Atlanta Braves",
+      "year": 1989
     },
     {
       "from": "Paul Assenmacher",
       "to": "Paul Assenmacher",
-      "team": "Atlanta Braves",
+      "team": "Chicago Cubs",
       "year": 1990
     },
     {
@@ -6132,7 +6132,7 @@
       "from": "Nick Esasky",
       "to": "Nick Esasky",
       "team": "Cincinnati Reds",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Nick Esasky",
@@ -6144,7 +6144,7 @@
       "from": "Rock Raines",
       "to": "Rock Raines",
       "team": "Montreal Expos",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Rock Raines",
@@ -6168,7 +6168,7 @@
       "from": "Joe Boever",
       "to": "Joe Boever",
       "team": "Atlanta Braves",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Joe Boever",
@@ -6180,7 +6180,7 @@
       "from": "Drew Hall",
       "to": "Drew Hall",
       "team": "Chicago Cubs",
-      "year": 1991
+      "year": 1989
     },
     {
       "from": "Drew Hall",
@@ -6221,13 +6221,13 @@
     {
       "from": "Sandy Alomar, Jr",
       "to": "Sandy Alomar, Jr",
-      "team": "Cleveland Indians",
-      "year": 1999
+      "team": "San Diego Padres",
+      "year": 1990
     },
     {
       "from": "Sandy Alomar, Jr",
       "to": "Sandy Alomar, Jr",
-      "team": "San Diego Padres",
+      "team": "Cleveland Indians",
       "year": 1999
     },
     {
@@ -6270,7 +6270,7 @@
       "from": "Otis Nixon",
       "to": "Otis Nixon",
       "team": "Montreal Expos",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Otis Nixon",
@@ -6287,20 +6287,20 @@
     {
       "from": "Dave Johnson",
       "to": "Dave Johnson",
-      "team": "Baltimore Orioles",
-      "year": 1992
+      "team": "New York Mets",
+      "year": 1990
     },
     {
       "from": "Dave Johnson",
       "to": "Dave Johnson",
-      "team": "New York Mets",
+      "team": "Baltimore Orioles",
       "year": 1992
     },
     {
       "from": "Jeff Treadway",
       "to": "Jeff Treadway",
       "team": "Cincinnati Reds",
-      "year": 1992
+      "year": 1989
     },
     {
       "from": "Jeff Treadway",
@@ -6372,13 +6372,13 @@
       "from": "Dante Bichette",
       "to": "Dante Bichette",
       "team": "Anaheim Angels",
-      "year": 1999
+      "year": 1991
     },
     {
       "from": "Dante Bichette",
       "to": "Dante Bichette",
       "team": "Milwaukee Brewers",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Dante Bichette",
@@ -6407,26 +6407,26 @@
     {
       "from": "Ron Gant",
       "to": "Ron Gant",
-      "team": "St. Louis Cardinals",
-      "year": 1999
+      "team": "Atlanta Braves",
+      "year": 1992
     },
     {
       "from": "Ron Gant",
       "to": "Ron Gant",
-      "team": "Atlanta Braves",
+      "team": "St. Louis Cardinals",
       "year": 1999
     },
     {
       "from": "Al Leiter",
       "to": "Al Leiter",
       "team": "New York Yankees",
-      "year": 1999
+      "year": 1989
     },
     {
       "from": "Al Leiter",
       "to": "Al Leiter",
       "team": "Toronto Blue Jays",
-      "year": 1999
+      "year": 1990
     },
     {
       "from": "Al Leiter",
@@ -6521,13 +6521,13 @@
     {
       "from": "Scott Ruskin",
       "to": "Scott Ruskin",
-      "team": "Montreal Expos",
-      "year": 1992
+      "team": "Pittsburgh Pirates",
+      "year": 1990
     },
     {
       "from": "Scott Ruskin",
       "to": "Scott Ruskin",
-      "team": "Pittsburgh Pirates",
+      "team": "Montreal Expos",
       "year": 1992
     },
     {
@@ -6539,13 +6539,13 @@
     {
       "from": "Sammy Sosa",
       "to": "Sammy Sosa",
-      "team": "Chicago Cubs",
-      "year": 1999
+      "team": "Chicago White Sox",
+      "year": 1990
     },
     {
       "from": "Sammy Sosa",
       "to": "Sammy Sosa",
-      "team": "Chicago White Sox",
+      "team": "Chicago Cubs",
       "year": 1999
     },
     {
@@ -6618,7 +6618,7 @@
       "from": "Walt Weiss",
       "to": "Walt Weiss",
       "team": "Oakland Athletics",
-      "year": 1999
+      "year": 1990
     },
     {
       "from": "Walt Weiss",
@@ -6659,20 +6659,20 @@
     {
       "from": "Kevin Gross",
       "to": "Kevin Gross",
-      "team": "Los Angeles Dodgers",
-      "year": 1993
+      "team": "Montreal Expos",
+      "year": 1990
     },
     {
       "from": "Kevin Gross",
       "to": "Kevin Gross",
-      "team": "Montreal Expos",
+      "team": "Los Angeles Dodgers",
       "year": 1993
     },
     {
       "from": "Don Slaught",
       "to": "Don Slaught",
       "team": "New York Yankees",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Don Slaught",
@@ -6690,7 +6690,7 @@
       "from": "Tom Gordon",
       "to": "Tom Gordon",
       "team": "Kansas City Royals",
-      "year": 1999
+      "year": 1991
     },
     {
       "from": "Tom Gordon",
@@ -6702,7 +6702,7 @@
       "from": "Walt Terrell",
       "to": "Walt Terrell",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Walt Terrell",
@@ -6720,7 +6720,7 @@
       "from": "Steve Farr",
       "to": "Steve Farr",
       "team": "Kansas City Royals",
-      "year": 1993
+      "year": 1991
     },
     {
       "from": "Steve Farr",
@@ -6743,26 +6743,26 @@
     {
       "from": "Albert Belle",
       "to": "Albert Belle",
-      "team": "Baltimore Orioles",
-      "year": 1999
+      "team": "Cleveland Indians",
+      "year": 1997
     },
     {
       "from": "Albert Belle",
       "to": "Albert Belle",
-      "team": "Cleveland Indians",
+      "team": "Baltimore Orioles",
       "year": 1999
     },
     {
       "from": "Ken Hill",
       "to": "Ken Hill",
       "team": "St. Louis Cardinals",
-      "year": 1996
+      "year": 1991
     },
     {
       "from": "Ken Hill",
       "to": "Ken Hill",
       "team": "Montreal Expos",
-      "year": 1996
+      "year": 1993
     },
     {
       "from": "Ken Hill",
@@ -6797,13 +6797,13 @@
     {
       "from": "Scott Bailes",
       "to": "Scott Bailes",
-      "team": "Anaheim Angels",
-      "year": 1992
+      "team": "Cleveland Indians",
+      "year": 1990
     },
     {
       "from": "Scott Bailes",
       "to": "Scott Bailes",
-      "team": "Cleveland Indians",
+      "team": "Anaheim Angels",
       "year": 1992
     },
     {
@@ -6821,13 +6821,13 @@
     {
       "from": "Omar Vizquel",
       "to": "Omar Vizquel",
-      "team": "Cleveland Indians",
-      "year": 1999
+      "team": "Seattle Mariners",
+      "year": 1992
     },
     {
       "from": "Omar Vizquel",
       "to": "Omar Vizquel",
-      "team": "Seattle Mariners",
+      "team": "Cleveland Indians",
       "year": 1999
     },
     {
@@ -6840,7 +6840,7 @@
       "from": "Dave Anderson",
       "to": "Dave Anderson",
       "team": "Los Angeles Dodgers",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Dave Anderson",
@@ -6852,7 +6852,7 @@
       "from": "Jay Bell",
       "to": "Jay Bell",
       "team": "Pittsburgh Pirates",
-      "year": 2000
+      "year": 1991
     },
     {
       "from": "Jay Bell",
@@ -6918,7 +6918,7 @@
       "from": "Tommy Greene",
       "to": "Tommy Greene",
       "team": "Atlanta Braves",
-      "year": 1993
+      "year": 1990
     },
     {
       "from": "Tommy Greene",
@@ -6972,13 +6972,13 @@
       "from": "Alejandro Pena",
       "to": "Alejandro Pena",
       "team": "Los Angeles Dodgers",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Alejandro Pena",
       "to": "Alejandro Pena",
       "team": "New York Mets",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Alejandro Pena",
@@ -7008,7 +7008,7 @@
       "from": "Orel Hershiser",
       "to": "Orel Hershiser",
       "team": "Los Angeles Dodgers",
-      "year": 1997
+      "year": 1991
     },
     {
       "from": "Orel Hershiser",
@@ -7056,7 +7056,7 @@
       "from": "Dennis Martinez",
       "to": "Dennis Martinez",
       "team": "Montreal Expos",
-      "year": 1996
+      "year": 1992
     },
     {
       "from": "Dennis Martinez",
@@ -7074,7 +7074,7 @@
       "from": "Deion Sanders",
       "to": "Deion Sanders",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Deion Sanders",
@@ -7127,20 +7127,20 @@
     {
       "from": "Joey Cora",
       "to": "Joey Cora",
-      "team": "Chicago White Sox",
-      "year": 1992
+      "team": "San Diego Padres",
+      "year": 1991
     },
     {
       "from": "Joey Cora",
       "to": "Joey Cora",
-      "team": "San Diego Padres",
+      "team": "Chicago White Sox",
       "year": 1992
     },
     {
       "from": "John Burkett",
       "to": "John Burkett",
       "team": "San Francisco Giants",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "John Burkett",
@@ -7182,13 +7182,13 @@
       "from": "Lee Smith",
       "to": "Lee Smith",
       "team": "Boston Red Sox",
-      "year": 1991
+      "year": 1990
     },
     {
       "from": "Rick Sutcliffe",
       "to": "Rick Sutcliffe",
       "team": "Chicago Cubs",
-      "year": 1993
+      "year": 1992
     },
     {
       "from": "Rick Sutcliffe",
@@ -7212,7 +7212,7 @@
       "from": "John Olerud",
       "to": "John Olerud",
       "team": "Toronto Blue Jays",
-      "year": 1998
+      "year": 1992
     },
     {
       "from": "John Olerud",
@@ -7253,13 +7253,13 @@
     {
       "from": "Todd Frohwirth",
       "to": "Todd Frohwirth",
-      "team": "Baltimore Orioles",
-      "year": 1992
+      "team": "Philadelphia Phillies",
+      "year": 1990
     },
     {
       "from": "Todd Frohwirth",
       "to": "Todd Frohwirth",
-      "team": "Philadelphia Phillies",
+      "team": "Baltimore Orioles",
       "year": 1992
     },
     {
@@ -7271,13 +7271,13 @@
     {
       "from": "Mike Flanagan",
       "to": "Mike Flanagan",
-      "team": "Baltimore Orioles",
-      "year": 1992
+      "team": "Toronto Blue Jays",
+      "year": 1990
     },
     {
       "from": "Mike Flanagan",
       "to": "Mike Flanagan",
-      "team": "Toronto Blue Jays",
+      "team": "Baltimore Orioles",
       "year": 1992
     },
     {
@@ -7332,7 +7332,7 @@
       "from": "Glenallen Hill",
       "to": "Glenallen Hill",
       "team": "Toronto Blue Jays",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Glenallen Hill",
@@ -7355,13 +7355,13 @@
     {
       "from": "Scott Bankhead",
       "to": "Scott Bankhead",
-      "team": "Cincinnati Reds",
-      "year": 1992
+      "team": "Seattle Mariners",
+      "year": 1991
     },
     {
       "from": "Scott Bankhead",
       "to": "Scott Bankhead",
-      "team": "Seattle Mariners",
+      "team": "Cincinnati Reds",
       "year": 1992
     },
     {
@@ -7380,7 +7380,7 @@
       "from": "Lenny Harris",
       "to": "Lenny Harris",
       "team": "Los Angeles Dodgers",
-      "year": 1998
+      "year": 1993
     },
     {
       "from": "Lenny Harris",
@@ -7421,13 +7421,13 @@
     {
       "from": "Steve Bedrosian",
       "to": "Steve Bedrosian",
-      "team": "Minnesota Twins",
-      "year": 1992
+      "team": "San Francisco Giants",
+      "year": 1990
     },
     {
       "from": "Steve Bedrosian",
       "to": "Steve Bedrosian",
-      "team": "San Francisco Giants",
+      "team": "Minnesota Twins",
       "year": 1992
     },
     {
@@ -7446,18 +7446,18 @@
       "from": "Pete Harnisch",
       "to": "Pete Harnisch",
       "team": "Baltimore Orioles",
-      "year": 1996
-    },
-    {
-      "from": "Pete Harnisch",
-      "to": "Pete Harnisch",
-      "team": "New York Mets",
-      "year": 1996
+      "year": 1991
     },
     {
       "from": "Pete Harnisch",
       "to": "Pete Harnisch",
       "team": "Houston Astros",
+      "year": 1992
+    },
+    {
+      "from": "Pete Harnisch",
+      "to": "Pete Harnisch",
+      "team": "New York Mets",
       "year": 1996
     },
     {
@@ -7536,7 +7536,7 @@
       "from": "Mike Aldrete",
       "to": "Mike Aldrete",
       "team": "Montreal Expos",
-      "year": 1992
+      "year": 1990
     },
     {
       "from": "Mike Aldrete",
@@ -7554,13 +7554,13 @@
       "from": "John Wetteland",
       "to": "John Wetteland",
       "team": "Los Angeles Dodgers",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "John Wetteland",
       "to": "John Wetteland",
       "team": "Montreal Expos",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "John Wetteland",
@@ -7613,13 +7613,13 @@
     {
       "from": "Julio Machado",
       "to": "Julio Machado",
-      "team": "Milwaukee Brewers",
-      "year": 1992
+      "team": "New York Mets",
+      "year": 1990
     },
     {
       "from": "Julio Machado",
       "to": "Julio Machado",
-      "team": "New York Mets",
+      "team": "Milwaukee Brewers",
       "year": 1992
     },
     {
@@ -7703,13 +7703,13 @@
     {
       "from": "Kevin Ritz",
       "to": "Kevin Ritz",
-      "team": "Colorado Rockies",
-      "year": 1996
+      "team": "Detroit Tigers",
+      "year": 1990
     },
     {
       "from": "Kevin Ritz",
       "to": "Kevin Ritz",
-      "team": "Detroit Tigers",
+      "team": "Colorado Rockies",
       "year": 1996
     },
     {
@@ -7800,7 +7800,7 @@
       "from": "Kevin Tapani",
       "to": "Kevin Tapani",
       "team": "Minnesota Twins",
-      "year": 1999
+      "year": 1991
     },
     {
       "from": "Kevin Tapani",
@@ -7818,7 +7818,7 @@
       "from": "Bob Tewksbury",
       "to": "Bob Tewksbury",
       "team": "St. Louis Cardinals",
-      "year": 1996
+      "year": 1991
     },
     {
       "from": "Bob Tewksbury",
@@ -7872,7 +7872,7 @@
       "from": "Oscar Azocar",
       "to": "Oscar Azocar",
       "team": "New York Yankees",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Oscar Azocar",
@@ -7890,7 +7890,7 @@
       "from": "Steve Finley",
       "to": "Steve Finley",
       "team": "Baltimore Orioles",
-      "year": 1997
+      "year": 1991
     },
     {
       "from": "Steve Finley",
@@ -7950,7 +7950,7 @@
       "from": "Mike Hartley",
       "to": "Mike Hartley",
       "team": "Los Angeles Dodgers",
-      "year": 1993
+      "year": 1991
     },
     {
       "from": "Mike Hartley",
@@ -7961,13 +7961,13 @@
     {
       "from": "Erik Hanson",
       "to": "Erik Hanson",
-      "team": "Boston Red Sox",
-      "year": 1996
+      "team": "Seattle Mariners",
+      "year": 1993
     },
     {
       "from": "Erik Hanson",
       "to": "Erik Hanson",
-      "team": "Seattle Mariners",
+      "team": "Boston Red Sox",
       "year": 1996
     },
     {
@@ -7991,19 +7991,19 @@
     {
       "from": "Andy Benes",
       "to": "Andy Benes",
+      "team": "San Diego Padres",
+      "year": 1991
+    },
+    {
+      "from": "Andy Benes",
+      "to": "Andy Benes",
       "team": "St. Louis Cardinals",
-      "year": 1999
+      "year": 1997
     },
     {
       "from": "Andy Benes",
       "to": "Andy Benes",
       "team": "Arizona Diamondbacks",
-      "year": 1999
-    },
-    {
-      "from": "Andy Benes",
-      "to": "Andy Benes",
-      "team": "San Diego Padres",
       "year": 1999
     },
     {
@@ -8058,7 +8058,7 @@
       "from": "Jose Vizcaino",
       "to": "Jose Vizcaino",
       "team": "Los Angeles Dodgers",
-      "year": 1993
+      "year": 1991
     },
     {
       "from": "Jose Vizcaino",
@@ -8106,7 +8106,7 @@
       "from": "Travis Fryman",
       "to": "Travis Fryman",
       "team": "Detroit Tigers",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "Travis Fryman",
@@ -8117,19 +8117,19 @@
     {
       "from": "Mark Whiten",
       "to": "Mark Whiten",
-      "team": "St. Louis Cardinals",
-      "year": 1995
+      "team": "Cleveland Indians",
+      "year": 1992
     },
     {
       "from": "Mark Whiten",
       "to": "Mark Whiten",
       "team": "Toronto Blue Jays",
-      "year": 1995
+      "year": 1991
     },
     {
       "from": "Mark Whiten",
       "to": "Mark Whiten",
-      "team": "Cleveland Indians",
+      "team": "St. Louis Cardinals",
       "year": 1995
     },
     {
@@ -8232,7 +8232,7 @@
       "from": "Jose Offerman",
       "to": "Jose Offerman",
       "team": "Los Angeles Dodgers",
-      "year": 2000
+      "year": 1992
     },
     {
       "from": "Jose Offerman",
@@ -8274,7 +8274,7 @@
       "from": "Mike Fetters",
       "to": "Mike Fetters",
       "team": "Anaheim Angels",
-      "year": 1993
+      "year": 1991
     },
     {
       "from": "Mike Fetters",
@@ -8316,7 +8316,7 @@
       "from": "Curt Schilling",
       "to": "Curt Schilling",
       "team": "Baltimore Orioles",
-      "year": 1999
+      "year": 1991
     },
     {
       "from": "Curt Schilling",
@@ -8333,13 +8333,13 @@
     {
       "from": "Jeff Conine",
       "to": "Jeff Conine",
-      "team": "Florida Marlins",
-      "year": 1993
+      "team": "Kansas City Royals",
+      "year": 1992
     },
     {
       "from": "Jeff Conine",
       "to": "Jeff Conine",
-      "team": "Kansas City Royals",
+      "team": "Florida Marlins",
       "year": 1993
     },
     {
@@ -8358,7 +8358,7 @@
       "from": "Scott Erickson",
       "to": "Scott Erickson",
       "team": "Minnesota Twins",
-      "year": 1996
+      "year": 1992
     },
     {
       "from": "Scott Erickson",
@@ -8400,13 +8400,13 @@
       "from": "Kevin Brown",
       "to": "Kevin Brown",
       "team": "Milwaukee Brewers",
-      "year": 1999
+      "year": 1991
     },
     {
       "from": "Kevin Brown",
       "to": "Kevin Brown",
       "team": "Texas Rangers",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Kevin Brown",
@@ -8435,13 +8435,13 @@
     {
       "from": "Carlos Martinez",
       "to": "Carlos Martinez",
-      "team": "Cleveland Indians",
-      "year": 1992
+      "team": "Chicago White Sox",
+      "year": 1991
     },
     {
       "from": "Carlos Martinez",
       "to": "Carlos Martinez",
-      "team": "Chicago White Sox",
+      "team": "Cleveland Indians",
       "year": 1992
     },
     {
@@ -8489,13 +8489,13 @@
     {
       "from": "Jeromy Burnitz",
       "to": "Jeromy Burnitz",
-      "team": "Milwaukee Brewers",
-      "year": 1999
+      "team": "New York Mets",
+      "year": 1991
     },
     {
       "from": "Jeromy Burnitz",
       "to": "Jeromy Burnitz",
-      "team": "New York Mets",
+      "team": "Milwaukee Brewers",
       "year": 1999
     },
     {
@@ -8514,7 +8514,7 @@
       "from": "Tony Fossas",
       "to": "Tony Fossas",
       "team": "Milwaukee Brewers",
-      "year": 1992
+      "year": 1991
     },
     {
       "from": "Tony Fossas",
@@ -8525,13 +8525,13 @@
     {
       "from": "Tim Costo",
       "to": "Tim Costo",
-      "team": "Cincinnati Reds",
-      "year": 1993
+      "team": "Cleveland Indians",
+      "year": 1991
     },
     {
       "from": "Tim Costo",
       "to": "Tim Costo",
-      "team": "Cleveland Indians",
+      "team": "Cincinnati Reds",
       "year": 1993
     },
     {
@@ -8592,7 +8592,7 @@
       "from": "Jose Mesa",
       "to": "Jose Mesa",
       "team": "Baltimore Orioles",
-      "year": 1997
+      "year": 1991
     },
     {
       "from": "Jose Mesa",
@@ -8615,13 +8615,13 @@
     {
       "from": "Jerald Clark",
       "to": "Jerald Clark",
-      "team": "Colorado Rockies",
+      "team": "San Diego Padres",
       "year": 1993
     },
     {
       "from": "Jerald Clark",
       "to": "Jerald Clark",
-      "team": "San Diego Padres",
+      "team": "Colorado Rockies",
       "year": 1993
     },
     {
@@ -8657,13 +8657,13 @@
     {
       "from": "Turner Ward",
       "to": "Turner Ward",
-      "team": "Pittsburgh Pirates",
-      "year": 1999
+      "team": "Cleveland Indians",
+      "year": 1991
     },
     {
       "from": "Turner Ward",
       "to": "Turner Ward",
-      "team": "Cleveland Indians",
+      "team": "Pittsburgh Pirates",
       "year": 1999
     },
     {
@@ -8675,13 +8675,13 @@
     {
       "from": "Shawn Boskie",
       "to": "Shawn Boskie",
-      "team": "Anaheim Angels",
-      "year": 1997
+      "team": "Chicago Cubs",
+      "year": 1992
     },
     {
       "from": "Shawn Boskie",
       "to": "Shawn Boskie",
-      "team": "Chicago Cubs",
+      "team": "Anaheim Angels",
       "year": 1997
     },
     {
@@ -8747,25 +8747,25 @@
     {
       "from": "Dave Gallagher",
       "to": "Dave Gallagher",
-      "team": "Anaheim Angels",
-      "year": 1992
+      "team": "Baltimore Orioles",
+      "year": 1991
     },
     {
       "from": "Dave Gallagher",
       "to": "Dave Gallagher",
-      "team": "Baltimore Orioles",
+      "team": "Anaheim Angels",
+      "year": 1992
+    },
+    {
+      "from": "Wilson Alvarez",
+      "to": "Wilson Alvarez",
+      "team": "Chicago White Sox",
       "year": 1992
     },
     {
       "from": "Wilson Alvarez",
       "to": "Wilson Alvarez",
       "team": "Tampa Bay Rays",
-      "year": 1999
-    },
-    {
-      "from": "Wilson Alvarez",
-      "to": "Wilson Alvarez",
-      "team": "Chicago White Sox",
       "year": 1999
     },
     {
@@ -8886,7 +8886,7 @@
       "from": "Paul Sorrento",
       "to": "Paul Sorrento",
       "team": "Minnesota Twins",
-      "year": 1995
+      "year": 1991
     },
     {
       "from": "Paul Sorrento",
@@ -8946,7 +8946,7 @@
       "from": "Greg Vaughn",
       "to": "Greg Vaughn",
       "team": "Milwaukee Brewers",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Greg Vaughn",
@@ -8958,7 +8958,7 @@
       "from": "Todd Zeile",
       "to": "Todd Zeile",
       "team": "St. Louis Cardinals",
-      "year": 1997
+      "year": 1992
     },
     {
       "from": "Todd Zeile",
@@ -8975,13 +8975,13 @@
     {
       "from": "Dean Palmer",
       "to": "Dean Palmer",
-      "team": "Kansas City Royals",
-      "year": 1999
+      "team": "Texas Rangers",
+      "year": 1992
     },
     {
       "from": "Dean Palmer",
       "to": "Dean Palmer",
-      "team": "Texas Rangers",
+      "team": "Kansas City Royals",
       "year": 1999
     },
     {
@@ -9023,13 +9023,13 @@
     {
       "from": "Tino Martinez",
       "to": "Tino Martinez",
-      "team": "New York Yankees",
-      "year": 1999
+      "team": "Seattle Mariners",
+      "year": 1992
     },
     {
       "from": "Tino Martinez",
       "to": "Tino Martinez",
-      "team": "Seattle Mariners",
+      "team": "New York Yankees",
       "year": 1999
     },
     {
@@ -9078,7 +9078,7 @@
       "from": "David Justice",
       "to": "David Justice",
       "team": "Atlanta Braves",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "David Justice",
@@ -9107,13 +9107,13 @@
     {
       "from": "Kenny Rogers",
       "to": "Kenny Rogers",
-      "team": "Oakland Athletics",
-      "year": 1999
+      "team": "Texas Rangers",
+      "year": 1992
     },
     {
       "from": "Kenny Rogers",
       "to": "Kenny Rogers",
-      "team": "Texas Rangers",
+      "team": "Oakland Athletics",
       "year": 1999
     },
     {
@@ -9143,13 +9143,13 @@
     {
       "from": "Rod Beck",
       "to": "Rod Beck",
-      "team": "Chicago Cubs",
-      "year": 1999
+      "team": "San Francisco Giants",
+      "year": 1992
     },
     {
       "from": "Rod Beck",
       "to": "Rod Beck",
-      "team": "San Francisco Giants",
+      "team": "Chicago Cubs",
       "year": 1999
     },
     {
@@ -9198,7 +9198,7 @@
       "from": "Eric Plunk",
       "to": "Eric Plunk",
       "team": "New York Yankees",
-      "year": 1996
+      "year": 1992
     },
     {
       "from": "Eric Plunk",
@@ -9239,13 +9239,13 @@
     {
       "from": "David Wells",
       "to": "David Wells",
-      "team": "New York Yankees",
-      "year": 1999
+      "team": "Toronto Blue Jays",
+      "year": 1993
     },
     {
       "from": "David Wells",
       "to": "David Wells",
-      "team": "Toronto Blue Jays",
+      "team": "New York Yankees",
       "year": 1999
     },
     {
@@ -9383,13 +9383,13 @@
     {
       "from": "Chris Haney",
       "to": "Chris Haney",
-      "team": "Kansas City Royals",
-      "year": 1993
+      "team": "Montreal Expos",
+      "year": 1992
     },
     {
       "from": "Chris Haney",
       "to": "Chris Haney",
-      "team": "Montreal Expos",
+      "team": "Kansas City Royals",
       "year": 1993
     },
     {
@@ -9407,13 +9407,13 @@
     {
       "from": "Royce Clayton",
       "to": "Royce Clayton",
-      "team": "St. Louis Cardinals",
-      "year": 1997
+      "team": "San Francisco Giants",
+      "year": 1993
     },
     {
       "from": "Royce Clayton",
       "to": "Royce Clayton",
-      "team": "San Francisco Giants",
+      "team": "St. Louis Cardinals",
       "year": 1997
     },
     {
@@ -9449,20 +9449,20 @@
     {
       "from": "Kenny Lofton",
       "to": "Kenny Lofton",
-      "team": "Atlanta Braves",
+      "team": "Cleveland Indians",
       "year": 1999
     },
     {
       "from": "Kenny Lofton",
       "to": "Kenny Lofton",
-      "team": "Cleveland Indians",
-      "year": 1999
+      "team": "Atlanta Braves",
+      "year": 1998
     },
     {
       "from": "Chad Curtis",
       "to": "Chad Curtis",
       "team": "Anaheim Angels",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Chad Curtis",
@@ -9498,7 +9498,7 @@
       "from": "Denny Neagle",
       "to": "Denny Neagle",
       "team": "Pittsburgh Pirates",
-      "year": 1999
+      "year": 1992
     },
     {
       "from": "Denny Neagle",
@@ -9570,7 +9570,7 @@
       "from": "Jeff Fassero",
       "to": "Jeff Fassero",
       "team": "Montreal Expos",
-      "year": 1998
+      "year": 1992
     },
     {
       "from": "Jeff Fassero",
@@ -9774,7 +9774,7 @@
       "from": "Chuck Knoblauch",
       "to": "Chuck Knoblauch",
       "team": "Minnesota Twins",
-      "year": 1998
+      "year": 1993
     },
     {
       "from": "Chuck Knoblauch",
@@ -10098,7 +10098,7 @@
       "from": "J.T. Snow",
       "to": "J.T. Snow",
       "team": "New York Yankees",
-      "year": 1999
+      "year": 1993
     },
     {
       "from": "J.T. Snow",
@@ -10115,13 +10115,13 @@
     {
       "from": "Cliff Floyd",
       "to": "Cliff Floyd",
-      "team": "Florida Marlins",
-      "year": 1999
+      "team": "Montreal Expos",
+      "year": 1993
     },
     {
       "from": "Cliff Floyd",
       "to": "Cliff Floyd",
-      "team": "Montreal Expos",
+      "team": "Florida Marlins",
       "year": 1999
     },
     {
@@ -10194,7 +10194,7 @@
       "from": "Jose Valentin",
       "to": "Jose Valentin",
       "team": "Chicago Cubs",
-      "year": 1996
+      "year": 1994
     },
     {
       "from": "Jose Valentin",
@@ -10247,13 +10247,13 @@
     {
       "from": "Manny Ramirez",
       "to": "Manny Ramirez",
-      "team": "Boston Red Sox",
+      "team": "Cleveland Indians",
       "year": 1999
     },
     {
       "from": "Manny Ramirez",
       "to": "Manny Ramirez",
-      "team": "Cleveland Indians",
+      "team": "Boston Red Sox",
       "year": 1999
     },
     {
@@ -10314,7 +10314,7 @@
       "from": "Damion Easley",
       "to": "Damion Easley",
       "team": "Anaheim Angels",
-      "year": 1999
+      "year": 1996
     },
     {
       "from": "Damion Easley",
@@ -10343,13 +10343,13 @@
     {
       "from": "Randy Johnson",
       "to": "Randy Johnson",
-      "team": "Arizona Diamondbacks",
-      "year": 1999
+      "team": "Seattle Mariners",
+      "year": 1996
     },
     {
       "from": "Randy Johnson",
       "to": "Randy Johnson",
-      "team": "Seattle Mariners",
+      "team": "Arizona Diamondbacks",
       "year": 1999
     },
     {
@@ -10374,7 +10374,7 @@
       "from": "Moises Alou",
       "to": "Moises Alou",
       "team": "Montreal Expos",
-      "year": 2000
+      "year": 1996
     },
     {
       "from": "Moises Alou",
@@ -10386,7 +10386,7 @@
       "from": "Raul Mondesi",
       "to": "Raul Mondesi",
       "team": "Los Angeles Dodgers",
-      "year": 2000
+      "year": 1999
     },
     {
       "from": "Raul Mondesi",
@@ -10404,7 +10404,7 @@
       "from": "Brant Brown",
       "to": "Brant Brown",
       "team": "Chicago Cubs",
-      "year": 1999
+      "year": 1997
     },
     {
       "from": "Brant Brown",
@@ -10427,13 +10427,13 @@
     {
       "from": "Jeff Kent",
       "to": "Jeff Kent",
-      "team": "San Francisco Giants",
-      "year": 1999
+      "team": "Cleveland Indians",
+      "year": 1997
     },
     {
       "from": "Jeff Kent",
       "to": "Jeff Kent",
-      "team": "Cleveland Indians",
+      "team": "San Francisco Giants",
       "year": 1999
     },
     {
@@ -10529,13 +10529,13 @@
     {
       "from": "Brian Giles",
       "to": "Brian Giles",
-      "team": "Pittsburgh Pirates",
-      "year": 1999
+      "team": "Cleveland Indians",
+      "year": 1998
     },
     {
       "from": "Brian Giles",
       "to": "Brian Giles",
-      "team": "Cleveland Indians",
+      "team": "Pittsburgh Pirates",
       "year": 1999
     },
     {
@@ -10566,7 +10566,7 @@
       "from": "Bernard Gilkey",
       "to": "Bernard Gilkey",
       "team": "New York Mets",
-      "year": 1999
+      "year": 1998
     },
     {
       "from": "Bernard Gilkey",
@@ -10650,7 +10650,7 @@
       "from": "Mike Piazza",
       "to": "Mike Piazza",
       "team": "Los Angeles Dodgers",
-      "year": 1999
+      "year": 1998
     },
     {
       "from": "Mike Piazza",
