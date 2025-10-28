@@ -51,28 +51,61 @@ self.onmessage = function(e) {
             teams.add(e.team);
         });
         
-        // Count connections per player
-        const connectionCounts = {};
+        // Count unique teams per player
+        const playerTeamCount = {};
         filteredEdges.forEach(e => {
-            connectionCounts[e.from] = (connectionCounts[e.from] || 0) + 1;
-            connectionCounts[e.to] = (connectionCounts[e.to] || 0) + 1;
+            if (!playerTeamCount[e.from]) {
+                playerTeamCount[e.from] = new Set();
+            }
+            playerTeamCount[e.from].add(e.team);
         });
         
-        // Filter by minimum connections
-        const qualifyingPlayers = new Set(
-            Object.entries(connectionCounts)
-                .filter(([player, count]) => count >= minConnections)
-                .map(([player]) => player)
+        // Filter by minimum connections - players must have played for minConnections+ teams
+        const qualifiedPlayers = new Set(
+            Object.keys(playerTeamCount).filter(p => playerTeamCount[p].size >= minConnections)
         );
         
-        // Final edge filter
+        // Filter edges to only include qualified players
         filteredEdges = filteredEdges.filter(e => 
-            qualifyingPlayers.has(e.from) && qualifyingPlayers.has(e.to)
+            qualifiedPlayers.has(e.from)
         );
         
-        // Recalculate after connection filter
+        // Recalculate after player connection filter
         const finalPlayers = new Set();
         const finalTeams = new Set();
+        filteredEdges.forEach(e => {
+            finalPlayers.add(e.from);
+            finalPlayers.add(e.to);
+            finalTeams.add(e.team);
+        });
+        
+        // ✨ NEW: Filter teams by minimum qualified players
+        // Count how many qualified players each team has
+        const teamQualifiedPlayerCount = {};
+        filteredEdges.forEach(e => {
+            if (qualifiedPlayers.has(e.from)) {
+                if (!teamQualifiedPlayerCount[e.team]) {
+                    teamQualifiedPlayerCount[e.team] = new Set();
+                }
+                teamQualifiedPlayerCount[e.team].add(e.from);
+            }
+        });
+        
+        // Only include teams that have at least 2 qualified players
+        const qualifiedTeams = new Set(
+            Object.keys(teamQualifiedPlayerCount).filter(team => 
+                teamQualifiedPlayerCount[team].size >= 2
+            )
+        );
+        
+        // Filter edges to only include qualified teams
+        filteredEdges = filteredEdges.filter(e => 
+            qualifiedTeams.has(e.team)
+        );
+        
+        // Final recalculation
+        finalPlayers.clear();
+        finalTeams.clear();
         filteredEdges.forEach(e => {
             finalPlayers.add(e.from);
             finalPlayers.add(e.to);

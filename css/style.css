@@ -27,6 +27,10 @@
             margin-bottom: 10px;
             font-size: 3em;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 100;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            padding: 10px 0;
         }
         
         .subtitle {
@@ -34,6 +38,10 @@
             color: #aaa;
             margin-bottom: 20px;
             font-size: 1.3em;
+            position: relative;
+            z-index: 100;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            padding: 5px 0;
         }
         
         .controls {
@@ -54,6 +62,8 @@
             margin-bottom: 8px;
             color: white;
             font-size: 1.1em;
+            position: relative;
+            z-index: 50;
         }
         
         .player-search-container {
@@ -213,6 +223,8 @@
             padding: 0 5px;
             font-size: 12px;
             color: #aaa;
+            position: relative;
+            z-index: 1;
         }
         
         .slider-labels span {
@@ -262,6 +274,8 @@
             flex-wrap: wrap;
             gap: 10px;
             margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
         }
         
         .year-btn {
@@ -334,6 +348,8 @@
             margin: 20px 0;
             flex-wrap: wrap;
             gap: 15px;
+            position: relative;
+            z-index: 50;
         }
         
         .stat-box {
@@ -435,6 +451,8 @@
             margin: 20px 0;
             font-style: italic;
             font-size: 1.1em;
+            position: relative;
+            z-index: 50;
         }
         
         .team-legend {
@@ -500,6 +518,8 @@
     color: white;
     font-size: 0.95em;
     line-height: 1.6;
+    position: relative;
+    z-index: 50;
 }
 
 .insights-panel strong {
@@ -641,6 +661,8 @@
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
     margin-top: 15px;
+    position: relative;
+    z-index: 1;
 }
 
 .plot-btn {

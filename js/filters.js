@@ -316,6 +316,48 @@ function updateDiagramImmediate() {
         teams.add(e.team);
     });
     
+    // ✨ NEW: Filter teams by minimum qualified players
+    // Count how many qualified players each team has
+    const teamQualifiedPlayerCount = {};
+    filteredEdges.forEach(e => {
+        if (qualifiedPlayers.has(e.from)) {
+            if (!teamQualifiedPlayerCount[e.team]) {
+                teamQualifiedPlayerCount[e.team] = new Set();
+            }
+            teamQualifiedPlayerCount[e.team].add(e.from);
+        }
+    });
+    
+    // Only include teams that have at least 2 qualified players
+    // (i.e., at least 2 players who each have minConnections+ teams)
+    const qualifiedTeams = new Set(
+        Object.keys(teamQualifiedPlayerCount).filter(team => 
+            teamQualifiedPlayerCount[team].size >= 2
+        )
+    );
+    
+    console.log(`   Teams with 2+ qualified players: ${qualifiedTeams.size} (filtered from ${teams.size})`);
+    
+    // Filter edges to only include qualified teams
+    filteredEdges = filteredEdges.filter(e => 
+        qualifiedTeams.has(e.team)
+    );
+    
+    if (filteredEdges.length === 0) {
+        document.getElementById('network-container').innerHTML = 
+            '<div class="loading">No teams have enough qualified players. Try lowering the minimum connections.</div>';
+        return;
+    }
+    
+    // Final recount after team filtering
+    players.clear();
+    teams.clear();
+    filteredEdges.forEach(e => {
+        players.add(e.from);
+        players.add(e.to);
+        teams.add(e.team);
+    });
+    
     // Cache results for future use
     const playersArray = Array.from(players);
     const teamsArray = Array.from(teams);
