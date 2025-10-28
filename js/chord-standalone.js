@@ -129,11 +129,11 @@ function generateAndDisplayChord() {
             const beforeCount = filteredEdges.length;
             if (playerFilterMode === 'show') {
                 filteredEdges = filteredEdges.filter(e => 
-                    selectedPlayers.has(e.from) || selectedPlayers.has(e.to)
+                    selectedPlayers.has(e.from)
                 );
             } else {
                 filteredEdges = filteredEdges.filter(e => 
-                    !selectedPlayers.has(e.from) && !selectedPlayers.has(e.to)
+                    !selectedPlayers.has(e.from)
                 );
             }
             console.log(`   After player filter: ${filteredEdges.length} (was ${beforeCount})`);
@@ -150,6 +150,26 @@ function generateAndDisplayChord() {
             console.log(`   After team filter: ${filteredEdges.length} (was ${beforeCount})`);
         }
         
+        // ✨ FIXED: Apply minimum connections filter
+        // Count how many teams each player has
+        const playerTeamCount = {};
+        filteredEdges.forEach(e => {
+            if (!playerTeamCount[e.from]) {
+                playerTeamCount[e.from] = new Set();
+            }
+            playerTeamCount[e.from].add(e.team);
+        });
+        
+        // Only include players with minConnections+ teams
+        const qualifiedPlayers = new Set(
+            Object.keys(playerTeamCount).filter(p => playerTeamCount[p].size >= minConnections)
+        );
+        
+        console.log(`   Qualified players (${minConnections}+ teams): ${qualifiedPlayers.size} of ${Object.keys(playerTeamCount).length}`);
+        
+        // Filter to only include qualified players
+        filteredEdges = filteredEdges.filter(e => qualifiedPlayers.has(e.from));
+        
         if (filteredEdges.length === 0) {
             console.warn('⚠️ No edges after filtering');
             showChordError('No Connections Found', 
@@ -158,19 +178,20 @@ function generateAndDisplayChord() {
             return;
         }
         
-        // Build team-to-team connection matrix
+        // ✨ FIXED: Build team-to-team connection matrix (only counting actual PLAYERS, not teams)
         const playerToTeams = {};
         
+        // Only track e.from (which is the player), NOT e.to (which is a team)
         filteredEdges.forEach(e => {
-            if (!playerToTeams[e.from]) playerToTeams[e.from] = new Set();
-            if (!playerToTeams[e.to]) playerToTeams[e.to] = new Set();
+            if (!playerToTeams[e.from]) {
+                playerToTeams[e.from] = new Set();
+            }
             playerToTeams[e.from].add(e.team);
-            playerToTeams[e.to].add(e.team);
         });
         
         console.log(`   Found ${Object.keys(playerToTeams).length} unique players`);
         
-        // Get all unique teams
+        // Get all unique teams from qualified players
         const allTeams = new Set();
         Object.values(playerToTeams).forEach(teamSet => {
             teamSet.forEach(team => allTeams.add(team));
@@ -187,16 +208,56 @@ function generateAndDisplayChord() {
             return;
         }
         
-        // Build connection matrix
-        const matrix = Array(teamArray.length).fill(0).map(() => Array(teamArray.length).fill(0));
+        // ✨ FIXED: Filter teams to only include those with 2+ qualified players
+        const teamQualifiedPlayerCount = {};
+        Object.entries(playerToTeams).forEach(([player, teamSet]) => {
+            teamSet.forEach(team => {
+                if (!teamQualifiedPlayerCount[team]) {
+                    teamQualifiedPlayerCount[team] = new Set();
+                }
+                teamQualifiedPlayerCount[team].add(player);
+            });
+        });
         
-        Object.values(playerToTeams).forEach(teamSet => {
+        // Only include teams with 2+ qualified players
+        const qualifiedTeams = new Set(
+            Object.keys(teamQualifiedPlayerCount).filter(team => 
+                teamQualifiedPlayerCount[team].size >= 2
+            )
+        );
+        
+        console.log(`   Qualified teams (2+ qualified players): ${qualifiedTeams.size} of ${teamArray.length}`);
+        
+        // Filter to only qualified teams
+        const filteredTeamArray = teamArray.filter(team => qualifiedTeams.has(team));
+        
+        if (filteredTeamArray.length < 2) {
+            console.warn('⚠️ Not enough qualified teams');
+            showChordError('Not Enough Teams', 
+                `Only ${filteredTeamArray.length} team(s) have 2+ players with ${minConnections}+ connections.`,
+                ['Lower minimum connections', 'Select more years', 'Clear team filters']);
+            return;
+        }
+        
+        // Rebuild playerToTeams with only qualified teams
+        const filteredPlayerToTeams = {};
+        Object.entries(playerToTeams).forEach(([player, teamSet]) => {
+            const qualifiedTeamsForPlayer = Array.from(teamSet).filter(team => qualifiedTeams.has(team));
+            if (qualifiedTeamsForPlayer.length > 0) {
+                filteredPlayerToTeams[player] = new Set(qualifiedTeamsForPlayer);
+            }
+        });
+        
+        // Build connection matrix
+        const matrix = Array(filteredTeamArray.length).fill(0).map(() => Array(filteredTeamArray.length).fill(0));
+        
+        Object.values(filteredPlayerToTeams).forEach(teamSet => {
             const teams = Array.from(teamSet);
             if (teams.length > 1) {
                 for (let i = 0; i < teams.length; i++) {
                     for (let j = i + 1; j < teams.length; j++) {
-                        const idx1 = teamArray.indexOf(teams[i]);
-                        const idx2 = teamArray.indexOf(teams[j]);
+                        const idx1 = filteredTeamArray.indexOf(teams[i]);
+                        const idx2 = filteredTeamArray.indexOf(teams[j]);
                         if (idx1 !== -1 && idx2 !== -1) {
                             matrix[idx1][idx2]++;
                             matrix[idx2][idx1]++;
@@ -215,14 +276,14 @@ function generateAndDisplayChord() {
         if (totalConnections === 0) {
             console.warn('⚠️ No team-to-team connections');
             showChordError('No Player Movement', 
-                `Found ${teamArray.length} teams but no players moved between them.`,
+                `Found ${filteredTeamArray.length} teams but no players moved between them.`,
                 ['Select "All Years" to see more movement', 'Lower minimum connections to 1', 'Try different teams']);
             return;
         }
         
         // Success - draw the diagram
         console.log('✅ Drawing chord diagram...');
-        drawChordDiagram(container, teamArray, matrix);
+        drawChordDiagram(container, filteredTeamArray, matrix);
         
     } catch (error) {
         console.error('❌ Error generating chord diagram:', error);
@@ -291,14 +352,14 @@ function drawChordDiagram(container, teams, matrix) {
     container.innerHTML = '';
     
     const containerWidth = container.clientWidth;
-    const containerHeight = Math.max(container.clientHeight, 1200); // Taller
+    const containerHeight = Math.max(container.clientHeight, 1200);
     
-    // Reserve MUCH MORE space for title at top
-    const titleHeight = 200; // Much more space from top
+    // Reserve space for title at top
+    const titleHeight = 200;
     const availableHeight = containerHeight - titleHeight - 150;
     
-    const size = Math.min(containerWidth - 150, availableHeight, 800); // Smaller, more side padding
-    const outerRadius = size * 0.40; // Smaller radius
+    const size = Math.min(containerWidth - 150, availableHeight, 800);
+    const outerRadius = size * 0.40;
     const innerRadius = outerRadius - 30;
     
     const svg = d3.select(container)
@@ -347,76 +408,78 @@ function drawChordDiagram(container, teams, matrix) {
         .html("⟲")
         .on("click", () => svg.transition().call(zoom.transform, d3.zoomIdentity));
     
-    // Dynamic subtitle based on filters (NO main title)
-    let subtitleParts = [];
+    // ✨ FIXED: Better title handling with custom titles
+    // Dynamic subtitle based on filters
+    let autoSubtitleParts = [];
     
     // Add year info
     if (selectedYears.size > 0) {
         const years = Array.from(selectedYears).sort((a, b) => a - b);
         if (years.length === 1) {
-            subtitleParts.push(`Year: ${years[0]}`);
+            autoSubtitleParts.push(`Year: ${years[0]}`);
         } else if (years.length <= 3) {
-            subtitleParts.push(`Years: ${years.join(', ')}`);
+            autoSubtitleParts.push(`Years: ${years.join(', ')}`);
         } else {
-            subtitleParts.push(`${years.length} years selected (${years[0]}-${years[years.length-1]})`);
+            autoSubtitleParts.push(`${years.length} years (${years[0]}-${years[years.length-1]})`);
         }
     }
     
     // Add team info
     if (selectedTeams.size > 0) {
-        subtitleParts.push(`${selectedTeams.size} team${selectedTeams.size === 1 ? '' : 's'} filtered`);
+        autoSubtitleParts.push(`${selectedTeams.size} team${selectedTeams.size === 1 ? '' : 's'} filtered`);
     }
     
     // Add connection filter
     if (minConnections > 1) {
-        subtitleParts.push(`${minConnections}+ connections`);
+        autoSubtitleParts.push(`${minConnections}+ connections`);
     }
     
-    const subtitle = subtitleParts.length > 0 
-        ? subtitleParts.join(' • ') 
-        : `${teams.length} teams • Player movement between teams`;
+    const autoSubtitle = autoSubtitleParts.length > 0 
+        ? autoSubtitleParts.join(' • ') 
+        : `${teams.length} teams • Player movement`;
+    
+    // Default auto title for chord diagram
+    const autoTitle = "Team Connection Network";
     
     // Use custom titles if set, otherwise use auto-generated
-    const finalSubtitle = typeof getCustomOrAutoSubtitle === 'function' 
-        ? getCustomOrAutoSubtitle(subtitle) 
-        : subtitle;
+    const finalTitle = (typeof getCustomOrAutoTitle === 'function') 
+        ? getCustomOrAutoTitle(autoTitle) 
+        : autoTitle;
     
-    const finalTitle = typeof getCustomOrAutoTitle === 'function' && customTitle
-        ? getCustomOrAutoTitle('')
-        : '';
+    const finalSubtitle = (typeof getCustomOrAutoSubtitle === 'function') 
+        ? getCustomOrAutoSubtitle(autoSubtitle) 
+        : autoSubtitle;
     
-    // Main title (if custom title is set)
-    if (finalTitle) {
-        svg.append("text")
-            .attr("x", containerWidth / 2)
-            .attr("y", 35)
-            .attr("text-anchor", "middle")
-            .attr("fill", "white")
-            .attr("font-size", "28px")
-            .attr("font-weight", "bold")
-            .text(finalTitle);
-    }
-    
-    // Subtitle with filter info (at top with MORE space below)
+    // Main title
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", finalTitle ? 70 : 35) // Move down if there's a main title
+        .attr("y", 40)
         .attr("text-anchor", "middle")
         .attr("fill", "white")
-        .attr("font-size", "20px")
-        .attr("font-weight", "600")
+        .attr("font-size", "32px")
+        .attr("font-weight", "bold")
+        .text(finalTitle);
+    
+    // Subtitle with filter info
+    svg.append("text")
+        .attr("x", containerWidth / 2)
+        .attr("y", 75)
+        .attr("text-anchor", "middle")
+        .attr("fill", "#aaa")
+        .attr("font-size", "18px")
+        .attr("font-weight", "500")
         .text(finalSubtitle);
     
     // Additional info line
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 65) // Closer together
+        .attr("y", 105)
         .attr("text-anchor", "middle")
         .attr("fill", "#888")
-        .attr("font-size", "15px")
+        .attr("font-size", "14px")
         .text(`${teams.length} teams shown • Hover over ribbons to see player movement`);
     
-    // Main group centered BELOW title (moved down even more)
+    // Main group centered BELOW title
     const centerY = titleHeight + (availableHeight / 2);
     const g = zoomGroup.append("g")
         .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
