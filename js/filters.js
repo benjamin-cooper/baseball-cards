@@ -270,13 +270,13 @@ function updateDiagramImmediate() {
     }
     
     // Get unique players and teams
-    // e.from = player, e.to = another player (teammate), e.team = team name
+    // In the data: e.from = player, e.to = same player (duplicate), e.team = team name
     const players = new Set();
     const teams = new Set();
     filteredEdges.forEach(e => {
-        players.add(e.from);
-        players.add(e.to);    // e.to is also a player (teammate)
-        teams.add(e.team);    // Only e.team is the team name
+        players.add(e.from);      // Player name
+        // e.to is the same as e.from, so don't add it (redundant)
+        teams.add(e.team);        // Team name
     });
     
     // Count unique teams per player (this is the real "connection" count)
@@ -309,12 +309,11 @@ function updateDiagramImmediate() {
     }
     
     // Recount after filtering
-    // e.from and e.to are both players, e.team is the team
+    // e.from = player, e.to = same player (duplicate), e.team = team name
     players.clear();
     teams.clear();
     filteredEdges.forEach(e => {
         players.add(e.from);
-        players.add(e.to);
         teams.add(e.team);
     });
     
@@ -322,18 +321,12 @@ function updateDiagramImmediate() {
     // Count how many qualified players each team has
     const teamQualifiedPlayerCount = {};
     filteredEdges.forEach(e => {
-        // Count both players in the connection
+        // Only count e.from since e.to is the same player
         if (qualifiedPlayers.has(e.from)) {
             if (!teamQualifiedPlayerCount[e.team]) {
                 teamQualifiedPlayerCount[e.team] = new Set();
             }
             teamQualifiedPlayerCount[e.team].add(e.from);
-        }
-        if (qualifiedPlayers.has(e.to)) {
-            if (!teamQualifiedPlayerCount[e.team]) {
-                teamQualifiedPlayerCount[e.team] = new Set();
-            }
-            teamQualifiedPlayerCount[e.team].add(e.to);
         }
     });
     
@@ -359,13 +352,12 @@ function updateDiagramImmediate() {
     }
     
     // Final recount after team filtering
-    // NOTE: Only e.from is a player, e.to and e.team are both teams
+    // e.from = player, e.to = same player (duplicate), e.team = team name
     players.clear();
     teams.clear();
     filteredEdges.forEach(e => {
-        players.add(e.from);  // Only e.from is a player
-        teams.add(e.team);
-        teams.add(e.to);      // e.to is also a team
+        players.add(e.from);
+        teams.add(e.team);      // ONLY add e.team, NOT e.to!
     });
     
     // Cache results for future use

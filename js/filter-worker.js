@@ -43,12 +43,11 @@ self.onmessage = function(e) {
         }
         
         // Get unique players and teams
-        // e.from and e.to are both players, e.team is the team
+        // e.from = player, e.to = same player (duplicate), e.team = team name
         const players = new Set();
         const teams = new Set();
         filteredEdges.forEach(e => {
             players.add(e.from);
-            players.add(e.to);
             teams.add(e.team);
         });
         
@@ -72,12 +71,11 @@ self.onmessage = function(e) {
         );
         
         // Recalculate after player connection filter
-        // e.from and e.to are both players, e.team is the team
+        // e.from = player, e.to = same player, e.team = team name
         const finalPlayers = new Set();
         const finalTeams = new Set();
         filteredEdges.forEach(e => {
             finalPlayers.add(e.from);
-            finalPlayers.add(e.to);
             finalTeams.add(e.team);
         });
         
@@ -85,18 +83,12 @@ self.onmessage = function(e) {
         // Count how many qualified players each team has
         const teamQualifiedPlayerCount = {};
         filteredEdges.forEach(e => {
-            // Count both players in the connection
+            // Only count e.from since e.to is the same player
             if (qualifiedPlayers.has(e.from)) {
                 if (!teamQualifiedPlayerCount[e.team]) {
                     teamQualifiedPlayerCount[e.team] = new Set();
                 }
                 teamQualifiedPlayerCount[e.team].add(e.from);
-            }
-            if (qualifiedPlayers.has(e.to)) {
-                if (!teamQualifiedPlayerCount[e.team]) {
-                    teamQualifiedPlayerCount[e.team] = new Set();
-                }
-                teamQualifiedPlayerCount[e.team].add(e.to);
             }
         });
         
@@ -113,12 +105,11 @@ self.onmessage = function(e) {
         );
         
         // Final recalculation
-        // e.from and e.to are both players, e.team is the team
+        // e.from = player, e.to = same player, e.team = team name  
         finalPlayers.clear();
         finalTeams.clear();
         filteredEdges.forEach(e => {
             finalPlayers.add(e.from);
-            finalPlayers.add(e.to);
             finalTeams.add(e.team);
         });
         
