@@ -24,7 +24,7 @@ let zoom;
 let labelsVisible = false;
 
 // Load all data files
-async function loadAllData() {
+async function loadData() {
     try {
         const loadingEl = document.querySelector('.loading');
         if (loadingEl) loadingEl.textContent = 'Loading data... 0%';
