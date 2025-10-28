@@ -359,6 +359,31 @@ function drawChordDiagram(container, teams, matrix) {
         return;
     }
     
+    // Function to adjust dark colors for better visibility on black background
+    function adjustColorForVisibility(hexColor) {
+        // Convert hex to RGB
+        const hex = hexColor.replace('#', '');
+        let r = parseInt(hex.substr(0, 2), 16);
+        let g = parseInt(hex.substr(2, 2), 16);
+        let b = parseInt(hex.substr(4, 2), 16);
+        
+        // Calculate perceived brightness (0-255)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        
+        // If color is too dark (brightness < 80), lighten it
+        if (brightness < 80) {
+            // Lighten by increasing RGB values proportionally
+            const factor = 80 / brightness;
+            r = Math.min(255, Math.round(r * factor * 1.5));
+            g = Math.min(255, Math.round(g * factor * 1.5));
+            b = Math.min(255, Math.round(b * factor * 1.5));
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        return hexColor;
+    }
+    
     container.innerHTML = '';
     
     const containerWidth = container.clientWidth;
@@ -380,11 +405,11 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("id", "chord-svg")
         .style("display", "block");
     
-    // Background
+    // Background - pure black for better team color visibility
     svg.append("rect")
         .attr("width", containerWidth)
         .attr("height", containerHeight)
-        .attr("fill", "#1a2332");
+        .attr("fill", "#000000");
     
     // Create group for zoomable content (title stays fixed, diagram zooms)
     const zoomGroup = svg.append("g");
@@ -515,9 +540,9 @@ function drawChordDiagram(container, teams, matrix) {
         return;
     }
     
-    // Team colors
+    // Team colors with visibility adjustment
     const teamColors = teams.map(team => 
-        teamColorsData.teamColors[team] || teamColorsData.defaultColor
+        adjustColorForVisibility(teamColorsData.teamColors[team] || teamColorsData.defaultColor)
     );
     
     // Tooltip

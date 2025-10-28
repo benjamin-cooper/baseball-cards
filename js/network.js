@@ -13,6 +13,31 @@ function updateNetwork(edges, players) {
     
     document.getElementById('network-container').innerHTML = '';
     
+    // Function to adjust dark colors for better visibility on black background
+    function adjustColorForVisibility(hexColor) {
+        // Convert hex to RGB
+        const hex = hexColor.replace('#', '');
+        let r = parseInt(hex.substr(0, 2), 16);
+        let g = parseInt(hex.substr(2, 2), 16);
+        let b = parseInt(hex.substr(4, 2), 16);
+        
+        // Calculate perceived brightness (0-255)
+        const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+        
+        // If color is too dark (brightness < 80), lighten it
+        if (brightness < 80) {
+            // Lighten by increasing RGB values proportionally
+            const factor = 80 / brightness; // How much to brighten
+            r = Math.min(255, Math.round(r * factor * 1.5));
+            g = Math.min(255, Math.round(g * factor * 1.5));
+            b = Math.min(255, Math.round(b * factor * 1.5));
+            
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        return hexColor;
+    }
+    
     // Warn if network is very large
     if (players.length > 500 || edges.length > 10000) {
         console.log(`⚠️ Large network: ${players.length} players, ${edges.length} connections`);
@@ -42,11 +67,11 @@ function updateNetwork(edges, players) {
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("id", "poster-svg");
     
-    // Set background color for better contrast
+    // Set background color to pure black for maximum color contrast
     svg.append("rect")
         .attr("width", width)
         .attr("height", height)
-        .attr("fill", "#1a2332");
+        .attr("fill", "#000000");
     
     g = svg.append("g");
     
@@ -220,7 +245,7 @@ function updateNetwork(edges, players) {
         .data(links)
         .join("line")
         .attr("class", "link")
-        .attr("stroke", d => teamColorsData.teamColors[d.team] || teamColorsData.defaultColor)
+        .attr("stroke", d => adjustColorForVisibility(teamColorsData.teamColors[d.team] || teamColorsData.defaultColor))
         .attr("stroke-width", tooManyLinks ? 1 : 3) // Thinner lines for many connections
         .attr("opacity", tooManyLinks ? 0.3 : 0.6)
         .on("mouseover", function(event, d) {
