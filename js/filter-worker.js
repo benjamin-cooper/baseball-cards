@@ -43,13 +43,13 @@ self.onmessage = function(e) {
         }
         
         // Get unique players and teams
-        // NOTE: e.from = player, e.to = team, e.team = team
+        // e.from and e.to are both players, e.team is the team
         const players = new Set();
         const teams = new Set();
         filteredEdges.forEach(e => {
-            players.add(e.from);  // Only e.from is a player
+            players.add(e.from);
+            players.add(e.to);
             teams.add(e.team);
-            teams.add(e.to);      // e.to is also a team
         });
         
         // Count unique teams per player
@@ -72,24 +72,31 @@ self.onmessage = function(e) {
         );
         
         // Recalculate after player connection filter
-        // NOTE: Only e.from is a player, e.to and e.team are teams
+        // e.from and e.to are both players, e.team is the team
         const finalPlayers = new Set();
         const finalTeams = new Set();
         filteredEdges.forEach(e => {
-            finalPlayers.add(e.from);  // Only e.from is a player
+            finalPlayers.add(e.from);
+            finalPlayers.add(e.to);
             finalTeams.add(e.team);
-            finalTeams.add(e.to);      // e.to is also a team
         });
         
         // ✨ NEW: Filter teams by minimum qualified players
         // Count how many qualified players each team has
         const teamQualifiedPlayerCount = {};
         filteredEdges.forEach(e => {
+            // Count both players in the connection
             if (qualifiedPlayers.has(e.from)) {
                 if (!teamQualifiedPlayerCount[e.team]) {
                     teamQualifiedPlayerCount[e.team] = new Set();
                 }
                 teamQualifiedPlayerCount[e.team].add(e.from);
+            }
+            if (qualifiedPlayers.has(e.to)) {
+                if (!teamQualifiedPlayerCount[e.team]) {
+                    teamQualifiedPlayerCount[e.team] = new Set();
+                }
+                teamQualifiedPlayerCount[e.team].add(e.to);
             }
         });
         
@@ -106,13 +113,13 @@ self.onmessage = function(e) {
         );
         
         // Final recalculation
-        // NOTE: Only e.from is a player, e.to and e.team are teams
+        // e.from and e.to are both players, e.team is the team
         finalPlayers.clear();
         finalTeams.clear();
         filteredEdges.forEach(e => {
-            finalPlayers.add(e.from);  // Only e.from is a player
+            finalPlayers.add(e.from);
+            finalPlayers.add(e.to);
             finalTeams.add(e.team);
-            finalTeams.add(e.to);      // e.to is also a team
         });
         
         // Send results back

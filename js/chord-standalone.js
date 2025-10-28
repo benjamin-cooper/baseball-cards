@@ -157,7 +157,11 @@ function generateAndDisplayChord() {
             if (!playerTeamCount[e.from]) {
                 playerTeamCount[e.from] = new Set();
             }
+            if (!playerTeamCount[e.to]) {
+                playerTeamCount[e.to] = new Set();
+            }
             playerTeamCount[e.from].add(e.team);
+            playerTeamCount[e.to].add(e.team);
         });
         
         // Only include players with minConnections+ teams
@@ -167,8 +171,10 @@ function generateAndDisplayChord() {
         
         console.log(`   Qualified players (${minConnections}+ teams): ${qualifiedPlayers.size} of ${Object.keys(playerTeamCount).length}`);
         
-        // Filter to only include qualified players
-        filteredEdges = filteredEdges.filter(e => qualifiedPlayers.has(e.from));
+        // Filter to only include edges where BOTH players are qualified
+        filteredEdges = filteredEdges.filter(e => 
+            qualifiedPlayers.has(e.from) && qualifiedPlayers.has(e.to)
+        );
         
         if (filteredEdges.length === 0) {
             console.warn('⚠️ No edges after filtering');
@@ -178,15 +184,19 @@ function generateAndDisplayChord() {
             return;
         }
         
-        // ✨ FIXED: Build team-to-team connection matrix (only counting actual PLAYERS, not teams)
+        // ✨ FIXED: Build team-to-team connection matrix
         const playerToTeams = {};
         
-        // Only track e.from (which is the player), NOT e.to (which is a team)
+        // Track teams for BOTH players in each edge
         filteredEdges.forEach(e => {
             if (!playerToTeams[e.from]) {
                 playerToTeams[e.from] = new Set();
             }
+            if (!playerToTeams[e.to]) {
+                playerToTeams[e.to] = new Set();
+            }
             playerToTeams[e.from].add(e.team);
+            playerToTeams[e.to].add(e.team);
         });
         
         console.log(`   Found ${Object.keys(playerToTeams).length} unique players`);

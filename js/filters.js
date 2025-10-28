@@ -270,14 +270,13 @@ function updateDiagramImmediate() {
     }
     
     // Get unique players and teams
-    // NOTE: e.from = player, e.to = team, e.team = team
-    // DO NOT add e.to to players set - it's a team, not a player!
+    // e.from = player, e.to = another player (teammate), e.team = team name
     const players = new Set();
     const teams = new Set();
     filteredEdges.forEach(e => {
-        players.add(e.from);  // Only e.from is a player
-        teams.add(e.team);    // e.team is the team
-        teams.add(e.to);      // e.to is also a team (redundant but safe)
+        players.add(e.from);
+        players.add(e.to);    // e.to is also a player (teammate)
+        teams.add(e.team);    // Only e.team is the team name
     });
     
     // Count unique teams per player (this is the real "connection" count)
@@ -310,24 +309,31 @@ function updateDiagramImmediate() {
     }
     
     // Recount after filtering
-    // NOTE: Only e.from is a player, e.to and e.team are both teams
+    // e.from and e.to are both players, e.team is the team
     players.clear();
     teams.clear();
     filteredEdges.forEach(e => {
-        players.add(e.from);  // Only e.from is a player
+        players.add(e.from);
+        players.add(e.to);
         teams.add(e.team);
-        teams.add(e.to);      // e.to is also a team
     });
     
     // ✨ NEW: Filter teams by minimum qualified players
     // Count how many qualified players each team has
     const teamQualifiedPlayerCount = {};
     filteredEdges.forEach(e => {
+        // Count both players in the connection
         if (qualifiedPlayers.has(e.from)) {
             if (!teamQualifiedPlayerCount[e.team]) {
                 teamQualifiedPlayerCount[e.team] = new Set();
             }
             teamQualifiedPlayerCount[e.team].add(e.from);
+        }
+        if (qualifiedPlayers.has(e.to)) {
+            if (!teamQualifiedPlayerCount[e.team]) {
+                teamQualifiedPlayerCount[e.team] = new Set();
+            }
+            teamQualifiedPlayerCount[e.team].add(e.to);
         }
     });
     
