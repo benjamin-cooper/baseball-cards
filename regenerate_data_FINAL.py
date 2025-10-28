@@ -116,57 +116,57 @@ def load_csv(filename):
     return cards
 
 def generate_network_data(cards):
-    """Generate network edges (player connections between teams) WITH YEARS"""
+    """Generate network edges in the format the app expects"""
     print("\n🔗 Generating network data...")
     
-    # Group cards by player and year
-    player_year_teams = defaultdict(lambda: defaultdict(set))
+    # Collect all unique years
+    all_years = set()
+    
+    # Group cards by player
+    player_info = defaultdict(lambda: {'teams': set(), 'years': set()})
     
     for card in cards:
         player = card['Player']
+        team = card['Team']
         try:
             year = int(card['Year'])
+            all_years.add(year)
+            player_info[player]['years'].add(year)
         except:
             year = None
-        team = card['Team']
         
-        if year and team:
-            player_year_teams[player][year].add(team)
+        if team:
+            player_info[player]['teams'].add(team)
     
     edges = []
     
-    # Create edges for each player
-    for player, year_teams in player_year_teams.items():
-        # Get all unique teams for this player across all years
-        all_teams = set()
-        for teams in year_teams.values():
-            all_teams.update(teams)
+    # Create edges: one edge per player-team combination
+    for player, info in player_info.items():
+        teams = list(info['teams'])
+        years = list(info['years'])
         
-        teams_list = sorted(list(all_teams))
+        # Get the most recent year for this player
+        player_year = max(years) if years else None
         
-        if len(teams_list) > 1:
-            # Create edges between all team pairs
-            for i in range(len(teams_list)):
-                for j in range(i + 1, len(teams_list)):
-                    # Find a year where this connection exists
-                    years_with_team1 = [y for y, teams in year_teams.items() if teams_list[i] in teams]
-                    years_with_team2 = [y for y, teams in year_teams.items() if teams_list[j] in teams]
-                    
-                    # Use the most recent year
-                    connection_year = None
-                    if years_with_team1 and years_with_team2:
-                        all_connection_years = sorted(set(years_with_team1 + years_with_team2))
-                        connection_year = all_connection_years[-1]
-                    
-                    edges.append({
-                        'player': player,
-                        'team1': teams_list[i],
-                        'team2': teams_list[j],
-                        'year': connection_year
-                    })
+        # Create one edge for each team the player was on
+        for team in teams:
+            edges.append({
+                'from': player,
+                'to': player,  # In this structure, from=to=player
+                'team': team,
+                'year': player_year
+            })
     
-    print(f"   Created {len(edges)} connections")
-    return edges
+    # Return proper format with years array and edges array
+    result = {
+        'years': sorted(list(all_years)),
+        'edges': edges
+    }
+    
+    print(f"   Created {len(edges)} player-team connections")
+    print(f"   {len(player_info)} unique players")
+    print(f"   Years range: {min(all_years) if all_years else 'N/A'} - {max(all_years) if all_years else 'N/A'}")
+    return result
 
 def generate_players_data(cards):
     """Generate player data"""
@@ -333,7 +333,8 @@ def main():
         print(f"   Total player cards: {len(cards)}")
         print(f"   Unique players: {len(players_data)}")
         print(f"   Unique teams: {teams_data['count']}")
-        print(f"   Player connections: {len(network_data)}")
+        print(f"   Years covered: {len(network_data['years'])}")
+        print(f"   Player connections: {len(network_data['edges'])}")
         
         # Check for Tampa Bay Rays
         tampa_players = [p for p in players_data if 'Tampa Bay Rays' in p['teams']]
