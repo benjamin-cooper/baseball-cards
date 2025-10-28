@@ -189,13 +189,15 @@ function setupPlayerSearch() {
             player.toLowerCase().includes(query)
         ).slice(0, 10);
         
+        console.log(`Search query: "${query}", Found ${matches.length} matches`);
+        
         if (matches.length === 0) {
             suggestionsDiv.style.display = 'none';
             return;
         }
         
         suggestionsDiv.innerHTML = matches.map(player => 
-            `<div class="suggestion-item" onclick="addPlayerFilter('${player.replace(/'/g, "\\'")}')">${player}</div>`
+            `<div class="player-suggestion" onclick="addPlayerFilter('${player.replace(/'/g, "\\'")}')">${player}</div>`
         ).join('');
         
         suggestionsDiv.style.display = 'block';
@@ -239,10 +241,10 @@ function updateSelectedPlayersDisplay() {
     }
     
     container.innerHTML = Array.from(selectedPlayers).map(player => 
-        `<span class="player-tag">
+        `<div class="player-chip">
             ${player}
-            <span class="remove-player" onclick="removePlayerFilter('${player.replace(/'/g, "\\'")}')">&times;</span>
-        </span>`
+            <span class="player-chip-remove" onclick="removePlayerFilter('${player.replace(/'/g, "\\'")}')">&times;</span>
+        </div>`
     ).join('');
 }
 
