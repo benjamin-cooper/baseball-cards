@@ -13,6 +13,12 @@ function updateNetwork(edges, players) {
     
     document.getElementById('network-container').innerHTML = '';
     
+    // Warn if network is very large
+    if (players.length > 500 || edges.length > 10000) {
+        console.log(`⚠️ Large network: ${players.length} players, ${edges.length} connections`);
+        console.log('💡 Tip: Use filters to reduce network size for better performance');
+    }
+    
     const width = 2400;
     const height = 1800;
     
@@ -66,22 +72,44 @@ function updateNetwork(edges, players) {
         year: e.year
     }));
     
-    // Create force simulation
-    simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(100).strength(0.5))
-        .force("charge", d3.forceManyBody().strength(-500))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(40));
+    // Show loading message with progress
+    const container = document.getElementById('network-container');
+    const loadingDiv = container.querySelector('.loading');
+    if (loadingDiv) {
+        loadingDiv.textContent = `Preparing network: ${nodes.length} players, ${links.length} connections...`;
+    }
     
-    // Draw links
+    // Create force simulation with optimized settings for faster loading
+    simulation = d3.forceSimulation(nodes)
+        .force("link", d3.forceLink(links).id(d => d.id).distance(80).strength(0.3))
+        .force("charge", d3.forceManyBody().strength(-300))
+        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("collision", d3.forceCollide().radius(35))
+        .alphaDecay(0.02)  // Faster convergence
+        .velocityDecay(0.3) // More friction = faster settling
+        .stop(); // Stop initially so we can warm it up
+    
+    // Pre-warm the simulation (run initial iterations without rendering)
+    const initialIterations = Math.min(100, Math.floor(5000 / nodes.length)); // Fewer iterations for large networks
+    for (let i = 0; i < initialIterations; ++i) {
+        simulation.tick();
+    }
+    
+    if (loadingDiv) {
+        loadingDiv.textContent = `Rendering visualization...`;
+    }
+    
+    // Draw links with optimization for large networks
+    const tooManyLinks = links.length > 5000;
+    
     link = g.append("g")
         .selectAll("line")
         .data(links)
         .join("line")
         .attr("class", "link")
         .attr("stroke", d => teamColorsData.teamColors[d.team] || teamColorsData.defaultColor)
-        .attr("stroke-width", 3)
-        .attr("opacity", 0.6)
+        .attr("stroke-width", tooManyLinks ? 1 : 3) // Thinner lines for many connections
+        .attr("opacity", tooManyLinks ? 0.3 : 0.6)
         .on("mouseover", function(event, d) {
             d3.select(this).classed("highlighted", true).attr("opacity", 1);
             tooltip
@@ -143,7 +171,7 @@ function updateNetwork(edges, players) {
             tooltip.style("opacity", 0);
         });
     
-    // Add labels
+    // Add labels - initially hidden for performance
     label = node.append("text")
         .attr("dx", 0)
         .attr("dy", 25)
@@ -153,10 +181,26 @@ function updateNetwork(edges, players) {
         .attr("stroke", "#000")
         .attr("stroke-width", 0.5)
         .attr("paint-order", "stroke")
+        .attr("class", "node-label")
+        .style("display", nodes.length > 100 ? "none" : "block") // Hide labels if too many nodes
         .text(d => d.name);
     
-    // Update positions on each tick
+    // Show labels on zoom or when fewer nodes
+    svg.on("zoom", function() {
+        const transform = d3.zoomTransform(this);
+        if (nodes.length > 100) {
+            // Only show labels when zoomed in
+            label.style("display", transform.k > 1.5 ? "block" : "none");
+        }
+    });
+    
+    // Update positions on each tick - throttled for performance
+    let tickCount = 0;
     simulation.on("tick", () => {
+        tickCount++;
+        // Only update every 2nd tick for smoother performance with many nodes
+        if (nodes.length > 200 && tickCount % 2 !== 0) return;
+        
         link
             .attr("x1", d => d.source.x)
             .attr("y1", d => d.source.y)
@@ -164,6 +208,14 @@ function updateNetwork(edges, players) {
             .attr("y2", d => d.target.y);
         
         node.attr("transform", d => `translate(${d.x},${d.y})`);
+    });
+    
+    // Restart simulation after pre-warming and rendering
+    simulation.restart();
+    
+    // Auto-stop after settling for better performance
+    simulation.on("end", () => {
+        console.log("✅ Network layout complete");
     });
     
     // Drag functions
