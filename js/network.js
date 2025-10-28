@@ -119,6 +119,26 @@ function updateNetwork(edges, players) {
     
     console.log(`🔗 Created ${links.length} player-to-player connections from ${edges.length} player-team edges`);
     
+    // ✨ FIX: Remove players with 0 connections
+    // Count connections per player
+    const playerConnectionCount = {};
+    links.forEach(link => {
+        playerConnectionCount[link.source] = (playerConnectionCount[link.source] || 0) + 1;
+        playerConnectionCount[link.target] = (playerConnectionCount[link.target] || 0) + 1;
+    });
+    
+    // Filter nodes to only include players with connections
+    const connectedPlayers = new Set(Object.keys(playerConnectionCount));
+    const filteredNodes = nodes.filter(node => connectedPlayers.has(node.id));
+    
+    const removedCount = nodes.length - filteredNodes.length;
+    if (removedCount > 0) {
+        console.log(`🧹 Removed ${removedCount} isolated players with 0 connections`);
+    }
+    
+    // Use filtered nodes for the rest of the visualization
+    const finalNodes = filteredNodes;
+    
     // Show loading message with progress
     const container = document.getElementById('network-container');
     const loadingDiv = container.querySelector('.loading');
@@ -127,7 +147,7 @@ function updateNetwork(edges, players) {
     }
     
     // Create force simulation with adaptive settings based on network size
-    const nodeCount = nodes.length;
+    const nodeCount = finalNodes.length;
     const linkCount = links.length;
     
     // Adaptive settings for better performance
@@ -158,7 +178,7 @@ function updateNetwork(edges, players) {
         console.log('⚡ Using balanced settings for medium network');
     }
     
-    simulation = d3.forceSimulation(nodes)
+    simulation = d3.forceSimulation(finalNodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(linkStrength))
         .force("charge", d3.forceManyBody().strength(chargeStrength))
         .force("center", d3.forceCenter(width / 2, height / 2))
@@ -222,7 +242,7 @@ function updateNetwork(edges, players) {
     // Draw nodes
     node = g.append("g")
         .selectAll("g")
-        .data(nodes)
+        .data(finalNodes)
         .join("g")
         .attr("class", "node")
         .call(d3.drag()
@@ -271,7 +291,7 @@ function updateNetwork(edges, players) {
         .attr("dx", 0)
         .attr("dy", 25)
         .attr("text-anchor", "middle")
-        .attr("font-size", players.length < 50 ? "14px" : "12px")
+        .attr("font-size", finalNodes.length < 50 ? "14px" : "12px")
         .attr("fill", "white")
         .attr("stroke", "#000")
         .attr("stroke-width", 0.5)
@@ -297,7 +317,7 @@ function updateNetwork(edges, players) {
     simulation.on("tick", () => {
         tickCount++;
         // Only update every 2nd tick for smoother performance with many nodes
-        if (nodes.length > 200 && tickCount % 2 !== 0) return;
+        if (finalNodes.length > 200 && tickCount % 2 !== 0) return;
         
         // Use requestAnimationFrame for smoother rendering
         if (animationFrame) return; // Already scheduled
