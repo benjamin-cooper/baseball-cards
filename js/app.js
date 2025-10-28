@@ -353,6 +353,44 @@ function createUI() {
                 </button>
             </div>
             
+            <!-- Node Controls -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin: 20px 0; padding: 15px; background: rgba(255, 255, 255, 0.05); border-radius: 10px; gap: 15px; flex-wrap: wrap;">
+                <div style="color: #aaa; font-size: 1em;">
+                    🎨 <strong>Visualization:</strong> Adjust node visibility and size
+                </div>
+                <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <!-- Toggle Nodes Button -->
+                    <button class="quick-filter-btn" id="toggle-nodes-btn" onclick="toggleNodes()" style="margin: 0;">
+                        ⚪ Hide Nodes
+                    </button>
+                    
+                    <!-- Node Size Control -->
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,0.1); padding: 8px 15px; border-radius: 20px;">
+                        <label for="node-size-slider" style="color: white; font-weight: 600; font-size: 14px;">
+                            Node Size:
+                        </label>
+                        <input type="range" 
+                               id="node-size-slider" 
+                               min="1" 
+                               max="20" 
+                               value="10" 
+                               oninput="updateNodeSize(this.value)"
+                               style="width: 120px; cursor: pointer;">
+                        <span id="node-size-value" 
+                              style="color: white; 
+                                     font-weight: bold; 
+                                     min-width: 25px; 
+                                     text-align: center; 
+                                     background: rgba(255,255,255,0.2); 
+                                     padding: 4px 8px; 
+                                     border-radius: 10px; 
+                                     font-size: 13px;">
+                            10
+                        </span>
+                    </div>
+                </div>
+            </div>
+            
             <div id="network-container">
                 <div class="loading">Select at least one year to view the network...</div>
             </div>

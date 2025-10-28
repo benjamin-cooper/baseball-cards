@@ -1,6 +1,10 @@
 // Network visualization using D3.js
 
 let currentZoom = null;
+let nodesVisible = true;  // Control node visibility
+let nodeSize = 10;        // Control node size (radius)
+let nodesVisible = true;  // Control node visibility
+let nodeSize = 10;        // Control node size (radius)
 
 // Initialize the network visualization
 function initializeNetwork() {
@@ -276,10 +280,11 @@ function updateNetwork(edges, players) {
             .on("end", dragended));
     
     node.append("circle")
-        .attr("r", 10)
+        .attr("r", nodeSize)
         .attr("fill", d => selectedPlayers.has(d.id) ? "#FF6B6B" : "#4CAF50")
         .attr("stroke", "white")
         .attr("stroke-width", 3)
+        .style("display", nodesVisible ? "block" : "none")  // Control visibility
         .on("mouseover", function(event, d) {
             // Highlight connected links
             link.classed("highlighted", function(l) {
@@ -473,4 +478,87 @@ function fitToScreen() {
         );
     
     showNotification('📐 View centered and fitted!', 2000);
+}
+// Toggle node visibility
+function toggleNodes() {
+    nodesVisible = !nodesVisible;
+    
+    if (!node) {
+        alert('Please select at least one year first!');
+        return;
+    }
+    
+    node.selectAll("circle")
+        .style("display", nodesVisible ? "block" : "none");
+    
+    // Also hide labels when nodes are hidden
+    if (!nodesVisible && label) {
+        label.style("display", "none");
+        // Update label button if it exists
+        const labelBtn = document.getElementById('toggle-labels-btn');
+        if (labelBtn && labelsVisible) {
+            labelsVisible = false;
+            labelBtn.textContent = '🏷️ Show Names';
+            labelBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        }
+    }
+    
+    // Update button
+    const btn = document.getElementById('toggle-nodes-btn');
+    if (btn) {
+        if (nodesVisible) {
+            btn.textContent = '⚫ Hide Nodes';
+            btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else {
+            btn.textContent = '⚪ Show Nodes';
+            btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+        }
+    }
+    
+    showNotification(nodesVisible ? '⚪ Nodes shown' : '⚫ Nodes hidden', 1500);
+}
+
+// Update node size
+function updateNodeSize(size) {
+    nodeSize = parseInt(size);
+    
+    if (!node) return;
+    
+    node.selectAll("circle")
+        .attr("r", nodeSize);
+    
+    // Update label position based on node size
+    if (label) {
+        label.attr("dy", nodeSize + 15);
+    }
+    
+    // Update slider value display if it exists
+    const sizeValue = document.getElementById('node-size-value');
+    if (sizeValue) {
+        sizeValue.textContent = nodeSize;
+    }
+}
+
+// Toggle node visibility
+function toggleNodes() {
+    nodesVisible = !nodesVisible;
+    
+    if (!node) return;
+    
+    node.selectAll("circle")
+        .style("display", nodesVisible ? "block" : "none");
+    
+    // Update button text
+    const btn = document.getElementById('toggle-nodes-btn');
+    if (btn) {
+        if (nodesVisible) {
+            btn.innerHTML = '⚪ Hide Nodes';
+            btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+        } else {
+            btn.innerHTML = '⚫ Show Nodes';
+            btn.style.background = 'linear-gradient(135deg, #764ba2 0%, #667eea 100%)';
+        }
+    }
+    
+    console.log(`🔘 Nodes ${nodesVisible ? 'shown' : 'hidden'}`);
 }
