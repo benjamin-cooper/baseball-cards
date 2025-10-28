@@ -5,30 +5,55 @@ let chordButtonInitialized = false;
 
 // Get chord button
 function getChordButton() {
-    return document.getElementById('chord-diagram-btn');
+    const btn = document.getElementById('chord-diagram-btn');
+    console.log('🔍 Looking for chord button:', btn ? 'Found!' : 'Not found');
+    return btn;
 }
 
 // Initialize button (called after DOM is ready)
 function initChordButton() {
-    if (chordButtonInitialized) return;
+    console.log('🔧 Attempting to initialize chord button...');
+    
+    if (chordButtonInitialized) {
+        console.log('✅ Already initialized');
+        return;
+    }
     
     const btn = getChordButton();
     if (btn) {
-        btn.onclick = showChordDiagram;
+        btn.onclick = function(e) {
+            console.log('🖱️ Chord button clicked!');
+            showChordDiagram();
+        };
         chordButtonInitialized = true;
-        console.log('✅ Chord diagram button initialized');
+        console.log('✅ Chord diagram button initialized successfully');
     } else {
+        console.log('⏳ Button not ready yet, will retry in 100ms...');
         // Button not ready yet, try again in a moment
         setTimeout(initChordButton, 100);
     }
 }
 
 // Auto-initialize when script loads
-setTimeout(initChordButton, 100);
+console.log('📜 chord-redesigned.js loaded');
+setTimeout(() => {
+    console.log('⏰ Starting initialization timer...');
+    initChordButton();
+}, 100);
 
 // Toggle between network and chord diagram
 function showChordDiagram() {
+    console.log('🎯 showChordDiagram() called');
+    console.log('   selectedYears.size:', selectedYears ? selectedYears.size : 'undefined');
+    
+    if (typeof selectedYears === 'undefined') {
+        console.error('❌ selectedYears is undefined!');
+        alert('⚠️ Data not loaded yet. Please wait a moment and try again.');
+        return;
+    }
+    
     if (selectedYears.size === 0) {
+        console.log('⚠️ No years selected');
         alert('⚠️ Please select at least one year first!');
         return;
     }
@@ -39,20 +64,28 @@ function showChordDiagram() {
     // Update button appearance
     const btn = getChordButton();
     if (btn) {
+        console.log('   Updating button text to "Back to Network"');
         btn.innerHTML = `
             <span class="plot-icon">🔙</span>
             <span class="plot-title">Back to Network</span>
             <span class="plot-desc">Return to player connection view</span>
         `;
         // Re-attach click handler after innerHTML change
-        btn.onclick = returnToNetwork;
+        btn.onclick = function(e) {
+            console.log('🖱️ Back button clicked!');
+            returnToNetwork();
+        };
     }
     
     // Hide the "Show Names" control (not relevant for chord)
     const namesControl = document.querySelector('.instructions').nextElementSibling;
-    if (namesControl) namesControl.style.display = 'none';
+    if (namesControl) {
+        namesControl.style.display = 'none';
+        console.log('   Hidden "Show Names" control');
+    }
     
     // Generate and display chord diagram
+    console.log('   Calling generateAndDisplayChord()...');
     generateAndDisplayChord();
 }
 
