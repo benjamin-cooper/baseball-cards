@@ -1,4 +1,5 @@
 // URL State Management - Save and load filters from URL
+// DISABLED per user request - uncomment initializeURLState() in optimizations.js to re-enable
 
 // Compression helper (simple base64 encoding)
 function compressState(obj) {
@@ -146,8 +147,19 @@ function hookURLUpdates() {
     };
 }
 
-// Initialize URL state management
+// Initialize URL state management - DISABLED
 function initializeURLState() {
+    console.log('ℹ️ URL state management disabled per user request');
+    
+    // Still add share button (but it won't auto-sync)
+    // Uncomment the next line if you want to remove the share button too:
+    // return;
+    
+    // Share button still works manually
+    setTimeout(addShareButton, 1000);
+    
+    /* DISABLED - Uncomment to re-enable URL auto-syncing:
+    
     // Try to load from URL first
     const loaded = loadFromURL();
     
@@ -179,4 +191,5 @@ function initializeURLState() {
     }, 1000);
     
     console.log('🔗 URL state management initialized');
+    */
 }
