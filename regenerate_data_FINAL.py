@@ -137,19 +137,19 @@ def generate_network_data(cards):
     
     edges = []
     
-    # Create edges: one edge per player-team combination
-    # Use the most recent year for that specific player-team combo
+    # Create edges: one edge per player-team-YEAR combination
+    # This gives full accuracy - if a player was on a team for 5 years, 
+    # we create 5 edges (one per year)
     for player, team_years in player_team_years.items():
         for team, years in team_years.items():
-            # Use the most recent year this player was on this team
-            most_recent_year = max(years) if years else None
-            
-            edges.append({
-                'from': player,
-                'to': player,  # In this structure, from=to=player
-                'team': team,
-                'year': most_recent_year
-            })
+            # Create one edge for EACH year the player was on this team
+            for year in years:
+                edges.append({
+                    'from': player,
+                    'to': player,  # In this structure, from=to=player
+                    'team': team,
+                    'year': year
+                })
     
     # Return proper format with years array and edges array
     result = {
@@ -157,9 +157,18 @@ def generate_network_data(cards):
         'edges': edges
     }
     
-    print(f"   Created {len(edges)} player-team connections")
+    print(f"   Created {len(edges)} player-team-year connections")
     print(f"   {len(player_team_years)} unique players")
     print(f"   Years range: {min(all_years) if all_years else 'N/A'} - {max(all_years) if all_years else 'N/A'}")
+    
+    # Show example
+    if player_team_years:
+        example_player = list(player_team_years.keys())[0]
+        example_teams = player_team_years[example_player]
+        print(f"\n   Example - {example_player}:")
+        for team, years in sorted(example_teams.items()):
+            print(f"   - {team}: {sorted(years)}")
+    
     return result
 
 def generate_players_data(cards):
