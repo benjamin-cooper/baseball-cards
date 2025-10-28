@@ -1,11 +1,30 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
 
 let chordMode = false;
+let chordButtonInitialized = false;
 
 // Get chord button
 function getChordButton() {
     return document.getElementById('chord-diagram-btn');
 }
+
+// Initialize button (called after DOM is ready)
+function initChordButton() {
+    if (chordButtonInitialized) return;
+    
+    const btn = getChordButton();
+    if (btn) {
+        btn.onclick = showChordDiagram;
+        chordButtonInitialized = true;
+        console.log('✅ Chord diagram button initialized');
+    } else {
+        // Button not ready yet, try again in a moment
+        setTimeout(initChordButton, 100);
+    }
+}
+
+// Auto-initialize when script loads
+setTimeout(initChordButton, 100);
 
 // Toggle between network and chord diagram
 function showChordDiagram() {
@@ -60,15 +79,6 @@ function returnToNetwork() {
     // Redraw network
     updateDiagram();
 }
-
-// Initialize chord button on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const btn = getChordButton();
-    if (btn) {
-        btn.onclick = showChordDiagram;
-        console.log('✅ Chord diagram button initialized');
-    }
-});
 
 // Generate and display chord diagram
 function generateAndDisplayChord() {
