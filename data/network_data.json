@@ -1113,12 +1113,6 @@
       "year": 1989
     },
     {
-      "from": "Tim Raines / Ryne Sandberg / Keith Hernandez",
-      "to": "Tim Raines / Ryne Sandberg / Keith Hernandez",
-      "team": "Montreal Expos / Chicago Cubs / New York Mets",
-      "year": 1986
-    },
-    {
       "from": "Ken Phelps",
       "to": "Ken Phelps",
       "team": "Seattle Mariners",
@@ -6561,12 +6555,6 @@
       "year": 1991
     },
     {
-      "from": "Jack Savage / Todd Simmons",
-      "to": "Jack Savage / Todd Simmons",
-      "team": "Los Angeles Dodgers / San Diego Padres",
-      "year": 1988
-    },
-    {
       "from": "Andy Allanson",
       "to": "Andy Allanson",
       "team": "Cleveland Indians",
@@ -9741,12 +9729,6 @@
       "year": 1989
     },
     {
-      "from": "Mark Davis / Dwight Gooden",
-      "to": "Mark Davis / Dwight Gooden",
-      "team": "San Diego Padres / New York Mets",
-      "year": 1989
-    },
-    {
       "from": "Brad Komminsk",
       "to": "Brad Komminsk",
       "team": "Cleveland Indians",
@@ -12426,12 +12408,6 @@
       "from": "Guillermo Hernandez",
       "to": "Guillermo Hernandez",
       "team": "Detroit Tigers",
-      "year": 1990
-    },
-    {
-      "from": "George Canale / Kevin Maas",
-      "to": "George Canale / Kevin Maas",
-      "team": "Milwaukee Brewers / New York Yankees",
       "year": 1990
     },
     {
@@ -15777,18 +15753,6 @@
       "year": 1992
     },
     {
-      "from": "Roberto Alomar / Sandy Alomar",
-      "to": "Roberto Alomar / Sandy Alomar",
-      "team": "Toronto Blue Jays / Anaheim Angels",
-      "year": 1992
-    },
-    {
-      "from": "David Justice / Willie Stargell",
-      "to": "David Justice / Willie Stargell",
-      "team": "Atlanta Braves / Pittsburgh Pirates",
-      "year": 1992
-    },
-    {
       "from": "Duane ward",
       "to": "Duane ward",
       "team": "Toronto Blue Jays",
@@ -15876,12 +15840,6 @@
       "from": "Buck Rodgers",
       "to": "Buck Rodgers",
       "team": "Anaheim Angels",
-      "year": 1992
-    },
-    {
-      "from": "Rico Brogna / John Jaha / Ryan Klesko / Dave Staton",
-      "to": "Rico Brogna / John Jaha / Ryan Klesko / Dave Staton",
-      "team": "Detroit Tigers / Milwaukee Brewers / Atlanta Braves / San Diego Padres",
       "year": 1992
     },
     {
@@ -16119,12 +16077,6 @@
       "year": 1993
     },
     {
-      "from": "Carlos Baerga / Ryne Sandberg",
-      "to": "Carlos Baerga / Ryne Sandberg",
-      "team": "Cleveland Indians / Chicago Cubs",
-      "year": 1993
-    },
-    {
       "from": "John Valentin",
       "to": "John Valentin",
       "team": "Boston Red Sox",
@@ -16200,18 +16152,6 @@
       "from": "Jeff Nelson",
       "to": "Jeff Nelson",
       "team": "Seattle Mariners",
-      "year": 1993
-    },
-    {
-      "from": "Sparky Anderson / Art Howe",
-      "to": "Sparky Anderson / Art Howe",
-      "team": "Detroit Tigers / Houston Astros",
-      "year": 1993
-    },
-    {
-      "from": "Jim Leyland / Tony La Russa",
-      "to": "Jim Leyland / Tony La Russa",
-      "team": "Pittsburgh Pirates / Oakland Athletics",
       "year": 1993
     },
     {
@@ -16482,12 +16422,6 @@
       "from": "Rube Lutzke",
       "to": "Rube Lutzke",
       "team": "Cleveland Indians",
-      "year": 1994
-    },
-    {
-      "from": "Harry Coveleski / Stan Coveleski",
-      "to": "Harry Coveleski / Stan Coveleski",
-      "team": "Detroit Tigers / Washington Senators",
       "year": 1994
     },
     {
@@ -16923,12 +16857,6 @@
       "year": 1997
     },
     {
-      "from": "John Nicholson / Andy Prater",
-      "to": "John Nicholson / Andy Prater",
-      "team": "Colorado Rockies / Pittsburgh Pirates",
-      "year": 1997
-    },
-    {
       "from": "Rocky Coppinger",
       "to": "Rocky Coppinger",
       "team": "Baltimore Orioles",
@@ -17250,12 +17178,6 @@
       "from": "Matt Holiday / Jeff Winchester",
       "to": "Matt Holiday / Jeff Winchester",
       "team": "Colorado Rockies",
-      "year": 1999
-    },
-    {
-      "from": "Adam Everett / Chip Ambres",
-      "to": "Adam Everett / Chip Ambres",
-      "team": "Boston Red Sox / Florida Marlins",
       "year": 1999
     },
     {

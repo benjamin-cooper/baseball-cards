@@ -81,6 +81,10 @@ def should_skip_card(card):
     if team.lower() == 'checklist':
         return True
     
+    # Skip if team contains "/" (compound teams like "Detroit Tigers / Milwaukee Brewers")
+    if '/' in team:
+        return True
+    
     return False
 
 def load_csv(filename):
@@ -103,7 +107,10 @@ def load_csv(filename):
             cards.append(row)
     
     print(f"   Found {len(cards)} valid player cards")
-    print(f"   Skipped {skipped} non-player cards (Checklist, Team Leaders, blanks)")
+    print(f"   Skipped {skipped} cards:")
+    print(f"      - Non-player cards (Checklist, Team Leaders)")
+    print(f"      - Compound teams (e.g. 'Tigers / Brewers / Braves')")
+    print(f"      - Blank teams/players")
     
     # Show normalization results
     if TEAM_ALIASES:
