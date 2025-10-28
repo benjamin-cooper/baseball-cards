@@ -98,8 +98,11 @@ function showChordDiagram() {
 
 // Generate chord diagram
 function generateChordDiagram(container) {
+    console.log('🔄 Starting chord diagram generation...');
+    
     // Filter edges by selected years
     let filteredEdges = networkData.edges.filter(e => selectedYears.has(e.year));
+    console.log(`📊 Filtered edges: ${filteredEdges.length}`);
     
     // Apply player and team filters
     if (selectedPlayers.size > 0) {
@@ -112,6 +115,7 @@ function generateChordDiagram(container) {
                 !selectedPlayers.has(e.from) && !selectedPlayers.has(e.to)
             );
         }
+        console.log(`📊 After player filter: ${filteredEdges.length}`);
     }
     
     if (selectedTeams.size > 0) {
@@ -120,9 +124,11 @@ function generateChordDiagram(container) {
         } else {
             filteredEdges = filteredEdges.filter(e => !selectedTeams.has(e.team));
         }
+        console.log(`📊 After team filter: ${filteredEdges.length}`);
     }
     
     if (filteredEdges.length === 0) {
+        console.warn('⚠️ No filtered edges found');
         container.innerHTML = `
             <div style="text-align: center; padding: 100px 40px; color: white;">
                 <h2 style="font-size: 2em; margin-bottom: 20px;">📊 No Connections Found</h2>
@@ -248,17 +254,33 @@ function generateChordDiagram(container) {
 
 // Draw the chord diagram using D3
 function drawChordDiagram(container, teams, matrix) {
+    // Check if D3 is available
+    if (typeof d3 === 'undefined') {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 100px; color: white;">
+                <h2>❌ Error Loading Chord Diagram</h2>
+                <p>D3.js library not found. Please refresh the page.</p>
+            </div>
+        `;
+        return;
+    }
+    
     const width = Math.min(container.clientWidth - 40, 1200);
     const height = Math.min(container.clientHeight - 40, 1200);
     const outerRadius = Math.min(width, height) * 0.5 - 100;
     const innerRadius = outerRadius - 30;
+    
+    // Clear container first
+    container.innerHTML = '';
     
     const svg = d3.select(container)
         .append("svg")
         .attr("width", width)
         .attr("height", height)
         .attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("id", "chord-svg");
+        .attr("id", "chord-svg")
+        .style("display", "block")
+        .style("margin", "0 auto");
     
     // Set background
     svg.append("rect")
@@ -282,25 +304,42 @@ function drawChordDiagram(container, teams, matrix) {
     const ribbon = d3.ribbon()
         .radius(innerRadius);
     
-    const chords = chord(matrix);
+    let chords;
+    try {
+        chords = chord(matrix);
+    } catch (e) {
+        console.error('Error creating chord layout:', e);
+        container.innerHTML = `
+            <div style="text-align: center; padding: 100px; color: white;">
+                <h2>❌ Error Creating Diagram</h2>
+                <p>Could not process team connection data.</p>
+                <p style="color: #aaa; font-size: 0.9em;">Error: ${e.message}</p>
+            </div>
+        `;
+        return;
+    }
     
     // Create color map
     const teamColors = teams.map(team => 
         teamColorsData.teamColors[team] || teamColorsData.defaultColor
     );
     
-    // Create tooltip
-    const tooltip = d3.select("body")
-        .append("div")
-        .attr("class", "chord-tooltip")
-        .style("position", "absolute")
-        .style("background", "rgba(0, 0, 0, 0.9)")
-        .style("color", "white")
-        .style("padding", "10px 15px")
-        .style("border-radius", "8px")
-        .style("pointer-events", "none")
-        .style("opacity", 0)
-        .style("z-index", 10002);
+    // Create tooltip - attach to body to avoid z-index issues
+    let tooltip = d3.select("#chord-tooltip");
+    if (tooltip.empty()) {
+        tooltip = d3.select("body")
+            .append("div")
+            .attr("id", "chord-tooltip")
+            .style("position", "absolute")
+            .style("background", "rgba(0, 0, 0, 0.9)")
+            .style("color", "white")
+            .style("padding", "10px 15px")
+            .style("border-radius", "8px")
+            .style("pointer-events", "none")
+            .style("opacity", 0)
+            .style("z-index", 20000)
+            .style("font-size", "14px");
+    }
     
     // Draw outer arcs (team segments)
     const group = g.append("g")
