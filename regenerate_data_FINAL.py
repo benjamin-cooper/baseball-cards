@@ -109,8 +109,10 @@ def load_csv(filename):
     print(f"   Found {len(cards)} valid player cards")
     print(f"   Skipped {skipped} cards:")
     print(f"      - Non-player cards (Checklist, Team Leaders)")
-    print(f"      - Compound teams (e.g. 'Tigers / Brewers / Braves')")
+    print(f"      - Compound teams (e.g. 'Tigers / Brewers')")
     print(f"      - Blank teams/players")
+    print(f"\n   Note: All teams (MLB, minor league, international) are included")
+    print(f"         Only teams with player connections will appear in visualizations")
     
     # Show normalization results
     if TEAM_ALIASES:
@@ -235,59 +237,154 @@ def generate_teams_data(cards):
     return teams
 
 def generate_team_colors(teams_list):
-    """Generate team colors"""
+    """Generate team colors - each team gets a unique color"""
     print("\n🎨 Generating team colors...")
     
-    # MLB team colors
+    # MLB team colors - UNIQUE colors for each team (no duplicates!)
     colors = {
-        'Anaheim Angels': '#BA0021',
-        'Arizona Diamondbacks': '#A71930',
-        'Atlanta Braves': '#CE1141',
-        'Baltimore Orioles': '#DF4601',
+        # American League East
+        'Baltimore Orioles': '#FF6600',
         'Boston Red Sox': '#BD3039',
-        'Brooklyn Dodgers': '#005A9C',
-        'Chicago Cubs': '#0E3386',
-        'Chicago White Sox': '#27251F',
-        'Cincinnati Reds': '#C6011F',
-        'Cincinnati Redlegs': '#C6011F',
-        'Cleveland Indians': '#E31937',
-        'Colorado Rockies': '#33006F',
-        'Detroit Tigers': '#0C2C56',
-        'Florida Marlins': '#00A3E0',
-        'Houston Astros': '#EB6E1F',
-        'Kansas City Royals': '#004687',
-        'Los Angeles Dodgers': '#005A9C',
-        'Miami Marlins': '#00A3E0',
-        'Milwaukee Brewers': '#12284B',
-        'Minnesota Twins': '#002B5C',
-        'Montreal Expos': '#003087',
-        'New York Giants': '#FD5A1E',
-        'New York Mets': '#002D72',
-        'New York Yankees': '#003087',
-        'Oakland Athletics': '#003831',
-        'Philadelphia Athletics': '#003831',
-        'Philadelphia Phillies': '#E81828',
-        'Pittsburgh Pirates': '#27251F',
-        'San Diego Padres': '#2F241D',
-        'San Francisco Giants': '#FD5A1E',
-        'Seattle Mariners': '#0C2C56',
-        'St. Louis Cardinals': '#C41E3A',
-        'Tampa Bay Rays': '#092C5C',
-        'Texas Rangers': '#003278',
+        'New York Yankees': '#1C3A70',
+        'Tampa Bay Rays': '#00A3E0',
         'Toronto Blue Jays': '#134A8E',
+        
+        # American League Central
+        'Chicago White Sox': '#FFFFFF',
+        'Cleveland Indians': '#E31937',
+        'Detroit Tigers': '#FA4616',
+        'Kansas City Royals': '#004687',
+        'Minnesota Twins': '#D31145',
+        
+        # American League West
+        'Anaheim Angels': '#BA0021',
+        'Oakland Athletics': '#00FF00',
+        'Seattle Mariners': '#00C4B4',
+        'Texas Rangers': '#003278',
+        
+        # National League East
+        'Atlanta Braves': '#CE1141',
+        'Florida Marlins': '#00CED1',
+        'Miami Marlins': '#FF6E1B',
+        'Montreal Expos': '#4A90E2',
+        'New York Mets': '#FF8C42',
+        'Philadelphia Phillies': '#E81828',
         'Washington Nationals': '#AB0003',
-        'Washington Senators': '#AB0003',
+        'Washington Senators': '#C41E3A',
+        
+        # National League Central
+        'Chicago Cubs': '#0E3386',
+        'Cincinnati Reds': '#FF3333',
+        'Cincinnati Redlegs': '#C6011F',
+        'Houston Astros': '#EB6E1F',
+        'Milwaukee Brewers': '#FFC72C',
+        'Pittsburgh Pirates': '#FFD700',
+        'St. Louis Cardinals': '#C41E3A',
+        
+        # National League West
+        'Arizona Diamondbacks': '#A71930',
+        'Colorado Rockies': '#9370DB',
+        'Los Angeles Dodgers': '#005A9C',
+        'San Diego Padres': '#FEC325',
+        'San Francisco Giants': '#FD5A1E',
+        
+        # Historical
+        'Brooklyn Dodgers': '#4682B4',
+        'New York Giants': '#FF6347',
+        'Philadelphia Athletics': '#00C851',
+        
+        # Minor League (unique bright colors)
+        'Burlington Braves': '#90EE90',
+        'Charleston Rainbows': '#FF69B4',
+        'Charleston Wheelers': '#DDA0DD',
+        'Clinton Giants': '#FFB6C1',
+        'Hagerstown Suns': '#FFEB3B',
+        'Huntsville Stars': '#87CEEB',
+        'Memphis Chicks': '#F0E68C',
+        'Nashville Sounds': '#98FB98',
+        'Rancho Cucamonga Quakes': '#DEB887',
+        'Riverside Red Wave': '#FA8072',
+        'South Bend White Sox': '#F8F8FF',
+        'Winston-Salem Warthogs': '#D2691E',
+        
+        # Japanese Teams
+        'Chunichi Dragons': '#DC143C',
+        'Hiroshima Toyo Carp': '#FF4500',
+        'Kinetsu Buffaloes': '#4682B4',
+        'Nippon-Ham Fighters': '#32CD32',
     }
+    
+    # Check for duplicate colors
+    color_counts = {}
+    for team, color in colors.items():
+        if color in color_counts:
+            color_counts[color].append(team)
+        else:
+            color_counts[color] = [team]
+    
+    duplicates = {color: teams for color, teams in color_counts.items() if len(teams) > 1}
+    
+    if duplicates:
+        print(f"\n   ⚠️  WARNING: Found {len(duplicates)} duplicate colors:")
+        for color, teams in duplicates.items():
+            print(f"      {color}: {', '.join(teams)}")
+        print(f"\n   🔧 Fixing duplicates with unique colors...")
+        
+        # Fix duplicates by generating unique colors
+        used_colors = set(colors.values())
+        
+        # Generate a palette of distinct colors
+        def generate_unique_color(used):
+            """Generate a unique bright color"""
+            import random
+            attempts = 0
+            while attempts < 100:
+                # Generate bright colors (high saturation/value)
+                hue = random.randint(0, 360)
+                sat = random.randint(70, 100)
+                val = random.randint(60, 100)
+                
+                # Convert HSV to RGB (simple approximation)
+                h = hue / 60.0
+                c = (val / 100.0) * (sat / 100.0)
+                x = c * (1 - abs(h % 2 - 1))
+                m = (val / 100.0) - c
+                
+                if h < 1: r, g, b = c, x, 0
+                elif h < 2: r, g, b = x, c, 0
+                elif h < 3: r, g, b = 0, c, x
+                elif h < 4: r, g, b = 0, x, c
+                elif h < 5: r, g, b = x, 0, c
+                else: r, g, b = c, 0, x
+                
+                r, g, b = int((r + m) * 255), int((g + m) * 255), int((b + m) * 255)
+                color = f'#{r:02X}{g:02X}{b:02X}'
+                
+                if color not in used:
+                    return color
+                attempts += 1
+            
+            return f'#{random.randint(128, 255):02X}{random.randint(128, 255):02X}{random.randint(128, 255):02X}'
+        
+        # Fix each duplicate set
+        for color, teams in duplicates.items():
+            # Keep first team with original color, reassign others
+            for team in teams[1:]:
+                new_color = generate_unique_color(used_colors)
+                colors[team] = new_color
+                used_colors.add(new_color)
+                print(f"      ✓ {team}: {color} → {new_color}")
     
     team_colors = {
         'teamColors': {},
-        'defaultColor': '#666666'
+        'defaultColor': '#888888'
     }
     
     for team in teams_list:
-        team_colors['teamColors'][team] = colors.get(team, '#666666')
+        team_colors['teamColors'][team] = colors.get(team, '#888888')
     
-    print(f"   Assigned colors to {len(team_colors['teamColors'])} teams")
+    print(f"   ✅ Assigned unique colors to {len(team_colors['teamColors'])} teams")
+    print(f"   ✅ {len(set(team_colors['teamColors'].values()))} unique colors used")
     
     return team_colors
 

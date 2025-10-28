@@ -273,6 +273,43 @@ function createUI() {
                         </button>
                     </div>
                 </div>
+                
+                <div class="filter-section">
+                    <label>✏️ CUSTOM TITLES (Optional):</label>
+                    <div class="title-editor">
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <div style="flex: 1; min-width: 300px;">
+                                <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Main Title:</label>
+                                <input 
+                                    type="text" 
+                                    id="custom-title" 
+                                    class="player-search" 
+                                    placeholder="Leave blank for auto-title"
+                                    style="width: 100%;">
+                            </div>
+                            <div style="flex: 1; min-width: 300px;">
+                                <label style="font-size: 12px; color: #aaa; display: block; margin-bottom: 5px;">Subtitle:</label>
+                                <input 
+                                    type="text" 
+                                    id="custom-subtitle" 
+                                    class="player-search" 
+                                    placeholder="Leave blank for auto-subtitle"
+                                    style="width: 100%;">
+                            </div>
+                        </div>
+                        <div class="quick-filters" style="margin-top: 10px;">
+                            <button class="quick-filter-btn" onclick="applyCustomTitle()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                                ✓ Apply Custom Titles
+                            </button>
+                            <button class="quick-filter-btn" onclick="clearCustomTitles()">
+                                🔄 Reset to Auto
+                            </button>
+                        </div>
+                        <div style="font-size: 11px; color: #666; margin-top: 8px; font-style: italic;">
+                            💡 Tip: Custom titles appear on chord diagram and when you export images
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="stats">
@@ -813,6 +850,40 @@ function toggleLabels() {
     if (label) {
         label.style('display', labelsVisible ? 'block' : 'none');
     }
+}
+
+// Custom title management
+let customTitle = '';
+let customSubtitle = '';
+
+function applyCustomTitle() {
+    customTitle = document.getElementById('custom-title').value.trim();
+    customSubtitle = document.getElementById('custom-subtitle').value.trim();
+    
+    console.log('📝 Custom titles applied:', {customTitle, customSubtitle});
+    
+    // Regenerate the current view to apply titles
+    updateDiagram();
+}
+
+function clearCustomTitles() {
+    customTitle = '';
+    customSubtitle = '';
+    document.getElementById('custom-title').value = '';
+    document.getElementById('custom-subtitle').value = '';
+    
+    console.log('🔄 Custom titles cleared');
+    
+    // Regenerate the current view to reset titles
+    updateDiagram();
+}
+
+function getCustomOrAutoTitle(autoTitle) {
+    return customTitle || autoTitle;
+}
+
+function getCustomOrAutoSubtitle(autoSubtitle) {
+    return customSubtitle || autoSubtitle;
 }
 
 // Start the application when DOM is ready

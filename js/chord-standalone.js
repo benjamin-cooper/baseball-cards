@@ -315,6 +315,38 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("height", containerHeight)
         .attr("fill", "#1a2332");
     
+    // Create group for zoomable content (title stays fixed, diagram zooms)
+    const zoomGroup = svg.append("g");
+    
+    // Add zoom behavior
+    const zoom = d3.zoom()
+        .scaleExtent([0.5, 3])
+        .on("zoom", (event) => {
+            zoomGroup.attr("transform", event.transform);
+        });
+    
+    svg.call(zoom);
+    
+    // Add zoom controls
+    const zoomControls = d3.select(container)
+        .append("div")
+        .attr("class", "zoom-controls");
+    
+    zoomControls.append("button")
+        .attr("class", "zoom-btn")
+        .html("+")
+        .on("click", () => svg.transition().call(zoom.scaleBy, 1.3));
+    
+    zoomControls.append("button")
+        .attr("class", "zoom-btn")
+        .html("−")
+        .on("click", () => svg.transition().call(zoom.scaleBy, 0.7));
+    
+    zoomControls.append("button")
+        .attr("class", "zoom-btn")
+        .html("⟲")
+        .on("click", () => svg.transition().call(zoom.transform, d3.zoomIdentity));
+    
     // Dynamic subtitle based on filters (NO main title)
     let subtitleParts = [];
     
@@ -344,15 +376,36 @@ function drawChordDiagram(container, teams, matrix) {
         ? subtitleParts.join(' • ') 
         : `${teams.length} teams • Player movement between teams`;
     
+    // Use custom titles if set, otherwise use auto-generated
+    const finalSubtitle = typeof getCustomOrAutoSubtitle === 'function' 
+        ? getCustomOrAutoSubtitle(subtitle) 
+        : subtitle;
+    
+    const finalTitle = typeof getCustomOrAutoTitle === 'function' && customTitle
+        ? getCustomOrAutoTitle('')
+        : '';
+    
+    // Main title (if custom title is set)
+    if (finalTitle) {
+        svg.append("text")
+            .attr("x", containerWidth / 2)
+            .attr("y", 35)
+            .attr("text-anchor", "middle")
+            .attr("fill", "white")
+            .attr("font-size", "28px")
+            .attr("font-weight", "bold")
+            .text(finalTitle);
+    }
+    
     // Subtitle with filter info (at top with MORE space below)
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 35) // Closer to top
+        .attr("y", finalTitle ? 70 : 35) // Move down if there's a main title
         .attr("text-anchor", "middle")
         .attr("fill", "white")
         .attr("font-size", "20px")
         .attr("font-weight", "600")
-        .text(subtitle);
+        .text(finalSubtitle);
     
     // Additional info line
     svg.append("text")
@@ -365,7 +418,7 @@ function drawChordDiagram(container, teams, matrix) {
     
     // Main group centered BELOW title (moved down even more)
     const centerY = titleHeight + (availableHeight / 2);
-    const g = svg.append("g")
+    const g = zoomGroup.append("g")
         .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
     
     // Create chord layout
