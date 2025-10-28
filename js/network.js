@@ -112,6 +112,7 @@ function updateNetwork(edges, players) {
     let chargeStrength = -300;
     let alphaDecay = 0.02;
     let velocityDecay = 0.3;
+    let collisionRadius = 35;
     
     if (nodeCount > 500) {
         // Large network - optimize for speed
@@ -120,6 +121,7 @@ function updateNetwork(edges, players) {
         chargeStrength = -200;
         alphaDecay = 0.05; // Faster settling
         velocityDecay = 0.4; // More friction
+        collisionRadius = 30;
         console.log('🚀 Using optimized settings for large network');
     } else if (nodeCount > 200) {
         // Medium network - balanced
@@ -128,6 +130,7 @@ function updateNetwork(edges, players) {
         chargeStrength = -250;
         alphaDecay = 0.03;
         velocityDecay = 0.35;
+        collisionRadius = 32;
         console.log('⚡ Using balanced settings for medium network');
     }
     
@@ -135,8 +138,12 @@ function updateNetwork(edges, players) {
         .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(linkStrength))
         .force("charge", d3.forceManyBody().strength(chargeStrength))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collision", d3.forceCollide().radius(35))
-        .force("radial", d3.forceRadial(Math.min(width, height) / 3, width / 2, height / 2).strength(0.05))
+        .force("collision", d3.forceCollide().radius(collisionRadius))
+        // Add stronger centering force to pull outliers in
+        .force("x", d3.forceX(width / 2).strength(0.1))
+        .force("y", d3.forceY(height / 2).strength(0.1))
+        // Stronger radial force to keep nodes from spreading too far
+        .force("radial", d3.forceRadial(Math.min(width, height) / 3.5, width / 2, height / 2).strength(0.15))
         .alphaDecay(alphaDecay)
         .velocityDecay(velocityDecay)
         .stop(); // Stop initially so we can warm it up
@@ -233,8 +240,8 @@ function updateNetwork(edges, players) {
             tooltip.style("opacity", 0);
         });
     
-    // Add labels - show for small networks, hide for large
-    const showLabelsInitially = players.length <= 100;
+    // Add labels - HIDE by default, show when zoomed in or toggled
+    const showLabelsInitially = false; // Changed from conditional to always false
     
     label = node.append("text")
         .attr("dx", 0)
@@ -246,16 +253,16 @@ function updateNetwork(edges, players) {
         .attr("stroke-width", 0.5)
         .attr("paint-order", "stroke")
         .attr("class", "node-label")
-        .style("display", showLabelsInitially || labelsVisible ? "block" : "none")
+        .style("display", "none") // Always hide initially
         .text(d => d.name);
     
-    // Update global label visibility state
-    if (showLabelsInitially && !labelsVisible) {
-        labelsVisible = true;
+    // Keep global state as false
+    if (labelsVisible) {
+        labelsVisible = false;
         const btn = document.getElementById('toggle-labels-btn');
         if (btn) {
-            btn.textContent = '🏷️ Hide Names';
-            btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+            btn.textContent = '🏷️ Show Names';
+            btn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
         }
     }
     
@@ -311,7 +318,7 @@ function updateNetwork(edges, players) {
     }
 }
 
-// Fit network to screen
+// Fit network to screen with smart centering
 function fitToScreen() {
     if (!svg || !simulation) {
         alert('Please select at least one year first!');
@@ -332,6 +339,40 @@ function fitToScreen() {
         if (node.y > maxY) maxY = node.y;
     });
     
+    // Calculate center of mass (weighted by connections) for better centering
+    let centerX = 0, centerY = 0, totalWeight = 0;
+    const links = simulation.force("link").links();
+    const connectionCounts = {};
+    
+    // Count connections per node
+    links.forEach(link => {
+        const sourceId = typeof link.source === 'object' ? link.source.id : link.source;
+        const targetId = typeof link.target === 'object' ? link.target.id : link.target;
+        connectionCounts[sourceId] = (connectionCounts[sourceId] || 0) + 1;
+        connectionCounts[targetId] = (connectionCounts[targetId] || 0) + 1;
+    });
+    
+    // Calculate weighted center
+    nodes.forEach(node => {
+        const weight = Math.max(1, connectionCounts[node.id] || 1);
+        centerX += node.x * weight;
+        centerY += node.y * weight;
+        totalWeight += weight;
+    });
+    
+    centerX /= totalWeight;
+    centerY /= totalWeight;
+    
+    // Use weighted center for better visual balance
+    // But also consider outliers by using a blend
+    const blendFactor = 0.7; // 70% weighted center, 30% geometric center
+    const geometricCenterX = (minX + maxX) / 2;
+    const geometricCenterY = (minY + maxY) / 2;
+    
+    const finalCenterX = centerX * blendFactor + geometricCenterX * (1 - blendFactor);
+    const finalCenterY = centerY * blendFactor + geometricCenterY * (1 - blendFactor);
+    
+    // Calculate bounding box around the weighted center with padding
     const width = maxX - minX;
     const height = maxY - minY;
     const padding = 100;
@@ -340,16 +381,18 @@ function fitToScreen() {
     const svgWidth = svgElement.clientWidth;
     const svgHeight = svgElement.clientHeight;
     
+    // Calculate scale to fit with padding
     const scale = Math.min(
         svgWidth / (width + padding * 2),
-        svgHeight / (height + padding * 2)
+        svgHeight / (height + padding * 2),
+        2.5 // Max zoom to prevent over-zooming on small networks
     );
     
-    const centerX = (minX + maxX) / 2;
-    const centerY = (minY + maxY) / 2;
+    // Calculate translation to center the weighted center point
+    const translateX = svgWidth / 2 - finalCenterX * scale;
+    const translateY = svgHeight / 2 - finalCenterY * scale;
     
-    const translateX = svgWidth / 2 - centerX * scale;
-    const translateY = svgHeight / 2 - centerY * scale;
+    console.log(`📐 Fit to screen: center (${Math.round(finalCenterX)}, ${Math.round(finalCenterY)}), scale ${scale.toFixed(2)}x`);
     
     svg.transition()
         .duration(750)
@@ -359,4 +402,6 @@ function fitToScreen() {
                 .translate(translateX, translateY)
                 .scale(scale)
         );
+    
+    showNotification('📐 View centered and fitted!', 2000);
 }

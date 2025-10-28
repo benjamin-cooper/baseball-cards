@@ -130,8 +130,10 @@ function formatState(state) {
     return parts.join(', ') || 'empty state';
 }
 
-// Add undo/redo buttons to UI
+// Add undo/redo buttons to UI (DISABLED - not needed per user request)
 function addHistoryButtons() {
+    // Commented out - user doesn't want these buttons
+    /*
     const quickFilters = document.querySelector('.quick-filters');
     if (!quickFilters) return;
     
@@ -160,6 +162,8 @@ function addHistoryButtons() {
         quickFilters.insertBefore(redoBtn, quickFilters.firstChild);
         quickFilters.insertBefore(undoBtn, redoBtn);
     }
+    */
+    console.log('ℹ️ Undo/Redo buttons disabled (use Ctrl+Z/Y for keyboard shortcuts)');
 }
 
 // Hook into filter changes to save history

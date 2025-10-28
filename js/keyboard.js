@@ -79,11 +79,6 @@ function handleKeyboardShortcut(e) {
             }
             break;
             
-        case 'v': // V: Toggle visualization
-        case 'V':
-            toggleVisualization();
-            break;
-            
         case '?': // ?: Show help
             showKeyboardHelp();
             break;
@@ -143,7 +138,7 @@ function showKeyboardHelp() {
             <div>Toggle player name labels</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">R</div>
-            <div>Reset view / Fit to screen</div>
+            <div>Center view (smart fit to main cluster)</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">Ctrl+F</div>
             <div>Focus player search</div>
@@ -152,16 +147,13 @@ function showKeyboardHelp() {
             <div>Zoom in / Zoom out</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">Ctrl+Z</div>
-            <div>Undo last filter change</div>
+            <div>Undo last filter change (no button, keyboard only)</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">Ctrl+Y</div>
-            <div>Redo filter change</div>
+            <div>Redo filter change (no button, keyboard only)</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">Shift+C</div>
             <div>Clear all filters</div>
-            
-            <div style="text-align: right; color: #4CAF50; font-weight: bold;">V</div>
-            <div>Toggle between network/chord diagram</div>
             
             <div style="text-align: right; color: #4CAF50; font-weight: bold;">?</div>
             <div>Show this help (press again to close)</div>
@@ -266,16 +258,8 @@ function showNotification(message, duration = 2000) {
     }, duration);
 }
 
-// Add keyboard shortcut button to UI
+// Add keyboard shortcut button to UI (now in app.js directly)
 function addKeyboardShortcutButton() {
-    const btn = document.createElement('button');
-    btn.className = 'quick-filter-btn';
-    btn.innerHTML = '⌨️ Shortcuts (?)';
-    btn.onclick = showKeyboardHelp;
-    
-    // Add to quick filters section
-    const quickFilters = document.querySelector('.quick-filters');
-    if (quickFilters) {
-        quickFilters.insertBefore(btn, quickFilters.firstChild);
-    }
+    // No longer needed - button is directly in the UI HTML
+    console.log('ℹ️ Keyboard shortcut button already in UI');
 }
