@@ -182,6 +182,62 @@ function createUI() {
                         <button class="export-btn" onclick="exportAsPNG()">📸 Download PNG</button>
                     </div>
                 </div>
+                
+                <div class="filter-section">
+                    <label>✨ SUGGESTED PLOTS - One-Click Stories:</label>
+                    <div class="suggested-plots">
+                        <button class="plot-btn" onclick="loadSuggestedPlot('elite13')">
+                            <span class="plot-icon">👑</span>
+                            <span class="plot-title">Elite 13</span>
+                            <span class="plot-desc">Most connected players (100+)</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('halloffame')">
+                            <span class="plot-icon">🏛️</span>
+                            <span class="plot-title">Hall of Famers</span>
+                            <span class="plot-desc">Known HOF inductees</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('allstars')">
+                            <span class="plot-icon">🌟</span>
+                            <span class="plot-title">All-Stars</span>
+                            <span class="plot-desc">Multiple All-Star selections</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('1992boom')">
+                            <span class="plot-icon">💥</span>
+                            <span class="plot-title">1992 Boom</span>
+                            <span class="plot-desc">Rico Brogna's 75-connection year</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('indians90s')">
+                            <span class="plot-icon">⚾</span>
+                            <span class="plot-title">90s Indians Dynasty</span>
+                            <span class="plot-desc">Cleveland's golden era</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('alrivalry')">
+                            <span class="plot-icon">🔥</span>
+                            <span class="plot-title">AL East Rivalry</span>
+                            <span class="plot-desc">Yankees vs Red Sox vs Orioles</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('starpower')">
+                            <span class="plot-icon">⭐</span>
+                            <span class="plot-title">Star Power</span>
+                            <span class="plot-desc">50+ connection superstars</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('crosstown')">
+                            <span class="plot-icon">🏙️</span>
+                            <span class="plot-title">Crosstown Classics</span>
+                            <span class="plot-desc">Cubs vs White Sox, Mets vs Yankees</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('jeffrobinson')">
+                            <span class="plot-icon">🎖️</span>
+                            <span class="plot-title">Jeff Robinson</span>
+                            <span class="plot-desc">The most connected player (155!)</span>
+                        </button>
+                        <button class="plot-btn" onclick="loadSuggestedPlot('westcoast')">
+                            <span class="plot-icon">🌊</span>
+                            <span class="plot-title">West Coast Battle</span>
+                            <span class="plot-desc">Dodgers, Giants, Athletics rivalry</span>
+                        </button>
+                    </div>
+                </div>
             </div>
             
             <div class="stats">
@@ -253,140 +309,168 @@ function setupPlayerSearch() {
                 return;
             }
             
-            suggestionsDiv.innerHTML = matches.map(player => 
-                `<div class="player-suggestion" onclick="addPlayerFilter('${player.replace(/'/g, "\\'")}')">${player}</div>`
-            ).join('');
-            
-            suggestionsDiv.style.display = 'block';
-        }, 200);
-    });
-    
-    // Close suggestions when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.player-search-container')) {
-            suggestionsDiv.style.display = 'none';
-        }
-    });
-}
-
-// Team search functionality
-function setupTeamSearch() {
-    const searchInput = document.getElementById('team-search');
-    const suggestionsDiv = document.getElementById('team-suggestions');
-    let searchTimeout;
-    
-    searchInput.addEventListener('input', (e) => {
-        const query = e.target.value.toLowerCase().trim();
-        
-        if (query.length < 2) {
-            suggestionsDiv.style.display = 'none';
-            return;
-        }
-        
-        // Debounce search - wait 200ms after typing stops
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-            const matches = teamsData.teams.filter(team => 
-                team.toLowerCase().includes(query)
-            ).slice(0, 10);
-            
-            console.log(`Team search query: "${query}", Found ${matches.length} matches`);
-            
-            if (matches.length === 0) {
-                suggestionsDiv.style.display = 'none';
-                return;
-            }
-            
-            suggestionsDiv.innerHTML = matches.map(team => 
-                `<div class="player-suggestion" onclick="addTeamFilter('${team.replace(/'/g, "\\'")}')">${team}</div>`
-            ).join('');
-            
-            suggestionsDiv.style.display = 'block';
-        }, 200);
-    });
-    
-    // Close suggestions when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!e.target.closest('.player-search-container')) {
-            suggestionsDiv.style.display = 'none';
-        }
-    });
-}
-
-// Add player to filter
-function addPlayerFilter(player) {
-    selectedPlayers.add(player);
-    updateSelectedPlayersDisplay();
-    document.getElementById('player-search').value = '';
-    document.getElementById('player-suggestions').style.display = 'none';
-}
-
-// Remove player from filter
-function removePlayerFilter(player) {
-    selectedPlayers.delete(player);
-    updateSelectedPlayersDisplay();
-}
-
-// Clear all player filters
-function clearPlayerFilter() {
+  
+// Load suggested plot presets
+function loadSuggestedPlot(plotId) {
+    // Clear existing filters first
+    selectedYears.clear();
     selectedPlayers.clear();
-    updateSelectedPlayersDisplay();
-    updateDiagram();
-}
-
-// Update selected players display
-function updateSelectedPlayersDisplay() {
-    const container = document.getElementById('selected-players');
-    if (selectedPlayers.size === 0) {
-        container.innerHTML = '';
-        return;
-    }
-    
-    container.innerHTML = Array.from(selectedPlayers).map(player => 
-        `<div class="player-chip">
-            ${player}
-            <span class="player-chip-remove" onclick="removePlayerFilter('${player.replace(/'/g, "\\'")}')">&times;</span>
-        </div>`
-    ).join('');
-}
-
-// Set filter mode
-function setFilterMode(mode) {
-    playerFilterMode = mode;
-    document.getElementById('mode-show').classList.toggle('active', mode === 'show');
-    document.getElementById('mode-hide').classList.toggle('active', mode === 'hide');
-    
-    if (selectedPlayers.size > 0) {
-        updateDiagram();
-    }
-}
-
-// Add team to filter
-function addTeamFilter(team) {
-    selectedTeams.add(team);
-    updateSelectedTeamsDisplay();
-    document.getElementById('team-search').value = '';
-    document.getElementById('team-suggestions').style.display = 'none';
-}
-
-// Remove team from filter
-function removeTeamFilter(team) {
-    selectedTeams.delete(team);
-    updateSelectedTeamsDisplay();
-}
-
-// Clear all team filters
-function clearTeamFilter() {
     selectedTeams.clear();
+    
+    const plots = {
+        elite13: {
+            name: "Elite 13",
+            years: 'all',
+            minConnections: 100,
+            players: [],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        halloffame: {
+            name: "Hall of Fame Inductees",
+            years: 'all',
+            minConnections: 1,
+            players: [
+                'Jim Thome', 'Roberto Alomar', 'Kenny Lofton', 'Don Mattingly',
+                'Darryl Strawberry', 'Dave Winfield', 'Wade Boggs',
+                'Kirby Puckett', 'Ryne Sandberg', 'Ozzie Smith', 'Gary Carter',
+                'Dennis Eckersley', 'Rickey Henderson', 'Paul Molitor', 'Eddie Murray',
+                'Nolan Ryan', 'George Brett', 'Robin Yount', 'Andre Dawson',
+                'Tim Raines', 'Barry Larkin', 'Frank Thomas', 'Jeff Bagwell',
+                'Craig Biggio', 'Ivan Rodriguez', 'Mike Piazza'
+            ],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        allstars: {
+            name: "All-Star Selections",
+            years: 'all',
+            minConnections: 1,
+            players: [
+                'Jim Thome', 'Kenny Lofton', 'Manny Ramirez', 'Roberto Alomar',
+                'Sandy Alomar, Jr', 'Albert Belle', 'Carlos Baerga', 'Omar Vizquel',
+                'Don Mattingly', 'Darryl Strawberry', 'Wade Boggs', 'Frank Thomas',
+                'Will Clark', 'Matt Williams', 'Barry Bonds', 'Randy Johnson',
+                'Greg Maddux', 'Pedro Martinez', 'Chipper Jones', 'Derek Jeter',
+                'David Ortiz', 'Mariano Rivera', 'Ivan Rodriguez', 'Mike Piazza'
+            ],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        '1992boom': {
+            name: "1992 Boom",
+            years: [1992],
+            minConnections: 1,
+            players: ['Rico Brogna'],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        indians90s: {
+            name: "90s Indians Dynasty",
+            years: [1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+            minConnections: 5,
+            players: [],
+            teams: ['Cleveland Indians'],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        alrivalry: {
+            name: "AL East Rivalry",
+            years: 'all',
+            minConnections: 10,
+            players: [],
+            teams: ['New York Yankees', 'Boston Red Sox', 'Baltimore Orioles'],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        starpower: {
+            name: "Star Power",
+            years: 'all',
+            minConnections: 50,
+            players: [],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        crosstown: {
+            name: "Crosstown Classics",
+            years: 'all',
+            minConnections: 5,
+            players: [],
+            teams: ['Chicago Cubs', 'Chicago White Sox', 'New York Mets', 'New York Yankees'],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        jeffrobinson: {
+            name: "Jeff Robinson - #1 Most Connected",
+            years: 'all',
+            minConnections: 1,
+            players: ['Jeff Robinson'],
+            teams: [],
+            playerMode: 'show',
+            teamMode: 'show'
+        },
+        westcoast: {
+            name: "West Coast Battle",
+            years: [1988, 1989, 1990, 1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999],
+            minConnections: 10,
+            players: [],
+            teams: ['Los Angeles Dodgers', 'San Francisco Giants', 'Oakland Athletics'],
+            playerMode: 'show',
+            teamMode: 'show'
+        }
+    };
+    
+    const plot = plots[plotId];
+    if (!plot) return;
+    
+    console.log(`🎬 Loading suggested plot: ${plot.name}`);
+    
+    // Set years
+    if (plot.years === 'all') {
+        networkData.years.forEach(year => selectedYears.add(year));
+    } else {
+        plot.years.forEach(year => selectedYears.add(year));
+    }
+    
+    // Set players
+    plot.players.forEach(player => selectedPlayers.add(player));
+    playerFilterMode = plot.playerMode;
+    
+    // Set teams
+    plot.teams.forEach(team => selectedTeams.add(team));
+    teamFilterMode = plot.teamMode;
+    
+    // Set min connections
+    minConnections = plot.minConnections;
+    document.getElementById('connection-input').value = plot.minConnections;
+    document.getElementById('connection-slider').value = plot.minConnections;
+    document.getElementById('connection-value').textContent = `${plot.minConnections}+ connection${plot.minConnections === 1 ? '' : 's'}`;
+    
+    // Update UI
+    updateSelectedYearsDisplay();
+    updateSelectedPlayersDisplay();
     updateSelectedTeamsDisplay();
+    
+    // Update mode buttons
+    document.getElementById('mode-show').classList.toggle('active', playerFilterMode === 'show');
+    document.getElementById('mode-hide').classList.toggle('active', playerFilterMode === 'hide');
+    document.getElementById('team-mode-show').classList.toggle('active', teamFilterMode === 'show');
+    document.getElementById('team-mode-hide').classList.toggle('active', teamFilterMode === 'hide');
+    
+    // Load the network
     updateDiagram();
+    
+    // Show notification
+    setTimeout(() => {
+        alert(`✨ Loaded: ${plot.name}\n\nExplore this curated view of your collection!`);
+    }, 100);
 }
-
-// Update selected teams display
-function updateSelectedTeamsDisplay() {
-    const container = document.getElementById('selected-teams');
-    if (selectedTeams.size === 0) {
-        container.innerHTML = '';
+';
         return;
     }
     
