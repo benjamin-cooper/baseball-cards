@@ -47,14 +47,30 @@ async function loadAllData() {
 
         console.log('✅ Data loaded successfully');
         
-        // Handle both array and object formats for network data
+        // ⚠️ NORMALIZE DATA FORMAT - Convert array to object if needed
         if (Array.isArray(networkData)) {
-            // New format: just an array of edges
-            console.log(`Edges: ${networkData.length}`);
-        } else {
-            // Old format: object with years and edges
-            console.log(`Years: ${networkData.years?.length || 0}`);
-            console.log(`Edges: ${networkData.edges?.length || 0}`);
+            console.warn('⚠️ Converting old networkData array format to new object format');
+            console.warn('   Please regenerate data files with regenerate_data_FINAL.py');
+            
+            // Extract years from edges
+            const yearSet = new Set();
+            networkData.forEach(edge => {
+                if (edge.year) yearSet.add(edge.year);
+            });
+            
+            // Convert to new format
+            networkData = {
+                years: Array.from(yearSet).sort((a, b) => a - b),
+                edges: networkData
+            };
+            
+            console.log(`   Converted: ${networkData.years.length} years, ${networkData.edges.length} edges`);
+        }
+        
+        // Log data summary
+        if (networkData.years && networkData.edges) {
+            console.log(`Years: ${networkData.years.length}`);
+            console.log(`Edges: ${networkData.edges.length}`);
         }
         
         console.log(`Players: ${Array.isArray(playersData) ? playersData.length : playersData.count}`);
@@ -739,7 +755,9 @@ function loadSuggestedPlot(plotId) {
     
     // Set years
     if (plot.years === 'all') {
-        networkData.years.forEach(year => selectedYears.add(year));
+        if (networkData.years) {
+            networkData.years.forEach(year => selectedYears.add(year));
+        }
     } else {
         plot.years.forEach(year => selectedYears.add(year));
     }
