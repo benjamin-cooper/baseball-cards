@@ -23,7 +23,26 @@ function initializeFilters() {
 // Setup year selector buttons
 function setupYearSelector() {
     const selector = document.getElementById('year-selector');
-    networkData.years.forEach(year => {
+    
+    // Handle both array and object formats
+    let years = [];
+    if (Array.isArray(networkData)) {
+        // Old format: array of edges, extract years from edges
+        const yearSet = new Set();
+        networkData.forEach(edge => {
+            if (edge.year) yearSet.add(edge.year);
+        });
+        years = Array.from(yearSet).sort((a, b) => a - b);
+        console.log('⚠️ Using old networkData format (array). Please regenerate data files.');
+    } else if (networkData.years) {
+        // New format: object with years array
+        years = networkData.years;
+    } else {
+        console.error('❌ Invalid networkData format');
+        return;
+    }
+    
+    years.forEach(year => {
         const btn = document.createElement('button');
         btn.className = 'year-btn';
         btn.textContent = year;
@@ -44,7 +63,7 @@ function setupConnectionSlider() {
         const value = parseInt(this.value);
         input.value = value;
         minConnections = value;
-        valueDisplay.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;
+        valueDisplay.textContent = `${value}+ team${value === 1 ? '' : 's'}`;
         updateDiagram();
     });
     
@@ -78,7 +97,9 @@ function selectYear(year) {
 
 // Select all years
 function selectAllYears() {
-    selectedYears = new Set(networkData.years);
+    if (networkData && networkData.years) {
+        selectedYears = new Set(networkData.years);
+    }
     updateYearButtons();
     updateDiagram();
 }
@@ -93,11 +114,13 @@ function clearSelection() {
 // Select a decade of years
 function selectDecade(startYear) {
     selectedYears.clear();
-    networkData.years.forEach(year => {
-        if (Math.floor(year / 10) * 10 === startYear) {
-            selectedYears.add(year);
-        }
-    });
+    if (networkData && networkData.years) {
+        networkData.years.forEach(year => {
+            if (Math.floor(year / 10) * 10 === startYear) {
+                selectedYears.add(year);
+            }
+        });
+    }
     updateYearButtons();
     updateDiagram();
 }
@@ -255,21 +278,27 @@ function updateDiagramImmediate() {
         teams.add(e.team);
     });
     
-    // Count connections per player
-    const connectionCount = {};
+    // Count unique teams per player (this is the real "connection" count)
+    const playerTeamCount = {};
     filteredEdges.forEach(e => {
-        connectionCount[e.from] = (connectionCount[e.from] || 0) + 1;
-        connectionCount[e.to] = (connectionCount[e.to] || 0) + 1;
+        if (!playerTeamCount[e.from]) {
+            playerTeamCount[e.from] = new Set();
+        }
+        playerTeamCount[e.from].add(e.team);
     });
     
     // Filter by minimum connections
+    // A player needs minConnections TEAMS to be included
+    // (e.g., minConnections=2 means player must have played for 2+ teams)
     const qualifiedPlayers = new Set(
-        Object.keys(connectionCount).filter(p => connectionCount[p] >= minConnections)
+        Object.keys(playerTeamCount).filter(p => playerTeamCount[p].size >= minConnections)
     );
     
-    // Filter edges again by qualified players
+    console.log(`   Players with ${minConnections}+ teams: ${qualifiedPlayers.size}`);
+    
+    // Filter edges to only include qualified players
     filteredEdges = filteredEdges.filter(e => 
-        qualifiedPlayers.has(e.from) && qualifiedPlayers.has(e.to)
+        qualifiedPlayers.has(e.from)
     );
     
     if (filteredEdges.length === 0) {
