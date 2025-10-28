@@ -54,6 +54,10 @@ function updateNetwork(edges, players) {
         .scaleExtent([0.1, 4])
         .on("zoom", (event) => {
             g.attr("transform", event.transform);
+            // Update LOD based on zoom level
+            if (typeof updateLOD === 'function') {
+                updateLOD(event.transform.k);
+            }
         });
     
     svg.call(currentZoom);
