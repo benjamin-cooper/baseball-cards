@@ -22,12 +22,24 @@ function setupYearSelector() {
 // Setup connection slider
 function setupConnectionSlider() {
     const slider = document.getElementById('connection-slider');
-    const valueDisplay = document.getElementById('slider-value');
+    const input = document.getElementById('connection-input');
+    const valueDisplay = document.getElementById('connection-value');
     
+    // Slider changes update input
     slider.addEventListener('input', function() {
-        minConnections = parseInt(this.value);
-        valueDisplay.textContent = minConnections + '+ connections';
+        const value = parseInt(this.value);
+        input.value = value;
+        minConnections = value;
+        valueDisplay.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;
         updateDiagram();
+    });
+    
+    // Input changes update slider (if within slider range)
+    input.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (!isNaN(value) && value >= 1 && value <= 50) {
+            slider.value = value;
+        }
     });
 }
 

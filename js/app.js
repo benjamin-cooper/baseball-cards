@@ -88,63 +88,75 @@ function createUI() {
             <div class="subtitle">Interactive Player Connection Network</div>
             
             <div class="controls">
-                <div class="filter-section">
-                    <label>🔍 SEARCH FOR PLAYERS:</label>
-                    <div class="player-search-container">
-                        <input 
-                            type="text" 
-                            id="player-search" 
-                            class="player-search" 
-                            placeholder="Type player name (e.g., Jim Thome, Kenny Lofton...) - Team cards already filtered out">
-                        <div class="player-suggestions" id="player-suggestions"></div>
+                <div class="filters-row">
+                    <div class="filter-section filter-half">
+                        <label>🔍 SEARCH FOR PLAYERS:</label>
+                        <div class="player-search-container">
+                            <input 
+                                type="text" 
+                                id="player-search" 
+                                class="player-search" 
+                                placeholder="Type player name (e.g., Jim Thome, Kenny Lofton...) - Team cards already filtered out">
+                            <div class="player-suggestions" id="player-suggestions"></div>
+                        </div>
+                        <div class="filter-mode">
+                            <button class="mode-btn active" id="mode-show" onclick="setFilterMode('show')">
+                                ✓ Show Only These Players
+                            </button>
+                            <button class="mode-btn" id="mode-hide" onclick="setFilterMode('hide')">
+                                ✗ Hide These Players
+                            </button>
+                            <button class="quick-filter-btn" onclick="clearPlayerFilter()">Clear All Players</button>
+                            <button class="quick-filter-btn" onclick="updateDiagram()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                                🔄 Apply Filter
+                            </button>
+                        </div>
+                        <div class="selected-players" id="selected-players"></div>
                     </div>
-                    <div class="filter-mode">
-                        <button class="mode-btn active" id="mode-show" onclick="setFilterMode('show')">
-                            ✓ Show Only These Players
-                        </button>
-                        <button class="mode-btn" id="mode-hide" onclick="setFilterMode('hide')">
-                            ✗ Hide These Players
-                        </button>
-                        <button class="quick-filter-btn" onclick="clearPlayerFilter()">Clear All Players</button>
-                        <button class="quick-filter-btn" onclick="updateDiagram()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
-                            🔄 Apply Filter
-                        </button>
+                    
+                    <div class="filter-section filter-half">
+                        <label>🏟️ SEARCH FOR TEAMS:</label>
+                        <div class="player-search-container">
+                            <input 
+                                type="text" 
+                                id="team-search" 
+                                class="player-search" 
+                                placeholder="Type team name (e.g., Cleveland Indians, Boston Red Sox...)">
+                            <div class="player-suggestions" id="team-suggestions"></div>
+                        </div>
+                        <div class="filter-mode">
+                            <button class="mode-btn active" id="team-mode-show" onclick="setTeamFilterMode('show')">
+                                ✓ Show Only These Teams
+                            </button>
+                            <button class="mode-btn" id="team-mode-hide" onclick="setTeamFilterMode('hide')">
+                                ✗ Hide These Teams
+                            </button>
+                            <button class="quick-filter-btn" onclick="clearTeamFilter()">Clear All Teams</button>
+                            <button class="quick-filter-btn" onclick="updateDiagram()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                                🔄 Apply Filter
+                            </button>
+                        </div>
+                        <div class="selected-players" id="selected-teams"></div>
                     </div>
-                    <div class="selected-players" id="selected-players"></div>
-                </div>
-                
-                <div class="filter-section">
-                    <label>🏟️ SEARCH FOR TEAMS:</label>
-                    <div class="player-search-container">
-                        <input 
-                            type="text" 
-                            id="team-search" 
-                            class="player-search" 
-                            placeholder="Type team name (e.g., Cleveland Indians, Boston Red Sox...)">
-                        <div class="player-suggestions" id="team-suggestions"></div>
-                    </div>
-                    <div class="filter-mode">
-                        <button class="mode-btn active" id="team-mode-show" onclick="setTeamFilterMode('show')">
-                            ✓ Show Only These Teams
-                        </button>
-                        <button class="mode-btn" id="team-mode-hide" onclick="setTeamFilterMode('hide')">
-                            ✗ Hide These Teams
-                        </button>
-                        <button class="quick-filter-btn" onclick="clearTeamFilter()">Clear All Teams</button>
-                        <button class="quick-filter-btn" onclick="updateDiagram()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
-                            🔄 Apply Filter
-                        </button>
-                    </div>
-                    <div class="selected-players" id="selected-teams"></div>
                 </div>
                 
                 <div class="filter-section">
                     <label>🎯 Minimum Connections Filter:</label>
+                    <div class="connection-controls">
+                        <button class="connection-btn" onclick="decreaseConnections()">−</button>
+                        <input type="number" min="1" max="100" value="2" class="connection-input" id="connection-input" 
+                               onchange="updateConnectionsFromInput()" placeholder="Min">
+                        <button class="connection-btn" onclick="increaseConnections()">+</button>
+                        <div class="connection-value" id="connection-value">2+ connections</div>
+                    </div>
                     <div class="slider-container">
-                        <span>2</span>
-                        <input type="range" min="2" max="20" value="2" class="slider" id="connection-slider">
-                        <span>20+</span>
-                        <div class="slider-value" id="slider-value">2+ connections</div>
+                        <input type="range" min="1" max="50" value="2" class="slider" id="connection-slider">
+                        <div class="slider-labels">
+                            <span>1</span>
+                            <span>10</span>
+                            <span>25</span>
+                            <span>50+</span>
+                        </div>
                     </div>
                 </div>
                 
@@ -394,6 +406,44 @@ function setTeamFilterMode(mode) {
     document.getElementById('team-mode-hide').classList.toggle('active', mode === 'hide');
     
     if (selectedTeams.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Connection filter controls
+function increaseConnections() {
+    const input = document.getElementById('connection-input');
+    const newValue = Math.min(100, parseInt(input.value) + 1);
+    input.value = newValue;
+    updateConnectionsFromInput();
+}
+
+function decreaseConnections() {
+    const input = document.getElementById('connection-input');
+    const newValue = Math.max(1, parseInt(input.value) - 1);
+    input.value = newValue;
+    updateConnectionsFromInput();
+}
+
+function updateConnectionsFromInput() {
+    const input = document.getElementById('connection-input');
+    const slider = document.getElementById('connection-slider');
+    const display = document.getElementById('connection-value');
+    
+    let value = parseInt(input.value);
+    
+    // Validate
+    if (isNaN(value) || value < 1) value = 1;
+    if (value > 100) value = 100;
+    
+    input.value = value;
+    slider.value = Math.min(value, 50); // Slider caps at 50
+    minConnections = value;
+    
+    display.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;
+    
+    // Auto-update diagram if data is loaded
+    if (selectedYears.size > 0) {
         updateDiagram();
     }
 }
