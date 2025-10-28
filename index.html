@@ -4,13 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Baseball Card Collection Network</title>
+    
+    <!-- Preconnect to CDN for faster loading -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    
+    <!-- PWA Manifest (optional - for "install app" feature) -->
+    <!-- <link rel="manifest" href="manifest.json"> -->
+    
+    <!-- Theme color for mobile browsers -->
+    <meta name="theme-color" content="#1a2332">
+    
+    <!-- D3.js library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
     <div id="app"></div>
     
-    <!-- Data file paths -->
+    <!-- Data file paths - MUST be defined before preload script -->
     <script>
         const DATA_URLS = {
             network: 'data/network_data.json',
@@ -20,14 +34,17 @@
         };
     </script>
     
-    <!-- Load app scripts in order -->
+    <!-- ⚡ PERFORMANCE OPTIMIZATION - Load first to start preloading data immediately -->
+    <script src="js/preload-optimization.js"></script>
+    
+    <!-- Core application scripts -->
     <script src="js/app.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/network.js"></script>
     <script src="js/export.js"></script>
-    <script src="js/chord-standalone.js"></script>
+    <script src="js/chord-redesigned.js"></script>
     
-    <!-- Optimization modules (add these!) -->
+    <!-- Feature enhancement scripts -->
     <script src="js/keyboard.js"></script>
     <script src="js/history.js"></script>
     <script src="js/url-state.js"></script>
