@@ -189,6 +189,9 @@ function updateDiagram() {
     document.getElementById('connection-count').textContent = filteredEdges.length;
     document.getElementById('teams-count').textContent = teams.size;
     
+    // Update insights panel
+    updateInsightsPanel(players.size, filteredEdges.length, teams.size);
+    
     // Update team legend
     updateTeamLegend(teams);
     
@@ -208,4 +211,51 @@ function updateTeamLegend(teams) {
             <span>${team}</span>
         </div>`;
     }).join('');
+}
+
+// Update insights panel with performance tips
+function updateInsightsPanel(playerCount, edgeCount, teamCount) {
+    const panel = document.getElementById('insights-panel');
+    
+    if (playerCount > 500 || edgeCount > 5000) {
+        // Large network - show warnings and tips
+        panel.className = 'insights-panel warning';
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <strong>⚠️ Large Network Detected (${playerCount} players, ${edgeCount.toLocaleString()} connections)</strong>
+            <ul>
+                <li>Try increasing minimum connections to 10+ for faster loading</li>
+                <li>Select fewer years or use decade filters</li>
+                <li>Use team filters to focus on 2-3 teams</li>
+                <li>Labels hidden until you zoom in (zoom > 1.5x)</li>
+            </ul>
+        `;
+    } else if (playerCount > 200) {
+        // Medium network - show helpful tips
+        panel.className = 'insights-panel';
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <strong>💡 Network Size: ${playerCount} players, ${edgeCount} connections</strong>
+            <ul>
+                <li>Drag nodes to rearrange the layout</li>
+                <li>Zoom in to see player names</li>
+                <li>Hover over players to see their connections</li>
+            </ul>
+        `;
+    } else if (playerCount < 50 && edgeCount < 200) {
+        // Small network - encourage exploration
+        panel.className = 'insights-panel success';
+        panel.style.display = 'block';
+        panel.innerHTML = `
+            <strong>✅ Focused Network (${playerCount} players, ${edgeCount} connections)</strong>
+            <ul>
+                <li>Perfect size for detailed analysis!</li>
+                <li>Try expanding to more years or teams</li>
+                <li>Use "Fit to Screen" for best view</li>
+            </ul>
+        `;
+    } else {
+        // Good size - hide panel
+        panel.style.display = 'none';
+    }
 }

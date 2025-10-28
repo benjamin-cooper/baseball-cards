@@ -197,18 +197,27 @@ function updateNetwork(edges, players) {
     
     // Update positions on each tick - throttled for performance
     let tickCount = 0;
+    let animationFrame = null;
+    
     simulation.on("tick", () => {
         tickCount++;
         // Only update every 2nd tick for smoother performance with many nodes
         if (nodes.length > 200 && tickCount % 2 !== 0) return;
         
-        link
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y);
+        // Use requestAnimationFrame for smoother rendering
+        if (animationFrame) return; // Already scheduled
         
-        node.attr("transform", d => `translate(${d.x},${d.y})`);
+        animationFrame = requestAnimationFrame(() => {
+            link
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+            
+            node.attr("transform", d => `translate(${d.x},${d.y})`);
+            
+            animationFrame = null;
+        });
     });
     
     // Restart simulation after pre-warming and rendering

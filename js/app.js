@@ -12,6 +12,10 @@ let playerFilterMode = 'show';
 let teamFilterMode = 'show';
 let minConnections = 2;
 
+// Cache for performance
+let filteredDataCache = null;
+let lastFilterString = '';
+
 // D3 elements
 let svg, g, simulation, link, node, label, tooltip;
 let zoom;
@@ -20,20 +24,23 @@ let zoom;
 async function loadAllData() {
     try {
         const loadingEl = document.querySelector('.loading');
-        if (loadingEl) loadingEl.textContent = 'Loading data...';
+        if (loadingEl) loadingEl.textContent = 'Loading data... 0%';
 
-        // Load all data files in parallel
-        const [networkResp, playersResp, teamsResp, colorsResp] = await Promise.all([
-            fetch(DATA_URLS.network),
-            fetch(DATA_URLS.players),
-            fetch(DATA_URLS.teams),
-            fetch(DATA_URLS.colors)
-        ]);
+        // Track progress
+        let loaded = 0;
+        const total = 4;
+        
+        const updateProgress = () => {
+            loaded++;
+            const percent = Math.round((loaded / total) * 100);
+            if (loadingEl) loadingEl.textContent = `Loading data... ${percent}%`;
+        };
 
-        networkData = await networkResp.json();
-        playersData = await playersResp.json();
-        teamsData = await teamsResp.json();
-        teamColorsData = await colorsResp.json();
+        // Load all data files in parallel with progress tracking
+        networkData = await fetch(DATA_URLS.network).then(r => r.json()).then(data => { updateProgress(); return data; });
+        playersData = await fetch(DATA_URLS.players).then(r => r.json()).then(data => { updateProgress(); return data; });
+        teamsData = await fetch(DATA_URLS.teams).then(r => r.json()).then(data => { updateProgress(); return data; });
+        teamColorsData = await fetch(DATA_URLS.colors).then(r => r.json()).then(data => { updateProgress(); return data; });
 
         console.log('✅ Data loaded successfully');
         console.log(`Years: ${networkData.years.length}`);
@@ -184,6 +191,10 @@ function createUI() {
                 </div>
             </div>
             
+            <div class="insights-panel" id="insights-panel" style="display: none;">
+                <!-- Dynamic insights appear here -->
+            </div>
+            
             <div class="filter-section">
                 <label>🎨 Team Color Legend:</label>
                 <div class="team-legend" id="team-legend"></div>
@@ -206,6 +217,7 @@ function createUI() {
 function setupPlayerSearch() {
     const searchInput = document.getElementById('player-search');
     const suggestionsDiv = document.getElementById('player-suggestions');
+    let searchTimeout;
     
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
@@ -215,22 +227,26 @@ function setupPlayerSearch() {
             return;
         }
         
-        const matches = playersData.players.filter(player => 
-            player.toLowerCase().includes(query)
-        ).slice(0, 10);
-        
-        console.log(`Search query: "${query}", Found ${matches.length} matches`);
-        
-        if (matches.length === 0) {
-            suggestionsDiv.style.display = 'none';
-            return;
-        }
-        
-        suggestionsDiv.innerHTML = matches.map(player => 
-            `<div class="player-suggestion" onclick="addPlayerFilter('${player.replace(/'/g, "\\'")}')">${player}</div>`
-        ).join('');
-        
-        suggestionsDiv.style.display = 'block';
+        // Debounce search - wait 200ms after typing stops
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const matches = playersData.players.filter(player => 
+                player.toLowerCase().includes(query)
+            ).slice(0, 10);
+            
+            console.log(`Search query: "${query}", Found ${matches.length} matches`);
+            
+            if (matches.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = matches.map(player => 
+                `<div class="player-suggestion" onclick="addPlayerFilter('${player.replace(/'/g, "\\'")}')">${player}</div>`
+            ).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }, 200);
     });
     
     // Close suggestions when clicking outside
@@ -245,6 +261,7 @@ function setupPlayerSearch() {
 function setupTeamSearch() {
     const searchInput = document.getElementById('team-search');
     const suggestionsDiv = document.getElementById('team-suggestions');
+    let searchTimeout;
     
     searchInput.addEventListener('input', (e) => {
         const query = e.target.value.toLowerCase().trim();
@@ -254,22 +271,26 @@ function setupTeamSearch() {
             return;
         }
         
-        const matches = teamsData.teams.filter(team => 
-            team.toLowerCase().includes(query)
-        ).slice(0, 10);
-        
-        console.log(`Team search query: "${query}", Found ${matches.length} matches`);
-        
-        if (matches.length === 0) {
-            suggestionsDiv.style.display = 'none';
-            return;
-        }
-        
-        suggestionsDiv.innerHTML = matches.map(team => 
-            `<div class="player-suggestion" onclick="addTeamFilter('${team.replace(/'/g, "\\'")}')">${team}</div>`
-        ).join('');
-        
-        suggestionsDiv.style.display = 'block';
+        // Debounce search - wait 200ms after typing stops
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const matches = teamsData.teams.filter(team => 
+                team.toLowerCase().includes(query)
+            ).slice(0, 10);
+            
+            console.log(`Team search query: "${query}", Found ${matches.length} matches`);
+            
+            if (matches.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = matches.map(team => 
+                `<div class="player-suggestion" onclick="addTeamFilter('${team.replace(/'/g, "\\'")}')">${team}</div>`
+            ).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }, 200);
     });
     
     // Close suggestions when clicking outside
