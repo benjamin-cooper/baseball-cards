@@ -241,7 +241,7 @@ function createUI() {
                             <span class="plot-title">West Coast Battle</span>
                             <span class="plot-desc">Dodgers, Giants, Athletics rivalry</span>
                         </button>
-                        <button class="plot-btn" onclick="showChordDiagram()" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
+                        <button class="plot-btn" id="chord-diagram-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
                             <span class="plot-icon">🔄</span>
                             <span class="plot-title">Team Chord Diagram</span>
                             <span class="plot-desc">View team-to-team player movement</span>

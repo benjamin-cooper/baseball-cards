@@ -1,7 +1,11 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
 
 let chordMode = false;
-let chordButton = null;
+
+// Get chord button
+function getChordButton() {
+    return document.getElementById('chord-diagram-btn');
+}
 
 // Toggle between network and chord diagram
 function showChordDiagram() {
@@ -13,25 +17,16 @@ function showChordDiagram() {
     chordMode = true;
     console.log('🔄 Switching to chord diagram mode...');
     
-    // Find and update the button
-    if (!chordButton) {
-        // Find the button in suggested plots
-        const buttons = document.querySelectorAll('.plot-btn');
-        for (let btn of buttons) {
-            if (btn.textContent.includes('Team Chord Diagram') || btn.textContent.includes('Back to Network')) {
-                chordButton = btn;
-                break;
-            }
-        }
-    }
-    
-    if (chordButton) {
-        chordButton.innerHTML = `
+    // Update button appearance
+    const btn = getChordButton();
+    if (btn) {
+        btn.innerHTML = `
             <span class="plot-icon">🔙</span>
             <span class="plot-title">Back to Network</span>
             <span class="plot-desc">Return to player connection view</span>
         `;
-        chordButton.onclick = returnToNetwork;
+        // Re-attach click handler after innerHTML change
+        btn.onclick = returnToNetwork;
     }
     
     // Hide the "Show Names" control (not relevant for chord)
@@ -46,14 +41,16 @@ function returnToNetwork() {
     chordMode = false;
     console.log('🔄 Returning to network view...');
     
-    // Update the button back
-    if (chordButton) {
-        chordButton.innerHTML = `
+    // Update button appearance
+    const btn = getChordButton();
+    if (btn) {
+        btn.innerHTML = `
             <span class="plot-icon">🔄</span>
             <span class="plot-title">Team Chord Diagram</span>
             <span class="plot-desc">View team-to-team player movement</span>
         `;
-        chordButton.onclick = showChordDiagram;
+        // Re-attach click handler after innerHTML change
+        btn.onclick = showChordDiagram;
     }
     
     // Show the "Show Names" control again
@@ -63,6 +60,15 @@ function returnToNetwork() {
     // Redraw network
     updateDiagram();
 }
+
+// Initialize chord button on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const btn = getChordButton();
+    if (btn) {
+        btn.onclick = showChordDiagram;
+        console.log('✅ Chord diagram button initialized');
+    }
+});
 
 // Generate and display chord diagram
 function generateAndDisplayChord() {
