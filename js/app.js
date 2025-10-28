@@ -144,18 +144,18 @@ function createUI() {
                     <label>🎯 Minimum Connections Filter:</label>
                     <div class="connection-controls">
                         <button class="connection-btn" onclick="decreaseConnections()">−</button>
-                        <input type="number" min="1" max="100" value="2" class="connection-input" id="connection-input" 
+                        <input type="number" min="1" max="150" value="2" class="connection-input" id="connection-input" 
                                onchange="updateConnectionsFromInput()" placeholder="Min">
                         <button class="connection-btn" onclick="increaseConnections()">+</button>
                         <div class="connection-value" id="connection-value">2+ connections</div>
                     </div>
                     <div class="slider-container">
-                        <input type="range" min="1" max="50" value="2" class="slider" id="connection-slider">
+                        <input type="range" min="1" max="150" value="2" class="slider" id="connection-slider">
                         <div class="slider-labels">
                             <span>1</span>
-                            <span>10</span>
                             <span>25</span>
-                            <span>50+</span>
+                            <span>75</span>
+                            <span>150</span>
                         </div>
                     </div>
                 </div>
@@ -434,10 +434,10 @@ function updateConnectionsFromInput() {
     
     // Validate
     if (isNaN(value) || value < 1) value = 1;
-    if (value > 100) value = 100;
+    if (value > 150) value = 150;
     
     input.value = value;
-    slider.value = Math.min(value, 50); // Slider caps at 50
+    slider.value = value; // Slider now goes up to 150
     minConnections = value;
     
     display.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;

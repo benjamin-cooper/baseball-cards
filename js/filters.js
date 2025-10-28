@@ -34,10 +34,10 @@ function setupConnectionSlider() {
         updateDiagram();
     });
     
-    // Input changes update slider (if within slider range)
+    // Input changes update slider
     input.addEventListener('input', function() {
         const value = parseInt(this.value);
-        if (!isNaN(value) && value >= 1 && value <= 50) {
+        if (!isNaN(value) && value >= 1 && value <= 150) {
             slider.value = value;
         }
     });
