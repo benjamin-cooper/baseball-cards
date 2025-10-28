@@ -20,6 +20,9 @@ let lastFilterString = '';
 let svg, g, simulation, link, node, label, tooltip;
 let zoom;
 
+// Label visibility state
+let labelsVisible = false;
+
 // Load all data files
 async function loadAllData() {
     try {
@@ -743,10 +746,18 @@ function loadSuggestedPlot(plotId) {
     document.getElementById('mode-show').classList.toggle('active', playerFilterMode === 'show');
     document.getElementById('mode-hide').classList.toggle('active', playerFilterMode === 'hide');
     document.getElementById('team-mode-show').classList.toggle('active', teamFilterMode === 'show');
-    document.getElementById('team-mode-hide').
-// Toggle player name labels
-let labelsVisible = false;
+    document.getElementById('team-mode-hide').classList.toggle('active', teamFilterMode === 'hide');
+    
+    // Load the network
+    updateDiagram();
+    
+    // Show notification
+    setTimeout(() => {
+        alert(`✨ Loaded: ${plot.name}\n\nExplore this curated view of your collection!`);
+    }, 100);
+}
 
+// Toggle player name labels
 function toggleLabels() {
     labelsVisible = !labelsVisible;
     const btn = document.getElementById('toggle-labels-btn');
@@ -764,3 +775,6 @@ function toggleLabels() {
         label.style('display', labelsVisible ? 'block' : 'none');
     }
 }
+
+// Start the application when DOM is ready
+window.addEventListener('DOMContentLoaded', loadAllData);
