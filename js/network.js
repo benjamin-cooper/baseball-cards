@@ -79,19 +79,57 @@ function updateNetwork(edges, players) {
         loadingDiv.textContent = `Preparing network: ${nodes.length} players, ${links.length} connections...`;
     }
     
-    // Create force simulation with optimized settings for faster loading
+    // Create force simulation with adaptive settings based on network size
+    const nodeCount = nodes.length;
+    const linkCount = links.length;
+    
+    // Adaptive settings for better performance
+    let linkDistance = 80;
+    let linkStrength = 0.3;
+    let chargeStrength = -300;
+    let alphaDecay = 0.02;
+    let velocityDecay = 0.3;
+    
+    if (nodeCount > 500) {
+        // Large network - optimize for speed
+        linkDistance = 60;
+        linkStrength = 0.2;
+        chargeStrength = -200;
+        alphaDecay = 0.05; // Faster settling
+        velocityDecay = 0.4; // More friction
+        console.log('🚀 Using optimized settings for large network');
+    } else if (nodeCount > 200) {
+        // Medium network - balanced
+        linkDistance = 70;
+        linkStrength = 0.25;
+        chargeStrength = -250;
+        alphaDecay = 0.03;
+        velocityDecay = 0.35;
+        console.log('⚡ Using balanced settings for medium network');
+    }
+    
     simulation = d3.forceSimulation(nodes)
-        .force("link", d3.forceLink(links).id(d => d.id).distance(80).strength(0.3))
-        .force("charge", d3.forceManyBody().strength(-300))
+        .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(linkStrength))
+        .force("charge", d3.forceManyBody().strength(chargeStrength))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .force("collision", d3.forceCollide().radius(35))
-        .force("radial", d3.forceRadial(Math.min(width, height) / 3, width / 2, height / 2).strength(0.05)) // Keep isolated groups from drifting too far
-        .alphaDecay(0.02)  // Faster convergence
-        .velocityDecay(0.3) // More friction = faster settling
+        .force("radial", d3.forceRadial(Math.min(width, height) / 3, width / 2, height / 2).strength(0.05))
+        .alphaDecay(alphaDecay)
+        .velocityDecay(velocityDecay)
         .stop(); // Stop initially so we can warm it up
     
     // Pre-warm the simulation (run initial iterations without rendering)
-    const initialIterations = Math.min(100, Math.floor(5000 / nodes.length)); // Fewer iterations for large networks
+    // Fewer iterations for large networks to avoid initial delay
+    let initialIterations;
+    if (nodeCount > 500) {
+        initialIterations = 50; // Quick pre-warm for large networks
+    } else if (nodeCount > 200) {
+        initialIterations = 75; // Medium pre-warm
+    } else {
+        initialIterations = 100; // Full pre-warm for small networks
+    }
+    
+    console.log(`🔥 Pre-warming with ${initialIterations} iterations`);
     for (let i = 0; i < initialIterations; ++i) {
         simulation.tick();
     }

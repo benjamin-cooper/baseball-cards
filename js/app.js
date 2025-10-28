@@ -300,7 +300,7 @@ function setupPlayerSearch() {
         searchTimeout = setTimeout(() => {
             const matches = playersData.players.filter(player => 
                 player.toLowerCase().includes(query)
-            ).slice(0, 10);
+            ).slice(0, 20);
             
             console.log(`Search query: "${query}", Found ${matches.length} matches`);
             
@@ -309,7 +309,286 @@ function setupPlayerSearch() {
                 return;
             }
             
-  
+            // Show suggestions with checkmarks for selected players
+            suggestionsDiv.innerHTML = matches.map(player => {
+                const isSelected = selectedPlayers.has(player);
+                const checkmark = isSelected ? '<span class="checkmark">✓</span>' : '';
+                const selectedClass = isSelected ? 'selected' : '';
+                return `<div class="player-suggestion ${selectedClass}" 
+                             onclick="togglePlayer(event, '${player.replace(/'/g, "\\'")}')"
+                             data-player="${player.replace(/"/g, '&quot;')}">
+                            <span>${player}</span>
+                            ${checkmark}
+                        </div>`;
+            }).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }, 200);
+    });
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.player-search-container')) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+    
+    // Keep suggestions open when clicking inside
+    suggestionsDiv.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+}
+
+// Toggle player selection (for multi-select)
+function togglePlayer(event, player) {
+    event.stopPropagation();
+    
+    if (selectedPlayers.has(player)) {
+        selectedPlayers.delete(player);
+    } else {
+        selectedPlayers.add(player);
+    }
+    
+    updateSelectedPlayersDisplay();
+    
+    // Refresh search to update checkmarks
+    const searchInput = document.getElementById('player-search');
+    searchInput.dispatchEvent(new Event('input'));
+}
+
+// Update the display of selected players
+function updateSelectedPlayersDisplay() {
+    const container = document.getElementById('selected-players');
+    
+    if (selectedPlayers.size === 0) {
+        container.innerHTML = '<div style="color: #aaa; font-style: italic;">No players selected</div>';
+        return;
+    }
+    
+    container.innerHTML = Array.from(selectedPlayers).map(player => 
+        `<div class="player-chip">
+            ${player}
+            <span class="player-chip-remove" onclick="removePlayerFilter('${player.replace(/'/g, "\\'")}')">&times;</span>
+        </div>`
+    ).join('');
+}
+
+// Remove a player from the filter
+function removePlayerFilter(player) {
+    selectedPlayers.delete(player);
+    updateSelectedPlayersDisplay();
+    
+    // Refresh search to update checkmarks
+    const searchInput = document.getElementById('player-search');
+    if (searchInput.value) {
+        searchInput.dispatchEvent(new Event('input'));
+    }
+    
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Clear all player filters
+function clearPlayerFilter() {
+    selectedPlayers.clear();
+    updateSelectedPlayersDisplay();
+    document.getElementById('player-search').value = '';
+    document.getElementById('player-suggestions').style.display = 'none';
+    
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Set player filter mode
+function setFilterMode(mode) {
+    playerFilterMode = mode;
+    document.getElementById('mode-show').classList.toggle('active', mode === 'show');
+    document.getElementById('mode-hide').classList.toggle('active', mode === 'hide');
+    
+    if (selectedPlayers.size > 0 && selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Team search functionality
+function setupTeamSearch() {
+    const searchInput = document.getElementById('team-search');
+    const suggestionsDiv = document.getElementById('team-suggestions');
+    let searchTimeout;
+    
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        if (query.length < 2) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        // Debounce search
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(() => {
+            const matches = teamsData.teams.filter(team => 
+                team.toLowerCase().includes(query)
+            ).slice(0, 20);
+            
+            if (matches.length === 0) {
+                suggestionsDiv.style.display = 'none';
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = matches.map(team => {
+                const isSelected = selectedTeams.has(team);
+                const checkmark = isSelected ? '<span class="checkmark">✓</span>' : '';
+                const selectedClass = isSelected ? 'selected' : '';
+                const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+                return `<div class="player-suggestion ${selectedClass}" 
+                             onclick="toggleTeam(event, '${team.replace(/'/g, "\\'")}')"
+                             style="border-left: 4px solid ${color}">
+                            <span>${team}</span>
+                            ${checkmark}
+                        </div>`;
+            }).join('');
+            
+            suggestionsDiv.style.display = 'block';
+        }, 200);
+    });
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('#team-search') && !e.target.closest('#team-suggestions')) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+}
+
+// Toggle team selection
+function toggleTeam(event, team) {
+    event.stopPropagation();
+    
+    if (selectedTeams.has(team)) {
+        selectedTeams.delete(team);
+    } else {
+        selectedTeams.add(team);
+    }
+    
+    updateSelectedTeamsDisplay();
+    
+    // Refresh search to update checkmarks
+    const searchInput = document.getElementById('team-search');
+    searchInput.dispatchEvent(new Event('input'));
+}
+
+// Update selected teams display
+function updateSelectedTeamsDisplay() {
+    const container = document.getElementById('selected-teams');
+    
+    if (selectedTeams.size === 0) {
+        container.innerHTML = '<div style="color: #aaa; font-style: italic;">No teams selected</div>';
+        return;
+    }
+    
+    container.innerHTML = Array.from(selectedTeams).map(team => {
+        const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+        return `<div class="player-chip" style="border-left: 4px solid ${color}">
+            ${team}
+            <span class="player-chip-remove" onclick="removeTeamFilter('${team.replace(/'/g, "\\'")}')">&times;</span>
+        </div>`;
+    }).join('');
+}
+
+// Remove team filter
+function removeTeamFilter(team) {
+    selectedTeams.delete(team);
+    updateSelectedTeamsDisplay();
+    
+    const searchInput = document.getElementById('team-search');
+    if (searchInput.value) {
+        searchInput.dispatchEvent(new Event('input'));
+    }
+    
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Clear team filter
+function clearTeamFilter() {
+    selectedTeams.clear();
+    updateSelectedTeamsDisplay();
+    document.getElementById('team-search').value = '';
+    document.getElementById('team-suggestions').style.display = 'none';
+    
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Set team filter mode
+function setTeamFilterMode(mode) {
+    teamFilterMode = mode;
+    document.getElementById('team-mode-show').classList.toggle('active', mode === 'show');
+    document.getElementById('team-mode-hide').classList.toggle('active', mode === 'hide');
+    
+    if (selectedTeams.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Connection filter controls
+function increaseConnections() {
+    const input = document.getElementById('connection-input');
+    const newValue = Math.min(150, parseInt(input.value) + 1);
+    input.value = newValue;
+    updateConnectionsFromInput();
+}
+
+function decreaseConnections() {
+    const input = document.getElementById('connection-input');
+    const newValue = Math.max(1, parseInt(input.value) - 1);
+    input.value = newValue;
+    updateConnectionsFromInput();
+}
+
+function updateConnectionsFromInput() {
+    const input = document.getElementById('connection-input');
+    const slider = document.getElementById('connection-slider');
+    const display = document.getElementById('connection-value');
+    
+    let value = parseInt(input.value);
+    
+    // Validate
+    if (isNaN(value) || value < 1) value = 1;
+    if (value > 150) value = 150;
+    
+    input.value = value;
+    slider.value = value;
+    minConnections = value;
+    
+    display.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;
+    
+    // Auto-update diagram if data is loaded
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Update selected years display
+function updateSelectedYearsDisplay() {
+    document.getElementById('selected-years').textContent = selectedYears.size;
+    
+    // Update year buttons
+    document.querySelectorAll('.year-btn').forEach(btn => {
+        const year = parseInt(btn.dataset.year);
+        if (selectedYears.has(year)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
+
 // Load suggested plot presets
 function loadSuggestedPlot(plotId) {
     // Clear existing filters first
@@ -469,67 +748,6 @@ function loadSuggestedPlot(plotId) {
     setTimeout(() => {
         alert(`✨ Loaded: ${plot.name}\n\nExplore this curated view of your collection!`);
     }, 100);
-}
-';
-        return;
-    }
-    
-    container.innerHTML = Array.from(selectedTeams).map(team => {
-        const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
-        return `<div class="player-chip" style="border-left: 4px solid ${color}">
-            ${team}
-            <span class="player-chip-remove" onclick="removeTeamFilter('${team.replace(/'/g, "\\'")}')">&times;</span>
-        </div>`;
-    }).join('');
-}
-
-// Set team filter mode
-function setTeamFilterMode(mode) {
-    teamFilterMode = mode;
-    document.getElementById('team-mode-show').classList.toggle('active', mode === 'show');
-    document.getElementById('team-mode-hide').classList.toggle('active', mode === 'hide');
-    
-    if (selectedTeams.size > 0) {
-        updateDiagram();
-    }
-}
-
-// Connection filter controls
-function increaseConnections() {
-    const input = document.getElementById('connection-input');
-    const newValue = Math.min(100, parseInt(input.value) + 1);
-    input.value = newValue;
-    updateConnectionsFromInput();
-}
-
-function decreaseConnections() {
-    const input = document.getElementById('connection-input');
-    const newValue = Math.max(1, parseInt(input.value) - 1);
-    input.value = newValue;
-    updateConnectionsFromInput();
-}
-
-function updateConnectionsFromInput() {
-    const input = document.getElementById('connection-input');
-    const slider = document.getElementById('connection-slider');
-    const display = document.getElementById('connection-value');
-    
-    let value = parseInt(input.value);
-    
-    // Validate
-    if (isNaN(value) || value < 1) value = 1;
-    if (value > 150) value = 150;
-    
-    input.value = value;
-    slider.value = value; // Slider now goes up to 150
-    minConnections = value;
-    
-    display.textContent = `${value}+ connection${value === 1 ? '' : 's'}`;
-    
-    // Auto-update diagram if data is loaded
-    if (selectedYears.size > 0) {
-        updateDiagram();
-    }
 }
 
 // Start the application when DOM is ready

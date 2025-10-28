@@ -1,5 +1,19 @@
 // Filter functions for year and player selection
 
+// Filter cache for performance
+const filterCache = new Map();
+let lastFilterKey = '';
+let updateTimeout = null;
+let filterWorker = null;
+
+// Initialize web worker for background processing
+try {
+    filterWorker = new Worker('js/filter-worker.js');
+    console.log('✅ Filter worker initialized');
+} catch (e) {
+    console.log('⚠️ Worker not available, using main thread');
+}
+
 // Initialize filters
 function initializeFilters() {
     setupYearSelector();
@@ -102,7 +116,36 @@ function updateYearButtons() {
 
 // Main update function - filters data and updates visualization
 function updateDiagram() {
+    // Debounce multiple rapid changes
+    clearTimeout(updateTimeout);
+    updateTimeout = setTimeout(() => {
+        updateDiagramImmediate();
+    }, 100);
+}
+
+// Immediate update (after debounce)
+function updateDiagramImmediate() {
     document.getElementById('selected-years').textContent = selectedYears.size;
+    
+    // Generate cache key
+    const filterKey = JSON.stringify({
+        years: Array.from(selectedYears).sort(),
+        players: Array.from(selectedPlayers).sort(),
+        teams: Array.from(selectedTeams).sort(),
+        playerMode: playerFilterMode,
+        teamMode: teamFilterMode,
+        minConn: minConnections
+    });
+    
+    // Check cache first
+    if (filterCache.has(filterKey) && filterKey === lastFilterKey) {
+        console.log('📦 Using cached filter results');
+        const cached = filterCache.get(filterKey);
+        renderFilteredData(cached.edges, cached.players, cached.teams);
+        return;
+    }
+    
+    lastFilterKey = filterKey;
     
     if (selectedYears.size === 0) {
         document.getElementById('network-container').innerHTML = 
@@ -113,6 +156,54 @@ function updateDiagram() {
         document.getElementById('team-legend').innerHTML = '';
         return;
     }
+    
+    // Show loading message
+    const loadingMsg = document.getElementById('network-container').querySelector('.loading');
+    if (loadingMsg) {
+        loadingMsg.textContent = 'Processing filters...';
+    }
+    
+    // Use web worker for large datasets (10,000+ edges)
+    const edgesToProcess = networkData.edges.filter(e => selectedYears.has(e.year));
+    
+    if (filterWorker && edgesToProcess.length > 10000) {
+        console.log('🔄 Using worker for large dataset');
+        
+        // Setup worker response handler
+        filterWorker.onmessage = function(e) {
+            if (e.data.type === 'filterComplete') {
+                const { edges, players, teams } = e.data.data;
+                
+                // Cache results
+                filterCache.set(filterKey, {
+                    edges,
+                    players,
+                    teams
+                });
+                
+                renderFilteredData(edges, players, teams);
+            }
+        };
+        
+        // Send work to worker
+        filterWorker.postMessage({
+            type: 'filter',
+            data: {
+                edges: networkData.edges,
+                selectedYears: Array.from(selectedYears),
+                selectedPlayers: Array.from(selectedPlayers),
+                selectedTeams: Array.from(selectedTeams),
+                playerFilterMode,
+                teamFilterMode,
+                minConnections
+            }
+        });
+        
+        return; // Exit - worker will call renderFilteredData when done
+    }
+    
+    // Otherwise process on main thread (faster for small datasets)
+    console.log('⚡ Processing on main thread');
     
     // Filter edges by selected years
     let filteredEdges = networkData.edges.filter(e => 
@@ -196,19 +287,34 @@ function updateDiagram() {
         teams.add(e.team);
     });
     
+    // Cache results for future use
+    const playersArray = Array.from(players);
+    const teamsArray = Array.from(teams);
+    filterCache.set(filterKey, {
+        edges: filteredEdges,
+        players: playersArray,
+        teams: teamsArray
+    });
+    
+    // Render the filtered data
+    renderFilteredData(filteredEdges, playersArray, teamsArray);
+}
+
+// Render filtered data (separated for reuse)
+function renderFilteredData(filteredEdges, playersArray, teamsArray) {
     // Update stats
-    document.getElementById('unique-players').textContent = players.size;
+    document.getElementById('unique-players').textContent = playersArray.length;
     document.getElementById('connection-count').textContent = filteredEdges.length;
-    document.getElementById('teams-count').textContent = teams.size;
+    document.getElementById('teams-count').textContent = teamsArray.length;
     
     // Update insights panel
-    updateInsightsPanel(players.size, filteredEdges.length, teams.size);
+    updateInsightsPanel(playersArray.length, filteredEdges.length, teamsArray.length);
     
     // Update team legend
-    updateTeamLegend(teams);
+    updateTeamLegend(new Set(teamsArray));
     
     // Update the network visualization
-    updateNetwork(filteredEdges, Array.from(players));
+    updateNetwork(filteredEdges, playersArray);
 }
 
 // Update team legend
