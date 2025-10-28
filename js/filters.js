@@ -122,6 +122,21 @@ function updateDiagram() {
         }
     }
     
+    // Apply team filter
+    if (selectedTeams.size > 0) {
+        if (teamFilterMode === 'show') {
+            // Show only selected teams
+            filteredEdges = filteredEdges.filter(e => 
+                selectedTeams.has(e.team)
+            );
+        } else {
+            // Hide selected teams
+            filteredEdges = filteredEdges.filter(e => 
+                !selectedTeams.has(e.team)
+            );
+        }
+    }
+    
     if (filteredEdges.length === 0) {
         document.getElementById('network-container').innerHTML = 
             '<div class="loading">No connections found for current filters.</div>';
@@ -188,9 +203,9 @@ function updateTeamLegend(teams) {
     
     legend.innerHTML = sortedTeams.map(team => {
         const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
-        return `<div class="legend-item">
-            <span class="legend-color" style="background: ${color}"></span>
-            <span class="legend-label">${team}</span>
+        return `<div class="team-legend-item">
+            <div class="team-color-box" style="background-color: ${color}"></div>
+            <span>${team}</span>
         </div>`;
     }).join('');
 }

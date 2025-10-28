@@ -7,7 +7,9 @@ let teamColorsData = null;
 // State
 let selectedYears = new Set();
 let selectedPlayers = new Set();
+let selectedTeams = new Set();
 let playerFilterMode = 'show';
+let teamFilterMode = 'show';
 let minConnections = 2;
 
 // D3 elements
@@ -62,6 +64,9 @@ function initializeApp() {
     // Setup player search
     setupPlayerSearch();
     
+    // Setup team search
+    setupTeamSearch();
+    
     // Initialize filters
     initializeFilters();
 }
@@ -99,6 +104,31 @@ function createUI() {
                         </button>
                     </div>
                     <div class="selected-players" id="selected-players"></div>
+                </div>
+                
+                <div class="filter-section">
+                    <label>🏟️ SEARCH FOR TEAMS:</label>
+                    <div class="player-search-container">
+                        <input 
+                            type="text" 
+                            id="team-search" 
+                            class="player-search" 
+                            placeholder="Type team name (e.g., Cleveland Indians, Boston Red Sox...)">
+                        <div class="player-suggestions" id="team-suggestions"></div>
+                    </div>
+                    <div class="filter-mode">
+                        <button class="mode-btn active" id="team-mode-show" onclick="setTeamFilterMode('show')">
+                            ✓ Show Only These Teams
+                        </button>
+                        <button class="mode-btn" id="team-mode-hide" onclick="setTeamFilterMode('hide')">
+                            ✗ Hide These Teams
+                        </button>
+                        <button class="quick-filter-btn" onclick="clearTeamFilter()">Clear All Teams</button>
+                        <button class="quick-filter-btn" onclick="updateDiagram()" style="background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);">
+                            🔄 Apply Filter
+                        </button>
+                    </div>
+                    <div class="selected-players" id="selected-teams"></div>
                 </div>
                 
                 <div class="filter-section">
@@ -211,6 +241,45 @@ function setupPlayerSearch() {
     });
 }
 
+// Team search functionality
+function setupTeamSearch() {
+    const searchInput = document.getElementById('team-search');
+    const suggestionsDiv = document.getElementById('team-suggestions');
+    
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase().trim();
+        
+        if (query.length < 2) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        const matches = teamsData.teams.filter(team => 
+            team.toLowerCase().includes(query)
+        ).slice(0, 10);
+        
+        console.log(`Team search query: "${query}", Found ${matches.length} matches`);
+        
+        if (matches.length === 0) {
+            suggestionsDiv.style.display = 'none';
+            return;
+        }
+        
+        suggestionsDiv.innerHTML = matches.map(team => 
+            `<div class="player-suggestion" onclick="addTeamFilter('${team.replace(/'/g, "\\'")}')">${team}</div>`
+        ).join('');
+        
+        suggestionsDiv.style.display = 'block';
+    });
+    
+    // Close suggestions when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.player-search-container')) {
+            suggestionsDiv.style.display = 'none';
+        }
+    });
+}
+
 // Add player to filter
 function addPlayerFilter(player) {
     selectedPlayers.add(player);
@@ -255,6 +324,55 @@ function setFilterMode(mode) {
     document.getElementById('mode-hide').classList.toggle('active', mode === 'hide');
     
     if (selectedPlayers.size > 0) {
+        updateDiagram();
+    }
+}
+
+// Add team to filter
+function addTeamFilter(team) {
+    selectedTeams.add(team);
+    updateSelectedTeamsDisplay();
+    document.getElementById('team-search').value = '';
+    document.getElementById('team-suggestions').style.display = 'none';
+}
+
+// Remove team from filter
+function removeTeamFilter(team) {
+    selectedTeams.delete(team);
+    updateSelectedTeamsDisplay();
+}
+
+// Clear all team filters
+function clearTeamFilter() {
+    selectedTeams.clear();
+    updateSelectedTeamsDisplay();
+    updateDiagram();
+}
+
+// Update selected teams display
+function updateSelectedTeamsDisplay() {
+    const container = document.getElementById('selected-teams');
+    if (selectedTeams.size === 0) {
+        container.innerHTML = '';
+        return;
+    }
+    
+    container.innerHTML = Array.from(selectedTeams).map(team => {
+        const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+        return `<div class="player-chip" style="border-left: 4px solid ${color}">
+            ${team}
+            <span class="player-chip-remove" onclick="removeTeamFilter('${team.replace(/'/g, "\\'")}')">&times;</span>
+        </div>`;
+    }).join('');
+}
+
+// Set team filter mode
+function setTeamFilterMode(mode) {
+    teamFilterMode = mode;
+    document.getElementById('team-mode-show').classList.toggle('active', mode === 'show');
+    document.getElementById('team-mode-hide').classList.toggle('active', mode === 'hide');
+    
+    if (selectedTeams.size > 0) {
         updateDiagram();
     }
 }
