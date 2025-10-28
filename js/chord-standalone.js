@@ -1,6 +1,7 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
 
 let chordMode = false;
+let chordButton = null;
 
 // Toggle between network and chord diagram
 function showChordDiagram() {
@@ -12,12 +13,25 @@ function showChordDiagram() {
     chordMode = true;
     console.log('🔄 Switching to chord diagram mode...');
     
-    // Update button state
-    const btn = document.querySelector('button[onclick="showChordDiagram()"]');
-    if (btn) {
-        btn.textContent = '🔙 Back to Network';
-        btn.onclick = () => returnToNetwork();
-        btn.style.background = 'linear-gradient(135deg, #f5576c 0%, #f093fb 100%)';
+    // Find and update the button
+    if (!chordButton) {
+        // Find the button in suggested plots
+        const buttons = document.querySelectorAll('.plot-btn');
+        for (let btn of buttons) {
+            if (btn.textContent.includes('Team Chord Diagram') || btn.textContent.includes('Back to Network')) {
+                chordButton = btn;
+                break;
+            }
+        }
+    }
+    
+    if (chordButton) {
+        chordButton.innerHTML = `
+            <span class="plot-icon">🔙</span>
+            <span class="plot-title">Back to Network</span>
+            <span class="plot-desc">Return to player connection view</span>
+        `;
+        chordButton.onclick = returnToNetwork;
     }
     
     // Hide the "Show Names" control (not relevant for chord)
@@ -32,12 +46,14 @@ function returnToNetwork() {
     chordMode = false;
     console.log('🔄 Returning to network view...');
     
-    // Update button state
-    const btn = document.querySelector('button[onclick="returnToNetwork()"]');
-    if (btn) {
-        btn.textContent = '🔄 Team Chord Diagram';
-        btn.onclick = () => showChordDiagram();
-        btn.style.background = 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)';
+    // Update the button back
+    if (chordButton) {
+        chordButton.innerHTML = `
+            <span class="plot-icon">🔄</span>
+            <span class="plot-title">Team Chord Diagram</span>
+            <span class="plot-desc">View team-to-team player movement</span>
+        `;
+        chordButton.onclick = showChordDiagram;
     }
     
     // Show the "Show Names" control again
@@ -45,12 +61,7 @@ function returnToNetwork() {
     if (namesControl) namesControl.style.display = 'flex';
     
     // Redraw network
-    if (selectedYears.size > 0) {
-        updateDiagram();
-    } else {
-        document.getElementById('network-container').innerHTML = 
-            '<div class="loading">Select at least one year to view the network...</div>';
-    }
+    updateDiagram();
 }
 
 // Generate and display chord diagram
@@ -170,6 +181,21 @@ function generateAndDisplayChord() {
             `Failed to generate chord diagram: ${error.message}`,
             ['Check browser console for details', 'Try refreshing the page', 'Report this issue']);
     }
+}
+
+// Hook into the global updateDiagram to check if we're in chord mode
+const originalUpdateDiagram = window.updateDiagram;
+if (originalUpdateDiagram) {
+    window.updateDiagram = function() {
+        if (chordMode) {
+            // Stay in chord mode, just regenerate chord diagram
+            console.log('🔄 Filter changed, updating chord diagram...');
+            generateAndDisplayChord();
+        } else {
+            // Normal network update
+            originalUpdateDiagram.apply(this, arguments);
+        }
+    };
 }
 
 // Show error message in network container
