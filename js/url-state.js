@@ -114,8 +114,13 @@ function fallbackCopyToClipboard(text) {
     document.body.removeChild(textArea);
 }
 
-// Add share button to UI
+// Add share button to UI - DISABLED per user request
 function addShareButton() {
+    // Share button disabled - user doesn't want it
+    console.log('ℹ️ Share button disabled');
+    return;
+    
+    /* DISABLED CODE:
     const quickFilters = document.querySelector('.quick-filters');
     if (!quickFilters) return;
     
@@ -127,6 +132,7 @@ function addShareButton() {
     
     // Add at the end
     quickFilters.appendChild(shareBtn);
+    */
 }
 
 // Auto-save to URL when filters change (debounced)

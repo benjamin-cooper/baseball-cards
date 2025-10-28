@@ -291,14 +291,14 @@ function drawChordDiagram(container, teams, matrix) {
     container.innerHTML = '';
     
     const containerWidth = container.clientWidth;
-    const containerHeight = Math.max(container.clientHeight, 1000);
+    const containerHeight = Math.max(container.clientHeight, 1200); // Taller
     
-    // Reserve MORE space for title at top
-    const titleHeight = 150; // Increased from 100
-    const availableHeight = containerHeight - titleHeight - 100;
+    // Reserve MUCH MORE space for title at top
+    const titleHeight = 200; // Much more space from top
+    const availableHeight = containerHeight - titleHeight - 150;
     
-    const size = Math.min(containerWidth - 100, availableHeight, 900); // Reduced max size
-    const outerRadius = size * 0.45;
+    const size = Math.min(containerWidth - 150, availableHeight, 800); // Smaller, more side padding
+    const outerRadius = size * 0.40; // Smaller radius
     const innerRadius = outerRadius - 30;
     
     const svg = d3.select(container)
@@ -315,8 +315,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("height", containerHeight)
         .attr("fill", "#1a2332");
     
-    // Dynamic title based on filters
-    let titleText = "Team Connection Chord Diagram";
+    // Dynamic subtitle based on filters (NO main title)
     let subtitleParts = [];
     
     // Add year info
@@ -343,37 +342,28 @@ function drawChordDiagram(container, teams, matrix) {
     
     const subtitle = subtitleParts.length > 0 
         ? subtitleParts.join(' • ') 
-        : `${teams.length} teams • Hover over ribbons to see player movement`;
+        : `${teams.length} teams • Player movement between teams`;
     
-    // Title at top
+    // Subtitle with filter info (at top with MORE space below)
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 40)
+        .attr("y", 35) // Closer to top
         .attr("text-anchor", "middle")
         .attr("fill", "white")
-        .attr("font-size", "28px")
-        .attr("font-weight", "bold")
-        .text(titleText);
-    
-    // Subtitle with filter info
-    svg.append("text")
-        .attr("x", containerWidth / 2)
-        .attr("y", 75)
-        .attr("text-anchor", "middle")
-        .attr("fill", "#aaa")
-        .attr("font-size", "16px")
+        .attr("font-size", "20px")
+        .attr("font-weight", "600")
         .text(subtitle);
     
     // Additional info line
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 105)
+        .attr("y", 65) // Closer together
         .attr("text-anchor", "middle")
         .attr("fill", "#888")
-        .attr("font-size", "14px")
+        .attr("font-size", "15px")
         .text(`${teams.length} teams shown • Hover over ribbons to see player movement`);
     
-    // Main group centered BELOW title (moved down more)
+    // Main group centered BELOW title (moved down even more)
     const centerY = titleHeight + (availableHeight / 2);
     const g = svg.append("g")
         .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
