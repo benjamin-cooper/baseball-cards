@@ -24,7 +24,7 @@ let zoom;
 let labelsVisible = false;
 
 // Load all data files
-async function loadData() {
+async function loadAllData() {
     try {
         const loadingEl = document.querySelector('.loading');
         if (loadingEl) loadingEl.textContent = 'Loading data... 0%';
@@ -46,10 +46,19 @@ async function loadData() {
         teamColorsData = await fetch(DATA_URLS.colors).then(r => r.json()).then(data => { updateProgress(); return data; });
 
         console.log('✅ Data loaded successfully');
-        console.log(`Years: ${networkData.years.length}`);
-        console.log(`Players: ${playersData.count}`);
+        
+        // Handle both array and object formats for network data
+        if (Array.isArray(networkData)) {
+            // New format: just an array of edges
+            console.log(`Edges: ${networkData.length}`);
+        } else {
+            // Old format: object with years and edges
+            console.log(`Years: ${networkData.years?.length || 0}`);
+            console.log(`Edges: ${networkData.edges?.length || 0}`);
+        }
+        
+        console.log(`Players: ${Array.isArray(playersData) ? playersData.length : playersData.count}`);
         console.log(`Teams: ${teamsData.count}`);
-        console.log(`Edges: ${networkData.edges.length}`);
 
         // Initialize the application
         initializeApp();
@@ -789,4 +798,4 @@ function toggleLabels() {
 }
 
 // Start the application when DOM is ready
-window.addEventListener('DOMContentLoaded', loadData);
+window.addEventListener('DOMContentLoaded', loadAllData);

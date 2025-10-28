@@ -139,9 +139,10 @@ const imageLazyLoader = {
 // Register service worker for offline caching
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('✅ Service Worker registered'))
-            .catch(err => console.log('❌ Service Worker registration failed:', err));
+        // Service Worker disabled - not needed for this app
+        // navigator.serviceWorker.register('/sw.js')
+        //     .then(reg => console.log('✅ Service Worker registered'))
+        //     .catch(err => console.log('❌ Service Worker registration failed:', err));
     });
 }
 
