@@ -789,4 +789,4 @@ function toggleLabels() {
 }
 
 // Start the application when DOM is ready
-window.addEventListener('DOMContentLoaded', loadAllData);
+window.addEventListener('DOMContentLoaded', loadData);
