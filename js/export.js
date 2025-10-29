@@ -378,8 +378,7 @@ function exportAsPNG(includeNames = true) {
             // Draw legend at bottom - COMPACT VERSION for better proportions
             const legendY = origBaseHeight + 10; // Less spacing
             
-            // Make legend more compact - reduce height
-            const compactLegendHeight = Math.ceil(sortedTeams.length / itemsPerRow) * 28 + 45; // Reduced from 40 + 60
+            // Legend height already calculated earlier (compactLegendHeight variable)
             
             // Draw legend background with rounded corners - new color scheme
             tempCtx.fillStyle = 'rgba(20, 20, 20, 0.95)';
