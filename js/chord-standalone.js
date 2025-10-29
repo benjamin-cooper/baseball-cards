@@ -772,35 +772,16 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // STEP 1: Create temp canvas at 2X resolution for sharper rendering
-                const renderScale = 2; // Render at 2x for crystal clear output
-                const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = origWidth * renderScale;
-                tempCanvas.height = origHeight * renderScale;
-                
-                const tempCtx = tempCanvas.getContext('2d');
-                
-                // Enable high-quality rendering
-                tempCtx.imageSmoothingEnabled = true;
-                tempCtx.imageSmoothingQuality = 'high';
-                
-                // Fill background (in case SVG has transparency)
-                tempCtx.fillStyle = '#000000';
-                tempCtx.fillRect(0, 0, origWidth * renderScale, origHeight * renderScale);
-                
-                // Draw the SVG image at 2X resolution
-                tempCtx.drawImage(img, 0, 0, origWidth * renderScale, origHeight * renderScale);
-                
-                // STEP 2: Create final high-res 4:3 canvas (24" × 18")
+                // Render directly at final 5X resolution - NO double-scaling to prevent blur
                 const targetWidth = 2400;
                 const targetHeight = 1800;
-                const scale = 5; // 5x for ultra-high quality
+                const scale = 5; // 5x for ultra-high quality (12000×9000)
                 
                 const finalCanvas = document.createElement('canvas');
                 finalCanvas.width = targetWidth * scale;  // 12000 pixels
                 finalCanvas.height = targetHeight * scale; // 9000 pixels
                 
-                const finalCtx = finalCanvas.getContext('2d');
+                const finalCtx = finalCanvas.getContext('2d', { alpha: false });
                 
                 // Enable high-quality rendering
                 finalCtx.imageSmoothingEnabled = true;
@@ -830,8 +811,8 @@ function exportChordDiagramPNG() {
                     offsetY = 0;
                 }
                 
-                // Draw temp canvas onto final canvas with proper scaling and centering
-                finalCtx.drawImage(tempCanvas, offsetX, offsetY, drawWidth, drawHeight);
+                // Draw SVG directly at 5X resolution (no intermediate scaling)
+                finalCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
                 
                 // Convert canvas to PNG blob with MAXIMUM quality
                 finalCanvas.toBlob(function(blob) {

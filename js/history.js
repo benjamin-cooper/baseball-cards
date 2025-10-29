@@ -168,10 +168,25 @@ function addHistoryButtons() {
 
 // Hook into filter changes to save history
 function hookFilterChanges() {
+    // Prevent multiple hooks
+    if (window.updateDiagram._historyHooked) {
+        console.log('ℹ️ Filter history already hooked');
+        return;
+    }
+    
     // Override updateDiagram to save history before changes
     const originalUpdateDiagram = window.updateDiagram;
+    if (!originalUpdateDiagram) {
+        console.warn('⚠️ updateDiagram not found, history hook skipped');
+        return;
+    }
+    
     window.updateDiagram = function() {
         saveFilterState();
         originalUpdateDiagram.apply(this, arguments);
     };
+    
+    // Mark as hooked
+    window.updateDiagram._historyHooked = true;
+    console.log('✅ Filter history hooked successfully');
 }
