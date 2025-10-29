@@ -655,7 +655,7 @@ function setTeamFilterMode(mode) {
     }
 }
 
-// Initialize filters (create year checkboxes)
+// Initialize filters (create year buttons)
 function initializeFilters() {
     const yearSelector = document.getElementById('year-selector');
     
@@ -664,26 +664,28 @@ function initializeFilters() {
         return;
     }
     
-    // Create a checkbox for each year
+    // Create a button for each year
     yearSelector.innerHTML = networkData.years.map(year => `
-        <label class="year-checkbox">
-            <input type="checkbox" 
-                   id="year-${year}" 
-                   value="${year}" 
-                   onchange="toggleYear(${year})">
-            <span>${year}</span>
-        </label>
+        <button class="year-btn" 
+                id="year-${year}" 
+                onclick="toggleYear(${year})">
+            ${year}
+        </button>
     `).join('');
     
-    console.log(`✅ Created ${networkData.years.length} year checkboxes`);
+    console.log(`✅ Created ${networkData.years.length} year buttons`);
 }
 
 // Toggle year selection
 function toggleYear(year) {
+    const btn = document.getElementById(`year-${year}`);
+    
     if (selectedYears.has(year)) {
         selectedYears.delete(year);
+        if (btn) btn.classList.remove('active');
     } else {
         selectedYears.add(year);
+        if (btn) btn.classList.add('active');
     }
     
     console.log(`📅 Year ${year} ${selectedYears.has(year) ? 'selected' : 'deselected'}`);
@@ -938,9 +940,9 @@ function selectAllYears() {
     if (networkData && networkData.years) {
         networkData.years.forEach(year => {
             selectedYears.add(year);
-            // Check the checkbox
-            const checkbox = document.getElementById(`year-${year}`);
-            if (checkbox) checkbox.checked = true;
+            // Add active class to button
+            const btn = document.getElementById(`year-${year}`);
+            if (btn) btn.classList.add('active');
         });
         console.log(`📅 Selected all years: ${selectedYears.size} years`);
         updateDiagram();
@@ -953,12 +955,12 @@ function selectDecade(startYear) {
     
     if (networkData && networkData.years) {
         networkData.years.forEach(year => {
-            const checkbox = document.getElementById(`year-${year}`);
+            const btn = document.getElementById(`year-${year}`);
             if (year >= startYear && year <= endYear) {
                 selectedYears.add(year);
-                if (checkbox) checkbox.checked = true;
+                if (btn) btn.classList.add('active');
             } else {
-                if (checkbox) checkbox.checked = false;
+                if (btn) btn.classList.remove('active');
             }
         });
         console.log(`📅 Selected ${startYear}s: ${selectedYears.size} years`);
@@ -970,11 +972,17 @@ function selectSingleYear(year) {
     selectedYears.clear();
     selectedYears.add(year);
     
-    // Update all checkboxes
+    // Update all buttons
     if (networkData && networkData.years) {
         networkData.years.forEach(y => {
-            const checkbox = document.getElementById(`year-${y}`);
-            if (checkbox) checkbox.checked = (y === year);
+            const btn = document.getElementById(`year-${y}`);
+            if (btn) {
+                if (y === year) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            }
         });
     }
     
@@ -985,11 +993,11 @@ function selectSingleYear(year) {
 function clearYears() {
     selectedYears.clear();
     
-    // Uncheck all checkboxes
+    // Remove active class from all buttons
     if (networkData && networkData.years) {
         networkData.years.forEach(year => {
-            const checkbox = document.getElementById(`year-${year}`);
-            if (checkbox) checkbox.checked = false;
+            const btn = document.getElementById(`year-${year}`);
+            if (btn) btn.classList.remove('active');
         });
     }
     
