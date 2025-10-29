@@ -1,4 +1,12 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
+//
+// PNG EXPORT QUALITY SETTINGS:
+// - Scale factor: 5x (produces ultra-high resolution images)
+// - Image smoothing: enabled with 'high' quality
+// - PNG quality: 1.0 (maximum)
+// - The exported images will be 5x larger than the display size for exceptional quality
+//
+// Note: You can adjust the scale factor (line 778) from 5 to 3 or 4 if needed.
 
 let chordMode = false;
 let chordButtonInitialized = false;
@@ -772,12 +780,20 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Create canvas
+                // Create canvas with HIGH RESOLUTION scaling
                 const canvas = document.createElement('canvas');
-                canvas.width = width;
-                canvas.height = height;
+                const scale = 5; // 5x resolution for ULTRA high quality
+                canvas.width = width * scale;
+                canvas.height = height * scale;
                 
                 const ctx = canvas.getContext('2d');
+                
+                // Enable high-quality rendering
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                
+                // Scale the context for all drawing operations
+                ctx.scale(scale, scale);
                 
                 // Fill background (in case SVG has transparency)
                 ctx.fillStyle = '#000000';
@@ -786,7 +802,7 @@ function exportChordDiagramPNG() {
                 // Draw the SVG image onto the canvas
                 ctx.drawImage(img, 0, 0, width, height);
                 
-                // Convert canvas to PNG blob
+                // Convert canvas to PNG blob with MAXIMUM quality
                 canvas.toBlob(function(blob) {
                     if (!blob) {
                         alert('❌ Error creating PNG. Please try SVG export instead.');
@@ -813,7 +829,7 @@ function exportChordDiagramPNG() {
                     } else {
                         console.log('✅ Chord diagram PNG exported!');
                     }
-                }, 'image/png');
+                }, 'image/png', 1.0); // Maximum quality (1.0)
             };
             
             img.onerror = function() {

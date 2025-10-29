@@ -1,4 +1,13 @@
 // Export functions for SVG and PNG
+// 
+// PNG QUALITY SETTINGS:
+// - Scale factor: 5x (produces 12000x9000+ pixel images for ultra-high quality)
+// - Image smoothing: enabled with 'high' quality
+// - PNG quality: 1.0 (maximum)
+// - Final resolution: 2400x1800 base × 5 = 12000x9000+ pixels
+//
+// Note: Higher scale factors (5x) produce larger file sizes but exceptional print quality.
+// You can reduce the scale factor (line 238) from 5 to 3 or 4 if file sizes are too large.
 
 // Create legend SVG with smart placement
 function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
@@ -232,8 +241,9 @@ function exportAsPNG(includeNames = true) {
             // Create legend with title detection
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
-            // Create a new canvas
+            // Create a new canvas with HIGH RESOLUTION scaling
             const canvas = document.createElement('canvas');
+            const scale = 5; // 5x resolution for ULTRA high quality (results in 12000x9000+ pixel images)
             const width = 2400;
             const baseHeight = 1800;
             
@@ -241,9 +251,17 @@ function exportAsPNG(includeNames = true) {
             const legendSpace = legend.height + 40;
             const totalHeight = baseHeight + legendSpace;
             
-            canvas.width = width;
-            canvas.height = totalHeight;
+            // Apply scaling for high resolution
+            canvas.width = width * scale;
+            canvas.height = totalHeight * scale;
             const ctx = canvas.getContext('2d');
+            
+            // Enable high-quality rendering
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            
+            // Scale the context for all drawing operations
+            ctx.scale(scale, scale);
             
             // Fill background
             ctx.fillStyle = '#1a2332';
@@ -423,7 +441,7 @@ function exportAsPNG(includeNames = true) {
                 ctx.fillText(team, x + 30, y + 15);
             });
             
-            // Convert to PNG
+            // Convert to PNG with MAXIMUM quality
             canvas.toBlob(function(blob) {
                 if (!blob) {
                     alert('❌ Error creating PNG. Please try again or use SVG export.');
@@ -444,7 +462,7 @@ function exportAsPNG(includeNames = true) {
                 }, 100);
                 
                 alert(`✅ PNG downloaded successfully ${includeNames ? 'with' : 'without'} player names!`);
-            }, 'image/png');
+            }, 'image/png', 1.0); // Maximum quality (1.0)
             
         } catch (error) {
             console.error('PNG Export Error:', error);
