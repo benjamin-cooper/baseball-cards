@@ -641,7 +641,7 @@ function drawChordDiagram(container, teams, matrix) {
             tooltip.style("opacity", 0);
         });
     
-    // Export button
+    // Export buttons
     const exportDiv = document.createElement('div');
     exportDiv.style.cssText = `
         position: absolute;
@@ -652,9 +652,9 @@ function drawChordDiagram(container, teams, matrix) {
         z-index: 100;
     `;
     
-    const exportBtn = document.createElement('button');
-    exportBtn.textContent = '💾 Export SVG';
-    exportBtn.style.cssText = `
+    const exportSVGBtn = document.createElement('button');
+    exportSVGBtn.textContent = '💾 Export SVG';
+    exportSVGBtn.style.cssText = `
         padding: 12px 24px;
         background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
         border: none;
@@ -665,9 +665,25 @@ function drawChordDiagram(container, teams, matrix) {
         font-weight: bold;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
     `;
-    exportBtn.onclick = () => exportChordDiagramSVG();
+    exportSVGBtn.onclick = () => exportChordDiagramSVG();
     
-    exportDiv.appendChild(exportBtn);
+    const exportPNGBtn = document.createElement('button');
+    exportPNGBtn.textContent = '📸 Export PNG';
+    exportPNGBtn.style.cssText = `
+        padding: 12px 24px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    exportPNGBtn.onclick = () => exportChordDiagramPNG();
+    
+    exportDiv.appendChild(exportSVGBtn);
+    exportDiv.appendChild(exportPNGBtn);
     container.style.position = 'relative';
     container.appendChild(exportDiv);
     
@@ -697,6 +713,105 @@ function exportChordDiagramSVG() {
     URL.revokeObjectURL(url);
     
     if (typeof showNotification === 'function') {
-        showNotification('✅ Chord diagram exported!', 2000);
+        showNotification('✅ Chord diagram SVG exported!', 2000);
+    } else {
+        console.log('✅ Chord diagram SVG exported!');
     }
+}
+
+// Export chord diagram as PNG
+function exportChordDiagramPNG() {
+    const svgElement = document.getElementById('chord-svg');
+    if (!svgElement) {
+        alert('No chord diagram found to export!');
+        return;
+    }
+    
+    if (typeof showNotification === 'function') {
+        showNotification('⏳ Generating PNG... This may take a few seconds.', 5000);
+    }
+    
+    setTimeout(() => {
+        try {
+            // Get SVG dimensions
+            const viewBox = svgElement.getAttribute('viewBox');
+            const [, , width, height] = viewBox.split(' ').map(Number);
+            
+            // Clone the SVG
+            const svgClone = svgElement.cloneNode(true);
+            
+            // Set explicit dimensions for rendering
+            svgClone.setAttribute('width', width);
+            svgClone.setAttribute('height', height);
+            
+            // Serialize the SVG
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(svgClone);
+            
+            // Create a blob from the SVG
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+            
+            // Create an image to load the SVG
+            const img = new Image();
+            
+            img.onload = function() {
+                // Create canvas
+                const canvas = document.createElement('canvas');
+                canvas.width = width;
+                canvas.height = height;
+                
+                const ctx = canvas.getContext('2d');
+                
+                // Fill background (in case SVG has transparency)
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(0, 0, width, height);
+                
+                // Draw the SVG image onto the canvas
+                ctx.drawImage(img, 0, 0, width, height);
+                
+                // Convert canvas to PNG blob
+                canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        alert('❌ Error creating PNG. Please try SVG export instead.');
+                        return;
+                    }
+                    
+                    // Create download link
+                    const pngUrl = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.href = pngUrl;
+                    link.download = `team-chord-diagram-${Date.now()}.png`;
+                    document.body.appendChild(link);
+                    link.click();
+                    
+                    // Cleanup
+                    setTimeout(() => {
+                        document.body.removeChild(link);
+                        URL.revokeObjectURL(pngUrl);
+                        URL.revokeObjectURL(url);
+                    }, 100);
+                    
+                    if (typeof showNotification === 'function') {
+                        showNotification('✅ Chord diagram PNG exported!', 3000);
+                    } else {
+                        console.log('✅ Chord diagram PNG exported!');
+                    }
+                }, 'image/png');
+            };
+            
+            img.onerror = function() {
+                console.error('Failed to load SVG for PNG conversion');
+                alert('❌ Failed to export PNG. Please try SVG export instead.');
+                URL.revokeObjectURL(url);
+            };
+            
+            // Load the SVG
+            img.src = url;
+            
+        } catch (error) {
+            console.error('PNG Export Error:', error);
+            alert('❌ Error creating PNG: ' + error.message);
+        }
+    }, 100);
 }
