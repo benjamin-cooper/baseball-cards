@@ -204,8 +204,8 @@ function createUI() {
                         <button class="quick-filter-btn" onclick="selectDecade(1980)">1980s</button>
                         <button class="quick-filter-btn" onclick="selectDecade(1990)">1990s</button>
                         <button class="quick-filter-btn" onclick="selectDecade(2000)">2000s</button>
-                        <button class="quick-filter-btn" onclick="selectYear(1991)">🎯 1991 Only</button>
-                        <button class="quick-filter-btn" onclick="clearSelection()">🔄 Clear Years</button>
+                        <button class="quick-filter-btn" onclick="selectSingleYear(1991)">🎯 1991 Only</button>
+                        <button class="quick-filter-btn" onclick="clearYears()">🔄 Clear Years</button>
                         <button class="export-btn" onclick="exportAsSVG(true)">💾 SVG (With Names)</button>
                         <button class="export-btn" onclick="exportAsSVG(false)">💾 SVG (No Names)</button>
                         <button class="export-btn" onclick="exportAsPNG(true)">📸 PNG (With Names)</button>
@@ -655,6 +655,48 @@ function setTeamFilterMode(mode) {
     }
 }
 
+// Initialize filters (create year checkboxes)
+function initializeFilters() {
+    const yearSelector = document.getElementById('year-selector');
+    
+    if (!networkData || !networkData.years) {
+        console.error('❌ Cannot create year selector: networkData not loaded');
+        return;
+    }
+    
+    // Create a checkbox for each year
+    yearSelector.innerHTML = networkData.years.map(year => `
+        <label class="year-checkbox">
+            <input type="checkbox" 
+                   id="year-${year}" 
+                   value="${year}" 
+                   onchange="toggleYear(${year})">
+            <span>${year}</span>
+        </label>
+    `).join('');
+    
+    console.log(`✅ Created ${networkData.years.length} year checkboxes`);
+}
+
+// Toggle year selection
+function toggleYear(year) {
+    if (selectedYears.has(year)) {
+        selectedYears.delete(year);
+    } else {
+        selectedYears.add(year);
+    }
+    
+    console.log(`📅 Year ${year} ${selectedYears.has(year) ? 'selected' : 'deselected'}`);
+    
+    if (selectedYears.size > 0) {
+        updateDiagram();
+    } else {
+        // Clear the network if no years selected
+        document.getElementById('network-container').innerHTML = 
+            '<div class="loading">Select at least one year to view the network...</div>';
+    }
+}
+
 // Connection filter controls
 function increaseConnections() {
     const input = document.getElementById('connection-input');
@@ -894,7 +936,12 @@ function toggleLabels() {
 function selectAllYears() {
     selectedYears.clear();
     if (networkData && networkData.years) {
-        networkData.years.forEach(year => selectedYears.add(year));
+        networkData.years.forEach(year => {
+            selectedYears.add(year);
+            // Check the checkbox
+            const checkbox = document.getElementById(`year-${year}`);
+            if (checkbox) checkbox.checked = true;
+        });
         console.log(`📅 Selected all years: ${selectedYears.size} years`);
         updateDiagram();
     }
@@ -906,8 +953,12 @@ function selectDecade(startYear) {
     
     if (networkData && networkData.years) {
         networkData.years.forEach(year => {
+            const checkbox = document.getElementById(`year-${year}`);
             if (year >= startYear && year <= endYear) {
                 selectedYears.add(year);
+                if (checkbox) checkbox.checked = true;
+            } else {
+                if (checkbox) checkbox.checked = false;
             }
         });
         console.log(`📅 Selected ${startYear}s: ${selectedYears.size} years`);
@@ -918,14 +969,33 @@ function selectDecade(startYear) {
 function selectSingleYear(year) {
     selectedYears.clear();
     selectedYears.add(year);
+    
+    // Update all checkboxes
+    if (networkData && networkData.years) {
+        networkData.years.forEach(y => {
+            const checkbox = document.getElementById(`year-${y}`);
+            if (checkbox) checkbox.checked = (y === year);
+        });
+    }
+    
     console.log(`📅 Selected single year: ${year}`);
     updateDiagram();
 }
 
 function clearYears() {
     selectedYears.clear();
+    
+    // Uncheck all checkboxes
+    if (networkData && networkData.years) {
+        networkData.years.forEach(year => {
+            const checkbox = document.getElementById(`year-${year}`);
+            if (checkbox) checkbox.checked = false;
+        });
+    }
+    
     console.log('🔄 Cleared all year selections');
-    updateDiagram();
+    document.getElementById('network-container').innerHTML = 
+        '<div class="loading">Select at least one year to view the network...</div>';
 }
 
 // Custom title management
