@@ -8,17 +8,18 @@
 const dataPreloader = {
     promises: {},
     cache: {},
+    startTime: 0,
     
-    // Start preloading all data files immediately
+    // Start preloading all data files immediately with optimizations
     init() {
         console.log('🚀 Preloading data files...');
-        const startTime = performance.now();
+        this.startTime = performance.now();
         
-        // Preload all data files in parallel
-        this.promises.network = this.loadJSON(DATA_URLS.network);
-        this.promises.players = this.loadJSON(DATA_URLS.players);
-        this.promises.teams = this.loadJSON(DATA_URLS.teams);
-        this.promises.colors = this.loadJSON(DATA_URLS.colors);
+        // Preload all data files in parallel with priority
+        this.promises.network = this.loadJSON(DATA_URLS.network, 'high');
+        this.promises.players = this.loadJSON(DATA_URLS.players, 'high');
+        this.promises.teams = this.loadJSON(DATA_URLS.teams, 'low');
+        this.promises.colors = this.loadJSON(DATA_URLS.colors, 'low');
         
         // Wait for all to complete
         Promise.all([
@@ -27,17 +28,31 @@ const dataPreloader = {
             this.promises.teams,
             this.promises.colors
         ]).then(() => {
-            const loadTime = (performance.now() - startTime).toFixed(0);
+            const loadTime = (performance.now() - this.startTime).toFixed(0);
             console.log(`✅ All data preloaded in ${loadTime}ms`);
+            this.cacheToLocalStorage();
         }).catch(err => {
             console.error('❌ Preload error:', err);
         });
     },
     
-    // Load JSON with caching
-    async loadJSON(url) {
+    // Load JSON with caching and compression
+    async loadJSON(url, priority = 'auto') {
         try {
-            const response = await fetch(url);
+            // Try localStorage first
+            const cached = this.getFromLocalStorage(url);
+            if (cached) {
+                this.cache[url] = cached;
+                return cached;
+            }
+            
+            const response = await fetch(url, {
+                priority: priority,
+                cache: 'force-cache'
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            
             const data = await response.json();
             this.cache[url] = data;
             return data;
@@ -47,12 +62,53 @@ const dataPreloader = {
         }
     },
     
+    // Cache to localStorage (with 2MB limit per item)
+    cacheToLocalStorage() {
+        try {
+            Object.entries(this.cache).forEach(([url, data]) => {
+                const key = `cache_${url}`;
+                const json = JSON.stringify(data);
+                if (json.length < 2 * 1024 * 1024) {
+                    localStorage.setItem(key, json);
+                    localStorage.setItem(`${key}_time`, Date.now().toString());
+                }
+            });
+        } catch (e) {
+            console.log('localStorage cache failed:', e.message);
+        }
+    },
+    
+    // Get from localStorage if < 24 hours old
+    getFromLocalStorage(url) {
+        try {
+            const key = `cache_${url}`;
+            const cached = localStorage.getItem(key);
+            const cachedTime = localStorage.getItem(`${key}_time`);
+            
+            if (cached && cachedTime) {
+                const age = Date.now() - parseInt(cachedTime);
+                if (age < 24 * 60 * 60 * 1000) { // 24 hours
+                    console.log(`📦 Using cached ${url.split('/').pop()}`);
+                    return JSON.parse(cached);
+                }
+            }
+        } catch (e) {}
+        return null;
+    },
+    
     // Get cached data (returns promise if not loaded yet)
     get(url) {
         if (this.cache[url]) {
             return Promise.resolve(this.cache[url]);
         }
         return this.promises[url] || this.loadJSON(url);
+    },
+    
+    // Clear cache manually if needed
+    clearCache() {
+        Object.keys(localStorage).forEach(key => {
+            if (key.startsWith('cache_')) localStorage.removeItem(key);
+        });
     }
 };
 

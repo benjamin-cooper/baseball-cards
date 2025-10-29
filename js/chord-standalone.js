@@ -772,19 +772,24 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // STEP 1: Create temp canvas at original SVG size (high quality)
+                // STEP 1: Create temp canvas at 2X resolution for sharper rendering
+                const renderScale = 2; // Render at 2x for crystal clear output
                 const tempCanvas = document.createElement('canvas');
-                tempCanvas.width = origWidth;
-                tempCanvas.height = origHeight;
+                tempCanvas.width = origWidth * renderScale;
+                tempCanvas.height = origHeight * renderScale;
                 
                 const tempCtx = tempCanvas.getContext('2d');
                 
+                // Enable high-quality rendering
+                tempCtx.imageSmoothingEnabled = true;
+                tempCtx.imageSmoothingQuality = 'high';
+                
                 // Fill background (in case SVG has transparency)
                 tempCtx.fillStyle = '#000000';
-                tempCtx.fillRect(0, 0, origWidth, origHeight);
+                tempCtx.fillRect(0, 0, origWidth * renderScale, origHeight * renderScale);
                 
-                // Draw the SVG image onto the temp canvas
-                tempCtx.drawImage(img, 0, 0, origWidth, origHeight);
+                // Draw the SVG image at 2X resolution
+                tempCtx.drawImage(img, 0, 0, origWidth * renderScale, origHeight * renderScale);
                 
                 // STEP 2: Create final high-res 4:3 canvas (24" × 18")
                 const targetWidth = 2400;

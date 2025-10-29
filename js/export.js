@@ -71,7 +71,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
         legendSVG = `
             <g class="legend-group" transform="translate(0, 0)">
                 <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(20, 20, 20, 0.95)" rx="10" stroke="#3498db" stroke-width="3"/>
-                <text x="${legendWidth / 2}" y="38" text-anchor="middle" font-size="28" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Color Legend</text>
+                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Color Legend</text>
         `;
         
         const itemWidth = legendWidth / itemsPerRow;
@@ -86,7 +86,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
             
             legendSVG += `
                 <rect x="${x}" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
-                <text x="${x + 30}" y="${y + 15}" font-size="15" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
+                <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
             `;
         });
         
@@ -132,13 +132,13 @@ function exportAsSVG(includeNames = true) {
         totalWidth = 2400 + legend.width + 50;
         totalHeight = currentHeight;
     } else if (legend.placement === 'bottom') {
-        // Bottom legend - add space at bottom with extra margin to prevent frame coverage
+        // Bottom legend - add space at bottom
         totalWidth = 2400;
-        totalHeight = currentHeight + legend.height + 80;
+        totalHeight = currentHeight + legend.height + 40;
     } else {
-        // Top legend (only when no custom titles) with extra margin
+        // Top legend (only when no custom titles)
         totalWidth = 2400;
-        totalHeight = currentHeight + legend.height + 80;
+        totalHeight = currentHeight + legend.height + 40;
     }
     
     svgClone.setAttribute('width', totalWidth);
@@ -168,10 +168,10 @@ function exportAsSVG(includeNames = true) {
     // Add legend
     const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
     if (legend.placement === 'bottom') {
-        // Position at bottom with more spacing to prevent frame coverage
+        // Position at bottom
         legendGroup.innerHTML = legend.svg.replace(
             'transform="translate(0, 0)"',
-            `transform="translate(0, ${currentHeight + 40})"`
+            `transform="translate(0, ${currentHeight + 20})"`
         );
     } else {
         legendGroup.innerHTML = legend.svg;
@@ -242,24 +242,30 @@ function exportAsPNG(includeNames = true) {
             // Create legend with title detection (for placement logic only)
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
-            // STEP 1: Create a temporary canvas with the original working dimensions
-            const tempCanvas = document.createElement('canvas');
-            const origWidth = 2400;
-            const origBaseHeight = 1800;
+            // STEP 1: Draw DIRECTLY at final 5X resolution for ZERO blur
+            // No temp canvas, no upscaling - just pure high-res rendering
+            const scale = 5; // Final scale for 12,000 × 9,000 output
+            const baseWidth = 2400;
+            const baseHeight = 1800;
             
-            // Calculate COMPACT legend height for PNG (much smaller than SVG version)
+            // Calculate legend dimensions
             const itemsPerRow = 6;
-            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 28 + 45;
-            const origLegendSpace = compactLegendHeight + 50; // Increased from 20 to 50 for proper bottom spacing
-            const origTotalHeight = origBaseHeight + origLegendSpace;
+            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 32 + 60;
+            const origLegendSpace = compactLegendHeight + 90;
+            const baseTotalHeight = baseHeight + origLegendSpace;
             
-            tempCanvas.width = origWidth;
-            tempCanvas.height = origTotalHeight;
-            const tempCtx = tempCanvas.getContext('2d');
+            // Create canvas at FINAL resolution (no upscaling needed later)
+            const canvas = document.createElement('canvas');
+            canvas.width = baseWidth * scale;   // 12,000 pixels
+            canvas.height = baseTotalHeight * scale; // ~10,000 pixels  
+            const ctx = canvas.getContext('2d', { alpha: false }); // Faster without alpha
             
-            // Fill background with pure black for maximum contrast
-            tempCtx.fillStyle = '#000000';
-            tempCtx.fillRect(0, 0, origWidth, origTotalHeight);
+            // Scale context once - everything now draws at 5x automatically
+            ctx.scale(scale, scale);
+            
+            // Fill background with pure black
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, baseWidth, baseTotalHeight);
             
             // Get titles if they exist
             let titleHeight = 0;
@@ -268,30 +274,30 @@ function exportAsPNG(includeNames = true) {
             
             if (titleElement || subtitleElement) {
                 // Draw titles at the top
-                tempCtx.textAlign = 'center';
+                ctx.textAlign = 'center';
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
-                    tempCtx.fillStyle = '#ffffff';
-                    tempCtx.font = 'bold 40px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    tempCtx.fillText(titleText, origWidth / 2, 80);
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 40px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.fillText(titleText, baseWidth / 2, 80);
                     titleHeight = 80;
                 }
                 
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
-                    tempCtx.fillStyle = '#d0d0d0';
-                    tempCtx.font = '24px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    tempCtx.fillText(subtitleText, origWidth / 2, titleHeight + 45);
+                    ctx.fillStyle = '#d0d0d0';
+                    ctx.font = '24px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.fillText(subtitleText, baseWidth / 2, titleHeight + 45);
                     titleHeight += 45;
                 }
                 
-                titleHeight += 30; // Add more spacing after titles for breathing room
+                titleHeight += 30; // Add more spacing after titles
             }
             
             // Network area starts after titles (if any)
             const networkStartY = titleHeight;
-            const networkHeight = origBaseHeight - titleHeight;
+            const networkHeight = baseHeight - titleHeight;
             
             // Get all links and nodes
             const links = d3.selectAll('#poster-svg line').nodes();
@@ -301,10 +307,10 @@ function exportAsPNG(includeNames = true) {
             // Get current transform
             const transform = d3.zoomTransform(svg.node());
             
-            tempCtx.save();
-            tempCtx.translate(0, networkStartY);
-            tempCtx.translate(transform.x, transform.y);
-            tempCtx.scale(transform.k, transform.k);
+            ctx.save();
+            ctx.translate(0, networkStartY);
+            ctx.translate(transform.x, transform.y);
+            ctx.scale(transform.k, transform.k);
             
             // Draw links
             links.forEach(link => {
@@ -315,14 +321,14 @@ function exportAsPNG(includeNames = true) {
                 const stroke = link.getAttribute('stroke');
                 const strokeWidth = parseFloat(link.getAttribute('stroke-width'));
                 
-                tempCtx.beginPath();
-                tempCtx.moveTo(x1, y1);
-                tempCtx.lineTo(x2, y2);
-                tempCtx.strokeStyle = stroke;
-                tempCtx.lineWidth = strokeWidth;
-                tempCtx.globalAlpha = 0.5;
-                tempCtx.stroke();
-                tempCtx.globalAlpha = 1;
+                ctx.beginPath();
+                ctx.moveTo(x1, y1);
+                ctx.lineTo(x2, y2);
+                ctx.strokeStyle = stroke;
+                ctx.lineWidth = strokeWidth;
+                ctx.globalAlpha = 0.5;
+                ctx.stroke();
+                ctx.globalAlpha = 1;
             });
             
             // Draw nodes
@@ -337,25 +343,25 @@ function exportAsPNG(includeNames = true) {
                 const r = parseFloat(node.getAttribute('r'));
                 const fill = node.getAttribute('fill');
                 
-                tempCtx.beginPath();
-                tempCtx.arc(cx, cy, r, 0, 2 * Math.PI);
-                tempCtx.fillStyle = fill;
-                tempCtx.fill();
-                tempCtx.strokeStyle = 'white';
-                tempCtx.lineWidth = 3;
-                tempCtx.stroke();
+                ctx.beginPath();
+                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
+                ctx.fillStyle = fill;
+                ctx.fill();
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.stroke();
             });
             
             // Draw labels (if requested)
             if (includeNames) {
-                tempCtx.font = 'bold 16px Roboto, "Helvetica Neue", Arial, sans-serif';
-                tempCtx.textAlign = 'center';
-                tempCtx.textBaseline = 'middle';
-                tempCtx.fillStyle = 'white';
-                tempCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                tempCtx.shadowBlur = 4;
-                tempCtx.shadowOffsetX = 2;
-                tempCtx.shadowOffsetY = 2;
+                ctx.font = 'bold 16px Roboto, "Helvetica Neue", Arial, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillStyle = 'white';
+                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                ctx.shadowBlur = 4;
+                ctx.shadowOffsetX = 2;
+                ctx.shadowOffsetY = 2;
                 
                 labels.forEach(label => {
                     const parent = label.parentElement;
@@ -368,115 +374,119 @@ function exportAsPNG(includeNames = true) {
                     const y = parseFloat(match[2]) + parseFloat(label.getAttribute('dy') || 0);
                     
                     if (text && !isNaN(x) && !isNaN(y)) {
-                        tempCtx.fillText(text, x, y);
+                        ctx.fillText(text, x, y);
                     }
                 });
             }
             
-            tempCtx.restore();
+            ctx.restore();
             
-            // Draw legend at bottom - COMPACT VERSION for better proportions
-            const legendY = origBaseHeight + 40; // More spacing to prevent frame coverage
+            // Draw legend at bottom with more spacing to prevent frame coverage
+            const legendY = baseHeight + 80;
             
             // Legend height already calculated earlier (compactLegendHeight variable)
             
             // Draw legend background with rounded corners - new color scheme
-            tempCtx.fillStyle = 'rgba(20, 20, 20, 0.95)';
-            const cornerRadius = 8; // Smaller radius
-            const legendMargin = 10; // Margin from edges
+            ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
+            const cornerRadius = 8;
+            const legendMargin = 10;
             
             // Create rounded rectangle
-            tempCtx.beginPath();
-            tempCtx.moveTo(legendMargin + cornerRadius, legendY);
-            tempCtx.lineTo(origWidth - legendMargin - cornerRadius, legendY);
-            tempCtx.quadraticCurveTo(origWidth - legendMargin, legendY, origWidth - legendMargin, legendY + cornerRadius);
-            tempCtx.lineTo(origWidth - legendMargin, legendY + compactLegendHeight - cornerRadius);
-            tempCtx.quadraticCurveTo(origWidth - legendMargin, legendY + compactLegendHeight, origWidth - legendMargin - cornerRadius, legendY + compactLegendHeight);
-            tempCtx.lineTo(legendMargin + cornerRadius, legendY + compactLegendHeight);
-            tempCtx.quadraticCurveTo(legendMargin, legendY + compactLegendHeight, legendMargin, legendY + compactLegendHeight - cornerRadius);
-            tempCtx.lineTo(legendMargin, legendY + cornerRadius);
-            tempCtx.quadraticCurveTo(legendMargin, legendY, legendMargin + cornerRadius, legendY);
-            tempCtx.closePath();
-            tempCtx.fill();
+            ctx.beginPath();
+            ctx.moveTo(legendMargin + cornerRadius, legendY);
+            ctx.lineTo(baseWidth - legendMargin - cornerRadius, legendY);
+            ctx.quadraticCurveTo(baseWidth - legendMargin, legendY, baseWidth - legendMargin, legendY + cornerRadius);
+            ctx.lineTo(baseWidth - legendMargin, legendY + compactLegendHeight - cornerRadius);
+            ctx.quadraticCurveTo(baseWidth - legendMargin, legendY + compactLegendHeight, baseWidth - legendMargin - cornerRadius, legendY + compactLegendHeight);
+            ctx.lineTo(legendMargin + cornerRadius, legendY + compactLegendHeight);
+            ctx.quadraticCurveTo(legendMargin, legendY + compactLegendHeight, legendMargin, legendY + compactLegendHeight - cornerRadius);
+            ctx.lineTo(legendMargin, legendY + cornerRadius);
+            ctx.quadraticCurveTo(legendMargin, legendY, legendMargin + cornerRadius, legendY);
+            ctx.closePath();
+            ctx.fill();
             
             // Draw vibrant blue border
-            tempCtx.strokeStyle = '#3498db';
-            tempCtx.lineWidth = 2; // Thinner border
-            tempCtx.stroke();
+            ctx.strokeStyle = '#3498db';
+            ctx.lineWidth = 2;
+            ctx.stroke();
             
-            // Draw legend title - larger with Roboto font
-            tempCtx.fillStyle = 'white';
-            tempCtx.font = 'bold 22px Roboto, "Helvetica Neue", Arial, sans-serif'; // Increased from 18px
-            tempCtx.textAlign = 'center';
-            tempCtx.fillText('Team Color Legend', origWidth / 2, legendY + 28); // Adjusted position
+            // Draw legend title - larger for better readability
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 28px Roboto, "Helvetica Neue", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 35);
             
-            // Draw legend items - more compact
+            // Draw legend items
             const sortedTeams = teams.sort();
             // itemsPerRow already defined earlier (value: 6)
-            const itemWidth = origWidth / itemsPerRow;
+            const itemWidth = baseWidth / itemsPerRow;
             
-            tempCtx.font = '13px Roboto, "Helvetica Neue", Arial, sans-serif'; // Increased from 12px
-            tempCtx.textAlign = 'left';
+            ctx.font = '16px Roboto, "Helvetica Neue", Arial, sans-serif';
+            ctx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {
                 const row = Math.floor(i / itemsPerRow);
                 const col = i % itemsPerRow;
                 const x = col * itemWidth + 20;
-                const y = legendY + row * 28 + 45; // Reduced spacing from 40 to 28, start from 45 instead of 60
+                const y = legendY + row * 32 + 58;
                 
-                // Draw color box - slightly smaller
+                // Draw color box
                 const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
-                tempCtx.fillStyle = color;
-                tempCtx.fillRect(x, y, 16, 16); // Reduced from 20x20
-                tempCtx.strokeStyle = 'white';
-                tempCtx.lineWidth = 1;
-                tempCtx.strokeRect(x, y, 16, 16);
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 20, 20);
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1.5;
+                ctx.strokeRect(x, y, 20, 20);
                 
                 // Draw team name
-                tempCtx.fillStyle = 'white';
-                tempCtx.fillText(team, x + 22, y + 12); // Adjusted for smaller box
+                ctx.fillStyle = 'white';
+                ctx.fillText(team, x + 26, y + 15);
             });
             
-            // STEP 2: Now create the final high-res 4:3 canvas
+            // Crop to 4:3 aspect ratio if needed (24" × 18" format)
             const targetWidth = 2400;
             const targetHeight = 1800;
-            const scale = 5;
+            const targetScale = 5;
             
             const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = targetWidth * scale;
-            finalCanvas.height = targetHeight * scale;
-            const finalCtx = finalCanvas.getContext('2d');
+            finalCanvas.width = targetWidth * targetScale;  // 12,000px
+            finalCanvas.height = targetHeight * targetScale; // 9,000px
+            const finalCtx = finalCanvas.getContext('2d', { alpha: false });
             
-            // Enable high-quality rendering
-            finalCtx.imageSmoothingEnabled = true;
-            finalCtx.imageSmoothingQuality = 'high';
-            
-            // Fill with pure black background for maximum contrast
+            // Fill background
             finalCtx.fillStyle = '#000000';
-            finalCtx.fillRect(0, 0, targetWidth * scale, targetHeight * scale);
+            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
             
-            // Calculate how to fit the original image into 4:3
-            const origAspect = origWidth / origTotalHeight;
+            // Calculate how to fit our content into 4:3 ratio
+            const srcAspect = baseWidth / baseTotalHeight;
             const targetAspect = targetWidth / targetHeight;
             
-            let drawWidth, drawHeight, offsetX, offsetY;
+            let sx, sy, sw, sh, dx, dy, dw, dh;
             
-            if (origAspect > targetAspect) {
-                // Original is wider - fit to width
-                drawWidth = targetWidth * scale;
-                drawHeight = (targetWidth / origAspect) * scale;
-                offsetX = 0;
-                offsetY = ((targetHeight * scale) - drawHeight) / 2;
+            if (srcAspect > targetAspect) {
+                // Source is wider - crop sides
+                sh = baseTotalHeight * scale;
+                sw = sh * targetAspect;
+                sx = ((baseWidth * scale) - sw) / 2;
+                sy = 0;
+                dx = 0;
+                dy = 0;
+                dw = finalCanvas.width;
+                dh = finalCanvas.height;
             } else {
-                // Original is taller - fit to height
-                drawHeight = targetHeight * scale;
-                drawWidth = (targetHeight * origAspect) * scale;
-                offsetX = ((targetWidth * scale) - drawWidth) / 2;
-                offsetY = 0;
+                // Source is taller - fit to height and center
+                sw = baseWidth * scale;
+                sh = baseTotalHeight * scale;
+                sx = 0;
+                sy = 0;
+                dw = finalCanvas.width;
+                dh = (sh / sw) * dw;
+                dx = 0;
+                dy = (finalCanvas.height - dh) / 2;
             }
             
-            // Draw the temp canvas onto the final canvas with proper scaling
-            finalCtx.drawImage(tempCanvas, offsetX, offsetY, drawWidth, drawHeight);
+            // Copy from source canvas (already at 5x resolution)
+            finalCtx.drawImage(canvas, sx, sy, sw, sh, dx, dy, dw, dh);
             
             // Convert to PNG with MAXIMUM quality
             finalCanvas.toBlob(function(blob) {
@@ -499,7 +509,7 @@ function exportAsPNG(includeNames = true) {
                 }, 100);
                 
                 alert(`✅ PNG downloaded successfully ${includeNames ? 'with' : 'without'} player names!`);
-            }, 'image/png', 1.0); // Maximum quality (1.0)
+            }, 'image/png', 1.0);
             
         } catch (error) {
             console.error('PNG Export Error:', error);
