@@ -3,8 +3,6 @@
 let currentZoom = null;
 let nodesVisible = true;  // Control node visibility
 let nodeSize = 10;        // Control node size (radius)
-let nodesVisible = true;  // Control node visibility
-let nodeSize = 10;        // Control node size (radius)
 
 // Initialize the network visualization
 function initializeNetwork() {
