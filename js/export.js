@@ -242,10 +242,10 @@ function exportAsPNG(includeNames = true) {
             // Create legend with title detection (for placement logic only)
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
-            // STEP 1: Draw DIRECTLY at final 5X resolution for ZERO blur
-            // No temp canvas, no upscaling - just pure high-res rendering
+            // REDESIGNED LAYOUT - Fit everything within 4:3 (24" × 18") from the start
             const scale = 5; // Final scale for 12,000 × 9,000 output
             const baseWidth = 2400;
+            const baseHeight = 1800; // Fixed 4:3 aspect ratio
             
             // Get titles if they exist
             let titleHeight = 0;
@@ -253,66 +253,62 @@ function exportAsPNG(includeNames = true) {
             const subtitleElement = svgElement.querySelector('.subtitle-text');
             
             if (titleElement) {
-                titleHeight = 80; // Main title space
+                titleHeight = 70; // Main title space
             }
             
             if (subtitleElement) {
-                titleHeight += 45; // Subtitle space
+                titleHeight += 40; // Subtitle space
             }
             
             if (titleHeight > 0) {
-                titleHeight += 30; // Extra spacing after titles
+                titleHeight += 20; // Extra spacing after titles
             }
             
             // Calculate legend dimensions
             const itemsPerRow = 6;
             const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 32 + 60;
-            const legendSpacing = 80; // Space before legend
-            const legendBottomMargin = 10; // Small margin at bottom
+            const legendSpacing = 60; // Space before legend
             
-            // Calculate network area height (what's left for the actual network)
-            const networkHeight = 1600; // Fixed network visualization area
+            // Calculate network area (what's left after title and legend)
+            const networkHeight = baseHeight - titleHeight - legendSpacing - compactLegendHeight;
             
-            // Total canvas height = title + network + spacing + legend + margin
-            const baseTotalHeight = titleHeight + networkHeight + legendSpacing + compactLegendHeight + legendBottomMargin;
+            console.log(`📐 Layout (fits 4:3): title=${titleHeight}, network=${networkHeight}, spacing=${legendSpacing}, legend=${compactLegendHeight}, total=${baseHeight}`);
             
-            console.log(`📐 Canvas layout: title=${titleHeight}, network=${networkHeight}, legend=${compactLegendHeight}, total=${baseTotalHeight}`);
-            
-            // Create canvas at FINAL resolution (no upscaling needed later)
+            // Create canvas at FINAL 4:3 resolution - NO CROPPING NEEDED
             const canvas = document.createElement('canvas');
             canvas.width = baseWidth * scale;   // 12,000 pixels
-            canvas.height = baseTotalHeight * scale; // Variable height based on content 
-            const ctx = canvas.getContext('2d', { alpha: false }); // Faster without alpha
+            canvas.height = baseHeight * scale; // 9,000 pixels (4:3 ratio)
+            const ctx = canvas.getContext('2d', { alpha: false });
             
-            // Scale context once - everything now draws at 5x automatically
+            // Scale context once
             ctx.scale(scale, scale);
             
-            // Fill background with pure black
+            // Fill background
             ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, baseWidth, baseTotalHeight);
+            ctx.fillRect(0, 0, baseWidth, baseHeight);
             
             // Draw titles at the top if they exist
             if (titleElement || subtitleElement) {
                 ctx.textAlign = 'center';
-                let currentY = 0;
+                let currentY = 50;
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
                     ctx.fillStyle = '#ffffff';
                     ctx.font = 'bold 40px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    ctx.fillText(titleText, baseWidth / 2, 80);
-                    currentY = 80;
+                    ctx.fillText(titleText, baseWidth / 2, currentY);
+                    currentY += 50;
                 }
                 
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
                     ctx.fillStyle = '#d0d0d0';
                     ctx.font = '24px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    ctx.fillText(subtitleText, baseWidth / 2, currentY + 45);
+                    ctx.fillText(subtitleText, baseWidth / 2, currentY);
                 }
             }
             
-            // Network area starts after titles (if any)
+            // Network area starts after titles
             const networkStartY = titleHeight;
             
             // Get all links and nodes
@@ -459,55 +455,8 @@ function exportAsPNG(includeNames = true) {
                 ctx.fillText(team, x + 26, y + 15);
             });
             
-            // Fit to 4:3 aspect ratio (24" × 18" format) - final output canvas
-            const targetWidth = 2400;
-            const targetHeight = 1800;
-            const targetScale = 5;
-            
-            const finalCanvas = document.createElement('canvas');
-            finalCanvas.width = targetWidth * targetScale;  // 12,000px
-            finalCanvas.height = targetHeight * targetScale; // 9,000px
-            const finalCtx = finalCanvas.getContext('2d', { alpha: false });
-            
-            // Fill background
-            finalCtx.fillStyle = '#000000';
-            finalCtx.fillRect(0, 0, finalCanvas.width, finalCanvas.height);
-            
-            // Calculate how to fit our full content into 4:3 ratio
-            const srcWidth = baseWidth * scale;
-            const srcHeight = baseTotalHeight * scale;
-            const srcAspect = baseWidth / baseTotalHeight;
-            const targetAspect = targetWidth / targetHeight;
-            
-            let sx, sy, sw, sh, dx, dy, dw, dh;
-            
-            if (srcAspect > targetAspect) {
-                // Source is wider - crop sides equally
-                sh = srcHeight;
-                sw = sh * targetAspect;
-                sx = (srcWidth - sw) / 2;
-                sy = 0;
-                dx = 0;
-                dy = 0;
-                dw = finalCanvas.width;
-                dh = finalCanvas.height;
-            } else {
-                // Source is taller - fit to target height and center vertically
-                sw = srcWidth;
-                sh = sw / targetAspect;
-                sx = 0;
-                sy = (srcHeight - sh) / 2;
-                dx = 0;
-                dy = 0;
-                dw = finalCanvas.width;
-                dh = finalCanvas.height;
-            }
-            
-            // Copy from source canvas with proper cropping/centering
-            finalCtx.drawImage(canvas, sx, sy, sw, sh, dx, dy, dw, dh);
-            
-            // Convert to PNG with MAXIMUM quality
-            finalCanvas.toBlob(function(blob) {
+            // Canvas is already at perfect 4:3 ratio (12,000 × 9,000) - convert directly to PNG
+            canvas.toBlob(function(blob) {
                 if (!blob) {
                     alert('❌ Error creating PNG. Please try again or use SVG export.');
                     return;

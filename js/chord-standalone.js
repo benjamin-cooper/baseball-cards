@@ -471,8 +471,8 @@ function drawChordDiagram(container, teams, matrix) {
     }
     
     const autoSubtitle = autoSubtitleParts.length > 0 
-        ? autoSubtitleParts.join(' • ') 
-        : `${teams.length} teams • Player movement`;
+        ? autoSubtitleParts.join(' | ') 
+        : `${teams.length} teams | Player movement`;
     
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
@@ -490,9 +490,15 @@ function drawChordDiagram(container, teams, matrix) {
         autoSubtitleParts,
         autoSubtitle,
         finalSubtitle,
+        finalSubtitleLength: finalSubtitle ? finalSubtitle.length : 0,
         selectedYearsSize: selectedYears.size,
         teamsCount: teams.length
     });
+    
+    // Sanitize subtitle text - remove any non-printable characters
+    const sanitizedSubtitle = finalSubtitle.replace(/[^\x20-\x7E]/g, '');
+    
+    console.log('🧹 Sanitized subtitle:', sanitizedSubtitle);
     
     // Main title
     svg.append("text")
@@ -514,17 +520,17 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("font-size", "24px")
         .attr("font-weight", "500")
         .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
-        .text(finalSubtitle);
+        .text(sanitizedSubtitle);
     
-    // Additional info line (hidden in exports)
+    // Additional info line (hidden in exports) - moved BELOW subtitle
     svg.append("text")
         .attr("class", "chord-info-line")  // Class for hiding during export
         .attr("x", containerWidth / 2)
-        .attr("y", 105)
+        .attr("y", 145)
         .attr("text-anchor", "middle")
-        .attr("fill", "#888")
+        .attr("fill", "#666")
         .attr("font-size", "14px")
-        .text(`${teams.length} teams shown • Hover over ribbons to see player movement`);
+        .text(`${teams.length} teams shown - Hover over ribbons to see player movement`);
     
     // Main group centered BELOW title
     const centerY = titleHeight + (availableHeight / 2);
