@@ -77,6 +77,38 @@ function updateNetwork(edges, players) {
     
     g = svg.append("g");
     
+    // Add custom titles if they exist (matches chord diagram behavior)
+    if (typeof getCustomOrAutoTitle === 'function') {
+        const title = getCustomOrAutoTitle('Player Connection Network');
+        const subtitle = getCustomOrAutoSubtitle('');
+        
+        let titleY = 40;
+        
+        if (title) {
+            g.append("text")
+                .attr("x", width / 2)
+                .attr("y", titleY)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "32px")
+                .attr("font-weight", "bold")
+                .attr("fill", "#ffffff")
+                .attr("font-family", "Arial, sans-serif")
+                .text(title);
+            titleY += 40;
+        }
+        
+        if (subtitle) {
+            g.append("text")
+                .attr("x", width / 2)
+                .attr("y", titleY)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "20px")
+                .attr("fill", "#cccccc")
+                .attr("font-family", "Arial, sans-serif")
+                .text(subtitle);
+        }
+    }
+    
     currentZoom = d3.zoom()
         .scaleExtent([0.1, 4])
         .on("zoom", (event) => {
