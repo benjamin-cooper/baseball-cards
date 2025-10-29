@@ -1,12 +1,14 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
 //
-// PNG EXPORT QUALITY SETTINGS:
-// - Scale factor: 5x (produces ultra-high resolution images)
+// PNG EXPORT QUALITY SETTINGS - OPTIMIZED FOR 24" × 18" PRINTS:
+// - Dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
+// - Scale factor: 5x (produces 12,000 × 9,000 pixel images)
 // - Image smoothing: enabled with 'high' quality
 // - PNG quality: 1.0 (maximum)
-// - The exported images will be 5x larger than the display size for exceptional quality
+// - Final resolution: 500 DPI at 24" × 18" (professional print quality)
+// - Content is automatically centered within the 4:3 frame
 //
-// Note: You can adjust the scale factor (line 778) from 5 to 3 or 4 if needed.
+// This configuration ensures NO white space when uploading to print services like Printful.
 
 let chordMode = false;
 let chordButtonInitialized = false;
@@ -753,7 +755,11 @@ function exportChordDiagramPNG() {
         try {
             // Get SVG dimensions
             const viewBox = svgElement.getAttribute('viewBox');
-            const [, , width, height] = viewBox.split(' ').map(Number);
+            const [, , origWidth, origHeight] = viewBox.split(' ').map(Number);
+            
+            // Set target dimensions for perfect 24" × 18" aspect ratio (4:3)
+            const targetWidth = 2400;  // 24 inches * 100 pixels/inch base
+            const targetHeight = 1800; // 18 inches * 100 pixels/inch base (4:3 ratio)
             
             // Clone the SVG
             const svgClone = svgElement.cloneNode(true);
@@ -764,9 +770,24 @@ function exportChordDiagramPNG() {
                 infoLine.remove();
             }
             
-            // Set explicit dimensions for rendering
-            svgClone.setAttribute('width', width);
-            svgClone.setAttribute('height', height);
+            // Update SVG to 4:3 aspect ratio with centered content
+            svgClone.setAttribute('width', targetWidth);
+            svgClone.setAttribute('height', targetHeight);
+            svgClone.setAttribute('viewBox', `0 0 ${targetWidth} ${targetHeight}`);
+            
+            // Calculate centering offsets for original content
+            const offsetX = (targetWidth - origWidth) / 2;
+            const offsetY = (targetHeight - origHeight) / 2;
+            
+            // Wrap all content in a group with centering transform
+            const contentGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            contentGroup.setAttribute('transform', `translate(${offsetX}, ${offsetY})`);
+            
+            // Move all children to the new group
+            while (svgClone.firstChild) {
+                contentGroup.appendChild(svgClone.firstChild);
+            }
+            svgClone.appendChild(contentGroup);
             
             // Serialize the SVG
             const serializer = new XMLSerializer();
@@ -780,11 +801,11 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Create canvas with HIGH RESOLUTION scaling
+                // Create canvas with HIGH RESOLUTION scaling for 24" × 18" (4:3 ratio)
                 const canvas = document.createElement('canvas');
                 const scale = 5; // 5x resolution for ULTRA high quality
-                canvas.width = width * scale;
-                canvas.height = height * scale;
+                canvas.width = targetWidth * scale;  // 2400 * 5 = 12000 pixels
+                canvas.height = targetHeight * scale; // 1800 * 5 = 9000 pixels
                 
                 const ctx = canvas.getContext('2d');
                 
@@ -797,10 +818,10 @@ function exportChordDiagramPNG() {
                 
                 // Fill background (in case SVG has transparency)
                 ctx.fillStyle = '#000000';
-                ctx.fillRect(0, 0, width, height);
+                ctx.fillRect(0, 0, targetWidth, targetHeight);
                 
-                // Draw the SVG image onto the canvas
-                ctx.drawImage(img, 0, 0, width, height);
+                // Draw the SVG image onto the canvas (4:3 ratio)
+                ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
                 
                 // Convert canvas to PNG blob with MAXIMUM quality
                 canvas.toBlob(function(blob) {

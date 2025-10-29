@@ -1,13 +1,14 @@
 // Export functions for SVG and PNG
 // 
-// PNG QUALITY SETTINGS:
-// - Scale factor: 5x (produces 12000x9000+ pixel images for ultra-high quality)
+// PNG QUALITY SETTINGS - OPTIMIZED FOR 24" × 18" PRINTS:
+// - Dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
+// - Scale factor: 5x (produces 12,000 × 9,000 pixel images)
 // - Image smoothing: enabled with 'high' quality
 // - PNG quality: 1.0 (maximum)
-// - Final resolution: 2400x1800 base × 5 = 12000x9000+ pixels
+// - Final resolution: 500 DPI at 24" × 18" (professional print quality)
 //
-// Note: Higher scale factors (5x) produce larger file sizes but exceptional print quality.
-// You can reduce the scale factor (line 238) from 5 to 3 or 4 if file sizes are too large.
+// This configuration ensures NO white space when uploading to print services like Printful.
+// The 4:3 aspect ratio perfectly matches 24" × 18" poster dimensions.
 
 // Create legend SVG with smart placement
 function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
@@ -242,18 +243,19 @@ function exportAsPNG(includeNames = true) {
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
             // Create a new canvas with HIGH RESOLUTION scaling
+            // Optimized for 24" × 18" prints (4:3 aspect ratio)
             const canvas = document.createElement('canvas');
-            const scale = 5; // 5x resolution for ULTRA high quality (results in 12000x9000+ pixel images)
-            const width = 2400;
-            const baseHeight = 1800;
+            const scale = 5; // 5x resolution for ULTRA high quality
             
-            // Calculate total height including legend space
-            const legendSpace = legend.height + 40;
-            const totalHeight = baseHeight + legendSpace;
+            // Set dimensions for perfect 24" × 18" aspect ratio (4:3)
+            const width = 2400;  // 24 inches * 100 pixels/inch base
+            const height = 1800; // 18 inches * 100 pixels/inch base (4:3 ratio)
+            
+            // No additional legend space - legend is included within the 4:3 frame
             
             // Apply scaling for high resolution
             canvas.width = width * scale;
-            canvas.height = totalHeight * scale;
+            canvas.height = height * scale;
             const ctx = canvas.getContext('2d');
             
             // Enable high-quality rendering
@@ -265,7 +267,7 @@ function exportAsPNG(includeNames = true) {
             
             // Fill background
             ctx.fillStyle = '#1a2332';
-            ctx.fillRect(0, 0, width, totalHeight);
+            ctx.fillRect(0, 0, width, height);
             
             // Get titles if they exist
             let titleHeight = 0;
@@ -297,7 +299,7 @@ function exportAsPNG(includeNames = true) {
             
             // Network area starts after titles (if any)
             const networkStartY = titleHeight;
-            const networkHeight = baseHeight - titleHeight;
+            const networkHeight = height - titleHeight - legend.height - 60; // Reserve space for legend at bottom
             
             // Get all links and nodes
             const links = d3.selectAll('#poster-svg line').nodes();
@@ -381,8 +383,8 @@ function exportAsPNG(includeNames = true) {
             
             ctx.restore();
             
-            // Draw legend at bottom
-            const legendY = baseHeight + 20;
+            // Draw legend at bottom (within the 4:3 frame)
+            const legendY = height - legend.height - 20;
             
             // Draw legend background with rounded corners
             ctx.fillStyle = 'rgba(26, 35, 50, 0.95)';
