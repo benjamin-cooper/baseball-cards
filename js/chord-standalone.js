@@ -505,8 +505,9 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("font-weight", "500")
         .text(finalSubtitle);
     
-    // Additional info line
+    // Additional info line (hidden in exports)
     svg.append("text")
+        .attr("class", "chord-info-line")  // Class for hiding during export
         .attr("x", containerWidth / 2)
         .attr("y", 105)
         .attr("text-anchor", "middle")
@@ -695,8 +696,17 @@ function exportChordDiagramSVG() {
     const svgElement = document.getElementById('chord-svg');
     if (!svgElement) return;
     
+    // Clone the SVG so we don't modify the original
+    const svgClone = svgElement.cloneNode(true);
+    
+    // Remove the info line (teams shown, hover instructions)
+    const infoLine = svgClone.querySelector('.chord-info-line');
+    if (infoLine) {
+        infoLine.remove();
+    }
+    
     const serializer = new XMLSerializer();
-    let source = serializer.serializeToString(svgElement);
+    let source = serializer.serializeToString(svgClone);
     
     if (!source.match(/^<\?xml/)) {
         source = '<?xml version="1.0" encoding="UTF-8" standalone="no"?>\r\n' + source;
@@ -739,6 +749,12 @@ function exportChordDiagramPNG() {
             
             // Clone the SVG
             const svgClone = svgElement.cloneNode(true);
+            
+            // Remove the info line (teams shown, hover instructions)
+            const infoLine = svgClone.querySelector('.chord-info-line');
+            if (infoLine) {
+                infoLine.remove();
+            }
             
             // Set explicit dimensions for rendering
             svgClone.setAttribute('width', width);
