@@ -71,7 +71,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
         legendSVG = `
             <g class="legend-group" transform="translate(0, 0)">
                 <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(20, 20, 20, 0.95)" rx="10" stroke="#3498db" stroke-width="3"/>
-                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Color Legend</text>
+                <text x="${legendWidth / 2}" y="38" text-anchor="middle" font-size="28" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Color Legend</text>
         `;
         
         const itemWidth = legendWidth / itemsPerRow;
@@ -86,7 +86,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
             
             legendSVG += `
                 <rect x="${x}" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
-                <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
+                <text x="${x + 30}" y="${y + 15}" font-size="15" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
             `;
         });
         
@@ -132,13 +132,13 @@ function exportAsSVG(includeNames = true) {
         totalWidth = 2400 + legend.width + 50;
         totalHeight = currentHeight;
     } else if (legend.placement === 'bottom') {
-        // Bottom legend - add space at bottom
+        // Bottom legend - add space at bottom with extra margin to prevent frame coverage
         totalWidth = 2400;
-        totalHeight = currentHeight + legend.height + 40;
+        totalHeight = currentHeight + legend.height + 80;
     } else {
-        // Top legend (only when no custom titles)
+        // Top legend (only when no custom titles) with extra margin
         totalWidth = 2400;
-        totalHeight = currentHeight + legend.height + 40;
+        totalHeight = currentHeight + legend.height + 80;
     }
     
     svgClone.setAttribute('width', totalWidth);
@@ -168,10 +168,10 @@ function exportAsSVG(includeNames = true) {
     // Add legend
     const legendGroup = document.createElementNS("http://www.w3.org/2000/svg", "g");
     if (legend.placement === 'bottom') {
-        // Position at bottom
+        // Position at bottom with more spacing to prevent frame coverage
         legendGroup.innerHTML = legend.svg.replace(
             'transform="translate(0, 0)"',
-            `transform="translate(0, ${currentHeight + 20})"`
+            `transform="translate(0, ${currentHeight + 40})"`
         );
     } else {
         legendGroup.innerHTML = legend.svg;
@@ -250,7 +250,7 @@ function exportAsPNG(includeNames = true) {
             // Calculate COMPACT legend height for PNG (much smaller than SVG version)
             const itemsPerRow = 6;
             const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 28 + 45;
-            const origLegendSpace = compactLegendHeight + 20; // Much less space
+            const origLegendSpace = compactLegendHeight + 50; // Increased from 20 to 50 for proper bottom spacing
             const origTotalHeight = origBaseHeight + origLegendSpace;
             
             tempCanvas.width = origWidth;
@@ -273,20 +273,20 @@ function exportAsPNG(includeNames = true) {
                 if (titleElement) {
                     const titleText = titleElement.textContent;
                     tempCtx.fillStyle = '#ffffff';
-                    tempCtx.font = 'bold 32px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    tempCtx.fillText(titleText, origWidth / 2, 40);
-                    titleHeight = 40;
+                    tempCtx.font = 'bold 40px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    tempCtx.fillText(titleText, origWidth / 2, 80);
+                    titleHeight = 80;
                 }
                 
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
                     tempCtx.fillStyle = '#d0d0d0';
-                    tempCtx.font = '20px Roboto, "Helvetica Neue", Arial, sans-serif';
-                    tempCtx.fillText(subtitleText, origWidth / 2, titleHeight + 40);
-                    titleHeight += 40;
+                    tempCtx.font = '24px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    tempCtx.fillText(subtitleText, origWidth / 2, titleHeight + 45);
+                    titleHeight += 45;
                 }
                 
-                titleHeight += 20; // Add spacing after titles
+                titleHeight += 30; // Add more spacing after titles for breathing room
             }
             
             // Network area starts after titles (if any)
@@ -376,7 +376,7 @@ function exportAsPNG(includeNames = true) {
             tempCtx.restore();
             
             // Draw legend at bottom - COMPACT VERSION for better proportions
-            const legendY = origBaseHeight + 10; // Less spacing
+            const legendY = origBaseHeight + 40; // More spacing to prevent frame coverage
             
             // Legend height already calculated earlier (compactLegendHeight variable)
             
@@ -404,18 +404,18 @@ function exportAsPNG(includeNames = true) {
             tempCtx.lineWidth = 2; // Thinner border
             tempCtx.stroke();
             
-            // Draw legend title - smaller with Roboto font
+            // Draw legend title - larger with Roboto font
             tempCtx.fillStyle = 'white';
-            tempCtx.font = 'bold 18px Roboto, "Helvetica Neue", Arial, sans-serif'; // Reduced from 24px
+            tempCtx.font = 'bold 22px Roboto, "Helvetica Neue", Arial, sans-serif'; // Increased from 18px
             tempCtx.textAlign = 'center';
-            tempCtx.fillText('Team Color Legend', origWidth / 2, legendY + 25); // Adjusted position
+            tempCtx.fillText('Team Color Legend', origWidth / 2, legendY + 28); // Adjusted position
             
             // Draw legend items - more compact
             const sortedTeams = teams.sort();
             // itemsPerRow already defined earlier (value: 6)
             const itemWidth = origWidth / itemsPerRow;
             
-            tempCtx.font = '12px Roboto, "Helvetica Neue", Arial, sans-serif'; // Reduced from 14px
+            tempCtx.font = '13px Roboto, "Helvetica Neue", Arial, sans-serif'; // Increased from 12px
             tempCtx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {

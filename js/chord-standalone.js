@@ -389,8 +389,8 @@ function drawChordDiagram(container, teams, matrix) {
     const containerWidth = container.clientWidth;
     const containerHeight = Math.max(container.clientHeight, 1200);
     
-    // Reserve space for title at top
-    const titleHeight = 200;
+    // Reserve space for title at top with more breathing room
+    const titleHeight = 240;
     const availableHeight = containerHeight - titleHeight - 150;
     
     const size = Math.min(containerWidth - 150, availableHeight, 800);
@@ -488,20 +488,20 @@ function drawChordDiagram(container, teams, matrix) {
     // Main title
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 40)
+        .attr("y", 70)
         .attr("text-anchor", "middle")
         .attr("fill", "white")
-        .attr("font-size", "32px")
+        .attr("font-size", "40px")
         .attr("font-weight", "bold")
         .text(finalTitle);
     
     // Subtitle with filter info
     svg.append("text")
         .attr("x", containerWidth / 2)
-        .attr("y", 75)
+        .attr("y", 115)
         .attr("text-anchor", "middle")
         .attr("fill", "#aaa")
-        .attr("font-size", "18px")
+        .attr("font-size", "22px")
         .attr("font-weight", "500")
         .text(finalSubtitle);
     
