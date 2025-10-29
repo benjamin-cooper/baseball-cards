@@ -206,10 +206,6 @@ function createUI() {
                         <button class="quick-filter-btn" onclick="selectDecade(2000)">2000s</button>
                         <button class="quick-filter-btn" onclick="selectSingleYear(1991)">🎯 1991 Only</button>
                         <button class="quick-filter-btn" onclick="clearYears()">🔄 Clear Years</button>
-                        <button class="export-btn" onclick="exportAsSVG(true)">💾 SVG (With Names)</button>
-                        <button class="export-btn" onclick="exportAsSVG(false)">💾 SVG (No Names)</button>
-                        <button class="export-btn" onclick="exportAsPNG(true)">📸 PNG (With Names)</button>
-                        <button class="export-btn" onclick="exportAsPNG(false)">📸 PNG (No Names)</button>
                     </div>
                 </div>
                 
