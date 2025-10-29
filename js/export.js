@@ -412,7 +412,7 @@ function exportAsPNG(includeNames = true) {
             
             // Draw legend items - more compact
             const sortedTeams = teams.sort();
-            const itemsPerRow = 6;
+            // itemsPerRow already defined earlier (value: 6)
             const itemWidth = origWidth / itemsPerRow;
             
             tempCtx.font = '12px Roboto, "Helvetica Neue", Arial, sans-serif'; // Reduced from 14px
