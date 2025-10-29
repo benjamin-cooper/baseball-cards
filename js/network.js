@@ -91,7 +91,7 @@ function updateNetwork(edges, players) {
                 .attr("font-size", "32px")
                 .attr("font-weight", "bold")
                 .attr("fill", "#ffffff")
-                .attr("font-family", "Arial, sans-serif")
+                .attr("font-family", "Roboto, Helvetica Neue, Arial, sans-serif")
                 .attr("class", "title-text")  // Class for identification
                 .text(title);
             titleY += 40;
@@ -103,8 +103,8 @@ function updateNetwork(edges, players) {
                 .attr("y", titleY)
                 .attr("text-anchor", "middle")
                 .attr("font-size", "20px")
-                .attr("fill", "#cccccc")
-                .attr("font-family", "Arial, sans-serif")
+                .attr("fill", "#d0d0d0")
+                .attr("font-family", "Roboto, Helvetica Neue, Arial, sans-serif")
                 .attr("class", "subtitle-text")  // Class for identification
                 .text(subtitle);
         }
@@ -423,6 +423,160 @@ function updateNetwork(edges, players) {
         d.fx = null;
         d.fy = null;
     }
+    
+    // Add export buttons at the bottom of the visualization (similar to chord diagram)
+    // Remove any existing export buttons first
+    const existingExportDiv = container.querySelector('.network-export-buttons');
+    if (existingExportDiv) {
+        existingExportDiv.remove();
+    }
+    
+    const exportDiv = document.createElement('div');
+    exportDiv.className = 'network-export-buttons'; // Unique class name
+    exportDiv.style.cssText = `
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        gap: 10px;
+        z-index: 100;
+    `;
+    
+    // SVG Export Button (with names)
+    const exportSVGWithNamesBtn = document.createElement('button');
+    exportSVGWithNamesBtn.textContent = '💾 SVG (with names)';
+    exportSVGWithNamesBtn.style.cssText = `
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    `;
+    exportSVGWithNamesBtn.onmouseover = () => {
+        exportSVGWithNamesBtn.style.transform = 'translateY(-2px)';
+        exportSVGWithNamesBtn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+    };
+    exportSVGWithNamesBtn.onmouseout = () => {
+        exportSVGWithNamesBtn.style.transform = 'translateY(0)';
+        exportSVGWithNamesBtn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    };
+    exportSVGWithNamesBtn.onclick = () => {
+        if (typeof exportAsSVG === 'function') {
+            exportAsSVG(true);
+        } else {
+            alert('Export function not available. Please ensure export.js is loaded.');
+        }
+    };
+    
+    // SVG Export Button (without names)
+    const exportSVGNoNamesBtn = document.createElement('button');
+    exportSVGNoNamesBtn.textContent = '💾 SVG (no names)';
+    exportSVGNoNamesBtn.style.cssText = `
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #66bb6a 0%, #4caf50 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    `;
+    exportSVGNoNamesBtn.onmouseover = () => {
+        exportSVGNoNamesBtn.style.transform = 'translateY(-2px)';
+        exportSVGNoNamesBtn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+    };
+    exportSVGNoNamesBtn.onmouseout = () => {
+        exportSVGNoNamesBtn.style.transform = 'translateY(0)';
+        exportSVGNoNamesBtn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    };
+    exportSVGNoNamesBtn.onclick = () => {
+        if (typeof exportAsSVG === 'function') {
+            exportAsSVG(false);
+        } else {
+            alert('Export function not available. Please ensure export.js is loaded.');
+        }
+    };
+    
+    // PNG Export Button (with names)
+    const exportPNGWithNamesBtn = document.createElement('button');
+    exportPNGWithNamesBtn.textContent = '📸 PNG (with names)';
+    exportPNGWithNamesBtn.style.cssText = `
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    `;
+    exportPNGWithNamesBtn.onmouseover = () => {
+        exportPNGWithNamesBtn.style.transform = 'translateY(-2px)';
+        exportPNGWithNamesBtn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+    };
+    exportPNGWithNamesBtn.onmouseout = () => {
+        exportPNGWithNamesBtn.style.transform = 'translateY(0)';
+        exportPNGWithNamesBtn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    };
+    exportPNGWithNamesBtn.onclick = () => {
+        if (typeof exportAsPNG === 'function') {
+            exportAsPNG(true);
+        } else {
+            alert('Export function not available. Please ensure export.js is loaded.');
+        }
+    };
+    
+    // PNG Export Button (without names)
+    const exportPNGNoNamesBtn = document.createElement('button');
+    exportPNGNoNamesBtn.textContent = '📸 PNG (no names)';
+    exportPNGNoNamesBtn.style.cssText = `
+        padding: 12px 20px;
+        background: linear-gradient(135deg, #42A5F5 0%, #2196F3 100%);
+        border: none;
+        color: white;
+        border-radius: 25px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: bold;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        transition: transform 0.2s, box-shadow 0.2s;
+    `;
+    exportPNGNoNamesBtn.onmouseover = () => {
+        exportPNGNoNamesBtn.style.transform = 'translateY(-2px)';
+        exportPNGNoNamesBtn.style.boxShadow = '0 6px 16px rgba(0,0,0,0.4)';
+    };
+    exportPNGNoNamesBtn.onmouseout = () => {
+        exportPNGNoNamesBtn.style.transform = 'translateY(0)';
+        exportPNGNoNamesBtn.style.boxShadow = '0 4px 12px rgba(0,0,0,0.3)';
+    };
+    exportPNGNoNamesBtn.onclick = () => {
+        if (typeof exportAsPNG === 'function') {
+            exportAsPNG(false);
+        } else {
+            alert('Export function not available. Please ensure export.js is loaded.');
+        }
+    };
+    
+    // Append all buttons to export div
+    exportDiv.appendChild(exportSVGWithNamesBtn);
+    exportDiv.appendChild(exportSVGNoNamesBtn);
+    exportDiv.appendChild(exportPNGWithNamesBtn);
+    exportDiv.appendChild(exportPNGNoNamesBtn);
+    
+    // Make container position relative and append export div
+    container.style.position = 'relative';
+    container.appendChild(exportDiv);
+    
+    console.log('✅ Export buttons added to network visualization');
 }
 
 // Fit network to screen with smart centering

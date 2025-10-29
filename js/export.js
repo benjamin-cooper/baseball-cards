@@ -1,7 +1,7 @@
 // Export functions for SVG and PNG
 // 
 // PNG QUALITY SETTINGS - OPTIMIZED FOR 24" × 18" PRINTS:
-// - Dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
+// - Target dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
 // - Scale factor: 5x (produces 12,000 × 9,000 pixel images)
 // - Image smoothing: enabled with 'high' quality
 // - PNG quality: 1.0 (maximum)
@@ -50,8 +50,8 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
         
         legendSVG = `
             <g class="legend-group" transform="translate(2050, 100)">
-                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="white" stroke-width="3"/>
-                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="20" fill="white" font-weight="bold">Team Colors</text>
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(20, 20, 20, 0.95)" rx="10" stroke="#3498db" stroke-width="3"/>
+                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="20" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Colors</text>
         `;
         
         teams.sort().forEach((team, i) => {
@@ -60,7 +60,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
             
             legendSVG += `
                 <rect x="15" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
-                <text x="45" y="${y + 15}" font-size="13" fill="white" font-family="Segoe UI, sans-serif">${team}</text>
+                <text x="45" y="${y + 15}" font-size="13" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
             `;
         });
         
@@ -70,8 +70,8 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
         // Horizontal legend (top or bottom)
         legendSVG = `
             <g class="legend-group" transform="translate(0, 0)">
-                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="white" stroke-width="3"/>
-                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold">Team Color Legend</text>
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(20, 20, 20, 0.95)" rx="10" stroke="#3498db" stroke-width="3"/>
+                <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold" font-family="Roboto, Helvetica Neue, Arial, sans-serif">Team Color Legend</text>
         `;
         
         const itemWidth = legendWidth / itemsPerRow;
@@ -86,7 +86,7 @@ function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
             
             legendSVG += `
                 <rect x="${x}" y="${y}" width="20" height="20" fill="${color}" stroke="white" stroke-width="1"/>
-                <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Segoe UI, sans-serif">${team}</text>
+                <text x="${x + 30}" y="${y + 15}" font-size="14" fill="white" font-family="Roboto, Helvetica Neue, Arial, sans-serif">${team}</text>
             `;
         });
         
@@ -150,7 +150,7 @@ function exportAsSVG(includeNames = true) {
     const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
     rect.setAttribute("width", totalWidth);
     rect.setAttribute("height", totalHeight);
-    rect.setAttribute("fill", "#1a2332");
+    rect.setAttribute("fill", "#000000");
     svgClone.insertBefore(rect, svgClone.firstChild);
     
     // Position main content based on legend placement
@@ -187,7 +187,7 @@ function exportAsSVG(includeNames = true) {
     const defs = document.createElementNS("http://www.w3.org/2000/svg", "defs");
     const style = document.createElementNS("http://www.w3.org/2000/svg", "style");
     style.textContent = `
-        text { font-family: 'Segoe UI', sans-serif; font-size: 16px; fill: white; text-shadow: 2px 2px 4px rgba(0,0,0,1); font-weight: 600; }
+        text { font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif; font-size: 16px; fill: white; text-shadow: 2px 2px 4px rgba(0,0,0,1); font-weight: 600; }
         circle { stroke: white; stroke-width: 3; }
         line { stroke-opacity: 0.5; }
     `;
@@ -214,7 +214,7 @@ function exportAsSVG(includeNames = true) {
     showNotification(`✅ SVG downloaded ${includeNames ? 'with' : 'without'} names! Legend placed at ${legend.placement}.`, 3000);
 }
 
-// Export network as PNG
+// Export network as PNG - OPTIMIZED FOR 24" × 18" (4:3 ratio)
 function exportAsPNG(includeNames = true) {
     const svgElement = document.getElementById('poster-svg');
     if (!svgElement) {
@@ -239,35 +239,27 @@ function exportAsPNG(includeNames = true) {
             // Get node positions
             const nodes = simulation ? simulation.nodes() : [];
             
-            // Create legend with title detection
+            // Create legend with title detection (for placement logic only)
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
-            // Create a new canvas with HIGH RESOLUTION scaling
-            // Optimized for 24" × 18" prints (4:3 aspect ratio)
-            const canvas = document.createElement('canvas');
-            const scale = 5; // 5x resolution for ULTRA high quality
+            // STEP 1: Create a temporary canvas with the original working dimensions
+            const tempCanvas = document.createElement('canvas');
+            const origWidth = 2400;
+            const origBaseHeight = 1800;
             
-            // Set dimensions for perfect 24" × 18" aspect ratio (4:3)
-            const width = 2400;  // 24 inches * 100 pixels/inch base
-            const height = 1800; // 18 inches * 100 pixels/inch base (4:3 ratio)
+            // Calculate COMPACT legend height for PNG (much smaller than SVG version)
+            const itemsPerRow = 6;
+            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 28 + 45;
+            const origLegendSpace = compactLegendHeight + 20; // Much less space
+            const origTotalHeight = origBaseHeight + origLegendSpace;
             
-            // No additional legend space - legend is included within the 4:3 frame
+            tempCanvas.width = origWidth;
+            tempCanvas.height = origTotalHeight;
+            const tempCtx = tempCanvas.getContext('2d');
             
-            // Apply scaling for high resolution
-            canvas.width = width * scale;
-            canvas.height = height * scale;
-            const ctx = canvas.getContext('2d');
-            
-            // Enable high-quality rendering
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = 'high';
-            
-            // Scale the context for all drawing operations
-            ctx.scale(scale, scale);
-            
-            // Fill background
-            ctx.fillStyle = '#1a2332';
-            ctx.fillRect(0, 0, width, height);
+            // Fill background with pure black for maximum contrast
+            tempCtx.fillStyle = '#000000';
+            tempCtx.fillRect(0, 0, origWidth, origTotalHeight);
             
             // Get titles if they exist
             let titleHeight = 0;
@@ -276,21 +268,21 @@ function exportAsPNG(includeNames = true) {
             
             if (titleElement || subtitleElement) {
                 // Draw titles at the top
-                ctx.textAlign = 'center';
+                tempCtx.textAlign = 'center';
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
-                    ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 32px Arial, sans-serif';
-                    ctx.fillText(titleText, width / 2, 40);
+                    tempCtx.fillStyle = '#ffffff';
+                    tempCtx.font = 'bold 32px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    tempCtx.fillText(titleText, origWidth / 2, 40);
                     titleHeight = 40;
                 }
                 
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
-                    ctx.fillStyle = '#cccccc';
-                    ctx.font = '20px Arial, sans-serif';
-                    ctx.fillText(subtitleText, width / 2, titleHeight + 40);
+                    tempCtx.fillStyle = '#d0d0d0';
+                    tempCtx.font = '20px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    tempCtx.fillText(subtitleText, origWidth / 2, titleHeight + 40);
                     titleHeight += 40;
                 }
                 
@@ -299,7 +291,7 @@ function exportAsPNG(includeNames = true) {
             
             // Network area starts after titles (if any)
             const networkStartY = titleHeight;
-            const networkHeight = height - titleHeight - legend.height - 60; // Reserve space for legend at bottom
+            const networkHeight = origBaseHeight - titleHeight;
             
             // Get all links and nodes
             const links = d3.selectAll('#poster-svg line').nodes();
@@ -309,10 +301,10 @@ function exportAsPNG(includeNames = true) {
             // Get current transform
             const transform = d3.zoomTransform(svg.node());
             
-            ctx.save();
-            ctx.translate(0, networkStartY);
-            ctx.translate(transform.x, transform.y);
-            ctx.scale(transform.k, transform.k);
+            tempCtx.save();
+            tempCtx.translate(0, networkStartY);
+            tempCtx.translate(transform.x, transform.y);
+            tempCtx.scale(transform.k, transform.k);
             
             // Draw links
             links.forEach(link => {
@@ -323,14 +315,14 @@ function exportAsPNG(includeNames = true) {
                 const stroke = link.getAttribute('stroke');
                 const strokeWidth = parseFloat(link.getAttribute('stroke-width'));
                 
-                ctx.beginPath();
-                ctx.moveTo(x1, y1);
-                ctx.lineTo(x2, y2);
-                ctx.strokeStyle = stroke;
-                ctx.lineWidth = strokeWidth;
-                ctx.globalAlpha = 0.5;
-                ctx.stroke();
-                ctx.globalAlpha = 1;
+                tempCtx.beginPath();
+                tempCtx.moveTo(x1, y1);
+                tempCtx.lineTo(x2, y2);
+                tempCtx.strokeStyle = stroke;
+                tempCtx.lineWidth = strokeWidth;
+                tempCtx.globalAlpha = 0.5;
+                tempCtx.stroke();
+                tempCtx.globalAlpha = 1;
             });
             
             // Draw nodes
@@ -345,25 +337,25 @@ function exportAsPNG(includeNames = true) {
                 const r = parseFloat(node.getAttribute('r'));
                 const fill = node.getAttribute('fill');
                 
-                ctx.beginPath();
-                ctx.arc(cx, cy, r, 0, 2 * Math.PI);
-                ctx.fillStyle = fill;
-                ctx.fill();
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 3;
-                ctx.stroke();
+                tempCtx.beginPath();
+                tempCtx.arc(cx, cy, r, 0, 2 * Math.PI);
+                tempCtx.fillStyle = fill;
+                tempCtx.fill();
+                tempCtx.strokeStyle = 'white';
+                tempCtx.lineWidth = 3;
+                tempCtx.stroke();
             });
             
             // Draw labels (if requested)
             if (includeNames) {
-                ctx.font = 'bold 16px "Segoe UI", Arial, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillStyle = 'white';
-                ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
-                ctx.shadowBlur = 4;
-                ctx.shadowOffsetX = 2;
-                ctx.shadowOffsetY = 2;
+                tempCtx.font = 'bold 16px Roboto, "Helvetica Neue", Arial, sans-serif';
+                tempCtx.textAlign = 'center';
+                tempCtx.textBaseline = 'middle';
+                tempCtx.fillStyle = 'white';
+                tempCtx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+                tempCtx.shadowBlur = 4;
+                tempCtx.shadowOffsetX = 2;
+                tempCtx.shadowOffsetY = 2;
                 
                 labels.forEach(label => {
                     const parent = label.parentElement;
@@ -376,75 +368,119 @@ function exportAsPNG(includeNames = true) {
                     const y = parseFloat(match[2]) + parseFloat(label.getAttribute('dy') || 0);
                     
                     if (text && !isNaN(x) && !isNaN(y)) {
-                        ctx.fillText(text, x, y);
+                        tempCtx.fillText(text, x, y);
                     }
                 });
             }
             
-            ctx.restore();
+            tempCtx.restore();
             
-            // Draw legend at bottom (within the 4:3 frame)
-            const legendY = height - legend.height - 20;
+            // Draw legend at bottom - COMPACT VERSION for better proportions
+            const legendY = origBaseHeight + 10; // Less spacing
             
-            // Draw legend background with rounded corners
-            ctx.fillStyle = 'rgba(26, 35, 50, 0.95)';
-            const cornerRadius = 10;
+            // Make legend more compact - reduce height
+            const compactLegendHeight = Math.ceil(sortedTeams.length / itemsPerRow) * 28 + 45; // Reduced from 40 + 60
+            
+            // Draw legend background with rounded corners - new color scheme
+            tempCtx.fillStyle = 'rgba(20, 20, 20, 0.95)';
+            const cornerRadius = 8; // Smaller radius
             const legendMargin = 10; // Margin from edges
             
             // Create rounded rectangle
-            ctx.beginPath();
-            ctx.moveTo(legendMargin + cornerRadius, legendY);
-            ctx.lineTo(width - legendMargin - cornerRadius, legendY);
-            ctx.quadraticCurveTo(width - legendMargin, legendY, width - legendMargin, legendY + cornerRadius);
-            ctx.lineTo(width - legendMargin, legendY + legend.height - cornerRadius);
-            ctx.quadraticCurveTo(width - legendMargin, legendY + legend.height, width - legendMargin - cornerRadius, legendY + legend.height);
-            ctx.lineTo(legendMargin + cornerRadius, legendY + legend.height);
-            ctx.quadraticCurveTo(legendMargin, legendY + legend.height, legendMargin, legendY + legend.height - cornerRadius);
-            ctx.lineTo(legendMargin, legendY + cornerRadius);
-            ctx.quadraticCurveTo(legendMargin, legendY, legendMargin + cornerRadius, legendY);
-            ctx.closePath();
-            ctx.fill();
+            tempCtx.beginPath();
+            tempCtx.moveTo(legendMargin + cornerRadius, legendY);
+            tempCtx.lineTo(origWidth - legendMargin - cornerRadius, legendY);
+            tempCtx.quadraticCurveTo(origWidth - legendMargin, legendY, origWidth - legendMargin, legendY + cornerRadius);
+            tempCtx.lineTo(origWidth - legendMargin, legendY + compactLegendHeight - cornerRadius);
+            tempCtx.quadraticCurveTo(origWidth - legendMargin, legendY + compactLegendHeight, origWidth - legendMargin - cornerRadius, legendY + compactLegendHeight);
+            tempCtx.lineTo(legendMargin + cornerRadius, legendY + compactLegendHeight);
+            tempCtx.quadraticCurveTo(legendMargin, legendY + compactLegendHeight, legendMargin, legendY + compactLegendHeight - cornerRadius);
+            tempCtx.lineTo(legendMargin, legendY + cornerRadius);
+            tempCtx.quadraticCurveTo(legendMargin, legendY, legendMargin + cornerRadius, legendY);
+            tempCtx.closePath();
+            tempCtx.fill();
             
-            // Draw white border
-            ctx.strokeStyle = 'white';
-            ctx.lineWidth = 3;
-            ctx.stroke();
+            // Draw vibrant blue border
+            tempCtx.strokeStyle = '#3498db';
+            tempCtx.lineWidth = 2; // Thinner border
+            tempCtx.stroke();
             
-            // Draw legend title
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 24px "Segoe UI", Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Team Color Legend', width / 2, legendY + 35);
+            // Draw legend title - smaller with Roboto font
+            tempCtx.fillStyle = 'white';
+            tempCtx.font = 'bold 18px Roboto, "Helvetica Neue", Arial, sans-serif'; // Reduced from 24px
+            tempCtx.textAlign = 'center';
+            tempCtx.fillText('Team Color Legend', origWidth / 2, legendY + 25); // Adjusted position
             
-            // Draw legend items
+            // Draw legend items - more compact
             const sortedTeams = teams.sort();
             const itemsPerRow = 6;
-            const itemWidth = width / itemsPerRow;
+            const itemWidth = origWidth / itemsPerRow;
             
-            ctx.font = '14px "Segoe UI", Arial, sans-serif';
-            ctx.textAlign = 'left';
+            tempCtx.font = '12px Roboto, "Helvetica Neue", Arial, sans-serif'; // Reduced from 14px
+            tempCtx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {
                 const row = Math.floor(i / itemsPerRow);
                 const col = i % itemsPerRow;
                 const x = col * itemWidth + 20;
-                const y = legendY + row * 40 + 60;
+                const y = legendY + row * 28 + 45; // Reduced spacing from 40 to 28, start from 45 instead of 60
                 
-                // Draw color box
+                // Draw color box - slightly smaller
                 const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, 20, 20);
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x, y, 20, 20);
+                tempCtx.fillStyle = color;
+                tempCtx.fillRect(x, y, 16, 16); // Reduced from 20x20
+                tempCtx.strokeStyle = 'white';
+                tempCtx.lineWidth = 1;
+                tempCtx.strokeRect(x, y, 16, 16);
                 
                 // Draw team name
-                ctx.fillStyle = 'white';
-                ctx.fillText(team, x + 30, y + 15);
+                tempCtx.fillStyle = 'white';
+                tempCtx.fillText(team, x + 22, y + 12); // Adjusted for smaller box
             });
             
+            // STEP 2: Now create the final high-res 4:3 canvas
+            const targetWidth = 2400;
+            const targetHeight = 1800;
+            const scale = 5;
+            
+            const finalCanvas = document.createElement('canvas');
+            finalCanvas.width = targetWidth * scale;
+            finalCanvas.height = targetHeight * scale;
+            const finalCtx = finalCanvas.getContext('2d');
+            
+            // Enable high-quality rendering
+            finalCtx.imageSmoothingEnabled = true;
+            finalCtx.imageSmoothingQuality = 'high';
+            
+            // Fill with pure black background for maximum contrast
+            finalCtx.fillStyle = '#000000';
+            finalCtx.fillRect(0, 0, targetWidth * scale, targetHeight * scale);
+            
+            // Calculate how to fit the original image into 4:3
+            const origAspect = origWidth / origTotalHeight;
+            const targetAspect = targetWidth / targetHeight;
+            
+            let drawWidth, drawHeight, offsetX, offsetY;
+            
+            if (origAspect > targetAspect) {
+                // Original is wider - fit to width
+                drawWidth = targetWidth * scale;
+                drawHeight = (targetWidth / origAspect) * scale;
+                offsetX = 0;
+                offsetY = ((targetHeight * scale) - drawHeight) / 2;
+            } else {
+                // Original is taller - fit to height
+                drawHeight = targetHeight * scale;
+                drawWidth = (targetHeight * origAspect) * scale;
+                offsetX = ((targetWidth * scale) - drawWidth) / 2;
+                offsetY = 0;
+            }
+            
+            // Draw the temp canvas onto the final canvas with proper scaling
+            finalCtx.drawImage(tempCanvas, offsetX, offsetY, drawWidth, drawHeight);
+            
             // Convert to PNG with MAXIMUM quality
-            canvas.toBlob(function(blob) {
+            finalCanvas.toBlob(function(blob) {
                 if (!blob) {
                     alert('❌ Error creating PNG. Please try again or use SVG export.');
                     return;

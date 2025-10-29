@@ -5,8 +5,8 @@
         }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a1a;
+            background-color: #000000;
+            font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
             padding: 20px;
             min-height: 100vh;
             color: white;
@@ -380,7 +380,7 @@
             justify-content: center;
             margin: 20px 0;
             position: relative;
-            background: #1a2332;
+            background: #000000;
             border-radius: 15px;
             padding: 20px;
             min-height: 1000px;
