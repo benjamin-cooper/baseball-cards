@@ -75,9 +75,8 @@ function updateNetwork(edges, players) {
         .attr("height", height)
         .attr("fill", "#000000");
     
-    g = svg.append("g");
-    
-    // Add custom titles if they exist (matches chord diagram behavior)
+    // Add custom titles if they exist (BEFORE creating g group so they don't zoom/pan)
+    // This ensures titles appear in exports and stay fixed on screen
     if (typeof getCustomOrAutoTitle === 'function') {
         const title = getCustomOrAutoTitle('Player Connection Network');
         const subtitle = getCustomOrAutoSubtitle('');
@@ -85,7 +84,7 @@ function updateNetwork(edges, players) {
         let titleY = 40;
         
         if (title) {
-            g.append("text")
+            svg.append("text")
                 .attr("x", width / 2)
                 .attr("y", titleY)
                 .attr("text-anchor", "middle")
@@ -93,21 +92,25 @@ function updateNetwork(edges, players) {
                 .attr("font-weight", "bold")
                 .attr("fill", "#ffffff")
                 .attr("font-family", "Arial, sans-serif")
+                .attr("class", "title-text")  // Class for identification
                 .text(title);
             titleY += 40;
         }
         
         if (subtitle) {
-            g.append("text")
+            svg.append("text")
                 .attr("x", width / 2)
                 .attr("y", titleY)
                 .attr("text-anchor", "middle")
                 .attr("font-size", "20px")
                 .attr("fill", "#cccccc")
                 .attr("font-family", "Arial, sans-serif")
+                .attr("class", "subtitle-text")  // Class for identification
                 .text(subtitle);
         }
     }
+    
+    g = svg.append("g");
     
     currentZoom = d3.zoom()
         .scaleExtent([0.1, 4])

@@ -1,7 +1,7 @@
 // Export functions for SVG and PNG
 
 // Create legend SVG with smart placement
-function createLegendSVG(teams, nodes = []) {
+function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
     const legendWidth = 2400;
     const itemsPerRow = 6;
     const legendHeight = Math.ceil(teams.length / itemsPerRow) * 40 + 60;
@@ -9,7 +9,11 @@ function createLegendSVG(teams, nodes = []) {
     // Determine best placement (top, bottom, or side) based on node positions
     let placement = 'top'; // default
     
-    if (nodes && nodes.length > 0) {
+    // If custom titles exist, always place legend at bottom to avoid overlap
+    if (hasCustomTitles) {
+        placement = 'bottom';
+        console.log('📍 Legend placement: bottom (custom titles detected)');
+    } else if (nodes && nodes.length > 0) {
         // Calculate node density in different areas
         const topDensity = nodes.filter(n => n.y < 300).length;
         const bottomDensity = nodes.filter(n => n.y > 1500).length;
@@ -36,7 +40,7 @@ function createLegendSVG(teams, nodes = []) {
         
         legendSVG = `
             <g class="legend-group" transform="translate(2050, 100)">
-                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="white" stroke-width="3"/>
                 <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="20" fill="white" font-weight="bold">Team Colors</text>
         `;
         
@@ -56,7 +60,7 @@ function createLegendSVG(teams, nodes = []) {
         // Horizontal legend (top or bottom)
         legendSVG = `
             <g class="legend-group" transform="translate(0, 0)">
-                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                <rect width="${legendWidth}" height="${legendHeight}" fill="rgba(26, 35, 50, 0.95)" rx="10" stroke="white" stroke-width="3"/>
                 <text x="${legendWidth / 2}" y="35" text-anchor="middle" font-size="24" fill="white" font-weight="bold">Team Color Legend</text>
         `;
         
@@ -99,8 +103,11 @@ function exportAsSVG(includeNames = true) {
     // Get node positions for smart placement
     const nodes = simulation ? simulation.nodes() : [];
     
+    // Check if custom titles exist
+    const hasTitles = svgElement.querySelector('.title-text') || svgElement.querySelector('.subtitle-text');
+    
     const svgClone = svgElement.cloneNode(true);
-    const legend = createLegendSVG(teams, nodes);
+    const legend = createLegendSVG(teams, nodes, hasTitles);
     
     // Remove labels if not requested
     if (!includeNames) {
@@ -115,11 +122,11 @@ function exportAsSVG(includeNames = true) {
         totalWidth = 2400 + legend.width + 50;
         totalHeight = currentHeight;
     } else if (legend.placement === 'bottom') {
-        // Bottom legend
+        // Bottom legend - add space at bottom
         totalWidth = 2400;
         totalHeight = currentHeight + legend.height + 40;
     } else {
-        // Top legend (default)
+        // Top legend (only when no custom titles)
         totalWidth = 2400;
         totalHeight = currentHeight + legend.height + 40;
     }
@@ -139,12 +146,13 @@ function exportAsSVG(includeNames = true) {
     // Position main content based on legend placement
     const mainGroup = svgClone.querySelector('g');
     if (mainGroup) {
-        if (legend.placement === 'top') {
-            // Shift main content down
+        if (legend.placement === 'top' && !hasTitles) {
+            // Only shift down for top legend when there are no titles
             const currentTransform = mainGroup.getAttribute('transform') || '';
             mainGroup.setAttribute('transform', `translate(0, ${legend.height + 20}) ${currentTransform}`);
         }
         // For 'bottom' and 'side', no shift needed
+        // For 'top' with titles, titles provide the spacing
     }
     
     // Add legend
@@ -162,7 +170,7 @@ function exportAsSVG(includeNames = true) {
     if (legend.placement === 'side') {
         svgClone.appendChild(legendGroup);
     } else {
-        svgClone.insertBefore(legendGroup, mainGroup);
+        mainGroup.parentNode.insertBefore(legendGroup, mainGroup.nextSibling);
     }
     
     // Add embedded styles
@@ -204,6 +212,9 @@ function exportAsPNG(includeNames = true) {
         return;
     }
     
+    // Check if custom titles exist
+    const hasTitles = svgElement.querySelector('.title-text') || svgElement.querySelector('.subtitle-text');
+    
     alert(`⏳ Preparing PNG export ${includeNames ? 'with' : 'without'} names... This may take a few seconds.\n\nClick OK and wait for the download.`);
     
     setTimeout(() => {
@@ -215,11 +226,20 @@ function exportAsPNG(includeNames = true) {
                     .map(e => e.team)
             ));
             
+            // Get node positions
+            const nodes = simulation ? simulation.nodes() : [];
+            
+            // Create legend with title detection
+            const legend = createLegendSVG(teams, nodes, hasTitles);
+            
             // Create a new canvas
             const canvas = document.createElement('canvas');
             const width = 2400;
-            const legend = createLegendSVG(teams);
-            const totalHeight = 1800 + legend.height + 40;
+            const baseHeight = 1800;
+            
+            // Calculate total height including legend space
+            const legendSpace = legend.height + 40;
+            const totalHeight = baseHeight + legendSpace;
             
             canvas.width = width;
             canvas.height = totalHeight;
@@ -229,55 +249,48 @@ function exportAsPNG(includeNames = true) {
             ctx.fillStyle = '#1a2332';
             ctx.fillRect(0, 0, width, totalHeight);
             
-            // Draw legend
-            ctx.fillStyle = 'rgba(26, 35, 50, 0.95)';
-            ctx.fillRect(0, 0, width, legend.height);
+            // Get titles if they exist
+            let titleHeight = 0;
+            const titleElement = svgElement.querySelector('.title-text');
+            const subtitleElement = svgElement.querySelector('.subtitle-text');
             
-            ctx.fillStyle = 'white';
-            ctx.font = 'bold 24px "Segoe UI", Arial, sans-serif';
-            ctx.textAlign = 'center';
-            ctx.fillText('Team Color Legend', width / 2, 30);
-            
-            // Draw legend items
-            const sortedTeams = teams.sort();
-            const itemsPerRow = 6;
-            const itemWidth = width / itemsPerRow;
-            
-            ctx.font = '14px "Segoe UI", Arial, sans-serif';
-            ctx.textAlign = 'left';
-            
-            sortedTeams.forEach((team, i) => {
-                const row = Math.floor(i / itemsPerRow);
-                const col = i % itemsPerRow;
-                const x = col * itemWidth + 20;
-                const y = row * 40 + 60;
+            if (titleElement || subtitleElement) {
+                // Draw titles at the top
+                ctx.textAlign = 'center';
                 
-                // Draw color box
-                const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
-                ctx.fillStyle = color;
-                ctx.fillRect(x, y, 20, 20);
-                ctx.strokeStyle = 'white';
-                ctx.lineWidth = 1;
-                ctx.strokeRect(x, y, 20, 20);
+                if (titleElement) {
+                    const titleText = titleElement.textContent;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 32px Arial, sans-serif';
+                    ctx.fillText(titleText, width / 2, 40);
+                    titleHeight = 40;
+                }
                 
-                // Draw team name
-                ctx.fillStyle = 'white';
-                ctx.fillText(team, x + 30, y + 15);
-            });
+                if (subtitleElement) {
+                    const subtitleText = subtitleElement.textContent;
+                    ctx.fillStyle = '#cccccc';
+                    ctx.font = '20px Arial, sans-serif';
+                    ctx.fillText(subtitleText, width / 2, titleHeight + 40);
+                    titleHeight += 40;
+                }
+                
+                titleHeight += 20; // Add spacing after titles
+            }
             
-            // Now draw the network
-            const networkY = legend.height + 20;
+            // Network area starts after titles (if any)
+            const networkStartY = titleHeight;
+            const networkHeight = baseHeight - titleHeight;
             
             // Get all links and nodes
             const links = d3.selectAll('#poster-svg line').nodes();
-            const nodes = d3.selectAll('#poster-svg circle').nodes();
-            const labels = d3.selectAll('#poster-svg text').nodes();
+            const nodesElements = d3.selectAll('#poster-svg circle').nodes();
+            const labels = d3.selectAll('#poster-svg text.node-label').nodes();
             
             // Get current transform
             const transform = d3.zoomTransform(svg.node());
             
             ctx.save();
-            ctx.translate(0, networkY);
+            ctx.translate(0, networkStartY);
             ctx.translate(transform.x, transform.y);
             ctx.scale(transform.k, transform.k);
             
@@ -301,7 +314,7 @@ function exportAsPNG(includeNames = true) {
             });
             
             // Draw nodes
-            nodes.forEach(node => {
+            nodesElements.forEach(node => {
                 const parent = node.parentElement;
                 const transform = parent.getAttribute('transform');
                 const match = transform.match(/translate\(([^,]+),([^)]+)\)/);
@@ -349,6 +362,66 @@ function exportAsPNG(includeNames = true) {
             }
             
             ctx.restore();
+            
+            // Draw legend at bottom
+            const legendY = baseHeight + 20;
+            
+            // Draw legend background with rounded corners
+            ctx.fillStyle = 'rgba(26, 35, 50, 0.95)';
+            const cornerRadius = 10;
+            const legendMargin = 10; // Margin from edges
+            
+            // Create rounded rectangle
+            ctx.beginPath();
+            ctx.moveTo(legendMargin + cornerRadius, legendY);
+            ctx.lineTo(width - legendMargin - cornerRadius, legendY);
+            ctx.quadraticCurveTo(width - legendMargin, legendY, width - legendMargin, legendY + cornerRadius);
+            ctx.lineTo(width - legendMargin, legendY + legend.height - cornerRadius);
+            ctx.quadraticCurveTo(width - legendMargin, legendY + legend.height, width - legendMargin - cornerRadius, legendY + legend.height);
+            ctx.lineTo(legendMargin + cornerRadius, legendY + legend.height);
+            ctx.quadraticCurveTo(legendMargin, legendY + legend.height, legendMargin, legendY + legend.height - cornerRadius);
+            ctx.lineTo(legendMargin, legendY + cornerRadius);
+            ctx.quadraticCurveTo(legendMargin, legendY, legendMargin + cornerRadius, legendY);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Draw white border
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Draw legend title
+            ctx.fillStyle = 'white';
+            ctx.font = 'bold 24px "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('Team Color Legend', width / 2, legendY + 35);
+            
+            // Draw legend items
+            const sortedTeams = teams.sort();
+            const itemsPerRow = 6;
+            const itemWidth = width / itemsPerRow;
+            
+            ctx.font = '14px "Segoe UI", Arial, sans-serif';
+            ctx.textAlign = 'left';
+            
+            sortedTeams.forEach((team, i) => {
+                const row = Math.floor(i / itemsPerRow);
+                const col = i % itemsPerRow;
+                const x = col * itemWidth + 20;
+                const y = legendY + row * 40 + 60;
+                
+                // Draw color box
+                const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 20, 20);
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 1;
+                ctx.strokeRect(x, y, 20, 20);
+                
+                // Draw team name
+                ctx.fillStyle = 'white';
+                ctx.fillText(team, x + 30, y + 15);
+            });
             
             // Convert to PNG
             canvas.toBlob(function(blob) {
