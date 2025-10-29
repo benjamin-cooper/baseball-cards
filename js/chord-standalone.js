@@ -1,7 +1,8 @@
 // Chord Diagram - Replaces Network View (Not a Modal)
 
-let chordMode = false;
-let chordButtonInitialized = false;
+// Use var to prevent redeclaration errors if file loaded multiple times
+var chordMode = chordMode || false;
+var chordButtonInitialized = chordButtonInitialized || false;
 
 // Get chord button
 function getChordButton() {
@@ -485,6 +486,14 @@ function drawChordDiagram(container, teams, matrix) {
         ? getCustomOrAutoSubtitle(autoSubtitle) 
         : autoSubtitle;
     
+    console.log('📝 Chord subtitle debug:', {
+        autoSubtitleParts,
+        autoSubtitle,
+        finalSubtitle,
+        selectedYearsSize: selectedYears.size,
+        teamsCount: teams.length
+    });
+    
     // Main title
     svg.append("text")
         .attr("x", containerWidth / 2)
@@ -493,16 +502,18 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("fill", "white")
         .attr("font-size", "40px")
         .attr("font-weight", "bold")
+        .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
         .text(finalTitle);
     
-    // Subtitle with filter info
+    // Subtitle with filter info - brighter and larger for visibility
     svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 115)
         .attr("text-anchor", "middle")
-        .attr("fill", "#aaa")
-        .attr("font-size", "22px")
+        .attr("fill", "#d0d0d0")
+        .attr("font-size", "24px")
         .attr("font-weight", "500")
+        .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
         .text(finalSubtitle);
     
     // Additional info line (hidden in exports)

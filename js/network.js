@@ -469,7 +469,9 @@ function updateNetwork(edges, players) {
         if (typeof exportAsSVG === 'function') {
             exportAsSVG(true);
         } else {
-            alert('Export function not available. Please ensure export.js is loaded.');
+            console.error('❌ exportAsSVG not found. Check if export.js is loaded.');
+            console.log('Available functions:', Object.keys(window).filter(k => k.includes('export')));
+            alert('Export function not available. Please ensure export.js is loaded.\n\nCheck console for details.');
         }
     };
     
@@ -500,7 +502,8 @@ function updateNetwork(edges, players) {
         if (typeof exportAsSVG === 'function') {
             exportAsSVG(false);
         } else {
-            alert('Export function not available. Please ensure export.js is loaded.');
+            console.error('❌ exportAsSVG not found. Check if export.js is loaded.');
+            alert('Export function not available. Please ensure export.js is loaded.\n\nCheck console for details.');
         }
     };
     
@@ -531,7 +534,8 @@ function updateNetwork(edges, players) {
         if (typeof exportAsPNG === 'function') {
             exportAsPNG(true);
         } else {
-            alert('Export function not available. Please ensure export.js is loaded.');
+            console.error('❌ exportAsPNG not found. Check if export.js is loaded.');
+            alert('Export function not available. Please ensure export.js is loaded.\n\nCheck console for details.');
         }
     };
     
@@ -562,7 +566,8 @@ function updateNetwork(edges, players) {
         if (typeof exportAsPNG === 'function') {
             exportAsPNG(false);
         } else {
-            alert('Export function not available. Please ensure export.js is loaded.');
+            console.error('❌ exportAsPNG not found. Check if export.js is loaded.');
+            alert('Export function not available. Please ensure export.js is loaded.\n\nCheck console for details.');
         }
     };
     
