@@ -890,6 +890,44 @@ function toggleLabels() {
     }
 }
 
+// Quick year selection functions
+function selectAllYears() {
+    selectedYears.clear();
+    if (networkData && networkData.years) {
+        networkData.years.forEach(year => selectedYears.add(year));
+        console.log(`📅 Selected all years: ${selectedYears.size} years`);
+        updateDiagram();
+    }
+}
+
+function selectDecade(startYear) {
+    selectedYears.clear();
+    const endYear = startYear + 9;
+    
+    if (networkData && networkData.years) {
+        networkData.years.forEach(year => {
+            if (year >= startYear && year <= endYear) {
+                selectedYears.add(year);
+            }
+        });
+        console.log(`📅 Selected ${startYear}s: ${selectedYears.size} years`);
+        updateDiagram();
+    }
+}
+
+function selectSingleYear(year) {
+    selectedYears.clear();
+    selectedYears.add(year);
+    console.log(`📅 Selected single year: ${year}`);
+    updateDiagram();
+}
+
+function clearYears() {
+    selectedYears.clear();
+    console.log('🔄 Cleared all year selections');
+    updateDiagram();
+}
+
 // Custom title management
 let customTitle = '';
 let customSubtitle = '';
