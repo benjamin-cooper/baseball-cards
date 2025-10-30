@@ -512,6 +512,10 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     let finalTitle = sanitizeText(customTitle || autoTitle);
     let finalSubtitle = sanitizeText(customSubtitle || autoSubtitle);
     
+    // ✨ STORE CLEAN SUBTITLE GLOBALLY for PNG export to use
+    window._chordCleanTitle = finalTitle;
+    window._chordCleanSubtitle = finalSubtitle;
+    
     console.log('📝 Using titles:', {
         finalTitle,
         finalSubtitle,
@@ -529,6 +533,7 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .attr("font-weight", "bold")
         .attr("font-family", "Roboto, Arial, sans-serif")
         .style("dominant-baseline", "middle")
+        .attr("data-chord-title", "true")
         .text(finalTitle);
     
     // Subtitle - ROBOTO with explicit rendering
@@ -541,7 +546,8 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .attr("font-weight", "normal")
         .attr("font-family", "Roboto, Arial, sans-serif")
         .style("dominant-baseline", "middle")
-        .attr("xml:space", "preserve");
+        .attr("xml:space", "preserve")
+        .attr("data-chord-subtitle", "true");
     
     // Set text directly - use sanitized text
     subtitleEl.text(finalSubtitle);
@@ -747,25 +753,20 @@ function exportChordDiagramSVG() {
         infoLine.remove();
     }
     
-    // ✨ CRITICAL FIX: Sanitize all text elements before serialization
-    function sanitizeTextForExport(text) {
-        if (!text) return '';
-        return String(text)
-            .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove ALL control characters
-            .replace(/[\u200B-\u200F\uFEFF]/g, '') // Remove zero-width spaces
-            .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep only printable ASCII + Unicode
-            .normalize('NFC') // Normalize Unicode to composed form
-            .trim();
+    // ✨ CRITICAL FIX: Re-inject clean title and subtitle from stored values
+    if (window._chordCleanTitle) {
+        const titleEl = svgClone.querySelector('text[data-chord-title="true"]');
+        if (titleEl) {
+            titleEl.textContent = window._chordCleanTitle;
+        }
     }
     
-    // Sanitize ALL text nodes in the cloned SVG
-    const textElements = svgClone.querySelectorAll('text');
-    textElements.forEach(textEl => {
-        const currentText = textEl.textContent;
-        const cleanText = sanitizeTextForExport(currentText);
-        textEl.textContent = '';
-        textEl.textContent = cleanText;
-    });
+    if (window._chordCleanSubtitle) {
+        const subtitleEl = svgClone.querySelector('text[data-chord-subtitle="true"]');
+        if (subtitleEl) {
+            subtitleEl.textContent = window._chordCleanSubtitle;
+        }
+    }
     
     const serializer = new XMLSerializer();
     let source = serializer.serializeToString(svgClone);
@@ -818,29 +819,21 @@ function exportChordDiagramPNG() {
                 infoLine.remove();
             }
             
-            // ✨ CRITICAL FIX: Sanitize all text elements in the clone before serialization
-            function sanitizeTextForExport(text) {
-                if (!text) return '';
-                // Aggressive sanitization for export
-                return String(text)
-                    .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove ALL control characters
-                    .replace(/[\u200B-\u200F\uFEFF]/g, '') // Remove zero-width spaces
-                    .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep only printable ASCII + Unicode
-                    .normalize('NFC') // Normalize Unicode to composed form
-                    .trim();
+            // ✨ CRITICAL FIX: Re-inject clean title and subtitle from stored values
+            // Instead of trying to sanitize corrupted text, use the original clean values
+            if (window._chordCleanTitle) {
+                const titleEl = svgClone.querySelector('text[data-chord-title="true"]');
+                if (titleEl) {
+                    titleEl.textContent = window._chordCleanTitle;
+                }
             }
             
-            // Sanitize ALL text nodes in the cloned SVG
-            const textElements = svgClone.querySelectorAll('text');
-            textElements.forEach(textEl => {
-                // Get current text content
-                const currentText = textEl.textContent;
-                // Sanitize it
-                const cleanText = sanitizeTextForExport(currentText);
-                // Clear and set clean text
-                textEl.textContent = '';
-                textEl.textContent = cleanText;
-            });
+            if (window._chordCleanSubtitle) {
+                const subtitleEl = svgClone.querySelector('text[data-chord-subtitle="true"]');
+                if (subtitleEl) {
+                    subtitleEl.textContent = window._chordCleanSubtitle;
+                }
+            }
             
             // Set explicit dimensions for rendering at original size
             svgClone.setAttribute('width', origWidth);
@@ -854,6 +847,9 @@ function exportChordDiagramPNG() {
             if (!svgString.match(/^<\?xml/)) {
                 svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
             }
+            
+            console.log('🔍 PNG Export - SVG String length:', svgString.length);
+            console.log('🔍 PNG Export - Subtitle in string:', svgString.includes(window._chordCleanSubtitle || ''));
             
             // Create a blob from the SVG with explicit UTF-8 encoding
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
