@@ -1,24 +1,24 @@
 // Export functions for SVG and PNG
-// VERSION: 2.0 - COMPACT LEGEND FIX
+// VERSION: 3.0 - PORTRAIT ORIENTATION (18" × 24")
 // Last updated: 2025-01-29
-console.log('📦 export.js VERSION 2.0 loaded - Compact Legend Fix');
+console.log('📦 export.js VERSION 3.0 loaded - Portrait Orientation');
 // 
-// PNG QUALITY SETTINGS - OPTIMIZED FOR 24" × 18" PRINTS:
-// - Target dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
-// - Scale factor: 5x (produces 12,000 × 9,000 pixel images)
+// PNG QUALITY SETTINGS - OPTIMIZED FOR 18" × 24" PORTRAIT PRINTS:
+// - Target dimensions: 1800 × 2400 pixels (perfect 3:4 aspect ratio for 18" × 24")
+// - Scale factor: 5x (produces 9,000 × 12,000 pixel images)
 // - Image smoothing: enabled with 'high' quality
 // - PNG quality: 1.0 (maximum)
-// - Final resolution: 500 DPI at 24" × 18" (professional print quality)
+// - Final resolution: 500 DPI at 18" × 24" (professional print quality)
 //
 // This configuration ensures NO white space when uploading to print services like Printful.
-// The 4:3 aspect ratio perfectly matches 24" × 18" poster dimensions.
+// The 3:4 aspect ratio perfectly matches 18" × 24" portrait poster dimensions.
 
 // Create legend SVG with smart placement
 function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
-    const legendWidth = 2400;
-    const itemsPerRow = 8; // Match PNG export
-    const rowHeight = 24; // Match PNG export
-    const legendHeaderHeight = 50; // Match PNG export
+    const legendWidth = 1800; // Match portrait width
+    const itemsPerRow = 6; // Fewer items per row for narrower width
+    const rowHeight = 26; // Slightly more space per row
+    const legendHeaderHeight = 50;
     const legendHeight = Math.ceil(teams.length / itemsPerRow) * rowHeight + legendHeaderHeight;
     
     // Determine best placement (top, bottom, or side) based on node positions
@@ -134,15 +134,15 @@ function exportAsSVG(includeNames = true) {
     
     if (legend.placement === 'side') {
         // Side legend - expand width
-        totalWidth = 2400 + legend.width + 50;
+        totalWidth = 1800 + legend.width + 50;
         totalHeight = currentHeight;
     } else if (legend.placement === 'bottom') {
         // Bottom legend - add space at bottom
-        totalWidth = 2400;
+        totalWidth = 1800;  // Portrait width
         totalHeight = currentHeight + legend.height + 40;
     } else {
         // Top legend (only when no custom titles)
-        totalWidth = 2400;
+        totalWidth = 1800;  // Portrait width
         totalHeight = currentHeight + legend.height + 40;
     }
     
@@ -247,10 +247,10 @@ function exportAsPNG(includeNames = true) {
             // Create legend with title detection (for placement logic only)
             const legend = createLegendSVG(teams, nodes, hasTitles);
             
-            // REDESIGNED LAYOUT - Fit everything within 4:3 (24" × 18") from the start
-            const scale = 5; // Final scale for 12,000 × 9,000 output
-            const baseWidth = 2400;
-            const baseHeight = 1800; // Fixed 4:3 aspect ratio
+            // REDESIGNED LAYOUT - PORTRAIT 3:4 (18" × 24") from the start
+            const scale = 5; // Final scale for 9,000 × 12,000 output
+            const baseWidth = 1800;  // Portrait width
+            const baseHeight = 2400; // Portrait height - Fixed 3:4 aspect ratio
             
             // Get titles if they exist
             let titleHeight = 0;
@@ -269,9 +269,9 @@ function exportAsPNG(includeNames = true) {
                 titleHeight += 30; // Extra spacing after titles (keeps this)
             }
             
-            // Calculate COMPACT legend dimensions
-            const itemsPerRow = 8; // Increased from 6 to reduce rows
-            const rowHeight = 24; // Even tighter for 12px text (was 26)
+            // Calculate COMPACT legend dimensions - PORTRAIT
+            const itemsPerRow = 6; // Fewer items for narrower width
+            const rowHeight = 26; // Slightly more space
             const legendHeaderHeight = 50; // Reduced header space
             
             // Debug: log the calculation step by step
@@ -292,12 +292,12 @@ function exportAsPNG(includeNames = true) {
             // Calculate network area (what's left after title and legend)
             const networkHeight = baseHeight - titleHeight - legendSpacing - compactLegendHeight - 20; // 20px bottom margin
             
-            console.log(`📐 Layout (fits 4:3): title=${titleHeight}, network=${networkHeight}, spacing=${legendSpacing}, legend=${compactLegendHeight}, total=${baseHeight}`);
+            console.log(`📐 Layout (fits 3:4 portrait): title=${titleHeight}, network=${networkHeight}, spacing=${legendSpacing}, legend=${compactLegendHeight}, total=${baseHeight}`);
             
-            // Create canvas at FINAL 4:3 resolution - NO CROPPING NEEDED
+            // Create canvas at FINAL 3:4 PORTRAIT resolution - NO CROPPING NEEDED
             const canvas = document.createElement('canvas');
-            canvas.width = baseWidth * scale;   // 12,000 pixels
-            canvas.height = baseHeight * scale; // 9,000 pixels (4:3 ratio)
+            canvas.width = baseWidth * scale;   // 9,000 pixels (portrait)
+            canvas.height = baseHeight * scale; // 12,000 pixels (3:4 ratio)
             const ctx = canvas.getContext('2d', { alpha: false });
             
             // Scale context once
@@ -501,7 +501,7 @@ function exportAsPNG(includeNames = true) {
                 ctx.fillText(team, x + 24, y + 13);
             });
             
-            // Canvas is already at perfect 4:3 ratio (12,000 × 9,000) - convert directly to PNG
+            // Canvas is already at perfect 3:4 portrait ratio (9,000 × 12,000) - convert directly to PNG
             canvas.toBlob(function(blob) {
                 if (!blob) {
                     alert('❌ Error creating PNG. Please try again or use SVG export.');

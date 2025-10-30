@@ -408,14 +408,15 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     
     container.innerHTML = '';
     
-    const containerWidth = container.clientWidth;
-    const containerHeight = Math.max(container.clientHeight, 1200);
+    // ✨ PORTRAIT ORIENTATION - 18" × 24" (3:4 aspect ratio for vertical frames)
+    const containerWidth = Math.min(container.clientWidth, 1800);  // Portrait width
+    const containerHeight = Math.max(container.clientHeight, 2400); // Portrait height
     
     // Reserve space for title at top with more breathing room
-    const titleHeight = 240;
-    const availableHeight = containerHeight - titleHeight - 150;
+    const titleHeight = 300; // More space for portrait
+    const availableHeight = containerHeight - titleHeight - 200;
     
-    const size = Math.min(containerWidth - 150, availableHeight, 800);
+    const size = Math.min(containerWidth - 100, availableHeight * 0.7, 900);
     const outerRadius = size * 0.40;
     const innerRadius = outerRadius - 30;
     
@@ -498,19 +499,51 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // ✨ SANITIZE TEXT - Remove any problematic characters
-    function sanitizeText(text) {
+    // ✨ NUCLEAR-LEVEL SANITIZATION - Catch corruption at the source
+    function nuclearSanitizeText(text) {
         if (!text) return '';
-        // Convert to string and remove any non-printable characters
-        return String(text)
-            .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove control characters
-            .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep ASCII + extended Unicode
-            .trim();
+        
+        // Convert to string first
+        let cleaned = String(text);
+        
+        // Step 1: Remove ALL control characters and problematic Unicode
+        cleaned = cleaned
+            .replace(/[\x00-\x1F\x7F-\x9F]/g, '')  // Control characters
+            .replace(/[\u200B-\u200F\uFEFF]/g, '')  // Zero-width spaces
+            .replace(/[\uFFFD]/g, '')  // Replacement character �
+            .replace(/[^\x20-\x7E\u00A0-\u024F\u1E00-\u1EFF]/g, ''); // Keep only safe ranges
+        
+        // Step 2: Normalize Unicode
+        try {
+            cleaned = cleaned.normalize('NFKC'); // Canonical decomposition + compatibility
+        } catch(e) {
+            console.warn('Unicode normalization failed, using raw text');
+        }
+        
+        // Step 3: Replace any remaining non-ASCII with ASCII equivalents
+        cleaned = cleaned
+            .replace(/[""]/g, '"')
+            .replace(/['']/g, "'")
+            .replace(/[–—]/g, '-')
+            .replace(/[…]/g, '...')
+            .replace(/[•]/g, '*');
+        
+        // Step 4: Final cleanup
+        cleaned = cleaned.trim();
+        
+        console.log('🧹 Sanitization:', { 
+            original: text, 
+            cleaned: cleaned,
+            originalLength: text.length,
+            cleanedLength: cleaned.length 
+        });
+        
+        return cleaned;
     }
     
-    // ✨ USE PASSED-IN CUSTOM TITLES (already read before container was cleared)
-    let finalTitle = sanitizeText(customTitle || autoTitle);
-    let finalSubtitle = sanitizeText(customSubtitle || autoSubtitle);
+    // ✨ USE PASSED-IN CUSTOM TITLES with NUCLEAR sanitization
+    let finalTitle = nuclearSanitizeText(customTitle || autoTitle);
+    let finalSubtitle = nuclearSanitizeText(customSubtitle || autoSubtitle);
     
     // ✨ STORE CLEAN SUBTITLE GLOBALLY for PNG export to use
     window._chordCleanTitle = finalTitle;
@@ -859,14 +892,14 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Render directly at final 5X resolution - NO double-scaling to prevent blur
-                const targetWidth = 2400;
-                const targetHeight = 1800;
-                const scale = 5; // 5x for ultra-high quality (12000×9000)
+                // ✨ PORTRAIT orientation - 18" × 24" at 500 DPI
+                const targetWidth = 1800;   // Portrait width
+                const targetHeight = 2400;  // Portrait height  
+                const scale = 5; // 5x for ultra-high quality (9000×12000)
                 
                 const finalCanvas = document.createElement('canvas');
-                finalCanvas.width = targetWidth * scale;  // 12000 pixels
-                finalCanvas.height = targetHeight * scale; // 9000 pixels
+                finalCanvas.width = targetWidth * scale;  // 9000 pixels
+                finalCanvas.height = targetHeight * scale; // 12000 pixels
                 
                 const finalCtx = finalCanvas.getContext('2d', { alpha: false });
                 
