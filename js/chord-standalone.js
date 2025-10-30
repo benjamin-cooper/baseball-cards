@@ -747,6 +747,26 @@ function exportChordDiagramSVG() {
         infoLine.remove();
     }
     
+    // ✨ CRITICAL FIX: Sanitize all text elements before serialization
+    function sanitizeTextForExport(text) {
+        if (!text) return '';
+        return String(text)
+            .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove ALL control characters
+            .replace(/[\u200B-\u200F\uFEFF]/g, '') // Remove zero-width spaces
+            .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep only printable ASCII + Unicode
+            .normalize('NFC') // Normalize Unicode to composed form
+            .trim();
+    }
+    
+    // Sanitize ALL text nodes in the cloned SVG
+    const textElements = svgClone.querySelectorAll('text');
+    textElements.forEach(textEl => {
+        const currentText = textEl.textContent;
+        const cleanText = sanitizeTextForExport(currentText);
+        textEl.textContent = '';
+        textEl.textContent = cleanText;
+    });
+    
     const serializer = new XMLSerializer();
     let source = serializer.serializeToString(svgClone);
     
@@ -798,15 +818,44 @@ function exportChordDiagramPNG() {
                 infoLine.remove();
             }
             
+            // ✨ CRITICAL FIX: Sanitize all text elements in the clone before serialization
+            function sanitizeTextForExport(text) {
+                if (!text) return '';
+                // Aggressive sanitization for export
+                return String(text)
+                    .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove ALL control characters
+                    .replace(/[\u200B-\u200F\uFEFF]/g, '') // Remove zero-width spaces
+                    .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep only printable ASCII + Unicode
+                    .normalize('NFC') // Normalize Unicode to composed form
+                    .trim();
+            }
+            
+            // Sanitize ALL text nodes in the cloned SVG
+            const textElements = svgClone.querySelectorAll('text');
+            textElements.forEach(textEl => {
+                // Get current text content
+                const currentText = textEl.textContent;
+                // Sanitize it
+                const cleanText = sanitizeTextForExport(currentText);
+                // Clear and set clean text
+                textEl.textContent = '';
+                textEl.textContent = cleanText;
+            });
+            
             // Set explicit dimensions for rendering at original size
             svgClone.setAttribute('width', origWidth);
             svgClone.setAttribute('height', origHeight);
             
-            // Serialize the SVG
+            // Serialize the SVG with proper encoding
             const serializer = new XMLSerializer();
-            const svgString = serializer.serializeToString(svgClone);
+            let svgString = serializer.serializeToString(svgClone);
             
-            // Create a blob from the SVG
+            // Ensure UTF-8 declaration
+            if (!svgString.match(/^<\?xml/)) {
+                svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
+            }
+            
+            // Create a blob from the SVG with explicit UTF-8 encoding
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
             
