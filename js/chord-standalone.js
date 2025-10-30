@@ -786,7 +786,7 @@ function exportChordDiagramSVG() {
         infoLine.remove();
     }
     
-    // ✨ CRITICAL FIX: Re-inject clean title and subtitle from stored values
+    // ✨ CRITICAL FIX: Only remove title/subtitle, KEEP team labels
     if (window._chordCleanTitle) {
         const titleEl = svgClone.querySelector('text[data-chord-title="true"]');
         if (titleEl) {
@@ -861,30 +861,35 @@ function exportChordDiagramPNG() {
             const titleText = window._chordCleanTitle || 'Team Connection Network';
             const subtitleText = window._chordCleanSubtitle || '';
             
-            let currentY = 80; // Start position for titles
+            let currentY = 100; // Start position for titles
             
-            // Draw main title - LARGER
+            // Draw main title - MUCH LARGER
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 48px Roboto, Arial, sans-serif'; // Increased from 38px
+            ctx.font = 'bold 60px Roboto, Arial, sans-serif'; // Increased from 48px
             ctx.textAlign = 'center';
             ctx.fillText(titleText, baseWidth / 2, currentY);
-            currentY += 60;
+            currentY += 70;
             
-            // Draw subtitle - LARGER
+            // Draw subtitle - MUCH LARGER
             if (subtitleText) {
                 ctx.fillStyle = '#d0d0d0';
-                ctx.font = '28px Roboto, Arial, sans-serif'; // Increased from 22px
+                ctx.font = '36px Roboto, Arial, sans-serif'; // Increased from 28px
                 ctx.fillText(subtitleText, baseWidth / 2, currentY);
-                currentY += 50;
+                currentY += 60;
             } else {
-                currentY += 20; // Less space if no subtitle
+                currentY += 30; // Less space if no subtitle
             }
             
-            // Now render the SVG diagram (WITHOUT text elements)
+            // Now render the SVG diagram
             const svgClone = svgElement.cloneNode(true);
             
-            // Remove ALL text elements from SVG (we rendered them with canvas)
-            svgClone.querySelectorAll('text').forEach(el => el.remove());
+            // ✨ CRITICAL: Only remove title/subtitle text, KEEP team labels
+            // Title and subtitle have data attributes we added
+            const titleEl = svgClone.querySelector('text[data-chord-title="true"]');
+            if (titleEl) titleEl.remove();
+            
+            const subtitleEl = svgClone.querySelector('text[data-chord-subtitle="true"]');
+            if (subtitleEl) subtitleEl.remove();
             
             // Remove the info line
             const infoLine = svgClone.querySelector('.chord-info-line');
@@ -897,7 +902,7 @@ function exportChordDiagramPNG() {
             svgClone.setAttribute('width', origWidth);
             svgClone.setAttribute('height', origHeight);
             
-            // Serialize the SVG (without text)
+            // Serialize the SVG (WITH team labels)
             const serializer = new XMLSerializer();
             const svgString = serializer.serializeToString(svgClone);
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
@@ -907,15 +912,15 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Calculate positioning - LESS BLANK SPACE
-                const diagramStartY = currentY + 20; // Small gap after titles
-                const availableHeight = baseHeight - diagramStartY - 100; // Leave some bottom margin
-                const availableWidth = baseWidth - 100; // Side margins
+                // Calculate positioning - MUCH LESS BLANK SPACE
+                const diagramStartY = currentY + 30; // Small gap after titles
+                const availableHeight = baseHeight - diagramStartY - 80; // Reduced bottom margin
+                const availableWidth = baseWidth - 80; // Reduced side margins
                 
-                // Calculate scale to fit diagram
+                // Calculate scale to fit diagram - ALLOW MUCH LARGER SCALING
                 const scaleX = availableWidth / origWidth;
                 const scaleY = availableHeight / origHeight;
-                const diagramScale = Math.min(scaleX, scaleY, 1.2); // Allow slight zoom up to 1.2x
+                const diagramScale = Math.min(scaleX, scaleY, 1.8); // Increased from 1.2x to 1.8x
                 
                 const drawWidth = origWidth * diagramScale;
                 const drawHeight = origHeight * diagramScale;
