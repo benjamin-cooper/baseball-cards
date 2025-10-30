@@ -1011,8 +1011,8 @@ function exportChordDiagramPNG() {
                     }
                     
                     // Calculate positioning - MAXIMIZE DIAGRAM SIZE
-                    const diagramStartY = currentY + 20; // Minimal gap after titles
-                    const availableHeight = baseHeight - diagramStartY - 30; // MINIMAL bottom margin
+                    const diagramStartY = currentY + 5; // Reduced gap for better vertical centering
+                    const availableHeight = baseHeight - diagramStartY - 20; // Reduced bottom margin for better centering
                     const availableWidth = baseWidth - 40; // Minimal side margins
                     
                     // Calculate scale to fit diagram - MAXIMUM SCALING
