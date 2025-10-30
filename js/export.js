@@ -258,15 +258,15 @@ function exportAsPNG(includeNames = true) {
             const subtitleElement = svgElement.querySelector('.subtitle-text');
             
             if (titleElement) {
-                titleHeight = 90; // Main title space (moved down from 70)
+                titleHeight = 110; // Main title space (moved lower from 90)
             }
             
             if (subtitleElement) {
-                titleHeight += 45; // Subtitle space
+                titleHeight += 50; // Subtitle space (increased from 45)
             }
             
             if (titleHeight > 0) {
-                titleHeight += 30; // Extra spacing after titles
+                titleHeight += 30; // Extra spacing after titles (keeps this)
             }
             
             // Calculate COMPACT legend dimensions
@@ -310,7 +310,7 @@ function exportAsPNG(includeNames = true) {
             // Draw titles LOWER to avoid being cut by frame
             if (titleElement || subtitleElement) {
                 ctx.textAlign = 'center';
-                let currentY = 60; // Start lower (was 50)
+                let currentY = 80; // Start even lower (was 60)
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
@@ -331,20 +331,45 @@ function exportAsPNG(includeNames = true) {
             // Network area starts after titles
             const networkStartY = titleHeight;
             
+            // Calculate center position for network (ignore zoom/pan, center the graph)
+            const networkCenterX = baseWidth / 2;
+            const networkCenterY = networkStartY + (networkHeight / 2);
+            
             // Get all links and nodes
             const links = d3.selectAll('#poster-svg line').nodes();
             const nodesElements = d3.selectAll('#poster-svg circle').nodes();
             const labels = d3.selectAll('#poster-svg text.node-label').nodes();
             
-            // Get current transform
-            const transform = d3.zoomTransform(svgElement);
+            // Find bounds of the network to center it properly
+            let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+            nodesElements.forEach(node => {
+                const parent = node.parentElement;
+                const transform = parent.getAttribute('transform');
+                const match = transform.match(/translate\(([^,]+),([^)]+)\)/);
+                if (match) {
+                    const x = parseFloat(match[1]);
+                    const y = parseFloat(match[2]);
+                    minX = Math.min(minX, x);
+                    maxX = Math.max(maxX, x);
+                    minY = Math.min(minY, y);
+                    maxY = Math.max(maxY, y);
+                }
+            });
+            
+            const graphWidth = maxX - minX;
+            const graphHeight = maxY - minY;
+            const graphCenterX = (minX + maxX) / 2;
+            const graphCenterY = (minY + maxY) / 2;
+            
+            // Calculate offset to center the graph in available space
+            const offsetX = networkCenterX - graphCenterX;
+            const offsetY = networkCenterY - graphCenterY;
+            
+            console.log(`🎯 Centering network: graph=${graphWidth.toFixed(0)}×${graphHeight.toFixed(0)}, offset=(${offsetX.toFixed(0)}, ${offsetY.toFixed(0)})`);
             
             ctx.save();
-            // Move down for title space first (in canvas coordinates)
-            ctx.translate(0, networkStartY);
-            // Apply D3 zoom transform: translate then scale (matching SVG order)
-            ctx.translate(transform.x, transform.y);
-            ctx.scale(transform.k, transform.k);
+            // Apply offset to center the network in available space (no zoom transform)
+            ctx.translate(offsetX, offsetY);
             
             // Draw links
             links.forEach(link => {

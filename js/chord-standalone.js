@@ -295,43 +295,27 @@ function generateAndDisplayChord() {
         // Success - draw the diagram
         console.log('✅ Drawing chord diagram...');
         
-        // ✨ READ CUSTOM TITLES BEFORE CLEARING - Get them from network SVG
-        let customTitle = null;
-        let customSubtitle = null;
+        // ✨ GET CUSTOM TITLES using the app's title functions
+        let customTitleValue = null;
+        let customSubtitleValue = null;
         
-        const networkSvg = document.getElementById('poster-svg');
-        if (networkSvg) {
-            try {
-                const titleElement = networkSvg.querySelector('.title-text');
-                const subtitleElement = networkSvg.querySelector('.subtitle-text');
-                
-                if (titleElement) {
-                    const titleText = titleElement.textContent;
-                    if (titleText && titleText.trim().length > 0) {
-                        const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(titleText);
-                        if (!hasWeirdChars) {
-                            customTitle = titleText.trim();
-                            console.log('✅ Read custom title from network:', customTitle);
-                        }
-                    }
-                }
-                
-                if (subtitleElement) {
-                    const subtitleText = subtitleElement.textContent;
-                    if (subtitleText && subtitleText.trim().length > 0) {
-                        const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(subtitleText);
-                        if (!hasWeirdChars) {
-                            customSubtitle = subtitleText.trim();
-                            console.log('✅ Read custom subtitle from network:', customSubtitle);
-                        }
-                    }
-                }
-            } catch (e) {
-                console.warn('⚠️ Error reading custom titles from network:', e);
-            }
+        if (typeof getCustomOrAutoTitle === 'function') {
+            customTitleValue = getCustomOrAutoTitle(null);
+            console.log('✅ Got custom title:', customTitleValue);
+        } else if (typeof customTitle !== 'undefined' && customTitle) {
+            customTitleValue = customTitle;
+            console.log('✅ Got custom title from global var:', customTitleValue);
         }
         
-        drawChordDiagram(container, filteredTeamArray, matrix, customTitle, customSubtitle);
+        if (typeof getCustomOrAutoSubtitle === 'function') {
+            customSubtitleValue = getCustomOrAutoSubtitle(null);
+            console.log('✅ Got custom subtitle:', customSubtitleValue);
+        } else if (typeof customSubtitle !== 'undefined' && customSubtitle) {
+            customSubtitleValue = customSubtitle;
+            console.log('✅ Got custom subtitle from global var:', customSubtitleValue);
+        }
+        
+        drawChordDiagram(container, filteredTeamArray, matrix, customTitleValue, customSubtitleValue);
         
     } catch (error) {
         console.error('❌ Error generating chord diagram:', error);
@@ -514,29 +498,26 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // ✨ USE PASSED-IN CUSTOM TITLES (already read before container was cleared)
-    let finalTitle = customTitle || autoTitle;
-    let finalSubtitle = customSubtitle || autoSubtitle;
-    
-    
-    console.log('📝 Chord subtitle debug:', {
-        autoSubtitleParts,
-        autoSubtitle,
-        finalSubtitle,
-        finalSubtitleLength: finalSubtitle ? finalSubtitle.length : 0,
-        finalSubtitleChars: finalSubtitle ? finalSubtitle.split('').map(c => c.charCodeAt(0)) : [],
-        selectedYearsSize: selectedYears.size,
-        teamsCount: teams.length
-    });
-    
-    // Verify subtitle is clean ASCII
-    const hasNonASCII = /[^\x20-\x7E]/.test(finalSubtitle);
-    if (hasNonASCII) {
-        console.warn('⚠️ Non-ASCII characters detected in subtitle!');
-        console.log('Characters:', finalSubtitle.split('').map((c, i) => ({ char: c, code: c.charCodeAt(0), index: i })));
-    } else {
-        console.log('✅ Subtitle is clean ASCII, length:', finalSubtitle.length);
+    // ✨ SANITIZE TEXT - Remove any problematic characters
+    function sanitizeText(text) {
+        if (!text) return '';
+        // Convert to string and remove any non-printable characters
+        return String(text)
+            .replace(/[\x00-\x1F\x7F-\x9F]/g, '') // Remove control characters
+            .replace(/[^\x20-\x7E\u00A0-\uFFFF]/g, '') // Keep ASCII + extended Unicode
+            .trim();
     }
+    
+    // ✨ USE PASSED-IN CUSTOM TITLES (already read before container was cleared)
+    let finalTitle = sanitizeText(customTitle || autoTitle);
+    let finalSubtitle = sanitizeText(customSubtitle || autoSubtitle);
+    
+    console.log('📝 Using titles:', {
+        finalTitle,
+        finalSubtitle,
+        titleLength: finalTitle.length,
+        subtitleLength: finalSubtitle.length
+    });
     
     // Main title - ROBOTO to match Network
     svg.append("text")
@@ -547,6 +528,7 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .attr("font-size", "40px")
         .attr("font-weight", "bold")
         .attr("font-family", "Roboto, Arial, sans-serif")
+        .style("dominant-baseline", "middle")
         .text(finalTitle);
     
     // Subtitle - ROBOTO with explicit rendering
@@ -557,17 +539,12 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .attr("fill", "#d0d0d0")
         .attr("font-size", "24px")
         .attr("font-weight", "normal")
-        .attr("font-family", "Roboto, Arial, sans-serif");
+        .attr("font-family", "Roboto, Arial, sans-serif")
+        .style("dominant-baseline", "middle")
+        .attr("xml:space", "preserve");
     
-    // Set text directly
+    // Set text directly - use sanitized text
     subtitleEl.text(finalSubtitle);
-    
-    console.log('🎨 Subtitle element created:', {
-        textContent: subtitleEl.text(),
-        textLength: subtitleEl.text().length,
-        fontFamily: subtitleEl.attr('font-family'),
-        nodeValue: subtitleEl.node().textContent
-    });
     
     // Additional info line (hidden in exports) - moved BELOW subtitle
     svg.append("text")
