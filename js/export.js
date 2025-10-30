@@ -340,9 +340,12 @@ function exportAsPNG(includeNames = true) {
             const transform = d3.zoomTransform(svg.node());
             
             ctx.save();
-            ctx.translate(0, networkStartY);
-            ctx.translate(transform.x, transform.y);
+            // Apply zoom scale first
             ctx.scale(transform.k, transform.k);
+            // Apply zoom translation (adjusted for scale)
+            ctx.translate(transform.x / transform.k, transform.y / transform.k);
+            // Now add the offset for title space (also adjusted for scale)
+            ctx.translate(0, networkStartY / transform.k);
             
             // Draw links
             links.forEach(link => {

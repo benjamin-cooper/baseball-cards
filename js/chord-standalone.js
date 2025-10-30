@@ -477,10 +477,49 @@ function drawChordDiagram(container, teams, matrix) {
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // For chord diagram, ALWAYS use auto-generated titles (don't use custom title system)
-    // This prevents encoding issues with custom subtitle functions
-    const finalTitle = autoTitle;
-    const finalSubtitle = autoSubtitle;
+    // ✨ CUSTOM TITLES ENABLED - Try to get custom titles with safety checks
+    let finalTitle = autoTitle;
+    let finalSubtitle = autoSubtitle;
+    
+    // Check if custom title functions exist and are safe to use
+    if (typeof window.getCustomChordTitle === 'function') {
+        try {
+            const customTitle = window.getCustomChordTitle();
+            // Safety check: ensure it's a valid string with no encoding issues
+            if (customTitle && typeof customTitle === 'string' && customTitle.trim().length > 0) {
+                // Verify it's clean ASCII or valid UTF-8
+                const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(customTitle);
+                if (!hasWeirdChars) {
+                    finalTitle = customTitle;
+                    console.log('✅ Using custom chord title:', customTitle);
+                } else {
+                    console.warn('⚠️ Custom title has invalid characters, using auto title');
+                }
+            }
+        } catch (e) {
+            console.warn('⚠️ Error getting custom chord title:', e);
+        }
+    }
+    
+    if (typeof window.getCustomChordSubtitle === 'function') {
+        try {
+            const customSubtitle = window.getCustomChordSubtitle();
+            // Safety check: ensure it's a valid string with no encoding issues
+            if (customSubtitle && typeof customSubtitle === 'string' && customSubtitle.trim().length > 0) {
+                // Verify it's clean ASCII or valid UTF-8
+                const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(customSubtitle);
+                if (!hasWeirdChars) {
+                    finalSubtitle = customSubtitle;
+                    console.log('✅ Using custom chord subtitle:', customSubtitle);
+                } else {
+                    console.warn('⚠️ Custom subtitle has invalid characters, using auto subtitle');
+                }
+            }
+        } catch (e) {
+            console.warn('⚠️ Error getting custom chord subtitle:', e);
+        }
+    }
+    
     
     console.log('📝 Chord subtitle debug:', {
         autoSubtitleParts,
