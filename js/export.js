@@ -16,8 +16,10 @@ console.log('📦 export.js VERSION 2.0 loaded - Compact Legend Fix');
 // Create legend SVG with smart placement
 function createLegendSVG(teams, nodes = [], hasCustomTitles = false) {
     const legendWidth = 2400;
-    const itemsPerRow = 6;
-    const legendHeight = Math.ceil(teams.length / itemsPerRow) * 40 + 60;
+    const itemsPerRow = 8; // Match PNG export
+    const rowHeight = 24; // Match PNG export
+    const legendHeaderHeight = 50; // Match PNG export
+    const legendHeight = Math.ceil(teams.length / itemsPerRow) * rowHeight + legendHeaderHeight;
     
     // Determine best placement (top, bottom, or side) based on node positions
     let placement = 'top'; // default
@@ -268,8 +270,8 @@ function exportAsPNG(includeNames = true) {
             }
             
             // Calculate COMPACT legend dimensions
-            const itemsPerRow = 6;
-            const rowHeight = 26; // Tighter spacing (was 32)
+            const itemsPerRow = 8; // Increased from 6 to reduce rows
+            const rowHeight = 24; // Even tighter for 12px text (was 26)
             const legendHeaderHeight = 50; // Reduced header space
             
             // Debug: log the calculation step by step
@@ -313,7 +315,7 @@ function exportAsPNG(includeNames = true) {
                 if (titleElement) {
                     const titleText = titleElement.textContent;
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 38px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.font = 'bold 38px Roboto, Arial, sans-serif';
                     ctx.fillText(titleText, baseWidth / 2, currentY);
                     currentY += 50;
                 }
@@ -321,7 +323,7 @@ function exportAsPNG(includeNames = true) {
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
                     ctx.fillStyle = '#d0d0d0';
-                    ctx.font = '22px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.font = '22px Roboto, Arial, sans-serif';
                     ctx.fillText(subtitleText, baseWidth / 2, currentY);
                 }
             }
@@ -384,7 +386,7 @@ function exportAsPNG(includeNames = true) {
             
             // Draw labels (if requested)
             if (includeNames) {
-                ctx.font = 'bold 16px Roboto, "Helvetica Neue", Arial, sans-serif';
+                ctx.font = 'bold 16px Roboto, Arial, sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 ctx.fillStyle = 'white';
@@ -442,7 +444,7 @@ function exportAsPNG(includeNames = true) {
             
             // Draw legend title - COMPACT
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 22px Roboto, "Helvetica Neue", Arial, sans-serif';
+            ctx.font = 'bold 22px Roboto, Arial, sans-serif';
             ctx.textAlign = 'center';
             ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 30);
             
@@ -450,7 +452,7 @@ function exportAsPNG(includeNames = true) {
             const sortedTeams = teams.sort();
             const itemWidth = baseWidth / itemsPerRow;
             
-            ctx.font = '13px Roboto, "Helvetica Neue", Arial, sans-serif'; // Smaller font
+            ctx.font = '12px Roboto, Arial, sans-serif';
             ctx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {

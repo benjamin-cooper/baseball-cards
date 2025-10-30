@@ -501,7 +501,7 @@ function drawChordDiagram(container, teams, matrix) {
         console.log('✅ Subtitle is clean ASCII, length:', finalSubtitle.length);
     }
     
-    // Main title - SIMPLE ARIAL (most reliable)
+    // Main title - ROBOTO to match Network
     svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 70)
@@ -509,10 +509,10 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("fill", "white")
         .attr("font-size", "40px")
         .attr("font-weight", "bold")
-        .attr("font-family", "Arial")
+        .attr("font-family", "Roboto, Arial, sans-serif")
         .text(finalTitle);
     
-    // Subtitle - SIMPLE ARIAL with explicit rendering
+    // Subtitle - ROBOTO with explicit rendering
     const subtitleEl = svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 115)
@@ -520,7 +520,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("fill", "#d0d0d0")
         .attr("font-size", "24px")
         .attr("font-weight", "normal")
-        .attr("font-family", "Arial");
+        .attr("font-family", "Roboto, Arial, sans-serif");
     
     // Set text directly
     subtitleEl.text(finalSubtitle);
@@ -540,7 +540,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("text-anchor", "middle")
         .attr("fill", "#666")
         .attr("font-size", "14px")
-        .attr("font-family", "Arial")
+        .attr("font-family", "Roboto, Arial, sans-serif")
         .text(`${teams.length} teams shown - Hover over ribbons to see player movement`);
     
     // Main group centered BELOW title
