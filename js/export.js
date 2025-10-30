@@ -277,7 +277,7 @@ function exportAsPNG(includeNames = true) {
             // Debug: log the calculation step by step
             const rows = Math.ceil(teams.length / itemsPerRow);
             const compactLegendHeight = rows * rowHeight + legendHeaderHeight;
-            const legendSpacing = 25; // REDUCED spacing before legend (was 40)
+            const legendSpacing = 10; // FURTHER REDUCED spacing before legend (was 25, originally 40)
             
             console.log('🔍 Legend calculation DEBUG:', {
                 teamCount: teams.length,

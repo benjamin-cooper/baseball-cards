@@ -914,7 +914,7 @@ function exportChordDiagramPNG() {
             const titleText = window._chordCleanTitle || 'Team Connection Network';
             const subtitleText = window._chordCleanSubtitle || '';
             
-            let currentY = 140; // Moved down from 100
+            let currentY = 190; // Moved down further for better spacing
             
             // Draw main title - EVEN LARGER
             ctx.fillStyle = '#ffffff';
