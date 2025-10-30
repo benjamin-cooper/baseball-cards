@@ -448,7 +448,7 @@ function exportAsPNG(includeNames = true) {
             // Draw legend background with rounded corners - new color scheme
             ctx.fillStyle = 'rgba(20, 20, 20, 0.95)';
             const cornerRadius = 8;
-            const legendMargin = 10;
+            const legendMargin = 40; // Increased from 10 to avoid frame coverage
             
             // Create rounded rectangle
             ctx.beginPath();
@@ -471,7 +471,7 @@ function exportAsPNG(includeNames = true) {
             
             // Draw legend title - COMPACT
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 22px Roboto, Arial, sans-serif';
+            ctx.font = 'bold 20px Roboto, Arial, sans-serif'; // Reduced from 22px
             ctx.textAlign = 'center';
             ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 30);
             
@@ -479,13 +479,13 @@ function exportAsPNG(includeNames = true) {
             const sortedTeams = teams.sort();
             const itemWidth = baseWidth / itemsPerRow;
             
-            ctx.font = '12px Roboto, Arial, sans-serif';
+            ctx.font = '10px Roboto, Arial, sans-serif'; // Reduced from 12px for compactness
             ctx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {
                 const row = Math.floor(i / itemsPerRow);
                 const col = i % itemsPerRow;
-                const x = col * itemWidth + 20;
+                const x = col * itemWidth + 50; // Increased from 20 for more left margin
                 const y = legendY + row * rowHeight + 48; // Using rowHeight variable
                 
                 // Draw color box - slightly smaller
