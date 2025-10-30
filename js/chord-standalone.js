@@ -408,16 +408,17 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     
     container.innerHTML = '';
     
-    // ✨ PORTRAIT ORIENTATION - 18" × 24" (3:4 aspect ratio for vertical frames)
-    const containerWidth = Math.min(container.clientWidth, 1800);  // Portrait width
-    const containerHeight = Math.max(container.clientHeight, 2400); // Portrait height
+    // ✨ LANDSCAPE ORIENTATION for on-screen display (better for websites)
+    // Export will be portrait, but display is landscape to reduce vertical scroll
+    const containerWidth = Math.min(container.clientWidth, 2400);  // Landscape width
+    const containerHeight = Math.max(container.clientHeight, 1400); // Landscape height (reduced from 2400)
     
     // Reserve space for title at top with more breathing room
-    const titleHeight = 300; // More space for portrait
-    const availableHeight = containerHeight - titleHeight - 200;
+    const titleHeight = 240;
+    const availableHeight = containerHeight - titleHeight - 100;
     
-    const size = Math.min(containerWidth - 100, availableHeight * 0.7, 900);
-    const outerRadius = size * 0.40;
+    const size = Math.min(containerWidth - 200, availableHeight, 1000);
+    const outerRadius = size * 0.45;
     const innerRadius = outerRadius - 30;
     
     const svg = d3.select(container)
@@ -861,23 +862,23 @@ function exportChordDiagramPNG() {
             const titleText = window._chordCleanTitle || 'Team Connection Network';
             const subtitleText = window._chordCleanSubtitle || '';
             
-            let currentY = 100; // Start position for titles
+            let currentY = 140; // Moved down from 100
             
-            // Draw main title - MUCH LARGER
+            // Draw main title - EVEN LARGER
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 60px Roboto, Arial, sans-serif'; // Increased from 48px
+            ctx.font = 'bold 72px Roboto, Arial, sans-serif'; // Increased from 60px
             ctx.textAlign = 'center';
             ctx.fillText(titleText, baseWidth / 2, currentY);
-            currentY += 70;
+            currentY += 80;
             
-            // Draw subtitle - MUCH LARGER
+            // Draw subtitle - EVEN LARGER
             if (subtitleText) {
                 ctx.fillStyle = '#d0d0d0';
-                ctx.font = '36px Roboto, Arial, sans-serif'; // Increased from 28px
+                ctx.font = '42px Roboto, Arial, sans-serif'; // Increased from 36px
                 ctx.fillText(subtitleText, baseWidth / 2, currentY);
-                currentY += 60;
+                currentY += 70;
             } else {
-                currentY += 30; // Less space if no subtitle
+                currentY += 40; // Less space if no subtitle
             }
             
             // Now render the SVG diagram
@@ -912,15 +913,15 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Calculate positioning - MUCH LESS BLANK SPACE
+                // Calculate positioning - MINIMAL BLANK SPACE
                 const diagramStartY = currentY + 30; // Small gap after titles
-                const availableHeight = baseHeight - diagramStartY - 80; // Reduced bottom margin
-                const availableWidth = baseWidth - 80; // Reduced side margins
+                const availableHeight = baseHeight - diagramStartY - 50; // REDUCED bottom margin from 80
+                const availableWidth = baseWidth - 60; // Reduced side margins
                 
-                // Calculate scale to fit diagram - ALLOW MUCH LARGER SCALING
+                // Calculate scale to fit diagram - ALLOW EVEN LARGER SCALING
                 const scaleX = availableWidth / origWidth;
                 const scaleY = availableHeight / origHeight;
-                const diagramScale = Math.min(scaleX, scaleY, 1.8); // Increased from 1.2x to 1.8x
+                const diagramScale = Math.min(scaleX, scaleY, 2.2); // Increased from 1.8x to 2.2x!
                 
                 const drawWidth = origWidth * diagramScale;
                 const drawHeight = origHeight * diagramScale;
@@ -930,6 +931,7 @@ function exportChordDiagramPNG() {
                 const offsetY = diagramStartY + (availableHeight - drawHeight) / 2;
                 
                 console.log('🎨 Chord diagram layout:', {
+                    titleStartY: 140,
                     titleEndY: currentY,
                     diagramStartY,
                     availableHeight,

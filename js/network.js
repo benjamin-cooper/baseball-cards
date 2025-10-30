@@ -47,19 +47,20 @@ function updateNetwork(edges, players) {
     }
     
     // Adaptive canvas size based on network size
+    // ✨ LANDSCAPE orientation for better website display (export stays portrait)
     let width, height;
     if (players.length < 50) {
         // Small network - use more space per node
         width = 2400;
-        height = 2400;
+        height = 1400;  // Changed from 2400 to landscape
     } else if (players.length < 150) {
         // Medium network
         width = 2400;
-        height = 2000;
+        height = 1300;  // Changed from 2000 to landscape
     } else {
         // Large network
         width = 2400;
-        height = 1800;
+        height = 1200;  // Changed from 1800 to landscape
     }
     
     svg = d3.select("#network-container")
