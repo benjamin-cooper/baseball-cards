@@ -477,28 +477,27 @@ function drawChordDiagram(container, teams, matrix) {
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // Use custom titles if set, otherwise use auto-generated
-    const finalTitle = (typeof getCustomOrAutoTitle === 'function') 
-        ? getCustomOrAutoTitle(autoTitle) 
-        : autoTitle;
-    
-    const finalSubtitle = (typeof getCustomOrAutoSubtitle === 'function') 
-        ? getCustomOrAutoSubtitle(autoSubtitle) 
-        : autoSubtitle;
+    // For chord diagram, ALWAYS use auto-generated titles (don't use custom title system)
+    // This prevents encoding issues with custom subtitle functions
+    const finalTitle = autoTitle;
+    const finalSubtitle = autoSubtitle;
     
     console.log('📝 Chord subtitle debug:', {
         autoSubtitleParts,
         autoSubtitle,
         finalSubtitle,
         finalSubtitleLength: finalSubtitle ? finalSubtitle.length : 0,
+        finalSubtitleChars: finalSubtitle ? finalSubtitle.split('').map(c => c.charCodeAt(0)) : [],
         selectedYearsSize: selectedYears.size,
         teamsCount: teams.length
     });
     
-    // Sanitize subtitle text - remove any non-printable characters
-    const sanitizedSubtitle = finalSubtitle.replace(/[^\x20-\x7E]/g, '');
-    
-    console.log('🧹 Sanitized subtitle:', sanitizedSubtitle);
+    // Verify subtitle is clean ASCII
+    const hasNonASCII = /[^\x20-\x7E]/.test(finalSubtitle);
+    if (hasNonASCII) {
+        console.warn('⚠️ Non-ASCII characters detected in subtitle!');
+        console.log('Characters:', finalSubtitle.split('').map((c, i) => ({ char: c, code: c.charCodeAt(0), index: i })));
+    }
     
     // Main title
     svg.append("text")
@@ -511,7 +510,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
         .text(finalTitle);
     
-    // Subtitle with filter info - brighter and larger for visibility
+    // Subtitle with filter info
     svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 115)
@@ -520,7 +519,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("font-size", "24px")
         .attr("font-weight", "500")
         .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
-        .text(sanitizedSubtitle);
+        .text(finalSubtitle);
     
     // Additional info line (hidden in exports) - moved BELOW subtitle
     svg.append("text")

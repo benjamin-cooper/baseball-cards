@@ -253,24 +253,26 @@ function exportAsPNG(includeNames = true) {
             const subtitleElement = svgElement.querySelector('.subtitle-text');
             
             if (titleElement) {
-                titleHeight = 70; // Main title space
+                titleHeight = 90; // Main title space (moved down from 70)
             }
             
             if (subtitleElement) {
-                titleHeight += 40; // Subtitle space
+                titleHeight += 45; // Subtitle space
             }
             
             if (titleHeight > 0) {
-                titleHeight += 20; // Extra spacing after titles
+                titleHeight += 30; // Extra spacing after titles
             }
             
-            // Calculate legend dimensions
+            // Calculate COMPACT legend dimensions
             const itemsPerRow = 6;
-            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * 32 + 60;
-            const legendSpacing = 60; // Space before legend
+            const rowHeight = 26; // Tighter spacing (was 32)
+            const legendHeaderHeight = 50; // Reduced header space
+            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * rowHeight + legendHeaderHeight;
+            const legendSpacing = 40; // Reduced spacing before legend
             
             // Calculate network area (what's left after title and legend)
-            const networkHeight = baseHeight - titleHeight - legendSpacing - compactLegendHeight;
+            const networkHeight = baseHeight - titleHeight - legendSpacing - compactLegendHeight - 20; // 20px bottom margin
             
             console.log(`📐 Layout (fits 4:3): title=${titleHeight}, network=${networkHeight}, spacing=${legendSpacing}, legend=${compactLegendHeight}, total=${baseHeight}`);
             
@@ -287,15 +289,15 @@ function exportAsPNG(includeNames = true) {
             ctx.fillStyle = '#000000';
             ctx.fillRect(0, 0, baseWidth, baseHeight);
             
-            // Draw titles at the top if they exist
+            // Draw titles LOWER to avoid being cut by frame
             if (titleElement || subtitleElement) {
                 ctx.textAlign = 'center';
-                let currentY = 50;
+                let currentY = 60; // Start lower (was 50)
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 40px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.font = 'bold 38px Roboto, "Helvetica Neue", Arial, sans-serif';
                     ctx.fillText(titleText, baseWidth / 2, currentY);
                     currentY += 50;
                 }
@@ -303,7 +305,7 @@ function exportAsPNG(includeNames = true) {
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
                     ctx.fillStyle = '#d0d0d0';
-                    ctx.font = '24px Roboto, "Helvetica Neue", Arial, sans-serif';
+                    ctx.font = '22px Roboto, "Helvetica Neue", Arial, sans-serif';
                     ctx.fillText(subtitleText, baseWidth / 2, currentY);
                 }
             }
@@ -422,37 +424,36 @@ function exportAsPNG(includeNames = true) {
             ctx.lineWidth = 2;
             ctx.stroke();
             
-            // Draw legend title - larger for better readability
+            // Draw legend title - COMPACT
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 28px Roboto, "Helvetica Neue", Arial, sans-serif';
+            ctx.font = 'bold 22px Roboto, "Helvetica Neue", Arial, sans-serif';
             ctx.textAlign = 'center';
-            ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 35);
+            ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 30);
             
-            // Draw legend items
+            // Draw legend items - COMPACT
             const sortedTeams = teams.sort();
-            // itemsPerRow already defined earlier (value: 6)
             const itemWidth = baseWidth / itemsPerRow;
             
-            ctx.font = '16px Roboto, "Helvetica Neue", Arial, sans-serif';
+            ctx.font = '13px Roboto, "Helvetica Neue", Arial, sans-serif'; // Smaller font
             ctx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {
                 const row = Math.floor(i / itemsPerRow);
                 const col = i % itemsPerRow;
                 const x = col * itemWidth + 20;
-                const y = legendY + row * 32 + 58;
+                const y = legendY + row * rowHeight + 48; // Using rowHeight variable
                 
-                // Draw color box
+                // Draw color box - slightly smaller
                 const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;
                 ctx.fillStyle = color;
-                ctx.fillRect(x, y, 20, 20);
+                ctx.fillRect(x, y, 18, 18);
                 ctx.strokeStyle = 'white';
-                ctx.lineWidth = 1.5;
-                ctx.strokeRect(x, y, 20, 20);
+                ctx.lineWidth = 1.2;
+                ctx.strokeRect(x, y, 18, 18);
                 
                 // Draw team name
                 ctx.fillStyle = 'white';
-                ctx.fillText(team, x + 26, y + 15);
+                ctx.fillText(team, x + 24, y + 13);
             });
             
             // Canvas is already at perfect 4:3 ratio (12,000 × 9,000) - convert directly to PNG
