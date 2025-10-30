@@ -694,15 +694,61 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .style("text-shadow", "2px 2px 4px rgba(0,0,0,0.8)")
         .text(d => teams[d.index]);
     
-    // Draw ribbons
+    // Create a defs section for gradients
+    const defs = svg.append("defs");
+    
+    // Create a gradient for each chord ribbon
+    chords.forEach((chord, i) => {
+        const gradient = defs.append("linearGradient")
+            .attr("id", `chord-gradient-${i}`)
+            .attr("gradientUnits", "userSpaceOnUse");
+        
+        // Calculate the gradient direction based on ribbon geometry
+        // Get the midpoints of source and target arcs
+        const sourceAngle = (chord.source.startAngle + chord.source.endAngle) / 2;
+        const targetAngle = (chord.target.startAngle + chord.target.endAngle) / 2;
+        
+        // Convert angles to coordinates for gradient
+        const sourceX = Math.cos(sourceAngle - Math.PI / 2) * innerRadius;
+        const sourceY = Math.sin(sourceAngle - Math.PI / 2) * innerRadius;
+        const targetX = Math.cos(targetAngle - Math.PI / 2) * innerRadius;
+        const targetY = Math.sin(targetAngle - Math.PI / 2) * innerRadius;
+        
+        gradient.attr("x1", sourceX)
+            .attr("y1", sourceY)
+            .attr("x2", targetX)
+            .attr("y2", targetY);
+        
+        // Add color stops - source team color to target team color
+        gradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", teamColors[chord.source.index])
+            .attr("stop-opacity", 1);
+        
+        gradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", teamColors[chord.target.index])
+            .attr("stop-opacity", 1);
+    });
+    
+    // Draw ribbons with gradients
     g.append("g")
         .selectAll("path")
         .data(chords)
         .join("path")
         .attr("class", "ribbon")
         .attr("d", ribbon)
-        .attr("fill", d => teamColors[d.source.index])
-        .attr("stroke", d => d3.rgb(teamColors[d.source.index]).darker())
+        .attr("fill", (d, i) => `url(#chord-gradient-${i})`)
+        .attr("stroke", d => {
+            // Create a blended stroke color
+            const sourceColor = d3.rgb(teamColors[d.source.index]);
+            const targetColor = d3.rgb(teamColors[d.target.index]);
+            return d3.rgb(
+                (sourceColor.r + targetColor.r) / 2,
+                (sourceColor.g + targetColor.g) / 2,
+                (sourceColor.b + targetColor.b) / 2
+            ).darker();
+        })
         .attr("stroke-width", 1)
         .style("opacity", 0.75)
         .style("cursor", "pointer")
