@@ -477,46 +477,46 @@ function drawChordDiagram(container, teams, matrix) {
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // ✨ CUSTOM TITLES ENABLED - Try to get custom titles with safety checks
+    // ✨ CUSTOM TITLES ENABLED - Read from network's existing title elements
     let finalTitle = autoTitle;
     let finalSubtitle = autoSubtitle;
     
-    // Check if custom title functions exist and are safe to use
-    if (typeof window.getCustomChordTitle === 'function') {
+    // Try to get custom titles from the network SVG (same system as network view)
+    const networkSvg = document.getElementById('poster-svg');
+    if (networkSvg) {
         try {
-            const customTitle = window.getCustomChordTitle();
-            // Safety check: ensure it's a valid string with no encoding issues
-            if (customTitle && typeof customTitle === 'string' && customTitle.trim().length > 0) {
-                // Verify it's clean ASCII or valid UTF-8
-                const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(customTitle);
-                if (!hasWeirdChars) {
-                    finalTitle = customTitle;
-                    console.log('✅ Using custom chord title:', customTitle);
-                } else {
-                    console.warn('⚠️ Custom title has invalid characters, using auto title');
+            const titleElement = networkSvg.querySelector('.title-text');
+            const subtitleElement = networkSvg.querySelector('.subtitle-text');
+            
+            if (titleElement) {
+                const titleText = titleElement.textContent;
+                // Safety check: ensure it's a valid string with no encoding issues
+                if (titleText && titleText.trim().length > 0) {
+                    const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(titleText);
+                    if (!hasWeirdChars) {
+                        finalTitle = titleText.trim();
+                        console.log('✅ Using custom title from network:', finalTitle);
+                    } else {
+                        console.warn('⚠️ Network title has invalid characters, using auto title');
+                    }
+                }
+            }
+            
+            if (subtitleElement) {
+                const subtitleText = subtitleElement.textContent;
+                // Safety check: ensure it's a valid string with no encoding issues  
+                if (subtitleText && subtitleText.trim().length > 0) {
+                    const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(subtitleText);
+                    if (!hasWeirdChars) {
+                        finalSubtitle = subtitleText.trim();
+                        console.log('✅ Using custom subtitle from network:', finalSubtitle);
+                    } else {
+                        console.warn('⚠️ Network subtitle has invalid characters, using auto subtitle');
+                    }
                 }
             }
         } catch (e) {
-            console.warn('⚠️ Error getting custom chord title:', e);
-        }
-    }
-    
-    if (typeof window.getCustomChordSubtitle === 'function') {
-        try {
-            const customSubtitle = window.getCustomChordSubtitle();
-            // Safety check: ensure it's a valid string with no encoding issues
-            if (customSubtitle && typeof customSubtitle === 'string' && customSubtitle.trim().length > 0) {
-                // Verify it's clean ASCII or valid UTF-8
-                const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(customSubtitle);
-                if (!hasWeirdChars) {
-                    finalSubtitle = customSubtitle;
-                    console.log('✅ Using custom chord subtitle:', customSubtitle);
-                } else {
-                    console.warn('⚠️ Custom subtitle has invalid characters, using auto subtitle');
-                }
-            }
-        } catch (e) {
-            console.warn('⚠️ Error getting custom chord subtitle:', e);
+            console.warn('⚠️ Error reading custom titles from network:', e);
         }
     }
     
