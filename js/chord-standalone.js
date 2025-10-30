@@ -497,9 +497,11 @@ function drawChordDiagram(container, teams, matrix) {
     if (hasNonASCII) {
         console.warn('⚠️ Non-ASCII characters detected in subtitle!');
         console.log('Characters:', finalSubtitle.split('').map((c, i) => ({ char: c, code: c.charCodeAt(0), index: i })));
+    } else {
+        console.log('✅ Subtitle is clean ASCII, length:', finalSubtitle.length);
     }
     
-    // Main title
+    // Main title - SIMPLE ARIAL (most reliable)
     svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 70)
@@ -507,19 +509,28 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("fill", "white")
         .attr("font-size", "40px")
         .attr("font-weight", "bold")
-        .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
+        .attr("font-family", "Arial")
         .text(finalTitle);
     
-    // Subtitle with filter info
-    svg.append("text")
+    // Subtitle - SIMPLE ARIAL with explicit rendering
+    const subtitleEl = svg.append("text")
         .attr("x", containerWidth / 2)
         .attr("y", 115)
         .attr("text-anchor", "middle")
         .attr("fill", "#d0d0d0")
         .attr("font-size", "24px")
-        .attr("font-weight", "500")
-        .attr("font-family", "Roboto, 'Helvetica Neue', Arial, sans-serif")
-        .text(finalSubtitle);
+        .attr("font-weight", "normal")
+        .attr("font-family", "Arial");
+    
+    // Set text directly
+    subtitleEl.text(finalSubtitle);
+    
+    console.log('🎨 Subtitle element created:', {
+        textContent: subtitleEl.text(),
+        textLength: subtitleEl.text().length,
+        fontFamily: subtitleEl.attr('font-family'),
+        nodeValue: subtitleEl.node().textContent
+    });
     
     // Additional info line (hidden in exports) - moved BELOW subtitle
     svg.append("text")
@@ -529,6 +540,7 @@ function drawChordDiagram(container, teams, matrix) {
         .attr("text-anchor", "middle")
         .attr("fill", "#666")
         .attr("font-size", "14px")
+        .attr("font-family", "Arial")
         .text(`${teams.length} teams shown - Hover over ribbons to see player movement`);
     
     // Main group centered BELOW title
