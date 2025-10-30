@@ -1,4 +1,7 @@
 // Export functions for SVG and PNG
+// VERSION: 2.0 - COMPACT LEGEND FIX
+// Last updated: 2025-01-29
+console.log('📦 export.js VERSION 2.0 loaded - Compact Legend Fix');
 // 
 // PNG QUALITY SETTINGS - OPTIMIZED FOR 24" × 18" PRINTS:
 // - Target dimensions: 2400 × 1800 pixels (perfect 4:3 aspect ratio for 24" × 18")
@@ -268,8 +271,21 @@ function exportAsPNG(includeNames = true) {
             const itemsPerRow = 6;
             const rowHeight = 26; // Tighter spacing (was 32)
             const legendHeaderHeight = 50; // Reduced header space
-            const compactLegendHeight = Math.ceil(teams.length / itemsPerRow) * rowHeight + legendHeaderHeight;
+            
+            // Debug: log the calculation step by step
+            const rows = Math.ceil(teams.length / itemsPerRow);
+            const compactLegendHeight = rows * rowHeight + legendHeaderHeight;
             const legendSpacing = 40; // Reduced spacing before legend
+            
+            console.log('🔍 Legend calculation DEBUG:', {
+                teamCount: teams.length,
+                itemsPerRow,
+                rows,
+                rowHeight,
+                legendHeaderHeight,
+                calculated: `${rows} × ${rowHeight} + ${legendHeaderHeight} = ${compactLegendHeight}`,
+                compactLegendHeight
+            });
             
             // Calculate network area (what's left after title and legend)
             const networkHeight = baseHeight - titleHeight - legendSpacing - compactLegendHeight - 20; // 20px bottom margin
