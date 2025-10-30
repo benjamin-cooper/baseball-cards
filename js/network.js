@@ -71,9 +71,10 @@ function updateNetwork(edges, players) {
     svg = d3.select("#network-container")
         .append("svg")
         .attr("width", "100%")
-        .attr("height", "100%")
         .attr("viewBox", `0 0 ${width} ${height}`)
-        .attr("id", "poster-svg");
+        .attr("preserveAspectRatio", "xMidYMid meet") // Ensure full viewBox is visible
+        .attr("id", "poster-svg")
+        .style("display", "block"); // Remove any extra spacing
     
     // Add custom titles if they exist (BEFORE creating g group so they don't zoom/pan)
     // This ensures titles appear in exports and stay fixed on screen
@@ -119,6 +120,8 @@ function updateNetwork(edges, players) {
     // Extend the viewBox height to include title space
     const extendedHeight = baseHeight + titleSpaceReserved;
     svg.attr("viewBox", `0 0 ${width} ${extendedHeight}`);
+    
+    console.log(`📐 Network layout: ${width}x${extendedHeight} (title space: ${titleSpaceReserved}px)`);
     
     // Set background color to pure black for maximum color contrast
     // Add it AFTER calculating extendedHeight

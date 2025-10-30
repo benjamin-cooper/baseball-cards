@@ -413,12 +413,13 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     const containerWidth = Math.min(container.clientWidth, 2400);  // Landscape width
     const containerHeight = Math.max(container.clientHeight, 1400); // Landscape height (reduced from 2400)
     
-    // Reserve space for title at top with more breathing room
-    const titleHeight = 240;
-    const availableHeight = containerHeight - titleHeight - 100;
+    // Reserve space for title at top - REDUCED for more diagram space
+    const titleHeight = 180; // Reduced from 240
+    const availableHeight = containerHeight - titleHeight - 80; // Reduced bottom padding
     
-    const size = Math.min(containerWidth - 200, availableHeight, 1000);
-    const outerRadius = size * 0.45;
+    // Increase diagram size for better visibility
+    const size = Math.min(containerWidth - 150, availableHeight, 1100); // Increased from 1000
+    const outerRadius = size * 0.48; // Increased from 0.45
     const innerRadius = outerRadius - 30;
     
     const svg = d3.select(container)
@@ -597,8 +598,8 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
         .attr("font-family", "Roboto, Arial, sans-serif")
         .text(`${teams.length} teams shown - Hover over ribbons to see player movement`);
     
-    // Main group centered BELOW title
-    const centerY = titleHeight + (availableHeight / 2);
+    // Main group centered BELOW title - moved up slightly
+    const centerY = titleHeight + (availableHeight / 2) - 30; // Subtract 30 to move up
     const g = zoomGroup.append("g")
         .attr("transform", `translate(${containerWidth / 2}, ${centerY})`);
     
