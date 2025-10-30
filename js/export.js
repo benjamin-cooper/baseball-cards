@@ -258,26 +258,26 @@ function exportAsPNG(includeNames = true) {
             const subtitleElement = svgElement.querySelector('.subtitle-text');
             
             if (titleElement) {
-                titleHeight = 110; // Main title space (moved lower from 90)
+                titleHeight = 120; // Increased for larger 48px title (was 110)
             }
             
             if (subtitleElement) {
-                titleHeight += 50; // Subtitle space (increased from 45)
+                titleHeight += 55; // Increased for larger 28px subtitle (was 50)
             }
             
             if (titleHeight > 0) {
-                titleHeight += 30; // Extra spacing after titles (keeps this)
+                titleHeight += 25; // Reduced extra spacing (was 30)
             }
             
             // Calculate COMPACT legend dimensions - PORTRAIT
             const itemsPerRow = 6; // Fewer items for narrower width
-            const rowHeight = 26; // Slightly more space
-            const legendHeaderHeight = 50; // Reduced header space
+            const rowHeight = 28; // Adjusted for slightly larger 11px text (was 26)
+            const legendHeaderHeight = 55; // Slightly increased for larger title (was 50)
             
             // Debug: log the calculation step by step
             const rows = Math.ceil(teams.length / itemsPerRow);
             const compactLegendHeight = rows * rowHeight + legendHeaderHeight;
-            const legendSpacing = 40; // Reduced spacing before legend
+            const legendSpacing = 25; // REDUCED spacing before legend (was 40)
             
             console.log('🔍 Legend calculation DEBUG:', {
                 teamCount: teams.length,
@@ -310,20 +310,20 @@ function exportAsPNG(includeNames = true) {
             // Draw titles LOWER to avoid being cut by frame
             if (titleElement || subtitleElement) {
                 ctx.textAlign = 'center';
-                let currentY = 80; // Start even lower (was 60)
+                let currentY = 80; // Start position
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
                     ctx.fillStyle = '#ffffff';
-                    ctx.font = 'bold 38px Roboto, Arial, sans-serif';
+                    ctx.font = 'bold 48px Roboto, Arial, sans-serif'; // Increased from 38px
                     ctx.fillText(titleText, baseWidth / 2, currentY);
-                    currentY += 50;
+                    currentY += 60; // Slightly more space after larger title
                 }
                 
                 if (subtitleElement) {
                     const subtitleText = subtitleElement.textContent;
                     ctx.fillStyle = '#d0d0d0';
-                    ctx.font = '22px Roboto, Arial, sans-serif';
+                    ctx.font = '28px Roboto, Arial, sans-serif'; // Increased from 22px
                     ctx.fillText(subtitleText, baseWidth / 2, currentY);
                 }
             }
@@ -471,22 +471,22 @@ function exportAsPNG(includeNames = true) {
             
             // Draw legend title - COMPACT
             ctx.fillStyle = 'white';
-            ctx.font = 'bold 20px Roboto, Arial, sans-serif'; // Reduced from 22px
+            ctx.font = 'bold 24px Roboto, Arial, sans-serif'; // Increased from 20px
             ctx.textAlign = 'center';
-            ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 30);
+            ctx.fillText('Team Color Legend', baseWidth / 2, legendY + 32); // Adjusted Y position
             
             // Draw legend items - COMPACT
             const sortedTeams = teams.sort();
             const itemWidth = baseWidth / itemsPerRow;
             
-            ctx.font = '10px Roboto, Arial, sans-serif'; // Reduced from 12px for compactness
+            ctx.font = '11px Roboto, Arial, sans-serif'; // Slightly increased from 10px
             ctx.textAlign = 'left';
             
             sortedTeams.forEach((team, i) => {
                 const row = Math.floor(i / itemsPerRow);
                 const col = i % itemsPerRow;
-                const x = col * itemWidth + 50; // Increased from 20 for more left margin
-                const y = legendY + row * rowHeight + 48; // Using rowHeight variable
+                const x = col * itemWidth + 50; // Left margin
+                const y = legendY + row * rowHeight + 52; // Using rowHeight variable
                 
                 // Draw color box - slightly smaller
                 const color = teamColorsData.teamColors[team] || teamColorsData.defaultColor;

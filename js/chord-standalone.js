@@ -839,109 +839,111 @@ function exportChordDiagramPNG() {
     
     setTimeout(() => {
         try {
-            // Get SVG dimensions
+            // ✨ NEW APPROACH: Use canvas rendering for text (bypasses SVG serialization issues)
+            const scale = 5;
+            const baseWidth = 1800;
+            const baseHeight = 2400;
+            
+            // Create final canvas
+            const canvas = document.createElement('canvas');
+            canvas.width = baseWidth * scale;
+            canvas.height = baseHeight * scale;
+            const ctx = canvas.getContext('2d', { alpha: false });
+            
+            // Scale context
+            ctx.scale(scale, scale);
+            
+            // Fill background
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, baseWidth, baseHeight);
+            
+            // ✨ DRAW TITLES USING CANVAS (not SVG serialization)
+            const titleText = window._chordCleanTitle || 'Team Connection Network';
+            const subtitleText = window._chordCleanSubtitle || '';
+            
+            let currentY = 80; // Start position for titles
+            
+            // Draw main title - LARGER
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 48px Roboto, Arial, sans-serif'; // Increased from 38px
+            ctx.textAlign = 'center';
+            ctx.fillText(titleText, baseWidth / 2, currentY);
+            currentY += 60;
+            
+            // Draw subtitle - LARGER
+            if (subtitleText) {
+                ctx.fillStyle = '#d0d0d0';
+                ctx.font = '28px Roboto, Arial, sans-serif'; // Increased from 22px
+                ctx.fillText(subtitleText, baseWidth / 2, currentY);
+                currentY += 50;
+            } else {
+                currentY += 20; // Less space if no subtitle
+            }
+            
+            // Now render the SVG diagram (WITHOUT text elements)
+            const svgClone = svgElement.cloneNode(true);
+            
+            // Remove ALL text elements from SVG (we rendered them with canvas)
+            svgClone.querySelectorAll('text').forEach(el => el.remove());
+            
+            // Remove the info line
+            const infoLine = svgClone.querySelector('.chord-info-line');
+            if (infoLine) infoLine.remove();
+            
+            // Get original SVG dimensions
             const viewBox = svgElement.getAttribute('viewBox');
             const [, , origWidth, origHeight] = viewBox.split(' ').map(Number);
             
-            // Clone the SVG
-            const svgClone = svgElement.cloneNode(true);
-            
-            // Remove the info line (teams shown, hover instructions)
-            const infoLine = svgClone.querySelector('.chord-info-line');
-            if (infoLine) {
-                infoLine.remove();
-            }
-            
-            // ✨ CRITICAL FIX: Re-inject clean title and subtitle from stored values
-            // Instead of trying to sanitize corrupted text, use the original clean values
-            if (window._chordCleanTitle) {
-                const titleEl = svgClone.querySelector('text[data-chord-title="true"]');
-                if (titleEl) {
-                    titleEl.textContent = window._chordCleanTitle;
-                }
-            }
-            
-            if (window._chordCleanSubtitle) {
-                const subtitleEl = svgClone.querySelector('text[data-chord-subtitle="true"]');
-                if (subtitleEl) {
-                    subtitleEl.textContent = window._chordCleanSubtitle;
-                }
-            }
-            
-            // Set explicit dimensions for rendering at original size
             svgClone.setAttribute('width', origWidth);
             svgClone.setAttribute('height', origHeight);
             
-            // Serialize the SVG with proper encoding
+            // Serialize the SVG (without text)
             const serializer = new XMLSerializer();
-            let svgString = serializer.serializeToString(svgClone);
-            
-            // Ensure UTF-8 declaration
-            if (!svgString.match(/^<\?xml/)) {
-                svgString = '<?xml version="1.0" encoding="UTF-8"?>\n' + svgString;
-            }
-            
-            console.log('🔍 PNG Export - SVG String length:', svgString.length);
-            console.log('🔍 PNG Export - Subtitle in string:', svgString.includes(window._chordCleanSubtitle || ''));
-            
-            // Create a blob from the SVG with explicit UTF-8 encoding
+            const svgString = serializer.serializeToString(svgClone);
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
             
-            // Create an image to load the SVG
+            // Load SVG as image
             const img = new Image();
             
             img.onload = function() {
-                // ✨ PORTRAIT orientation - 18" × 24" at 500 DPI
-                const targetWidth = 1800;   // Portrait width
-                const targetHeight = 2400;  // Portrait height  
-                const scale = 5; // 5x for ultra-high quality (9000×12000)
+                // Calculate positioning - LESS BLANK SPACE
+                const diagramStartY = currentY + 20; // Small gap after titles
+                const availableHeight = baseHeight - diagramStartY - 100; // Leave some bottom margin
+                const availableWidth = baseWidth - 100; // Side margins
                 
-                const finalCanvas = document.createElement('canvas');
-                finalCanvas.width = targetWidth * scale;  // 9000 pixels
-                finalCanvas.height = targetHeight * scale; // 12000 pixels
+                // Calculate scale to fit diagram
+                const scaleX = availableWidth / origWidth;
+                const scaleY = availableHeight / origHeight;
+                const diagramScale = Math.min(scaleX, scaleY, 1.2); // Allow slight zoom up to 1.2x
                 
-                const finalCtx = finalCanvas.getContext('2d', { alpha: false });
+                const drawWidth = origWidth * diagramScale;
+                const drawHeight = origHeight * diagramScale;
                 
-                // Enable high-quality rendering
-                finalCtx.imageSmoothingEnabled = true;
-                finalCtx.imageSmoothingQuality = 'high';
+                // Center the diagram
+                const offsetX = (baseWidth - drawWidth) / 2;
+                const offsetY = diagramStartY + (availableHeight - drawHeight) / 2;
                 
-                // Fill background
-                finalCtx.fillStyle = '#000000';
-                finalCtx.fillRect(0, 0, targetWidth * scale, targetHeight * scale);
+                console.log('🎨 Chord diagram layout:', {
+                    titleEndY: currentY,
+                    diagramStartY,
+                    availableHeight,
+                    scale: diagramScale.toFixed(2),
+                    drawSize: `${drawWidth.toFixed(0)}×${drawHeight.toFixed(0)}`
+                });
                 
-                // Calculate how to fit the original into 4:3
-                const origAspect = origWidth / origHeight;
-                const targetAspect = targetWidth / targetHeight;
+                // Draw the SVG diagram
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                // Draw the SVG diagram
+                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
                 
-                let drawWidth, drawHeight, offsetX, offsetY;
-                
-                if (origAspect > targetAspect) {
-                    // Original is wider - fit to width
-                    drawWidth = targetWidth * scale;
-                    drawHeight = (targetWidth / origAspect) * scale;
-                    offsetX = 0;
-                    offsetY = ((targetHeight * scale) - drawHeight) / 2;
-                } else {
-                    // Original is taller - fit to height
-                    drawHeight = targetHeight * scale;
-                    drawWidth = (targetHeight * origAspect) * scale;
-                    offsetX = ((targetWidth * scale) - drawWidth) / 2;
-                    offsetY = 0;
-                }
-                
-                // Draw SVG directly at 5X resolution (no intermediate scaling)
-                finalCtx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                
-                // Convert canvas to PNG blob with MAXIMUM quality
-                finalCanvas.toBlob(function(blob) {
+                // Convert to PNG
+                canvas.toBlob(function(blob) {
                     if (!blob) {
                         alert('❌ Error creating PNG. Please try SVG export instead.');
                         return;
                     }
                     
-                    // Create download link
                     const pngUrl = URL.createObjectURL(blob);
                     const link = document.createElement('a');
                     link.href = pngUrl;
@@ -949,7 +951,6 @@ function exportChordDiagramPNG() {
                     document.body.appendChild(link);
                     link.click();
                     
-                    // Cleanup
                     setTimeout(() => {
                         document.body.removeChild(link);
                         URL.revokeObjectURL(pngUrl);
@@ -961,7 +962,7 @@ function exportChordDiagramPNG() {
                     } else {
                         console.log('✅ Chord diagram PNG exported!');
                     }
-                }, 'image/png', 1.0); // Maximum quality
+                }, 'image/png', 1.0);
             };
             
             img.onerror = function() {
@@ -970,7 +971,6 @@ function exportChordDiagramPNG() {
                 URL.revokeObjectURL(url);
             };
             
-            // Load the SVG
             img.src = url;
             
         } catch (error) {
