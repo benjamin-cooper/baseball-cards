@@ -3,6 +3,7 @@
 let currentZoom = null;
 let nodesVisible = true;  // Control node visibility
 let nodeSize = 10;        // Control node size (radius)
+let selectedNode = null;  // Track currently selected node
 
 // Initialize the network visualization
 function initializeNetwork() {
@@ -78,6 +79,7 @@ function updateNetwork(edges, players) {
     
     // Add custom titles if they exist (BEFORE creating g group so they don't zoom/pan)
     // This ensures titles appear in exports and stay fixed on screen
+    let titleHeight = 0; // Track total height used by titles
     if (typeof getCustomOrAutoTitle === 'function') {
         const title = getCustomOrAutoTitle('Player Connection Network');
         const subtitle = getCustomOrAutoSubtitle('');
@@ -96,6 +98,7 @@ function updateNetwork(edges, players) {
                 .attr("class", "title-text")  // Class for identification
                 .text(title);
             titleY += 40;
+            titleHeight = titleY;
         }
         
         if (subtitle) {
@@ -108,6 +111,7 @@ function updateNetwork(edges, players) {
                 .attr("font-family", "Roboto, Helvetica Neue, Arial, sans-serif")
                 .attr("class", "subtitle-text")  // Class for identification
                 .text(subtitle);
+            titleHeight = titleY + 30; // Add spacing after subtitle
         }
     }
     
@@ -143,7 +147,13 @@ function updateNetwork(edges, players) {
     zoomControls.append("button")
         .attr("class", "zoom-btn")
         .html("⟲")
-        .on("click", () => svg.transition().call(currentZoom.transform, d3.zoomIdentity));
+        .on("click", () => {
+            // Reset zoom/pan while preserving selected node
+            svg.transition().call(currentZoom.transform, d3.zoomIdentity);
+            if (selectedNode) {
+                console.log(`📐 View reset - selected node preserved: ${selectedNode.id}`);
+            }
+        });
     
     // Create nodes and links
     const nodes = players.map(player => ({
@@ -241,16 +251,21 @@ function updateNetwork(edges, players) {
         console.log('⚡ Using balanced settings for medium network');
     }
     
+    // Calculate adjusted center Y position to avoid title overlap
+    // Add extra padding to ensure network doesn't overlap with titles
+    const centerYOffset = Math.max(titleHeight + 50, 0); // Add 50px padding
+    const adjustedCenterY = (height / 2) + (centerYOffset / 2);
+    
     simulation = d3.forceSimulation(finalNodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(linkStrength))
         .force("charge", d3.forceManyBody().strength(chargeStrength))
-        .force("center", d3.forceCenter(width / 2, height / 2))
+        .force("center", d3.forceCenter(width / 2, adjustedCenterY))
         .force("collision", d3.forceCollide().radius(collisionRadius))
         // Add stronger centering force to pull outliers in
         .force("x", d3.forceX(width / 2).strength(0.1))
-        .force("y", d3.forceY(height / 2).strength(0.1))
+        .force("y", d3.forceY(adjustedCenterY).strength(0.1))
         // Stronger radial force to keep nodes from spreading too far
-        .force("radial", d3.forceRadial(Math.min(width, height) / 3.5, width / 2, height / 2).strength(0.15))
+        .force("radial", d3.forceRadial(Math.min(width, height) / 3.5, width / 2, adjustedCenterY).strength(0.15))
         .alphaDecay(alphaDecay)
         .velocityDecay(velocityDecay)
         .stop(); // Stop initially so we can warm it up
@@ -315,10 +330,35 @@ function updateNetwork(edges, players) {
     
     node.append("circle")
         .attr("r", nodeSize)
-        .attr("fill", d => selectedPlayers.has(d.id) ? "#FF6B6B" : "#4CAF50")
-        .attr("stroke", "white")
-        .attr("stroke-width", 3)
+        .attr("fill", d => {
+            // Priority: selected node > selected players > default
+            if (selectedNode && selectedNode.id === d.id) return "#FFD700"; // Gold for selected
+            if (selectedPlayers.has(d.id)) return "#FF6B6B"; // Red for filtered players
+            return "#4CAF50"; // Green default
+        })
+        .attr("stroke", d => (selectedNode && selectedNode.id === d.id) ? "#FFA500" : "white")
+        .attr("stroke-width", d => (selectedNode && selectedNode.id === d.id) ? 5 : 3)
         .style("display", nodesVisible ? "block" : "none")  // Control visibility
+        .on("click", function(event, d) {
+            // Toggle selection on click
+            if (selectedNode && selectedNode.id === d.id) {
+                selectedNode = null; // Deselect if clicking same node
+            } else {
+                selectedNode = d; // Select this node
+            }
+            
+            // Update all node styles to reflect selection
+            node.selectAll("circle")
+                .attr("fill", nd => {
+                    if (selectedNode && selectedNode.id === nd.id) return "#FFD700";
+                    if (selectedPlayers.has(nd.id)) return "#FF6B6B";
+                    return "#4CAF50";
+                })
+                .attr("stroke", nd => (selectedNode && selectedNode.id === nd.id) ? "#FFA500" : "white")
+                .attr("stroke-width", nd => (selectedNode && selectedNode.id === nd.id) ? 5 : 3);
+            
+            console.log(`🎯 ${selectedNode ? 'Selected' : 'Deselected'} node: ${d.id}`);
+        })
         .on("mouseover", function(event, d) {
             // Highlight connected links
             link.classed("highlighted", function(l) {

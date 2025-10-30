@@ -913,20 +913,20 @@ function exportChordDiagramPNG() {
             const img = new Image();
             
             img.onload = function() {
-                // Calculate positioning - MINIMAL BLANK SPACE
-                const diagramStartY = currentY + 30; // Small gap after titles
-                const availableHeight = baseHeight - diagramStartY - 50; // REDUCED bottom margin from 80
-                const availableWidth = baseWidth - 60; // Reduced side margins
+                // Calculate positioning - MAXIMIZE DIAGRAM SIZE
+                const diagramStartY = currentY + 20; // Minimal gap after titles
+                const availableHeight = baseHeight - diagramStartY - 30; // MINIMAL bottom margin
+                const availableWidth = baseWidth - 40; // Minimal side margins
                 
-                // Calculate scale to fit diagram - ALLOW EVEN LARGER SCALING
+                // Calculate scale to fit diagram - MAXIMUM SCALING
                 const scaleX = availableWidth / origWidth;
                 const scaleY = availableHeight / origHeight;
-                const diagramScale = Math.min(scaleX, scaleY, 2.2); // Increased from 1.8x to 2.2x!
+                const diagramScale = Math.min(scaleX, scaleY, 2.6); // Increased from 2.2x to 2.6x!
                 
                 const drawWidth = origWidth * diagramScale;
                 const drawHeight = origHeight * diagramScale;
                 
-                // Center the diagram
+                // Center the diagram perfectly in available space
                 const offsetX = (baseWidth - drawWidth) / 2;
                 const offsetY = diagramStartY + (availableHeight - drawHeight) / 2;
                 
@@ -935,8 +935,10 @@ function exportChordDiagramPNG() {
                     titleEndY: currentY,
                     diagramStartY,
                     availableHeight,
+                    availableWidth,
                     scale: diagramScale.toFixed(2),
-                    drawSize: `${drawWidth.toFixed(0)}×${drawHeight.toFixed(0)}`
+                    drawSize: `${drawWidth.toFixed(0)}×${drawHeight.toFixed(0)}`,
+                    centered: `X=${offsetX.toFixed(0)}, Y=${offsetY.toFixed(0)}`
                 });
                 
                 // Draw the SVG diagram
