@@ -294,7 +294,44 @@ function generateAndDisplayChord() {
         
         // Success - draw the diagram
         console.log('✅ Drawing chord diagram...');
-        drawChordDiagram(container, filteredTeamArray, matrix);
+        
+        // ✨ READ CUSTOM TITLES BEFORE CLEARING - Get them from network SVG
+        let customTitle = null;
+        let customSubtitle = null;
+        
+        const networkSvg = document.getElementById('poster-svg');
+        if (networkSvg) {
+            try {
+                const titleElement = networkSvg.querySelector('.title-text');
+                const subtitleElement = networkSvg.querySelector('.subtitle-text');
+                
+                if (titleElement) {
+                    const titleText = titleElement.textContent;
+                    if (titleText && titleText.trim().length > 0) {
+                        const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(titleText);
+                        if (!hasWeirdChars) {
+                            customTitle = titleText.trim();
+                            console.log('✅ Read custom title from network:', customTitle);
+                        }
+                    }
+                }
+                
+                if (subtitleElement) {
+                    const subtitleText = subtitleElement.textContent;
+                    if (subtitleText && subtitleText.trim().length > 0) {
+                        const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(subtitleText);
+                        if (!hasWeirdChars) {
+                            customSubtitle = subtitleText.trim();
+                            console.log('✅ Read custom subtitle from network:', customSubtitle);
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('⚠️ Error reading custom titles from network:', e);
+            }
+        }
+        
+        drawChordDiagram(container, filteredTeamArray, matrix, customTitle, customSubtitle);
         
     } catch (error) {
         console.error('❌ Error generating chord diagram:', error);
@@ -352,7 +389,7 @@ function showChordError(title, message, suggestions) {
 }
 
 // Draw the chord diagram
-function drawChordDiagram(container, teams, matrix) {
+function drawChordDiagram(container, teams, matrix, customTitle = null, customSubtitle = null) {
     // Check D3 availability
     if (typeof d3 === 'undefined') {
         console.error('❌ D3.js not loaded');
@@ -477,48 +514,9 @@ function drawChordDiagram(container, teams, matrix) {
     // Default auto title for chord diagram
     const autoTitle = "Team Connection Network";
     
-    // ✨ CUSTOM TITLES ENABLED - Read from network's existing title elements
-    let finalTitle = autoTitle;
-    let finalSubtitle = autoSubtitle;
-    
-    // Try to get custom titles from the network SVG (same system as network view)
-    const networkSvg = document.getElementById('poster-svg');
-    if (networkSvg) {
-        try {
-            const titleElement = networkSvg.querySelector('.title-text');
-            const subtitleElement = networkSvg.querySelector('.subtitle-text');
-            
-            if (titleElement) {
-                const titleText = titleElement.textContent;
-                // Safety check: ensure it's a valid string with no encoding issues
-                if (titleText && titleText.trim().length > 0) {
-                    const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(titleText);
-                    if (!hasWeirdChars) {
-                        finalTitle = titleText.trim();
-                        console.log('✅ Using custom title from network:', finalTitle);
-                    } else {
-                        console.warn('⚠️ Network title has invalid characters, using auto title');
-                    }
-                }
-            }
-            
-            if (subtitleElement) {
-                const subtitleText = subtitleElement.textContent;
-                // Safety check: ensure it's a valid string with no encoding issues  
-                if (subtitleText && subtitleText.trim().length > 0) {
-                    const hasWeirdChars = /[\x00-\x08\x0B-\x0C\x0E-\x1F\x7F-\x9F]/.test(subtitleText);
-                    if (!hasWeirdChars) {
-                        finalSubtitle = subtitleText.trim();
-                        console.log('✅ Using custom subtitle from network:', finalSubtitle);
-                    } else {
-                        console.warn('⚠️ Network subtitle has invalid characters, using auto subtitle');
-                    }
-                }
-            }
-        } catch (e) {
-            console.warn('⚠️ Error reading custom titles from network:', e);
-        }
-    }
+    // ✨ USE PASSED-IN CUSTOM TITLES (already read before container was cleared)
+    let finalTitle = customTitle || autoTitle;
+    let finalSubtitle = customSubtitle || autoSubtitle;
     
     
     console.log('📝 Chord subtitle debug:', {

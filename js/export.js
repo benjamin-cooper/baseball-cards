@@ -337,15 +337,14 @@ function exportAsPNG(includeNames = true) {
             const labels = d3.selectAll('#poster-svg text.node-label').nodes();
             
             // Get current transform
-            const transform = d3.zoomTransform(svg.node());
+            const transform = d3.zoomTransform(svgElement);
             
             ctx.save();
-            // Apply zoom scale first
+            // Move down for title space first (in canvas coordinates)
+            ctx.translate(0, networkStartY);
+            // Apply D3 zoom transform: translate then scale (matching SVG order)
+            ctx.translate(transform.x, transform.y);
             ctx.scale(transform.k, transform.k);
-            // Apply zoom translation (adjusted for scale)
-            ctx.translate(transform.x / transform.k, transform.y / transform.k);
-            // Now add the offset for title space (also adjusted for scale)
-            ctx.translate(0, networkStartY / transform.k);
             
             // Draw links
             links.forEach(link => {
