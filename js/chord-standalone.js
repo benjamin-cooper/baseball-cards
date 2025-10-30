@@ -417,9 +417,9 @@ function drawChordDiagram(container, teams, matrix, customTitle = null, customSu
     const titleHeight = 220; // Increased from 180 to clear team labels at top
     const availableHeight = containerHeight - titleHeight - 80; // Reduced bottom padding
     
-    // Increase diagram size for better visibility
-    const size = Math.min(containerWidth - 150, availableHeight, 1100); // Increased from 1000
-    const outerRadius = size * 0.48; // Increased from 0.45
+    // Reduce diagram size for display to prevent overlap (PNG export uses separate sizing)
+    const size = Math.min(containerWidth - 200, availableHeight, 950); // Reduced from 1100
+    const outerRadius = size * 0.45; // Reduced from 0.48
     const innerRadius = outerRadius - 30;
     
     const svg = d3.select(container)
