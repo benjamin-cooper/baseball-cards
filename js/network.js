@@ -49,20 +49,24 @@ function updateNetwork(edges, players) {
     
     // Adaptive canvas size based on network size
     // ✨ LANDSCAPE orientation for better website display (export stays portrait)
-    let width, height;
+    let width, height, baseHeight;
     if (players.length < 50) {
         // Small network - use more space per node
         width = 2400;
-        height = 1400;  // Changed from 2400 to landscape
+        baseHeight = 1400;  // Changed from 2400 to landscape
     } else if (players.length < 150) {
         // Medium network
         width = 2400;
-        height = 1300;  // Changed from 2000 to landscape
+        baseHeight = 1300;  // Changed from 2000 to landscape
     } else {
         // Large network
         width = 2400;
-        height = 1200;  // Changed from 1800 to landscape
+        baseHeight = 1200;  // Changed from 1800 to landscape
     }
+    
+    // Reserve space at top for titles - will be calculated after titles are added
+    let titleSpaceReserved = 0;
+    height = baseHeight; // Will be adjusted after titles
     
     svg = d3.select("#network-container")
         .append("svg")
@@ -70,12 +74,6 @@ function updateNetwork(edges, players) {
         .attr("height", "100%")
         .attr("viewBox", `0 0 ${width} ${height}`)
         .attr("id", "poster-svg");
-    
-    // Set background color to pure black for maximum color contrast
-    svg.append("rect")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "#000000");
     
     // Add custom titles if they exist (BEFORE creating g group so they don't zoom/pan)
     // This ensures titles appear in exports and stay fixed on screen
@@ -115,7 +113,22 @@ function updateNetwork(edges, players) {
         }
     }
     
-    g = svg.append("g");
+    // Add padding and extend canvas to accommodate titles
+    titleSpaceReserved = Math.max(titleHeight + 80, 0); // 80px total padding (top + spacing)
+    
+    // Extend the viewBox height to include title space
+    const extendedHeight = baseHeight + titleSpaceReserved;
+    svg.attr("viewBox", `0 0 ${width} ${extendedHeight}`);
+    
+    // Set background color to pure black for maximum color contrast
+    // Add it AFTER calculating extendedHeight
+    svg.insert("rect", ":first-child") // Insert as first child so it's behind everything
+        .attr("width", width)
+        .attr("height", extendedHeight)
+        .attr("fill", "#000000");
+    
+    g = svg.append("g")
+        .attr("transform", `translate(0, ${titleSpaceReserved})`);
     
     currentZoom = d3.zoom()
         .scaleExtent([0.1, 4])
@@ -251,21 +264,19 @@ function updateNetwork(edges, players) {
         console.log('⚡ Using balanced settings for medium network');
     }
     
-    // Calculate adjusted center Y position to avoid title overlap
-    // Add extra padding to ensure network doesn't overlap with titles
-    const centerYOffset = Math.max(titleHeight + 50, 0); // Add 50px padding
-    const adjustedCenterY = (height / 2) + (centerYOffset / 2);
+    // Use baseHeight for force calculations since g group is translated down
+    const networkCenterY = baseHeight / 2;
     
     simulation = d3.forceSimulation(finalNodes)
         .force("link", d3.forceLink(links).id(d => d.id).distance(linkDistance).strength(linkStrength))
         .force("charge", d3.forceManyBody().strength(chargeStrength))
-        .force("center", d3.forceCenter(width / 2, adjustedCenterY))
+        .force("center", d3.forceCenter(width / 2, networkCenterY))
         .force("collision", d3.forceCollide().radius(collisionRadius))
         // Add stronger centering force to pull outliers in
         .force("x", d3.forceX(width / 2).strength(0.1))
-        .force("y", d3.forceY(adjustedCenterY).strength(0.1))
+        .force("y", d3.forceY(networkCenterY).strength(0.1))
         // Stronger radial force to keep nodes from spreading too far
-        .force("radial", d3.forceRadial(Math.min(width, height) / 3.5, width / 2, adjustedCenterY).strength(0.15))
+        .force("radial", d3.forceRadial(Math.min(width, baseHeight) / 3.5, width / 2, networkCenterY).strength(0.15))
         .alphaDecay(alphaDecay)
         .velocityDecay(velocityDecay)
         .stop(); // Stop initially so we can warm it up

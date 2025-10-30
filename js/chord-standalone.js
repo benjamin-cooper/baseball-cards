@@ -838,6 +838,11 @@ function exportChordDiagramPNG() {
         showNotification('⏳ Generating PNG... This may take a few seconds.', 5000);
     }
     
+    console.log('🎨 Starting PNG export...');
+    console.log('   SVG element:', svgElement);
+    console.log('   SVG viewBox:', svgElement.getAttribute('viewBox'));
+    
+    // Longer timeout to ensure SVG is fully rendered
     setTimeout(() => {
         try {
             // ✨ NEW APPROACH: Use canvas rendering for text (bypasses SVG serialization issues)
@@ -898,93 +903,156 @@ function exportChordDiagramPNG() {
             
             // Get original SVG dimensions
             const viewBox = svgElement.getAttribute('viewBox');
-            const [, , origWidth, origHeight] = viewBox.split(' ').map(Number);
+            console.log('📐 Original viewBox:', viewBox);
+            
+            if (!viewBox) {
+                throw new Error('SVG missing viewBox attribute');
+            }
+            
+            const viewBoxParts = viewBox.split(' ').map(Number);
+            if (viewBoxParts.length !== 4 || viewBoxParts.some(isNaN)) {
+                throw new Error('Invalid viewBox format: ' + viewBox);
+            }
+            
+            const [, , origWidth, origHeight] = viewBoxParts;
+            console.log('📐 Parsed dimensions:', origWidth, 'x', origHeight);
             
             svgClone.setAttribute('width', origWidth);
             svgClone.setAttribute('height', origHeight);
+            svgClone.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
             
             // Serialize the SVG (WITH team labels)
             const serializer = new XMLSerializer();
             const svgString = serializer.serializeToString(svgClone);
+            
+            console.log('📄 Serialized SVG length:', svgString.length, 'chars');
+            console.log('📄 First 200 chars:', svgString.substring(0, 200));
+            
             const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
             const url = URL.createObjectURL(svgBlob);
+            console.log('🔗 Created blob URL:', url);
             
             // Load SVG as image
             const img = new Image();
             
+            let imageLoaded = false;
+            let imageErrored = false;
+            
+            // Set up a timeout to detect if image never loads
+            const loadTimeout = setTimeout(() => {
+                if (!imageLoaded && !imageErrored) {
+                    console.error('❌ Image load timeout - image did not load within 5 seconds');
+                    console.error('   This usually means the SVG cannot be rendered as an image');
+                    console.error('   SVG blob URL:', url);
+                    alert('❌ PNG export timed out. The chord diagram could not be converted to an image.\n\n' +
+                          'Please try exporting as SVG instead.');
+                    URL.revokeObjectURL(url);
+                }
+            }, 5000);
+            
             img.onload = function() {
-                // Calculate positioning - MAXIMIZE DIAGRAM SIZE
-                const diagramStartY = currentY + 20; // Minimal gap after titles
-                const availableHeight = baseHeight - diagramStartY - 30; // MINIMAL bottom margin
-                const availableWidth = baseWidth - 40; // Minimal side margins
-                
-                // Calculate scale to fit diagram - MAXIMUM SCALING
-                const scaleX = availableWidth / origWidth;
-                const scaleY = availableHeight / origHeight;
-                const diagramScale = Math.min(scaleX, scaleY, 2.6); // Increased from 2.2x to 2.6x!
-                
-                const drawWidth = origWidth * diagramScale;
-                const drawHeight = origHeight * diagramScale;
-                
-                // Center the diagram perfectly in available space
-                const offsetX = (baseWidth - drawWidth) / 2;
-                const offsetY = diagramStartY + (availableHeight - drawHeight) / 2;
-                
-                console.log('🎨 Chord diagram layout:', {
-                    titleStartY: 140,
-                    titleEndY: currentY,
-                    diagramStartY,
-                    availableHeight,
-                    availableWidth,
-                    scale: diagramScale.toFixed(2),
-                    drawSize: `${drawWidth.toFixed(0)}×${drawHeight.toFixed(0)}`,
-                    centered: `X=${offsetX.toFixed(0)}, Y=${offsetY.toFixed(0)}`
-                });
-                
-                // Draw the SVG diagram
-                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                // Draw the SVG diagram
-                ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
-                
-                // Convert to PNG
-                canvas.toBlob(function(blob) {
-                    if (!blob) {
-                        alert('❌ Error creating PNG. Please try SVG export instead.');
-                        return;
+                clearTimeout(loadTimeout);
+                imageLoaded = true;
+                try {
+                    console.log('✅ SVG image loaded successfully');
+                    console.log('   Image dimensions:', img.width, 'x', img.height);
+                    console.log('   Original SVG dimensions:', origWidth, 'x', origHeight);
+                    
+                    // Validate dimensions
+                    if (!origWidth || !origHeight || origWidth <= 0 || origHeight <= 0) {
+                        throw new Error('Invalid SVG dimensions');
                     }
                     
-                    const pngUrl = URL.createObjectURL(blob);
-                    const link = document.createElement('a');
-                    link.href = pngUrl;
-                    link.download = `team-chord-diagram-${Date.now()}.png`;
-                    document.body.appendChild(link);
-                    link.click();
+                    // Calculate positioning - MAXIMIZE DIAGRAM SIZE
+                    const diagramStartY = currentY + 20; // Minimal gap after titles
+                    const availableHeight = baseHeight - diagramStartY - 30; // MINIMAL bottom margin
+                    const availableWidth = baseWidth - 40; // Minimal side margins
                     
-                    setTimeout(() => {
-                        document.body.removeChild(link);
-                        URL.revokeObjectURL(pngUrl);
-                        URL.revokeObjectURL(url);
-                    }, 100);
+                    // Calculate scale to fit diagram - MAXIMUM SCALING
+                    const scaleX = availableWidth / origWidth;
+                    const scaleY = availableHeight / origHeight;
+                    const diagramScale = Math.min(scaleX, scaleY, 2.6); // Increased from 2.2x to 2.6x!
                     
-                    if (typeof showNotification === 'function') {
-                        showNotification('✅ Chord diagram PNG exported!', 3000);
-                    } else {
-                        console.log('✅ Chord diagram PNG exported!');
-                    }
-                }, 'image/png', 1.0);
+                    const drawWidth = origWidth * diagramScale;
+                    const drawHeight = origHeight * diagramScale;
+                    
+                    // Center the diagram perfectly in available space
+                    const offsetX = (baseWidth - drawWidth) / 2;
+                    const offsetY = diagramStartY + (availableHeight - drawHeight) / 2;
+                    
+                    console.log('🎨 Chord diagram layout:', {
+                        titleStartY: 140,
+                        titleEndY: currentY,
+                        diagramStartY,
+                        availableHeight,
+                        availableWidth,
+                        scale: diagramScale.toFixed(2),
+                        drawSize: `${drawWidth.toFixed(0)}×${drawHeight.toFixed(0)}`,
+                        centered: `X=${offsetX.toFixed(0)}, Y=${offsetY.toFixed(0)}`
+                    });
+                    
+                    // Draw the SVG diagram (removed duplicate)
+                    ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+                    console.log('✅ SVG drawn to canvas');
+                    
+                    // Convert to PNG
+                    canvas.toBlob(function(blob) {
+                        if (!blob) {
+                            alert('❌ Error creating PNG. Please try SVG export instead.');
+                            return;
+                        }
+                        
+                        console.log('✅ PNG blob created:', (blob.size / 1024 / 1024).toFixed(2), 'MB');
+                        
+                        const pngUrl = URL.createObjectURL(blob);
+                        const link = document.createElement('a');
+                        link.href = pngUrl;
+                        link.download = `team-chord-diagram-${Date.now()}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        
+                        setTimeout(() => {
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(pngUrl);
+                            URL.revokeObjectURL(url);
+                        }, 100);
+                        
+                        if (typeof showNotification === 'function') {
+                            showNotification('✅ Chord diagram PNG exported!', 3000);
+                        } else {
+                            console.log('✅ Chord diagram PNG exported!');
+                        }
+                    }, 'image/png', 1.0);
+                } catch (error) {
+                    console.error('❌ Error in img.onload:', error);
+                    alert('❌ Error drawing diagram: ' + error.message);
+                    URL.revokeObjectURL(url);
+                }
             };
             
-            img.onerror = function() {
-                console.error('Failed to load SVG for PNG conversion');
-                alert('❌ Failed to export PNG. Please try SVG export instead.');
+            img.onerror = function(error) {
+                clearTimeout(loadTimeout);
+                imageErrored = true;
+                console.error('❌ Failed to load SVG for PNG conversion');
+                console.error('   Error:', error);
+                console.error('   Image src:', img.src);
+                console.error('   SVG string length:', svgString.length);
+                console.error('   SVG first 500 chars:', svgString.substring(0, 500));
+                
+                alert('❌ Failed to load SVG as image. This can happen if:\n' +
+                      '1. The SVG contains external resources\n' +
+                      '2. Browser security restrictions\n' +
+                      '3. Invalid SVG structure\n\n' +
+                      'Try exporting as SVG instead, which works more reliably.');
                 URL.revokeObjectURL(url);
             };
             
+            console.log('🔄 Setting image src to blob URL:', url);
             img.src = url;
             
         } catch (error) {
             console.error('PNG Export Error:', error);
             alert('❌ Error creating PNG: ' + error.message);
         }
-    }, 100);
+    }, 500); // Increased from 100ms to allow SVG to fully render
 }
