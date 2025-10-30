@@ -258,7 +258,7 @@ function exportAsPNG(includeNames = true) {
             const subtitleElement = svgElement.querySelector('.subtitle-text');
             
             if (titleElement) {
-                titleHeight = 120; // Increased for larger 48px title (was 110)
+                titleHeight = 150; // Increased to account for lower starting position (was 120)
             }
             
             if (subtitleElement) {
@@ -266,7 +266,7 @@ function exportAsPNG(includeNames = true) {
             }
             
             if (titleHeight > 0) {
-                titleHeight += 25; // Reduced extra spacing (was 30)
+                titleHeight += 35; // Increased for lower title position (was 25)
             }
             
             // Calculate COMPACT legend dimensions - PORTRAIT
@@ -277,7 +277,7 @@ function exportAsPNG(includeNames = true) {
             // Debug: log the calculation step by step
             const rows = Math.ceil(teams.length / itemsPerRow);
             const compactLegendHeight = rows * rowHeight + legendHeaderHeight;
-            const legendSpacing = 10; // FURTHER REDUCED spacing before legend (was 25, originally 40)
+            const legendSpacing = 5; // Small buffer to prevent any overlap (was -10)
             
             console.log('🔍 Legend calculation DEBUG:', {
                 teamCount: teams.length,
@@ -310,7 +310,7 @@ function exportAsPNG(includeNames = true) {
             // Draw titles LOWER to avoid being cut by frame
             if (titleElement || subtitleElement) {
                 ctx.textAlign = 'center';
-                let currentY = 80; // Start position
+                let currentY = 110; // Moved down for better spacing
                 
                 if (titleElement) {
                     const titleText = titleElement.textContent;
