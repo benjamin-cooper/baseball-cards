@@ -1,18 +1,24 @@
 /**
- * Further Insights — pricing.js
- * Loads pricing_results.json, renders the page, handles GitHub Actions trigger.
+ * Further Insights — pricing.js v2
+ * Price history · Portfolio chart · Market movers · Live run tracker
+ * Sparklines · Card detail modal · Team filter · CSV export
  */
 
 const REPO_OWNER  = 'benjamin-cooper';
 const REPO_NAME   = 'baseball-cards';
 const WORKFLOW_ID = 'price_cards.yml';
 const DATA_URL    = 'data/pricing_results.json';
+const HISTORY_URL = 'data/price_history.json';
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let allCards    = [];
-let filtered    = [];
-let sortCol     = 'avg_price';
-let sortDir     = 'desc';
+let allCards     = [];
+let filtered     = [];
+let priceHistory = {};
+let sortCol      = 'avg_price';
+let sortDir      = 'desc';
+let runPollTimer = null;
+let runTickTimer = null;
+let runStartTime = null;
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -23,55 +29,60 @@ document.addEventListener('DOMContentLoaded', () => {
 // ─── Data Loading ─────────────────────────────────────────────────────────────
 async function loadData() {
   try {
-    const res  = await fetch(`${DATA_URL}?t=${Date.now()}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const t = Date.now();
+    const [r1, r2] = await Promise.all([
+      fetch(`${DATA_URL}?t=${t}`),
+      fetch(`${HISTORY_URL}?t=${t}`)
+    ]);
+    if (!r1.ok) throw new Error(`HTTP ${r1.status}`);
+    const data = await r1.json();
+    priceHistory = r2.ok ? await r2.json() : {};
     render(data);
   } catch (e) {
     showEmpty('No pricing data yet. Click ⚡ Update Prices to run the pricing agent.');
   }
 }
 
+// ─── Card ID — must match Python make_card_id() ───────────────────────────────
+function cardId(c) {
+  return `${c.year}_${c.brand||''}_${c.player||''}_${c.card_number||''}`
+    .toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+}
+
 // ─── Render ───────────────────────────────────────────────────────────────────
 function render(data) {
   renderStats(data);
   renderTopCards(data.top_cards || []);
-  renderEraChart(data.by_era  || {});
+  renderMarketMovers(data.cards || []);
+  renderPortfolioChart(data._portfolio || []);
+  renderEraChart(data.by_era || {});
+  renderBrandChart(data.cards || []);
   allCards = data.cards || [];
   populateYearFilter(allCards);
+  populateTeamFilter(allCards);
   applyFilters();
-  document.getElementById('last-updated').textContent =
-    data.last_updated ? new Date(data.last_updated).toLocaleString() : '—';
+  set('last-updated', data.last_updated ? new Date(data.last_updated).toLocaleString() : '—');
 }
 
 function renderStats(data) {
-  const fmt  = n => n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2}) : '—';
-  const pct  = n => n != null ? (n > 0 ? '+' : '') + n.toFixed(1) + '%' : '—';
-
+  const fmt = n => n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   set('stat-total-value',  fmt(data.total_value));
   set('stat-cards-priced', data.cards_priced != null ? data.cards_priced.toLocaleString() : '—');
   set('stat-avg-value',    fmt(data.avg_value));
   set('stat-winners',      data.winners != null ? data.winners.toLocaleString() : '—');
   set('stat-unrealized',   data.unrealized_gain != null
-    ? (data.unrealized_gain >= 0 ? '+' : '') + fmt(data.unrealized_gain)
-    : '—');
-  set('stat-top-card',     fmt(data.top_card_value));
-
-  // Colour unrealized gain/loss
+    ? (data.unrealized_gain >= 0 ? '+' : '') + fmt(data.unrealized_gain) : '—');
+  set('stat-top-card', fmt(data.top_card_value));
   const el = document.getElementById('stat-unrealized');
-  if (data.unrealized_gain != null) {
+  if (el && data.unrealized_gain != null)
     el.style.color = data.unrealized_gain >= 0 ? '#4CAF50' : '#EF5350';
-  }
 }
 
 function renderTopCards(cards) {
   const el = document.getElementById('top-cards-list');
-  if (!cards.length) {
-    el.innerHTML = '<div class="state-empty">No data yet</div>';
-    return;
-  }
+  if (!cards.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
   el.innerHTML = cards.map((c, i) => `
-    <div class="top-card-row">
+    <div class="top-card-row" onclick="openCardModal(${safeJson(c)})">
       <span class="top-card-rank">${i + 1}</span>
       <span class="top-card-name" title="${esc(c.player)} — ${esc(c.brand)}">${esc(c.player)}</span>
       <span class="top-card-year">${c.year}</span>
@@ -79,24 +90,112 @@ function renderTopCards(cards) {
     </div>`).join('');
 }
 
-function renderEraChart(byEra) {
-  const el  = document.getElementById('era-chart');
-  const entries = Object.entries(byEra).sort((a, b) => a[0].localeCompare(b[0]));
-  if (!entries.length) {
-    el.innerHTML = '<div class="state-empty">No data yet</div>';
+// ─── Market Movers ────────────────────────────────────────────────────────────
+function renderMarketMovers(cards) {
+  const el = document.getElementById('market-movers');
+  const movers = cards
+    .map(c => {
+      const id = cardId(c);
+      const h  = priceHistory[id];
+      if (!h || h.length < 2) return null;
+      const prev = h[h.length - 2].price;
+      const curr = parseFloat(c.avg_price);
+      if (!prev || !curr) return null;
+      return { ...c, prev_price: prev, delta: curr - prev, pct: (curr - prev) / prev * 100 };
+    })
+    .filter(Boolean)
+    .sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct))
+    .slice(0, 10);
+
+  if (!movers.length) {
+    el.innerHTML = '<div class="state-empty">Run the agent at least twice to see movers</div>';
     return;
   }
-  const maxVal = Math.max(...entries.map(([, v]) => v.total_value || 0), 1);
-  el.innerHTML = entries.map(([era, stats]) => {
-    const pct = ((stats.total_value || 0) / maxVal * 100).toFixed(1);
+  el.innerHTML = movers.map(c => {
+    const up = c.pct >= 0, sign = up ? '+' : '';
     return `
-      <div class="era-row">
-        <span class="era-label">${esc(era)}</span>
-        <div class="era-bar-wrap">
-          <div class="era-bar" style="width:${pct}%"></div>
+      <div class="mover-row" onclick="openCardModal(${safeJson(c)})">
+        <div class="mover-info">
+          <span class="mover-name">${esc(c.player)}</span>
+          <span class="mover-meta">${c.year} ${esc(c.brand)}</span>
         </div>
-        <span class="era-value">${fmt$(stats.total_value)}</span>
+        <span class="mover-price">${fmt$(c.avg_price)}</span>
+        <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${c.pct.toFixed(1)}%</span>
       </div>`;
+  }).join('');
+}
+
+// ─── Portfolio Chart ──────────────────────────────────────────────────────────
+function renderPortfolioChart(portfolio) {
+  const el = document.getElementById('portfolio-chart');
+  if (!portfolio || portfolio.length < 2) {
+    el.innerHTML = '<div class="state-empty">Portfolio trend will appear after 2+ pricing runs</div>';
+    return;
+  }
+  const W = Math.max(el.offsetWidth || 600, 300), H = 150;
+  const P = { t: 16, r: 16, b: 28, l: 70 };
+  const pw = W - P.l - P.r, ph = H - P.t - P.b;
+  const vals = portfolio.map(p => p.total_value);
+  const minV = Math.min(...vals) * 0.93, maxV = Math.max(...vals) * 1.07;
+  const xS   = i => P.l + (i / (portfolio.length - 1)) * pw;
+  const yS   = v => P.t + ph - ((v - minV) / ((maxV - minV) || 1)) * ph;
+  const poly = portfolio.map((p, i) => `${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ');
+  const area = `M${xS(0).toFixed(1)},${(P.t+ph).toFixed(1)} ` +
+    portfolio.map((p, i) => `L${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ') +
+    ` L${xS(portfolio.length-1).toFixed(1)},${(P.t+ph).toFixed(1)} Z`;
+
+  const yLabels = [minV, (minV+maxV)/2, maxV].map(v =>
+    `<text x="${P.l-8}" y="${yS(v)+4}" text-anchor="end" class="chart-label">${fmt$(v)}</text>`
+  ).join('');
+  const xi = portfolio.length <= 4 ? portfolio.map((_,i) => i) : [0, Math.floor((portfolio.length-1)/2), portfolio.length-1];
+  const xLabels = xi.map(i =>
+    `<text x="${xS(i).toFixed(1)}" y="${H-4}" text-anchor="middle" class="chart-label">${fmtDateShort(portfolio[i].date)}</text>`
+  ).join('');
+
+  el.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+    <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#4CAF50" stop-opacity="0.02"/>
+    </linearGradient></defs>
+    ${yLabels}${xLabels}
+    <path d="${area}" fill="url(#pg)"/>
+    <polyline points="${poly}" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/>
+    ${portfolio.map((p,i) => `<circle cx="${xS(i).toFixed(1)}" cy="${yS(p.total_value).toFixed(1)}" r="3.5" fill="#4CAF50"/>`).join('')}
+  </svg>`;
+}
+
+// ─── Era Chart ────────────────────────────────────────────────────────────────
+function renderEraChart(byEra) {
+  const el = document.getElementById('era-chart');
+  const entries = Object.entries(byEra).sort((a, b) => a[0].localeCompare(b[0]));
+  if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+  const maxVal = Math.max(...entries.map(([,v]) => v.total_value || 0), 1);
+  el.innerHTML = entries.map(([era, stats]) => {
+    const pct = ((stats.total_value||0) / maxVal * 100).toFixed(1);
+    return `<div class="era-row">
+      <span class="era-label">${esc(era)}</span>
+      <div class="era-bar-wrap"><div class="era-bar" style="width:${pct}%"></div></div>
+      <span class="era-value">${fmt$(stats.total_value)}</span>
+    </div>`;
+  }).join('');
+}
+
+// ─── Brand Chart ─────────────────────────────────────────────────────────────
+function renderBrandChart(cards) {
+  const el = document.getElementById('brand-chart');
+  const priced = cards.filter(c => c.avg_price);
+  if (!priced.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+  const byBrand = {};
+  priced.forEach(c => { const b = c.brand||'Unknown'; byBrand[b] = (byBrand[b]||0) + parseFloat(c.avg_price); });
+  const sorted  = Object.entries(byBrand).sort((a,b) => b[1]-a[1]).slice(0,10);
+  const maxVal  = sorted[0][1];
+  el.innerHTML = sorted.map(([brand, val]) => {
+    const pct = (val / maxVal * 100).toFixed(1);
+    return `<div class="era-row">
+      <span class="era-label">${esc(brand)}</span>
+      <div class="era-bar-wrap"><div class="era-bar brand-bar" style="width:${pct}%"></div></div>
+      <span class="era-value">${fmt$(val)}</span>
+    </div>`;
   }).join('');
 }
 
@@ -104,36 +203,42 @@ function renderEraChart(byEra) {
 function applyFilters() {
   const q    = document.getElementById('table-search').value.toLowerCase();
   const yr   = document.getElementById('filter-year').value;
+  const tm   = document.getElementById('filter-team').value;
   const conf = document.getElementById('filter-confidence').value;
   const win  = document.getElementById('filter-winner').value;
 
   filtered = allCards.filter(c => {
-    if (yr   && String(c.year)   !== yr)                       return false;
-    if (win  && c.is_winner      !== win)                      return false;
-    if (conf && !((c.confidence || '').includes(conf)))        return false;
+    if (yr   && String(c.year) !== yr)                   return false;
+    if (win  && c.is_winner   !== win)                   return false;
+    if (tm   && c.team        !== tm)                    return false;
+    if (conf && !((c.confidence||'').includes(conf)))    return false;
     if (q) {
-      const hay = `${c.player} ${c.brand} ${c.year} ${c.card_number} ${c.team}`.toLowerCase();
-      if (!hay.includes(q)) return false;
+      if (!`${c.player} ${c.brand} ${c.year} ${c.card_number} ${c.team}`.toLowerCase().includes(q)) return false;
     }
     return true;
   });
-
   sortTable();
+}
+
+function getChangePct(c) {
+  const h = priceHistory[cardId(c)];
+  if (!h || h.length < 2) return -Infinity;
+  const prev = h[h.length-2].price, curr = parseFloat(c.avg_price);
+  return (prev && curr) ? (curr - prev) / prev * 100 : -Infinity;
 }
 
 function sortTable() {
   filtered.sort((a, b) => {
     let av = a[sortCol], bv = b[sortCol];
-    // Numeric cols
     if (['avg_price','purchase_price','roi'].includes(sortCol)) {
-      av = parseFloat(av) || 0;
-      bv = parseFloat(bv) || 0;
+      av = parseFloat(av)||0; bv = parseFloat(bv)||0;
+    } else if (sortCol === 'change_pct') {
+      av = getChangePct(a); bv = getChangePct(b);
     } else {
-      av = (av ?? '').toString().toLowerCase();
-      bv = (bv ?? '').toString().toLowerCase();
+      av = (av??'').toString().toLowerCase(); bv = (bv??'').toString().toLowerCase();
     }
-    if (av < bv) return sortDir === 'asc' ?  -1 : 1;
-    if (av > bv) return sortDir === 'asc' ?   1 : -1;
+    if (av < bv) return sortDir === 'asc' ? -1 :  1;
+    if (av > bv) return sortDir === 'asc' ?  1 : -1;
     return 0;
   });
   renderTable();
@@ -141,183 +246,316 @@ function sortTable() {
 
 function renderTable() {
   const tbody = document.getElementById('cards-tbody');
-  document.getElementById('table-count').textContent = `${filtered.length.toLocaleString()} cards`;
-
+  set('table-count', `${filtered.length.toLocaleString()} cards`);
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="10" class="state-empty">No cards match your filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="12" class="state-empty">No cards match your filters</td></tr>`;
     return;
   }
-
   tbody.innerHTML = filtered.map(c => {
-    const roi     = parseFloat(c.roi);
-    const roiTxt  = isNaN(roi) ? '<span class="roi-na">—</span>' :
-                    `<span class="${roi >= 0 ? 'roi-pos' : 'roi-neg'}">${roi >= 0 ? '+' : ''}${roi.toFixed(1)}%</span>`;
-    return `<tr>
+    const roi    = parseFloat(c.roi);
+    const roiTxt = isNaN(roi) ? '<span class="roi-na">—</span>'
+      : `<span class="${roi>=0?'roi-pos':'roi-neg'}">${roi>=0?'+':''}${roi.toFixed(1)}%</span>`;
+
+    const id = cardId(c), hist = priceHistory[id];
+    let changeTxt = '<span class="roi-na">—</span>';
+    if (hist && hist.length >= 2) {
+      const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
+      if (prev && curr) {
+        const pct = (curr-prev)/prev*100;
+        changeTxt = `<span class="${pct>=0?'roi-pos':'roi-neg'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
+      }
+    }
+    const spark = hist && hist.length >= 2 ? sparkline(hist.map(h => h.price)) : '<span class="no-spark">—</span>';
+
+    return `<tr class="card-row" onclick="openCardModal(${safeJson(c)})">
       <td>${esc(c.player)}</td>
       <td>${c.year}</td>
       <td>${esc(c.brand)}</td>
-      <td style="color:#777">${esc(c.card_number || '—')}</td>
+      <td style="color:#777">${esc(c.card_number||'—')}</td>
+      <td style="color:#888;font-size:0.8em">${esc(c.team||'—')}</td>
       <td class="num" style="color:#4CAF50;font-weight:600">${fmt$(c.avg_price)}</td>
       <td class="num" style="color:#888">${fmt$(c.purchase_price)}</td>
       <td class="num">${roiTxt}</td>
+      <td class="num">${changeTxt}</td>
+      <td class="spark-cell">${spark}</td>
       <td>${confidenceBadge(c.confidence)}</td>
-      <td><span class="scarcity-${(c.scarcity || 'base').toLowerCase().replace(' ','-')}">${esc(c.scarcity || '—')}</span></td>
       <td style="color:#666;font-size:0.8em">${fmtDate(c.last_updated)}</td>
     </tr>`;
   }).join('');
 }
 
 function populateYearFilter(cards) {
-  const years = [...new Set(cards.map(c => c.year))].filter(Boolean).sort();
-  const sel   = document.getElementById('filter-year');
-  years.forEach(yr => {
-    const opt = document.createElement('option');
-    opt.value = opt.textContent = yr;
-    sel.appendChild(opt);
+  const sel = document.getElementById('filter-year');
+  sel.innerHTML = '<option value="">All Years</option>';
+  [...new Set(cards.map(c => c.year))].filter(Boolean).sort().forEach(yr => {
+    const o = document.createElement('option'); o.value = o.textContent = yr; sel.appendChild(o);
   });
+}
+function populateTeamFilter(cards) {
+  const sel = document.getElementById('filter-team');
+  sel.innerHTML = '<option value="">All Teams</option>';
+  [...new Set(cards.map(c => c.team))].filter(Boolean).sort().forEach(t => {
+    const o = document.createElement('option'); o.value = o.textContent = t; sel.appendChild(o);
+  });
+}
+
+// ─── Sparkline ────────────────────────────────────────────────────────────────
+function sparkline(prices, w=60, h=22) {
+  if (!prices || prices.length < 2) return '<span class="no-spark">—</span>';
+  const min = Math.min(...prices), max = Math.max(...prices), rng = max-min||1;
+  const pts = prices.map((p,i) => {
+    return `${((i/(prices.length-1))*w).toFixed(1)},${(h-3-((p-min)/rng)*(h-6)).toFixed(1)}`;
+  }).join(' ');
+  const lastY = (h-3-((prices[prices.length-1]-min)/rng)*(h-6)).toFixed(1);
+  const col   = prices[prices.length-1] >= prices[0] ? '#4CAF50' : '#EF5350';
+  return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="overflow:visible;display:block">
+    <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.5" stroke-linejoin="round"/>
+    <circle cx="${w}" cy="${lastY}" r="2.5" fill="${col}"/>
+  </svg>`;
+}
+
+// ─── Card Detail Modal ────────────────────────────────────────────────────────
+function openCardModal(card) {
+  const id   = cardId(card);
+  const hist = priceHistory[id] || [];
+  const pp   = parseFloat(card.purchase_price)||0;
+  const cp   = parseFloat(card.avg_price)||0;
+  const roi  = pp ? ((cp-pp)/pp*100) : null;
+
+  set('modal-card-title', `${card.player} — ${card.year} ${card.brand}`);
+  document.getElementById('modal-card-body').innerHTML = `
+    <div class="card-detail-grid">
+      <div class="cd-item"><span class="cd-label">Market Value</span><span class="cd-value" style="color:#4CAF50">${fmt$(cp)}</span></div>
+      <div class="cd-item"><span class="cd-label">Paid</span><span class="cd-value">${fmt$(pp||null)}</span></div>
+      <div class="cd-item"><span class="cd-label">ROI</span><span class="cd-value ${roi!=null?(roi>=0?'roi-pos':'roi-neg'):''}">${roi!=null?(roi>=0?'+':'')+roi.toFixed(1)+'%':'—'}</span></div>
+      <div class="cd-item"><span class="cd-label">Confidence</span><span class="cd-value">${esc(card.confidence||'—')}</span></div>
+      <div class="cd-item"><span class="cd-label">Scarcity</span><span class="cd-value">${esc(card.scarcity||'—')}</span></div>
+      <div class="cd-item"><span class="cd-label">Card #</span><span class="cd-value">${esc(card.card_number||'—')}</span></div>
+      <div class="cd-item"><span class="cd-label">Team</span><span class="cd-value">${esc(card.team||'—')}</span></div>
+      <div class="cd-item"><span class="cd-label">Updated</span><span class="cd-value">${fmtDate(card.last_updated)}</span></div>
+    </div>
+    ${hist.length >= 2 ? cardHistoryChart(hist) : '<div class="state-empty" style="padding:18px 0">History appears after 2+ runs for this card</div>'}
+    <div class="card-detail-links">
+      <a href="https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(card.year+' '+card.brand+' '+card.player+' baseball')}&_sacat=212" target="_blank" class="card-link">🔍 Search eBay</a>
+      <a href="https://mavin.io/search?q=${encodeURIComponent(card.year+' '+card.brand+' '+card.player)}" target="_blank" class="card-link">📊 Mavin Prices</a>
+    </div>`;
+  openModal('modal-card');
+}
+
+function cardHistoryChart(hist) {
+  const W=400, H=110, P={t:12,r:12,b:26,l:58};
+  const pw=W-P.l-P.r, ph=H-P.t-P.b;
+  const vals=hist.map(h=>h.price), minV=Math.min(...vals)*0.88, maxV=Math.max(...vals)*1.12;
+  const xS=i=>P.l+(i/(hist.length-1))*pw, yS=v=>P.t+ph-((v-minV)/((maxV-minV)||1))*ph;
+  const pts=hist.map((h,i)=>`${xS(i).toFixed(1)},${yS(h.price).toFixed(1)}`).join(' ');
+  const area=`M${xS(0).toFixed(1)},${(P.t+ph).toFixed(1)} `+
+    hist.map((h,i)=>`L${xS(i).toFixed(1)},${yS(h.price).toFixed(1)}`).join(' ')+
+    ` L${xS(hist.length-1).toFixed(1)},${(P.t+ph).toFixed(1)} Z`;
+  return `<div class="card-history-chart">
+    <div class="chart-section-title">Price History</div>
+    <svg width="100%" viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+      <defs><linearGradient id="ch-g" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.2"/>
+        <stop offset="100%" stop-color="#4CAF50" stop-opacity="0"/>
+      </linearGradient></defs>
+      <text x="${P.l-8}" y="${yS(minV)+4}" text-anchor="end" class="chart-label">${fmt$(minV)}</text>
+      <text x="${P.l-8}" y="${yS(maxV)+4}" text-anchor="end" class="chart-label">${fmt$(maxV)}</text>
+      <path d="${area}" fill="url(#ch-g)"/>
+      <polyline points="${pts}" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/>
+      ${hist.map((h,i)=>`
+        <circle cx="${xS(i).toFixed(1)}" cy="${yS(h.price).toFixed(1)}" r="3.5" fill="#4CAF50"/>
+        <text x="${xS(i).toFixed(1)}" y="${H-4}" text-anchor="middle" class="chart-label">${fmtDateShort(h.date)}</text>
+      `).join('')}
+    </svg>
+  </div>`;
+}
+
+// ─── Export CSV ───────────────────────────────────────────────────────────────
+function exportCSV() {
+  const headers = ['Player','Year','Brand','Card #','Team','Market Value','Paid','ROI','Confidence','Scarcity','Last Updated'];
+  const rows = filtered.map(c => [
+    c.player, c.year, c.brand, c.card_number||'', c.team||'',
+    c.avg_price||'', c.purchase_price||'', c.roi||'',
+    c.confidence||'', c.scarcity||'', c.last_updated||''
+  ].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv  = [headers.join(','),...rows].join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const url  = URL.createObjectURL(blob);
+  Object.assign(document.createElement('a'),{href:url,download:'card_prices.csv'}).click();
+  URL.revokeObjectURL(url);
 }
 
 // ─── UI Bindings ──────────────────────────────────────────────────────────────
 function bindUI() {
-  // Search + filters
   document.getElementById('table-search').addEventListener('input', applyFilters);
   document.getElementById('filter-year').addEventListener('change', applyFilters);
+  document.getElementById('filter-team').addEventListener('change', applyFilters);
   document.getElementById('filter-confidence').addEventListener('change', applyFilters);
   document.getElementById('filter-winner').addEventListener('change', applyFilters);
 
-  // Column sort
   document.querySelectorAll('#cards-table th.sortable').forEach(th => {
     th.addEventListener('click', () => {
       const col = th.dataset.col;
-      if (sortCol === col) {
-        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortCol = col;
-        sortDir = col === 'avg_price' ? 'desc' : 'asc';
-      }
-      document.querySelectorAll('#cards-table th').forEach(t => {
-        t.classList.remove('sort-asc','sort-desc');
-      });
-      th.classList.add(sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+      if (sortCol === col) { sortDir = sortDir==='asc'?'desc':'asc'; }
+      else { sortCol = col; sortDir = ['avg_price','change_pct'].includes(col)?'desc':'asc'; }
+      document.querySelectorAll('#cards-table th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
+      th.classList.add(sortDir==='asc'?'sort-asc':'sort-desc');
       sortTable();
     });
   });
 
-  // Update button → run modal
-  document.getElementById('btn-update').addEventListener('click', () => {
-    if (!getPAT()) {
-      openSettings();
-      return;
-    }
-    openModal('modal-run');
-  });
-
-  // Settings
+  document.getElementById('btn-update').addEventListener('click', () => { if (!getPAT()) { openSettings(); return; } openModal('modal-run'); });
   document.getElementById('btn-settings').addEventListener('click', openSettings);
   document.getElementById('btn-cancel-settings').addEventListener('click', () => closeModal('modal-settings'));
   document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
-  document.getElementById('btn-cancel-run').addEventListener('click', () => closeModal('modal-run'));
+  document.getElementById('btn-cancel-run').addEventListener('click', cancelRun);
   document.getElementById('btn-confirm-run').addEventListener('click', triggerRun);
+  document.getElementById('btn-export').addEventListener('click', exportCSV);
+  document.getElementById('btn-close-card').addEventListener('click', () => closeModal('modal-card'));
 
-  // Pre-fill PAT if stored
   const pat = getPAT();
   if (pat) document.getElementById('input-pat').value = pat;
 
-  // Close modals on backdrop click
   document.querySelectorAll('.modal').forEach(m => {
-    m.addEventListener('click', e => { if (e.target === m) closeModal(m.id); });
+    m.addEventListener('click', e => { if (e.target === m) { cancelRun(); closeModal(m.id); } });
   });
 }
 
-// ─── Settings Modal ───────────────────────────────────────────────────────────
+// ─── Settings ────────────────────────────────────────────────────────────────
 function openSettings() {
-  const pat = getPAT();
-  if (pat) document.getElementById('input-pat').value = pat;
+  const pat = getPAT(); if (pat) document.getElementById('input-pat').value = pat;
   openModal('modal-settings');
 }
-
 function saveSettings() {
   const pat = document.getElementById('input-pat').value.trim();
-  if (pat) {
-    localStorage.setItem('gh_pat', pat);
-    closeModal('modal-settings');
-  }
+  if (pat) { localStorage.setItem('gh_pat', pat); closeModal('modal-settings'); }
 }
 
-// ─── GitHub Actions Trigger ───────────────────────────────────────────────────
+// ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
 async function triggerRun() {
-  const pat   = getPAT();
-  const batch = document.getElementById('input-batch').value || '50';
+  const pat = getPAT(), batch = document.getElementById('input-batch').value || '50';
   if (!pat) { openSettings(); return; }
-
-  const btn    = document.getElementById('btn-confirm-run');
-  const status = document.getElementById('run-status');
-  btn.disabled = true;
-  btn.textContent = 'Starting…';
-  status.className = 'run-status hidden';
+  const btn = document.getElementById('btn-confirm-run');
+  btn.disabled = true; btn.textContent = 'Starting…';
+  setRunStatus('', '');
 
   try {
     const res = await fetch(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_ID}/dispatches`,
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${pat}`,
-          'Accept': 'application/vnd.github+json',
-          'X-GitHub-Api-Version': '2022-11-28',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          ref: 'main',
-          inputs: { batch_size: String(batch) }
-        })
-      }
+      { method:'POST',
+        headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json',
+          'X-GitHub-Api-Version':'2022-11-28', 'Content-Type':'application/json' },
+        body: JSON.stringify({ ref:'main', inputs:{ batch_size: String(batch) } }) }
     );
-
     if (res.status === 204) {
-      status.className = 'run-status success';
-      status.textContent = '✅ Pricing run queued! Results will appear here in ~10 minutes. You can track progress in the Actions tab on GitHub.';
+      runStartTime = Date.now();
+      document.getElementById('run-tracker').classList.remove('hidden');
+      updateTracker('queued', null, 0);
+      startRunPoll(pat);
     } else if (res.status === 401 || res.status === 403) {
-      status.className = 'run-status error';
-      status.textContent = `❌ GitHub token rejected (${res.status}). Check it has "workflow" scope and hasn't expired.`;
+      setRunStatus('error', `❌ Token rejected (${res.status}) — check it has "workflow" scope.`);
+      btn.disabled = false; btn.textContent = 'Start Run';
     } else {
-      const body = await res.text();
-      status.className = 'run-status error';
-      status.textContent = `❌ GitHub API error ${res.status}: ${body}`;
+      setRunStatus('error', `❌ GitHub API error ${res.status}: ${await res.text()}`);
+      btn.disabled = false; btn.textContent = 'Start Run';
     }
-  } catch (e) {
-    status.className = 'run-status error';
-    status.textContent = `❌ Network error: ${e.message}`;
+  } catch(e) {
+    setRunStatus('error', `❌ Network error: ${e.message}`);
+    btn.disabled = false; btn.textContent = 'Start Run';
   }
+}
 
-  status.classList.remove('hidden');
-  btn.disabled    = false;
-  btn.textContent = 'Start Run';
+function updateTracker(status, conclusion, elapsedSec) {
+  const pct = Math.min((elapsedSec/600)*100, 95).toFixed(1);
+  const m   = Math.floor(elapsedSec/60), s = String(elapsedSec%60).padStart(2,'0');
+  set('tracker-icon',  { queued:'⏳', in_progress:'🔄', completed: conclusion==='success'?'✅':'❌' }[status]||'⏳');
+  set('tracker-label', {
+    queued:      'Queued on GitHub…',
+    in_progress: `Running — ${m}m ${s}s  (est. ~10 min)`,
+    completed:   conclusion==='success' ? `Done in ${m}m ${s}s — refreshing…` : `Failed after ${m}m ${s}s`
+  }[status] || status);
+  const bar = document.getElementById('tracker-bar');
+  bar.style.width      = status==='completed' ? '100%' : pct+'%';
+  bar.style.background = conclusion==='failure' ? '#EF5350' : 'linear-gradient(90deg,#2e7d32,#4CAF50)';
+}
+
+function startRunPoll(pat) {
+  stopRunPoll();
+  runTickTimer = setInterval(() => {
+    if (!runStartTime) return;
+    const e = Math.floor((Date.now()-runStartTime)/1000);
+    const lbl = document.getElementById('tracker-label').textContent;
+    if (lbl.includes('Running')||lbl.includes('Queued')) updateTracker(e>8?'in_progress':'queued', null, e);
+  }, 1000);
+
+  runPollTimer = setInterval(async () => {
+    try {
+      const r = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?event=workflow_dispatch&per_page=5`,
+        { headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json' } }
+      );
+      if (!r.ok) return;
+      const data = await r.json();
+      const run  = data.workflow_runs?.find(w => new Date(w.created_at).getTime() >= runStartTime - 30_000);
+      if (!run) return;
+      const elapsed = Math.floor((Date.now()-runStartTime)/1000);
+      if (run.status === 'completed') {
+        stopRunPoll();
+        updateTracker('completed', run.conclusion, elapsed);
+        if (run.conclusion === 'success') {
+          setRunStatus('success', '✅ Pricing complete! Refreshing results…');
+          setTimeout(() => { loadData(); closeModal('modal-run'); resetRunModal(); }, 3500);
+        } else {
+          setRunStatus('error', `❌ Run failed. <a href="https://github.com/${REPO_OWNER}/${REPO_NAME}/actions" target="_blank" style="color:#ef9a9a">View logs →</a>`);
+          const btn = document.getElementById('btn-confirm-run'); btn.disabled=false; btn.textContent='Retry';
+        }
+      } else { updateTracker(run.status, null, elapsed); }
+    } catch(_) {}
+  }, 15_000);
+}
+
+function stopRunPoll() {
+  if (runPollTimer) { clearInterval(runPollTimer); runPollTimer=null; }
+  if (runTickTimer) { clearInterval(runTickTimer); runTickTimer=null; }
+}
+function cancelRun() { stopRunPoll(); resetRunModal(); }
+function resetRunModal() {
+  const btn = document.getElementById('btn-confirm-run'); btn.disabled=false; btn.textContent='Start Run';
+  document.getElementById('run-tracker').classList.add('hidden');
+  document.getElementById('tracker-bar').style.width='0%';
+  setRunStatus('','');
+}
+function setRunStatus(type, msg) {
+  const el = document.getElementById('run-status');
+  el.className = type ? `run-status ${type}` : 'run-status hidden';
+  el.innerHTML = msg;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function getPAT()              { return localStorage.getItem('gh_pat') || ''; }
-function openModal(id)         { document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id)        { document.getElementById(id).classList.add('hidden'); }
-function set(id, val)          { const el = document.getElementById(id); if (el) el.textContent = val; }
-function esc(str)              { return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmt$(n)               { return n != null && n !== '' ? '$' + parseFloat(n).toFixed(2) : '—'; }
-function fmtDate(iso)          { if (!iso) return '—'; try { return new Date(iso).toLocaleDateString(); } catch { return '—'; } }
+function getPAT()        { return localStorage.getItem('gh_pat')||''; }
+function openModal(id)   { document.getElementById(id).classList.remove('hidden'); }
+function closeModal(id)  { document.getElementById(id).classList.add('hidden'); }
+function set(id, val)    { const el=document.getElementById(id); if(el) el.textContent=val; }
+function esc(str)        { return String(str??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmt$(n)         { return n!=null&&n!=='' ? '$'+parseFloat(n).toFixed(2) : '—'; }
+function fmtDate(iso)    { if(!iso) return '—'; try { return new Date(iso).toLocaleDateString(); } catch{return '—';} }
+function fmtDateShort(d) { if(!d) return '—'; const p=String(d).split('-'); return p.length>=3?`${p[1]}/${String(p[0]).slice(2)}`:d; }
+function safeJson(obj)   { return JSON.stringify(obj).replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
 
 function confidenceBadge(conf) {
-  const c = (conf || '').toLowerCase();
-  let cls = 'badge-floor';
-  if (c.includes('very high')) cls = 'badge-very-high';
-  else if (c.includes('high')) cls = 'badge-high';
-  else if (c.includes('medium')) cls = 'badge-medium';
-  else if (c.includes('low'))  cls = 'badge-low';
-  const label = (conf || 'Floor').split('(')[0].trim(); // strip "(sold)" suffix
-  return `<span class="badge ${cls}">${esc(label)}</span>`;
+  const c=(conf||'').toLowerCase(); let cls='badge-floor';
+  if(c.includes('very high')) cls='badge-very-high';
+  else if(c.includes('high')) cls='badge-high';
+  else if(c.includes('medium')) cls='badge-medium';
+  else if(c.includes('low')) cls='badge-low';
+  return `<span class="badge ${cls}">${esc((conf||'Floor').split('(')[0].trim())}</span>`;
 }
 
 function showEmpty(msg) {
-  document.getElementById('top-cards-list').innerHTML = `<div class="state-empty">${msg}</div>`;
-  document.getElementById('era-chart').innerHTML      = `<div class="state-empty"></div>`;
-  document.getElementById('cards-tbody').innerHTML    = `<tr><td colspan="10" class="state-empty">${msg}</td></tr>`;
-  document.getElementById('last-updated').textContent = 'Never';
+  ['top-cards-list','market-movers','era-chart','brand-chart'].forEach(id => {
+    const el=document.getElementById(id); if(el) el.innerHTML=`<div class="state-empty">${id==='top-cards-list'?msg:''}</div>`;
+  });
+  const pc=document.getElementById('portfolio-chart'); if(pc) pc.innerHTML='<div class="state-empty"></div>';
+  const tb=document.getElementById('cards-tbody'); if(tb) tb.innerHTML=`<tr><td colspan="12" class="state-empty">${msg}</td></tr>`;
+  set('last-updated','Never');
 }

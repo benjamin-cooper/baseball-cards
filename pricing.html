@@ -12,27 +12,29 @@
 </head>
 <body>
   <div id="app">
-    <div class="container">
 
-      <!-- NAV -->
-      <nav class="insights-nav">
-        <a href="index.html" class="nav-back">← Network Graph</a>
-        <span class="nav-divider">|</span>
-        <span class="nav-current">Further Insights</span>
-        <div class="nav-actions">
-          <button id="btn-update" class="btn-update" title="Run pricing agent via GitHub Actions">
-            ⚡ Update Prices
-          </button>
+    <!-- ── SITE TAB NAV ──────────────────────────────────────────────────────── -->
+    <nav class="site-tabs">
+      <div class="site-tabs-inner">
+        <a href="index.html" class="site-tab">🕸 Network Graph</a>
+        <a href="pricing.html" class="site-tab active">📊 Further Insights</a>
+        <div class="site-tabs-actions">
+          <button id="btn-update" class="btn-update" title="Run pricing agent via GitHub Actions">⚡ Update Prices</button>
           <button id="btn-settings" class="btn-settings" title="Settings">⚙</button>
         </div>
-      </nav>
+      </div>
+    </nav>
+
+    <div class="container">
 
       <!-- HEADER -->
-      <h1>Further Insights</h1>
-      <p class="subtitle">Market valuations · Collection analytics · Last updated: <span id="last-updated">—</span></p>
+      <div class="page-header">
+        <h1>Further Insights</h1>
+        <p class="subtitle">Market valuations · Collection analytics · Last updated: <span id="last-updated">—</span></p>
+      </div>
 
       <!-- SUMMARY STATS -->
-      <div class="stats-grid" id="stats-grid">
+      <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-value" id="stat-total-value">—</div>
           <div class="stat-label">Total Value</div>
@@ -59,19 +61,34 @@
         </div>
       </div>
 
-      <!-- TWO-COLUMN: Top Cards + Value by Year -->
-      <div class="insights-grid">
+      <!-- PORTFOLIO CHART -->
+      <div class="insights-panel portfolio-panel">
+        <h2>Portfolio Value Over Time</h2>
+        <div id="portfolio-chart" class="portfolio-chart"></div>
+      </div>
 
+      <!-- TOP CARDS + MARKET MOVERS -->
+      <div class="insights-grid">
         <div class="insights-panel">
           <h2>Top 25 Most Valuable</h2>
           <div id="top-cards-list" class="top-cards-list"></div>
         </div>
+        <div class="insights-panel">
+          <h2>Market Movers</h2>
+          <div id="market-movers" class="market-movers"></div>
+        </div>
+      </div>
 
+      <!-- ERA + BRAND CHARTS -->
+      <div class="insights-grid">
         <div class="insights-panel">
           <h2>Value by Era</h2>
           <div id="era-chart" class="era-chart"></div>
         </div>
-
+        <div class="insights-panel">
+          <h2>Value by Brand</h2>
+          <div id="brand-chart" class="era-chart"></div>
+        </div>
       </div>
 
       <!-- FULL TABLE -->
@@ -79,9 +96,8 @@
         <div class="table-controls">
           <input type="text" id="table-search" class="player-search" placeholder="Search player, brand, year…" autocomplete="off">
           <div class="table-filters">
-            <select id="filter-year" class="filter-select">
-              <option value="">All Years</option>
-            </select>
+            <select id="filter-year" class="filter-select"><option value="">All Years</option></select>
+            <select id="filter-team" class="filter-select"><option value="">All Teams</option></select>
             <select id="filter-confidence" class="filter-select">
               <option value="">All Confidence</option>
               <option value="Very High">Very High</option>
@@ -97,6 +113,7 @@
             </select>
           </div>
           <span id="table-count" class="table-count"></span>
+          <button id="btn-export" class="btn-export">⬇ Export CSV</button>
         </div>
 
         <div class="table-wrapper">
@@ -107,11 +124,13 @@
                 <th data-col="year" class="sortable">Year <span class="sort-icon">↕</span></th>
                 <th data-col="brand">Brand</th>
                 <th data-col="card_number">#</th>
-                <th data-col="avg_price" class="sortable num">Market Value <span class="sort-icon">↕</span></th>
+                <th data-col="team">Team</th>
+                <th data-col="avg_price" class="sortable num">Value <span class="sort-icon">↕</span></th>
                 <th data-col="purchase_price" class="num">Paid</th>
                 <th data-col="roi" class="sortable num">ROI <span class="sort-icon">↕</span></th>
+                <th data-col="change_pct" class="sortable num">Change <span class="sort-icon">↕</span></th>
+                <th class="num">Trend</th>
                 <th data-col="confidence">Confidence</th>
-                <th data-col="scarcity">Scarcity</th>
                 <th data-col="last_updated" class="sortable">Updated <span class="sort-icon">↕</span></th>
               </tr>
             </thead>
@@ -123,15 +142,14 @@
     </div><!-- /container -->
   </div><!-- /app -->
 
-  <!-- SETTINGS MODAL -->
+  <!-- ── SETTINGS MODAL ──────────────────────────────────────────────────────── -->
   <div id="modal-settings" class="modal hidden">
     <div class="modal-box">
       <h3>Settings</h3>
       <p class="modal-desc">
-        To trigger a pricing update from this page, provide a GitHub Personal Access Token
-        with <strong>workflow</strong> scope. It is stored only in your browser's localStorage
-        and never sent anywhere except the GitHub API.
-        <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank">Create one here →</a>
+        Provide a GitHub Personal Access Token with <strong>workflow</strong> scope to trigger
+        pricing runs from this page. Stored only in your browser's localStorage.
+        <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank">Create one →</a>
       </p>
       <label>GitHub PAT (workflow scope)</label>
       <input type="password" id="input-pat" placeholder="ghp_…" autocomplete="off">
@@ -142,20 +160,44 @@
     </div>
   </div>
 
-  <!-- RUN MODAL -->
+  <!-- ── RUN MODAL ───────────────────────────────────────────────────────────── -->
   <div id="modal-run" class="modal hidden">
     <div class="modal-box">
       <h3>⚡ Update Prices</h3>
-      <p class="modal-desc">This will trigger a GitHub Actions run that prices your cards using
-        the eBay API and Claude AI. It typically takes 5–15 minutes depending on how many
-        cards need updating.</p>
+      <p class="modal-desc">Triggers a GitHub Actions run that prices your cards using the eBay API
+        and Claude AI. Typically takes 5–15 minutes.</p>
       <label>Cards to process per run</label>
       <input type="number" id="input-batch" value="50" min="10" max="200">
+
+      <!-- Live tracker — hidden until run starts -->
+      <div id="run-tracker" class="run-tracker hidden">
+        <div class="tracker-header">
+          <span id="tracker-icon">⏳</span>
+          <span id="tracker-label">Queued…</span>
+          <a href="https://github.com/benjamin-cooper/baseball-cards/actions" target="_blank" class="tracker-gh-link">View on GitHub →</a>
+        </div>
+        <div class="tracker-bar-bg">
+          <div id="tracker-bar" class="tracker-bar-fill"></div>
+        </div>
+      </div>
+
+      <div id="run-status" class="run-status hidden"></div>
+
       <div class="modal-actions">
         <button id="btn-confirm-run" class="btn-primary">Start Run</button>
-        <button id="btn-cancel-run" class="btn-secondary">Cancel</button>
+        <button id="btn-cancel-run" class="btn-secondary">Close</button>
       </div>
-      <div id="run-status" class="run-status hidden"></div>
+    </div>
+  </div>
+
+  <!-- ── CARD DETAIL MODAL ───────────────────────────────────────────────────── -->
+  <div id="modal-card" class="modal hidden">
+    <div class="modal-box modal-box-wide">
+      <div class="modal-card-header">
+        <h3 id="modal-card-title">Card Detail</h3>
+        <button id="btn-close-card" class="btn-close">✕</button>
+      </div>
+      <div id="modal-card-body"></div>
     </div>
   </div>
 

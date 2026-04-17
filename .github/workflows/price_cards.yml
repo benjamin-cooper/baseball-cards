@@ -52,10 +52,10 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/pricing_results.json
-          # Only commit if the file actually changed
+          git add data/pricing_results.json data/price_history.json
+          # Only commit if files actually changed
           if git diff --cached --quiet; then
-            echo "No changes to pricing_results.json — skipping commit"
+            echo "No changes — skipping commit"
           else
             TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
             git commit -m "chore: update pricing results [${TIMESTAMP}]"

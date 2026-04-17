@@ -48,6 +48,8 @@ LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
 EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
+HISTORY_FILE       = 'data/price_history.json'
+HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 
 # ── Column indices (0-based, matching GAS script layout) ───────────────────────
 C = {
@@ -61,6 +63,11 @@ C = {
     'VALUE_TIER': 26, 'IS_WINNER': 27,
 }
 OUTPUT_START_COL = C['AVG_PRICE'] + 1  # 1-indexed column G
+
+def make_card_id(year, brand, player, card_number='') -> str:
+    """Stable identifier that matches the JS cardId() function."""
+    raw = f"{year}_{brand}_{player}_{card_number or ''}".lower().replace(' ', '_')
+    return re.sub(r'[^a-z0-9_]', '', raw)
 OUTPUT_WIDTH     = C['IS_WINNER'] - C['AVG_PRICE'] + 1  # 22 columns
 
 
@@ -647,6 +654,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             'roi':            roi,
             'is_winner':      winner,
             'last_updated':   now_iso,
+            'card_id':        make_card_id(card['year'], card['brand'], card['player'], card['card_number']),
         }
     }
 
@@ -683,6 +691,7 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
                 'roi':            get(C['ROI']),
                 'is_winner':      get(C['IS_WINNER']),
                 'last_updated':   get(C['LAST_UPDATED']),
+                'card_id':        make_card_id(get(C['YEAR']), get(C['BRAND']), get(C['PLAYER']), get(C['CARD_NUMBER'])),
             }
         cards.append(c)
 
@@ -784,6 +793,43 @@ def main():
     # Build and save pricing_results.json
     os.makedirs('data', exist_ok=True)
     output = build_results_json(rows, results)
+
+    # ── Price history ──────────────────────────────────────────────────────────
+    try:
+        with open(HISTORY_FILE) as f:
+            price_history = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        price_history = {}
+
+    today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
+
+    for r in results:
+        cid   = r['card']['card_id']
+        entry = {'price': r['card']['avg_price'], 'date': today}
+        hist  = price_history.get(cid, [])
+        # Overwrite same-day entry rather than appending duplicates
+        if hist and hist[-1]['date'] == today:
+            hist[-1] = entry
+        else:
+            hist.append(entry)
+        price_history[cid] = hist[-HISTORY_MAX:]
+
+    # Portfolio snapshot (keyed as '_portfolio' in the same file)
+    port_entry = {'date': today, 'total_value': output['total_value'], 'cards_priced': output['cards_priced']}
+    port_hist  = price_history.get('_portfolio', [])
+    if port_hist and port_hist[-1]['date'] == today:
+        port_hist[-1] = port_entry
+    else:
+        port_hist.append(port_entry)
+    price_history['_portfolio'] = port_hist[-HISTORY_MAX:]
+
+    with open(HISTORY_FILE, 'w') as f:
+        json.dump(price_history, f, separators=(',', ':'))
+    log.info('Wrote %s', HISTORY_FILE)
+
+    # Embed portfolio history so the page can draw the chart
+    output['_portfolio'] = price_history['_portfolio']
+
     with open(RESULTS_FILE, 'w') as f:
         json.dump(output, f, indent=2, default=str)
 

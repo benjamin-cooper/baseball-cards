@@ -11,28 +11,10 @@
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/pricing.css">
     <style>
-      #insights-link {
-        position: fixed;
-        top: 14px;
-        right: 16px;
-        z-index: 9999;
-        background: rgba(76,175,80,0.12);
-        color: #4CAF50;
-        border: 1px solid rgba(76,175,80,0.35);
-        padding: 7px 14px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-size: 0.82em;
-        font-weight: 600;
-        font-family: 'Roboto', sans-serif;
-        transition: background 0.2s, border-color 0.2s;
-        backdrop-filter: blur(6px);
-      }
-      #insights-link:hover {
-        background: rgba(76,175,80,0.22);
-        border-color: rgba(76,175,80,0.6);
-      }
+      /* Push app canvas below the sticky tab nav */
+      #app { padding-top: 0; }
     </style>
     
     <!-- PWA Manifest (optional - for "install app" feature) -->
@@ -47,7 +29,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
-    <a href="pricing.html" id="insights-link" title="Further Insights — pricing &amp; analytics">📊 Further Insights</a>
+    <nav class="site-tabs">
+      <div class="site-tabs-inner">
+        <a href="index.html" class="site-tab active">🕸 Network Graph</a>
+        <a href="pricing.html" class="site-tab">📊 Further Insights</a>
+      </div>
+    </nav>
     <div id="app"></div>
     
     <!-- Data file paths - MUST be defined before preload script -->
