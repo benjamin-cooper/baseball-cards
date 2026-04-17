@@ -11,6 +11,29 @@
     
     <!-- Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
+    <style>
+      #insights-link {
+        position: fixed;
+        top: 14px;
+        right: 16px;
+        z-index: 9999;
+        background: rgba(76,175,80,0.12);
+        color: #4CAF50;
+        border: 1px solid rgba(76,175,80,0.35);
+        padding: 7px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 0.82em;
+        font-weight: 600;
+        font-family: 'Roboto', sans-serif;
+        transition: background 0.2s, border-color 0.2s;
+        backdrop-filter: blur(6px);
+      }
+      #insights-link:hover {
+        background: rgba(76,175,80,0.22);
+        border-color: rgba(76,175,80,0.6);
+      }
+    </style>
     
     <!-- PWA Manifest (optional - for "install app" feature) -->
     <!-- <link rel="manifest" href="manifest.json"> -->
@@ -24,6 +47,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
 <body>
+    <a href="pricing.html" id="insights-link" title="Further Insights — pricing &amp; analytics">📊 Further Insights</a>
     <div id="app"></div>
     
     <!-- Data file paths - MUST be defined before preload script -->
