@@ -11,14 +11,15 @@ const DATA_URL    = 'data/pricing_results.json';
 const HISTORY_URL = 'data/price_history.json';
 
 // ─── State ────────────────────────────────────────────────────────────────────
-let allCards     = [];
-let filtered     = [];
-let priceHistory = {};
-let sortCol      = 'avg_price';
-let sortDir      = 'desc';
-let runPollTimer = null;
-let runTickTimer = null;
-let runStartTime = null;
+let allCards      = [];
+let filtered      = [];
+let priceHistory  = {};
+let sortCol       = 'avg_price';
+let sortDir       = 'desc';
+let runPollTimer  = null;
+let runTickTimer  = null;
+let runStartTime  = null;
+let activeRunId   = null;   // GitHub Actions run ID, set once the run is found
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -417,6 +418,7 @@ function bindUI() {
   document.getElementById('btn-cancel-settings').addEventListener('click', () => closeModal('modal-settings'));
   document.getElementById('btn-save-settings').addEventListener('click', saveSettings);
   document.getElementById('btn-cancel-run').addEventListener('click', cancelRun);
+  document.getElementById('btn-abort-run').addEventListener('click', abortRun);
   document.getElementById('btn-confirm-run').addEventListener('click', triggerRun);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
   document.getElementById('btn-close-card').addEventListener('click', () => closeModal('modal-card'));
@@ -481,6 +483,7 @@ async function triggerRun() {
     if (res.status === 204) {
       runStartTime = Date.now();
       document.getElementById('run-tracker').classList.remove('hidden');
+      document.getElementById('btn-abort-run').classList.remove('hidden');
       updateTracker('queued', null, 0);
       startRunPoll(pat);
     } else if (res.status === 401 || res.status === 403) {
@@ -529,6 +532,7 @@ function startRunPoll(pat) {
       const data = await r.json();
       const run  = data.workflow_runs?.find(w => new Date(w.created_at).getTime() >= runStartTime - 30_000);
       if (!run) return;
+      if (!activeRunId) activeRunId = run.id;   // capture once found
       const elapsed = Math.floor((Date.now()-runStartTime)/1000);
       if (run.status === 'completed') {
         stopRunPoll();
@@ -549,12 +553,34 @@ function stopRunPoll() {
   if (runPollTimer) { clearInterval(runPollTimer); runPollTimer=null; }
   if (runTickTimer) { clearInterval(runTickTimer); runTickTimer=null; }
 }
-function cancelRun() { stopRunPoll(); resetRunModal(); }
+function cancelRun() { stopRunPoll(); resetRunModal(); closeModal('modal-run'); }
 function resetRunModal() {
+  activeRunId = null;
   const btn = document.getElementById('btn-confirm-run'); btn.disabled=false; btn.textContent='Start Run';
   document.getElementById('run-tracker').classList.add('hidden');
+  document.getElementById('btn-abort-run').classList.add('hidden');
   document.getElementById('tracker-bar').style.width='0%';
   setRunStatus('','');
+}
+
+async function abortRun() {
+  const pat = getPAT();
+  if (!activeRunId || !pat) return;
+  const btn = document.getElementById('btn-abort-run');
+  btn.disabled = true; btn.textContent = 'Cancelling…';
+  try {
+    await fetch(
+      `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${activeRunId}/cancel`,
+      { method: 'POST', headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
+    );
+    setRunStatus('error', '⛔ Run cancelled.');
+    stopRunPoll();
+    resetRunModal();
+    closeModal('modal-run');
+  } catch(e) {
+    btn.disabled = false; btn.textContent = '⛔ Cancel Run';
+    setRunStatus('error', `❌ Could not cancel: ${e.message}`);
+  }
 }
 function setRunStatus(type, msg) {
   const el = document.getElementById('run-status');

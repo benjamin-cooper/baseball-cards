@@ -112,6 +112,17 @@ def make_card_id(year, brand, player, card_number='') -> str:
     return re.sub(r'[^a-z0-9_]', '', raw)
 
 
+def parse_price(val: str) -> Optional[float]:
+    """Parse a price string that may have $, commas, or whitespace. Returns None if empty/unparseable."""
+    if not val:
+        return None
+    cleaned = val.strip().lstrip('$').replace(',', '').strip()
+    try:
+        return float(cleaned) if cleaned else None
+    except ValueError:
+        return None
+
+
 # ══════════════════════════════════════════════════════════════════════════════
 # Google Sheets
 # ══════════════════════════════════════════════════════════════════════════════
@@ -669,7 +680,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             'brand':        card['brand'],
             'card_number':  card['card_number'],
             'team':         card['team'],
-            'tcdb_price':   float(card['tcdb_price']) if card['tcdb_price'] else None,
+            'tcdb_price':   parse_price(card['tcdb_price']),
             'avg_price':    round(fp, 2),
             'median':       result['median'],
             'confidence':   conf,
@@ -704,9 +715,9 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
                 'brand':        get(C['BRAND']),
                 'card_number':  get(C['CARD_NUMBER']),
                 'team':         get(C['TEAM']),
-                'tcdb_price':   float(get(C['TCDB_PRICE'])) if get(C['TCDB_PRICE']) else None,
-                'avg_price':    float(price)  if price  else None,
-                'median':       float(median) if median else None,
+                'tcdb_price':   parse_price(get(C['TCDB_PRICE'])),
+                'avg_price':    parse_price(price),
+                'median':       parse_price(median),
                 'confidence':   get(C['CONFIDENCE']),
                 'last_updated': get(C['LAST_UPDATED']),
                 'card_id':      make_card_id(

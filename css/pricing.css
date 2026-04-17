@@ -453,6 +453,20 @@
 }
 .btn-secondary:hover { background: rgba(255,255,255,0.14); }
 
+.btn-danger {
+  background: rgba(239,83,80,0.15);
+  color: #ef9a9a;
+  border: 1px solid rgba(239,83,80,0.35);
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 0.9em;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.2s;
+}
+.btn-danger:hover    { background: rgba(239,83,80,0.28); }
+.btn-danger:disabled { opacity: 0.5; cursor: not-allowed; }
+
 .run-status {
   margin-top: 14px;
   padding: 10px 14px;
