@@ -389,47 +389,98 @@ PARALLEL_KW = ('/1 ', '/2 ', '/3 ', '/4 ', '/5 ', '/10 ', '/25 ', '/50 ')
 MULTI_KW    = (' x2', ' x3', '(2)', '(3)', '(4)')
 
 
+def _extract_price(item: dict) -> Optional[float]:
+    """Handle both eBay raw format {price:{value:'2.50'}} and pre-normalised {price:2.50}."""
+    raw = item.get('price', {})
+    val = raw.get('value') if isinstance(raw, dict) else raw
+    try:
+        return float(val) if val is not None else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _extract_end_date(item: dict) -> Optional[str]:
+    """Pull end/sale date from either eBay or Mavin item format."""
+    return item.get('end_date') or item.get('itemEndDate')
+
+
+def _extract_listing_type(item: dict) -> str:
+    """Prefer the pre-set listing_type (Mavin sets 'Sold'); fall back to eBay buyingOptions."""
+    if 'listing_type' in item:
+        return item['listing_type']
+    return 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
+
+
+def _apply_exclusions(title_l: str) -> bool:
+    """Return True if this listing should be excluded."""
+    if any(k in title_l for k in GRADED_KW):   return True
+    if any(k in title_l for k in AUTO_KW):      return True
+    if any(k in title_l for k in LOT_KW):       return True
+    if any(k in title_l for k in REPRINT_KW):   return True
+    if any(k in title_l for k in MULTI_KW):     return True
+    if any(k in title_l for k in PARALLEL_KW):  return True
+    if re.search(r'/\d{1,3}\b', title_l):       return True
+    return False
+
+
 def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
-    brand_l  = brand.lower()
+    """Strict filter: player + year + brand + card number must all match."""
     player_l = player.lower()
     year_s   = str(year)
+    brand_l  = brand.lower()
     cn_clean = (card_number or '').lstrip('#').strip()
     results  = []
 
     for item in items:
-        price_val = item.get('price', {}).get('value')
-        if not price_val:
-            continue
-        price = float(price_val)
-        if price < 0.50:
+        price = _extract_price(item)
+        if not price or price < 0.50:
             continue
 
-        title  = item.get('title', '')
+        title   = item.get('title', '') or ''
         title_l = title.lower()
 
-        # Hard requires
-        if player_l not in title_l:       continue
-        if year_s   not in title_l:       continue
+        if player_l not in title_l: continue
+        if year_s   not in title_l: continue
+        if _apply_exclusions(title_l): continue
 
-        # Exclusions
-        if any(k in title_l for k in GRADED_KW):   continue
-        if any(k in title_l for k in AUTO_KW):      continue
-        if any(k in title_l for k in LOT_KW):       continue
-        if any(k in title_l for k in REPRINT_KW):   continue
-        if any(k in title_l for k in MULTI_KW):     continue
-        if any(k in title_l for k in PARALLEL_KW):  continue
-        if re.search(r'/\d{1,3}\b', title_l):       continue  # numbered parallels
+        if cn_clean and not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_l):
+            continue
 
-        # Card number match
-        if cn_clean:
-            if not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_l):
-                continue
-
-        listing_type = 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
         results.append({
             'price':        price,
-            'listing_type': listing_type,
-            'end_date':     item.get('itemEndDate'),
+            'listing_type': _extract_listing_type(item),
+            'end_date':     _extract_end_date(item),
+            'title':        title,
+        })
+
+    return results
+
+
+def filter_items_relaxed(items, year, player) -> list[dict]:
+    """Relaxed filter: player + year only, no card number or brand required.
+    Used as a fallback when strict filtering finds fewer than LOW_DATA_THRESH comps.
+    Still excludes graded, lots, autos, reprints and parallels.
+    """
+    player_l = player.lower()
+    year_s   = str(year)
+    results  = []
+
+    for item in items:
+        price = _extract_price(item)
+        if not price or price < 0.50:
+            continue
+
+        title   = item.get('title', '') or ''
+        title_l = title.lower()
+
+        if player_l not in title_l: continue
+        if year_s   not in title_l: continue
+        if _apply_exclusions(title_l): continue
+
+        results.append({
+            'price':        price,
+            'listing_type': _extract_listing_type(item),
+            'end_date':     _extract_end_date(item),
             'title':        title,
         })
 
@@ -493,22 +544,28 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
 
 
 def floor_value(year: str, brand: str) -> float:
+    """Minimum value for a card with no market data at all.
+    This is a true last resort — prefer TCDB reference or relaxed eBay comps first.
+    """
     y = int(year or 0)
     b = brand.lower()
-    if any(k in b for k in ('topps chrome', 'bowman chrome', 'prizm', 'finest', 'select')): return 1.50
-    if 'bowman' in b and y >= 2000: return 1.00
-    if y < 1970: return 5.00
-    if y < 1980: return 2.50
-    if 1980 <= y <= 1986: return 0.75
-    if 1987 <= y <= 1994:
-        if 'upper deck' in b: return 0.40
-        if 'stadium club' in b: return 0.50
-        return 0.25
-    if 1995 <= y <= 1999: return 0.50
-    if 2000 <= y < 2010:  return 0.75
-    if 2010 <= y < 2020:  return 1.00
-    if y >= 2020:         return 1.25
-    return 0.50
+    # Premium modern brands always carry a floor above commons
+    if any(k in b for k in ('topps chrome', 'bowman chrome', 'prizm', 'finest', 'select')): return 2.00
+    if 'bowman' in b and y >= 2000: return 1.50
+    # Era-based floors
+    if y < 1970: return 8.00    # pre-Topps-monopoly vintage — any card has collector value
+    if y < 1980: return 3.00    # 1970s Topps commons still trade regularly
+    if 1980 <= y <= 1986: return 1.00   # early 80s — Ripken/Gwynn rookies era
+    if 1987 <= y <= 1994:               # junk wax — heavily overproduced
+        if 'upper deck' in b: return 0.50   # UD was higher quality print run
+        if 'stadium club' in b: return 0.60
+        if 'fleer ultra' in b: return 0.40
+        return 0.35                          # Topps/Donruss/Fleer commons
+    if 1995 <= y <= 1999: return 0.75   # insert era — base cards still low
+    if 2000 <= y < 2010:  return 1.00
+    if 2010 <= y < 2020:  return 1.50
+    if y >= 2020:         return 2.00   # modern base cards hold value better
+    return 0.75
 
 
 def scarcity_label(count: int, year: str) -> str:
@@ -740,7 +797,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     label = f"Row {row_number}: {card['year']} {card['brand']} {card['player']}"
     log.info('Pricing %s', label)
 
-    # ── Step 1: eBay active listings + Mavin sold prices ─────────────────────
+    # ── Step 1: eBay active listings + Mavin sold prices (strict filter) ────────
     query = f"{card['year']} {card['brand']} {card['player']}"
 
     ebay_items  = ebay_search(query)
@@ -748,7 +805,6 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         card['year'], card['brand'], card['player'], card['card_number']
     )
 
-    # Filter both sources through the same quality gate
     ebay_filtered  = filter_items(
         ebay_items,  card['year'], card['brand'], card['player'],
         card['card_number'], card['team']
@@ -760,16 +816,46 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     combined = ebay_filtered + mavin_filtered
     result   = weighted_average(combined)
 
-    mavin_count = len(mavin_filtered)
     ebay_count  = len(ebay_filtered)
+    mavin_count = len(mavin_filtered)
+    fallback    = None   # tracks which fallback tier was used
 
-    # Source label for logging / confidence string
-    if mavin_count and ebay_count:
-        source = f'eBay active ({ebay_count}) + Mavin sold ({mavin_count})'
+    # ── Step 1b: Relaxed filter — player + year only, no card number/brand ────
+    # Fires when strict comps are too thin. Gives a market signal even for
+    # cards that are rarely listed under an exact card-number search.
+    if result['count'] < LOW_DATA_THRESH:
+        relaxed_ebay  = filter_items_relaxed(ebay_items,  card['year'], card['player'])
+        relaxed_mavin = filter_items_relaxed(mavin_items, card['year'], card['player'])
+        relaxed_all   = relaxed_ebay + relaxed_mavin
+        if len(relaxed_all) >= LOW_DATA_THRESH:
+            result   = weighted_average(relaxed_all)
+            fallback = 'relaxed'
+            ebay_count  = len(relaxed_ebay)
+            mavin_count = len(relaxed_mavin)
+            log.info('  → Relaxed filter: %d comps', result['count'])
+
+    # ── Step 1c: TCDB reference price ─────────────────────────────────────────
+    # If both filters still come up empty but TCDB has a value, use it as our
+    # estimate rather than jumping straight to a generic floor.
+    if result['count'] == 0 and card['tcdb_price']:
+        tp = parse_price(card['tcdb_price'])
+        if tp and tp > 0:
+            result = {'price': tp, 'count': 1, 'median': tp, 'min': tp, 'max': tp}
+            fallback = 'tcdb'
+            log.info('  → No market comps — using TCDB reference $%.2f', tp)
+
+    # Source label for logging
+    if fallback == 'tcdb':
+        source = 'TCDB reference'
+    elif mavin_count and ebay_count:
+        source = f'eBay ({ebay_count}) + Mavin sold ({mavin_count})'
+        if fallback == 'relaxed': source += ' [relaxed]'
     elif mavin_count:
         source = f'Mavin sold ({mavin_count})'
+        if fallback == 'relaxed': source += ' [relaxed]'
     else:
-        source = f'eBay active ({ebay_count})'
+        source = f'eBay ({ebay_count})'
+        if fallback == 'relaxed': source += ' [relaxed]'
 
     use_claude = (
         result['count'] < LOW_DATA_THRESH
@@ -798,9 +884,14 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         conf = 'Floor Value'
     else:
         fp, cap_note = era_cap(result['price'], card['year'], card['brand'], result['count'])
-        levels = {10: 'Very High', 5: 'High', 3: 'Medium'}
-        conf   = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
-        if use_claude and conf in ('Very High', 'High'):
+        if fallback == 'tcdb':
+            conf = 'Low (TCDB ref)'
+        elif fallback == 'relaxed':
+            conf = 'Low (relaxed)'
+        else:
+            levels = {10: 'Very High', 5: 'High', 3: 'Medium'}
+            conf   = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
+        if use_claude and 'Low' not in conf:
             conf += ' (Claude)'
 
     now_iso = datetime.now(timezone.utc).isoformat()
