@@ -412,6 +412,7 @@ function bindUI() {
   document.getElementById('btn-confirm-run').addEventListener('click', triggerRun);
   document.getElementById('btn-export').addEventListener('click', exportCSV);
   document.getElementById('btn-close-card').addEventListener('click', () => closeModal('modal-card'));
+  bindRunModeUI();
 
   const pat = getPAT();
   if (pat) document.getElementById('input-pat').value = pat;
@@ -432,12 +433,34 @@ function saveSettings() {
 }
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
+function bindRunModeUI() {
+  document.querySelectorAll('input[name="run_mode"]').forEach(radio => {
+    radio.addEventListener('change', () => {
+      const mode = document.querySelector('input[name="run_mode"]:checked').value;
+      document.getElementById('run-opt-batch').style.display  = mode === 'batch'  ? '' : 'none';
+      document.getElementById('run-opt-player').style.display = mode === 'player' ? '' : 'none';
+    });
+  });
+}
+
 async function triggerRun() {
-  const pat = getPAT(), batch = document.getElementById('input-batch').value || '50';
+  const pat  = getPAT();
   if (!pat) { openSettings(); return; }
+
+  const mode   = document.querySelector('input[name="run_mode"]:checked')?.value || 'batch';
+  const batch  = document.getElementById('input-batch').value  || '200';
+  const player = document.getElementById('input-player').value.trim();
+
+  if (mode === 'player' && !player) {
+    setRunStatus('error', '❌ Enter a player name for Player Target mode.');
+    return;
+  }
+
   const btn = document.getElementById('btn-confirm-run');
   btn.disabled = true; btn.textContent = 'Starting…';
   setRunStatus('', '');
+
+  const inputs = { run_mode: mode, batch_size: String(batch), target_player: player };
 
   try {
     const res = await fetch(
@@ -445,7 +468,7 @@ async function triggerRun() {
       { method:'POST',
         headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json',
           'X-GitHub-Api-Version':'2022-11-28', 'Content-Type':'application/json' },
-        body: JSON.stringify({ ref:'main', inputs:{ batch_size: String(batch) } }) }
+        body: JSON.stringify({ ref:'main', inputs }) }
     );
     if (res.status === 204) {
       runStartTime = Date.now();

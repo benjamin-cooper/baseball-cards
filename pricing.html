@@ -164,10 +164,44 @@
   <div id="modal-run" class="modal hidden">
     <div class="modal-box">
       <h3>⚡ Update Prices</h3>
-      <p class="modal-desc">Triggers a GitHub Actions run that prices your cards using the eBay API
-        and Claude AI. Typically takes 5–15 minutes.</p>
-      <label>Cards to process per run</label>
-      <input type="number" id="input-batch" value="50" min="10" max="200">
+      <p class="modal-desc">Triggers a GitHub Actions run using the eBay API and Claude AI.</p>
+
+      <!-- Mode selector -->
+      <div class="run-modes">
+        <label class="run-mode-option">
+          <input type="radio" name="run_mode" value="batch" checked>
+          <span class="run-mode-label">
+            <strong>Batch</strong>
+            <span class="run-mode-desc">Price the next N unpriced/stale cards (~20 min)</span>
+          </span>
+        </label>
+        <label class="run-mode-option">
+          <input type="radio" name="run_mode" value="full">
+          <span class="run-mode-label">
+            <strong>Full Run</strong>
+            <span class="run-mode-desc">Price all unpriced/stale cards — commits every 200 so progress is saved</span>
+          </span>
+        </label>
+        <label class="run-mode-option">
+          <input type="radio" name="run_mode" value="player">
+          <span class="run-mode-label">
+            <strong>Player Target</strong>
+            <span class="run-mode-desc">Re-price all cards matching a player name or keyword</span>
+          </span>
+        </label>
+      </div>
+
+      <!-- Batch size (shown for batch mode) -->
+      <div id="run-opt-batch">
+        <label>Cards to process</label>
+        <input type="number" id="input-batch" value="200" min="10" max="500">
+      </div>
+
+      <!-- Player input (shown for player mode) -->
+      <div id="run-opt-player" style="display:none">
+        <label>Player name or keyword</label>
+        <input type="text" id="input-player" placeholder="e.g. Garrett Anderson" autocomplete="off">
+      </div>
 
       <!-- Live tracker — hidden until run starts -->
       <div id="run-tracker" class="run-tracker hidden">

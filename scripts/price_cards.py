@@ -41,7 +41,7 @@ SPREADSHEET_ID = os.environ.get(
 )
 SHEET_NAME         = 'Pricing Sheet'
 RESULTS_FILE       = 'data/pricing_results.json'
-BATCH_SIZE         = int(os.environ.get('BATCH_SIZE', '50'))
+BATCH_SIZE         = int(os.environ.get('BATCH_SIZE', '200'))
 STALE_DAYS         = 30          # re-price cards older than this
 HIGH_VALUE_THRESH  = 20.0        # use Claude for cards above this price
 LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
@@ -50,9 +50,50 @@ EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
+FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
 
-# ── Column indices (0-based, matching GAS script layout) ───────────────────────
-C = {
+RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player
+TARGET_PLAYER = os.environ.get('TARGET_PLAYER', '').strip().lower()
+
+# ── Column aliases — maps canonical names to common header spellings ───────────
+COLUMN_ALIASES: dict[str, tuple] = {
+    'BRAND':          ('brand', 'set', 'card set', 'manufacturer', 'series', 'product'),
+    'YEAR':           ('year', 'season', 'card year'),
+    'CARD_NUMBER':    ('card number', 'card #', 'card no', 'number', '#', 'no', 'card_number'),
+    'PLAYER':         ('player', 'player name', 'name', 'athlete', 'subject'),
+    'TEAM':           ('team', 'team name'),
+    'PURCHASE_PRICE': ('purchase price', 'paid', 'cost', 'purchase', 'buy price', 'bought for', 'price paid'),
+    'AVG_PRICE':      ('avg price', 'market value', 'value', 'price', 'avg', 'average price', 'current value'),
+    'COUNT':          ('count', 'data points', 'comps', 'comp count'),
+    'MEDIAN':         ('median', 'median price'),
+    'MIN':            ('min', 'minimum', 'min price'),
+    'MAX':            ('max', 'maximum', 'max price'),
+    'BIN_COUNT':      ('bin count', 'fixed price count', 'buy it now count', 'bin'),
+    'BIN_AVG':        ('bin avg', 'bin average', 'fixed price avg'),
+    'AUCTION_COUNT':  ('auction count', 'auctions'),
+    'AUCTION_AVG':    ('auction avg', 'auction average'),
+    'DEBUG_INFO':     ('debug info', 'debug', 'notes', 'info', 'details'),
+    'CONFIDENCE':     ('confidence', 'confidence level'),
+    'VALUATION_METHOD':('valuation method', 'method', 'source'),
+    'LAST_UPDATED':   ('last updated', 'updated', 'date updated', 'last priced', 'priced'),
+    'SCARCITY':       ('scarcity', 'rarity'),
+    'VALUE_MULTIPLIER':('value multiplier', 'multiplier'),
+    'VOLATILITY':     ('volatility',),
+    'ROI':            ('roi', 'return', 'return on investment'),
+    'UNREALIZED_GAIN':('unrealized gain', 'unrealized gain/loss', 'gain/loss', 'gain loss'),
+    'LIQUIDITY_SCORE':('liquidity score', 'liquidity'),
+    'VALUE_TIER':     ('value tier', 'tier'),
+    'IS_WINNER':      ('is winner', 'winner', 'profit?', 'above cost'),
+    # Extra detail columns — included in search queries when present
+    'VARIATION':      ('variation', 'parallel', 'version', 'insert', 'subset'),
+    'GRADE':          ('grade', 'condition', 'graded'),
+    'ROOKIE':         ('rookie', 'rc', 'rookie card'),
+    'PRINT_RUN':      ('print run', 'numbered', '/'),
+}
+
+# Fallback hardcoded positions matching the GAS script layout (used when
+# header detection fails for a column)
+C_DEFAULTS = {
     'BRAND': 0, 'YEAR': 1, 'CARD_NUMBER': 2, 'PLAYER': 3, 'TEAM': 4,
     'PURCHASE_PRICE': 5, 'AVG_PRICE': 6, 'COUNT': 8, 'MEDIAN': 9,
     'MIN': 10, 'MAX': 11, 'BIN_COUNT': 12, 'BIN_AVG': 13,
@@ -62,7 +103,30 @@ C = {
     'ROI': 23, 'UNREALIZED_GAIN': 24, 'LIQUIDITY_SCORE': 25,
     'VALUE_TIER': 26, 'IS_WINNER': 27,
 }
-OUTPUT_START_COL = C['AVG_PRICE'] + 1  # 1-indexed column G
+
+# C is populated dynamically in main() then used globally
+C: dict = dict(C_DEFAULTS)
+OUTPUT_START_COL = C['AVG_PRICE'] + 1  # updated after detection
+
+
+def detect_columns(header_row: list) -> dict:
+    """Build column map from the sheet's header row, falling back to defaults."""
+    found: dict = {}
+    for i, cell in enumerate(header_row):
+        h = str(cell).strip().lower()
+        for canonical, aliases in COLUMN_ALIASES.items():
+            if h in aliases and canonical not in found:
+                found[canonical] = i
+                break
+
+    # Fill in any missing columns from the hardcoded defaults
+    merged = dict(C_DEFAULTS)
+    merged.update(found)
+
+    detected = [k for k in found]
+    log.info('Column detection: found %d/%d columns from headers (%s)',
+             len(found), len(C_DEFAULTS), ', '.join(detected) if detected else 'none — using defaults')
+    return merged
 
 def make_card_id(year, brand, player, card_number='') -> str:
     """Stable identifier that matches the JS cardId() function."""
@@ -501,8 +565,8 @@ def price_with_claude(card: dict) -> Optional[dict]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def needs_pricing(row: list, row_index: int) -> bool:
-    """Return True if this card should be re-priced."""
-    def get(col): return row[col].strip() if col < len(row) and row[col] else ''
+    """Return True if this card should be re-priced given the current RUN_MODE."""
+    def get(col): return (row[col].strip() if col < len(row) and row[col] else '')
 
     player = get(C['PLAYER'])
     year   = get(C['YEAR'])
@@ -510,8 +574,12 @@ def needs_pricing(row: list, row_index: int) -> bool:
     if not player or not year or not brand:
         return False
 
-    price      = get(C['AVG_PRICE'])
-    last_upd   = get(C['LAST_UPDATED'])
+    # Player mode: force re-price any card whose player matches the target
+    if RUN_MODE == 'player' and TARGET_PLAYER:
+        return TARGET_PLAYER in player.lower()
+
+    price    = get(C['AVG_PRICE'])
+    last_upd = get(C['LAST_UPDATED'])
 
     if not price or price == '0':
         return True
@@ -745,29 +813,28 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
 # Main
 # ══════════════════════════════════════════════════════════════════════════════
 
-def main():
-    log.info('=== Baseball Card Pricing Agent ===')
-    log.info('Batch size: %d  |  Stale threshold: %d days', BATCH_SIZE, STALE_DAYS)
+def commit_progress(label: str = ''):
+    """Commit data files mid-run (used by full mode for incremental saves)."""
+    import subprocess
+    try:
+        subprocess.run(['git', 'config', 'user.name',  'github-actions[bot]'], check=True)
+        subprocess.run(['git', 'config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], check=True)
+        subprocess.run(['git', 'add', RESULTS_FILE, HISTORY_FILE], check=True)
+        diff = subprocess.run(['git', 'diff', '--cached', '--quiet'])
+        if diff.returncode != 0:
+            msg = f'chore: pricing progress [{label}]' if label else 'chore: pricing progress'
+            subprocess.run(['git', 'commit', '-m', msg], check=True)
+            subprocess.run(['git', 'push'], check=True)
+            log.info('Committed progress: %s', label)
+        else:
+            log.info('No changes to commit for checkpoint: %s', label)
+    except Exception as e:
+        log.warning('Failed to commit progress: %s', e)
 
-    service = get_sheets_service()
-    rows    = read_sheet(service)
 
-    if len(rows) < 2:
-        log.error('Sheet appears empty')
-        sys.exit(1)
-
-    # Find cards that need pricing
-    candidates = [
-        (i + 2, row)                            # +2: 1-indexed, skip header
-        for i, row in enumerate(rows[1:])
-        if needs_pricing(row, i + 2)
-    ]
-    log.info('%d / %d cards need pricing', len(candidates), len(rows) - 1)
-
-    batch     = candidates[:BATCH_SIZE]
-    results   = []
-    api_calls = 0
-
+def process_batch(batch: list, service) -> list:
+    """Price a list of (row_num, row) tuples. Returns result dicts."""
+    results, api_calls = [], 0
     for row_num, row in batch:
         try:
             r = process_card(row, row_num)
@@ -776,23 +843,86 @@ def main():
                 api_calls += 1
         except Exception as e:
             log.error('Failed row %d: %s', row_num, e)
-
-        # Rate limit break every 100 eBay calls
         if api_calls > 0 and api_calls % 100 == 0:
             log.info('Rate limit pause…')
             time.sleep(0.5)
+    if results:
+        write_rows(service, [{'row': r['row'], 'values': r['values']} for r in results])
+    return results
 
-    log.info('Processed %d cards', len(results))
 
-    # Write prices back to Google Sheets
-    write_rows(service, [{'row': r['row'], 'values': r['values']} for r in results])
+def main():
+    global C, OUTPUT_START_COL
 
-    # Re-read updated sheet for the results JSON
-    rows = read_sheet(service)
+    log.info('=== Baseball Card Pricing Agent ===')
+    log.info('Mode: %s  |  Batch size: %d  |  Stale threshold: %d days',
+             RUN_MODE.upper(), BATCH_SIZE, STALE_DAYS)
+    if RUN_MODE == 'player':
+        log.info('Target player: "%s"', TARGET_PLAYER or '(none)')
 
-    # Build and save pricing_results.json
+    service = get_sheets_service()
+    rows    = read_sheet(service)
+
+    if len(rows) < 2:
+        log.error('Sheet appears empty')
+        sys.exit(1)
+
+    # ── Dynamic column detection ───────────────────────────────────────────────
+    C = detect_columns(rows[0])
+    OUTPUT_START_COL = C['AVG_PRICE'] + 1
+
+    # ── Find candidates ────────────────────────────────────────────────────────
+    candidates = [
+        (i + 2, row)
+        for i, row in enumerate(rows[1:])
+        if needs_pricing(row, i + 2)
+    ]
+    log.info('%d / %d cards need pricing', len(candidates), len(rows) - 1)
+
+    if not candidates:
+        log.info('Nothing to price — exiting.')
+        # Still rebuild the results JSON so the page stays fresh
+        rows = read_sheet(service)
+
+    # ── Run modes ─────────────────────────────────────────────────────────────
+    all_results: list = []
+
+    if RUN_MODE == 'full':
+        # Process everything in chunks, committing after each so progress is
+        # saved even if the job hits the 6-hour timeout limit.
+        total = len(candidates)
+        for chunk_start in range(0, total, FULL_RUN_CHUNK):
+            chunk  = candidates[chunk_start:chunk_start + FULL_RUN_CHUNK]
+            log.info('--- Chunk %d–%d of %d ---',
+                     chunk_start + 1, chunk_start + len(chunk), total)
+            chunk_results = process_batch(chunk, service)
+            all_results.extend(chunk_results)
+
+            # Rebuild JSON with everything priced so far and commit
+            rows   = read_sheet(service)
+            output = build_results_json(rows, all_results)
+            _save_outputs(output, all_results)
+            commit_progress(f'{chunk_start + len(chunk)}/{total}')
+    else:
+        # Batch or player mode: process once, commit at the end via the
+        # workflow's "Commit pricing results" step.
+        batch       = candidates if RUN_MODE == 'player' else candidates[:BATCH_SIZE]
+        all_results = process_batch(batch, service)
+        rows        = read_sheet(service)
+
+    log.info('Processed %d cards total', len(all_results))
+
+    # Final save (full mode already saved incrementally, this is a no-op if
+    # nothing changed; batch/player mode saves here for the first time)
     os.makedirs('data', exist_ok=True)
-    output = build_results_json(rows, results)
+    output = build_results_json(rows, all_results)
+    _save_outputs(output, all_results)
+    log.info('Done. Total value: $%.2f across %d cards', output['total_value'], output['cards_priced'])
+
+
+def _save_outputs(output: dict, results: list):
+    """Write pricing_results.json and price_history.json."""
+    os.makedirs('data', exist_ok=True)
 
     # ── Price history ──────────────────────────────────────────────────────────
     try:
@@ -802,19 +932,16 @@ def main():
         price_history = {}
 
     today = datetime.now(timezone.utc).strftime('%Y-%m-%d')
-
     for r in results:
         cid   = r['card']['card_id']
         entry = {'price': r['card']['avg_price'], 'date': today}
         hist  = price_history.get(cid, [])
-        # Overwrite same-day entry rather than appending duplicates
         if hist and hist[-1]['date'] == today:
             hist[-1] = entry
         else:
             hist.append(entry)
         price_history[cid] = hist[-HISTORY_MAX:]
 
-    # Portfolio snapshot (keyed as '_portfolio' in the same file)
     port_entry = {'date': today, 'total_value': output['total_value'], 'cards_priced': output['cards_priced']}
     port_hist  = price_history.get('_portfolio', [])
     if port_hist and port_hist[-1]['date'] == today:
@@ -825,16 +952,11 @@ def main():
 
     with open(HISTORY_FILE, 'w') as f:
         json.dump(price_history, f, separators=(',', ':'))
-    log.info('Wrote %s', HISTORY_FILE)
 
-    # Embed portfolio history so the page can draw the chart
     output['_portfolio'] = price_history['_portfolio']
-
     with open(RESULTS_FILE, 'w') as f:
         json.dump(output, f, indent=2, default=str)
-
-    log.info('Wrote %s  (%.0f KB)', RESULTS_FILE, os.path.getsize(RESULTS_FILE) / 1024)
-    log.info('Done. Total value: $%.2f across %d cards', output['total_value'], output['cards_priced'])
+    log.info('Saved %s (%.0f KB)', RESULTS_FILE, os.path.getsize(RESULTS_FILE) / 1024)
 
 
 if __name__ == '__main__':

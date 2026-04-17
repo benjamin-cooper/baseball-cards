@@ -3,19 +3,30 @@ name: Price Cards
 on:
   workflow_dispatch:
     inputs:
+      run_mode:
+        description: 'batch = N cards | full = all unpriced | player = target by name'
+        required: false
+        default: 'batch'
+        type: choice
+        options: [batch, full, player]
       batch_size:
-        description: 'Number of cards to price per run'
+        description: 'Cards per run (batch mode only)'
         required: false
         default: '200'
         type: string
+      target_player:
+        description: 'Player name or keyword to re-price (player mode only)'
+        required: false
+        default: ''
+        type: string
 
 permissions:
-  contents: write   # needed to commit pricing_results.json back to the repo
+  contents: write
 
 jobs:
   price:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 360   # 6 hrs — needed for full runs over large collections
 
     steps:
       # ── Checkout ────────────────────────────────────────────────────────────
@@ -43,7 +54,9 @@ jobs:
           EBAY_CLIENT_SECRET:     ${{ secrets.EBAY_CLIENT_SECRET }}
           GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
           SPREADSHEET_ID:         ${{ secrets.SPREADSHEET_ID }}
+          RUN_MODE:               ${{ github.event.inputs.run_mode }}
           BATCH_SIZE:             ${{ github.event.inputs.batch_size }}
+          TARGET_PLAYER:         ${{ github.event.inputs.target_player }}
           OUTPUT_JSON:            data/pricing_results.json
         run: python scripts/price_cards.py
 

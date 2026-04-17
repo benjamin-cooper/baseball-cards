@@ -637,6 +637,33 @@
   transition: width 1s ease, background 0.3s;
 }
 
+/* RUN MODE SELECTOR */
+.run-modes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+.run-mode-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+.run-mode-option:hover { background: rgba(255,255,255,0.05); }
+.run-mode-option:has(input:checked) {
+  background: rgba(76,175,80,0.1);
+  border-color: rgba(76,175,80,0.35);
+}
+.run-mode-option input[type="radio"] { margin-top: 3px; accent-color: #4CAF50; flex-shrink: 0; }
+.run-mode-label { display: flex; flex-direction: column; gap: 2px; }
+.run-mode-label strong { font-size: 0.9em; color: #ddd; }
+.run-mode-desc { font-size: 0.78em; color: #777; line-height: 1.4; }
+
 /* CARD DETAIL MODAL */
 .modal-box-wide { max-width: 520px; }
 .modal-card-header {
