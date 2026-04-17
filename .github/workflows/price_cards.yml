@@ -6,8 +6,10 @@ on:
       batch_size:
         description: 'Number of cards to price per run'
         required: false
-        default: '50'
+        default: '200'
         type: string
+  schedule:
+    - cron: '0 * * * *'   # every hour — disable once all cards are priced
 
 permissions:
   contents: write   # needed to commit pricing_results.json back to the repo
