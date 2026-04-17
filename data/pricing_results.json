@@ -1,8 +1,8 @@
 {
-  "last_updated": "2026-04-17T19:49:44.613915+00:00",
+  "last_updated": "2026-04-17T20:00:13.075372+00:00",
   "total_cards": 4364,
   "cards_priced": 4364,
-  "total_value": 7047.76,
+  "total_value": 7047.69,
   "avg_value": 1.61,
   "top_card_value": 22.48,
   "top_cards": [
@@ -335,7 +335,7 @@
   "by_era": {
     "Vintage (pre-1970)": {
       "count": 27,
-      "total_value": 64.48
+      "total_value": 64.41000000000001
     },
     "1970s": {
       "count": 5,
@@ -361,7 +361,7 @@
   "by_brand": {
     "Topps Archive (1991)": {
       "count": 19,
-      "total_value": 32.11000000000001
+      "total_value": 32.040000000000006
     },
     "Topps": {
       "count": 1308,
@@ -820,10 +820,10 @@
       "card_number": "5",
       "team": "Chicago White Sox",
       "tcdb_price": 0.2,
-      "avg_price": 1.86,
-      "median": 1.95,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/16/2026",
+      "avg_price": 1.79,
+      "median": 1.99,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:00:11.067003+00:00",
       "card_id": "1953_topps_archive_1991_joe_dobson_5"
     },
     {
@@ -57549,7 +57549,7 @@
   "_portfolio": [
     {
       "date": "2026-04-17",
-      "total_value": 7047.76,
+      "total_value": 7047.69,
       "cards_priced": 4364
     }
   ]
