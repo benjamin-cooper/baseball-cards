@@ -48,16 +48,16 @@
           <div class="stat-label">Avg Card Value</div>
         </div>
         <div class="stat-card">
-          <div class="stat-value" id="stat-winners">—</div>
-          <div class="stat-label">Above Purchase Price</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-value" id="stat-unrealized">—</div>
-          <div class="stat-label">Unrealized Gain/Loss</div>
-        </div>
-        <div class="stat-card">
           <div class="stat-value" id="stat-top-card">—</div>
           <div class="stat-label">Top Card Value</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-total-cards">—</div>
+          <div class="stat-label">Total Cards</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stat-unpriced">—</div>
+          <div class="stat-label">Awaiting Pricing</div>
         </div>
       </div>
 
@@ -106,10 +106,10 @@
               <option value="Low">Low</option>
               <option value="Floor Value">Floor Value</option>
             </select>
-            <select id="filter-winner" class="filter-select">
+            <select id="filter-priced" class="filter-select">
               <option value="">All Cards</option>
-              <option value="Yes">Winners only</option>
-              <option value="No">Losers only</option>
+              <option value="priced">Priced only</option>
+              <option value="unpriced">Unpriced only</option>
             </select>
           </div>
           <span id="table-count" class="table-count"></span>
@@ -125,9 +125,8 @@
                 <th data-col="brand">Brand</th>
                 <th data-col="card_number">#</th>
                 <th data-col="team">Team</th>
-                <th data-col="avg_price" class="sortable num">Value <span class="sort-icon">↕</span></th>
-                <th data-col="purchase_price" class="num">Paid</th>
-                <th data-col="roi" class="sortable num">ROI <span class="sort-icon">↕</span></th>
+                <th data-col="avg_price" class="sortable num">eBay Value <span class="sort-icon">↕</span></th>
+                <th data-col="tcdb_price" class="sortable num">TCDB Ref <span class="sort-icon">↕</span></th>
                 <th data-col="change_pct" class="sortable num">Change <span class="sort-icon">↕</span></th>
                 <th class="num">Trend</th>
                 <th data-col="confidence">Confidence</th>

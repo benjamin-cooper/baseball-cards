@@ -56,7 +56,7 @@ function render(data) {
   renderMarketMovers(data.cards || []);
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
-  renderBrandChart(data.cards || []);
+  renderBrandChart(data.by_brand || {}, data.cards || []);
   allCards = data.cards || [];
   populateYearFilter(allCards);
   populateTeamFilter(allCards);
@@ -69,13 +69,11 @@ function renderStats(data) {
   set('stat-total-value',  fmt(data.total_value));
   set('stat-cards-priced', data.cards_priced != null ? data.cards_priced.toLocaleString() : '—');
   set('stat-avg-value',    fmt(data.avg_value));
-  set('stat-winners',      data.winners != null ? data.winners.toLocaleString() : '—');
-  set('stat-unrealized',   data.unrealized_gain != null
-    ? (data.unrealized_gain >= 0 ? '+' : '') + fmt(data.unrealized_gain) : '—');
-  set('stat-top-card', fmt(data.top_card_value));
-  const el = document.getElementById('stat-unrealized');
-  if (el && data.unrealized_gain != null)
-    el.style.color = data.unrealized_gain >= 0 ? '#4CAF50' : '#EF5350';
+  set('stat-top-card',     fmt(data.top_card_value));
+  set('stat-total-cards',  data.total_cards != null ? data.total_cards.toLocaleString() : '—');
+  const unpriced = data.total_cards != null && data.cards_priced != null
+    ? (data.total_cards - data.cards_priced).toLocaleString() : '—';
+  set('stat-unpriced', unpriced);
 }
 
 function renderTopCards(cards) {
@@ -95,8 +93,8 @@ function renderMarketMovers(cards) {
   const el = document.getElementById('market-movers');
   const movers = cards
     .map(c => {
-      const id = cardId(c);
-      const h  = priceHistory[id];
+      const id  = cardId(c);
+      const h   = priceHistory[id];
       if (!h || h.length < 2) return null;
       const prev = h[h.length - 2].price;
       const curr = parseFloat(c.avg_price);
@@ -181,37 +179,47 @@ function renderEraChart(byEra) {
 }
 
 // ─── Brand Chart ─────────────────────────────────────────────────────────────
-function renderBrandChart(cards) {
+function renderBrandChart(byBrand, cards) {
   const el = document.getElementById('brand-chart');
-  const priced = cards.filter(c => c.avg_price);
-  if (!priced.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
-  const byBrand = {};
-  priced.forEach(c => { const b = c.brand||'Unknown'; byBrand[b] = (byBrand[b]||0) + parseFloat(c.avg_price); });
-  const sorted  = Object.entries(byBrand).sort((a,b) => b[1]-a[1]).slice(0,10);
-  const maxVal  = sorted[0][1];
-  el.innerHTML = sorted.map(([brand, val]) => {
-    const pct = (val / maxVal * 100).toFixed(1);
+  // Use pre-computed by_brand from JSON, fall back to computing from cards
+  let entries = Object.entries(byBrand);
+  if (!entries.length) {
+    const map = {};
+    cards.filter(c => c.avg_price).forEach(c => {
+      const b = c.brand||'Unknown';
+      if (!map[b]) map[b] = { count: 0, total_value: 0 };
+      map[b].count++;
+      map[b].total_value += parseFloat(c.avg_price);
+    });
+    entries = Object.entries(map);
+  }
+  if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+  const sorted = entries.sort((a,b) => b[1].total_value - a[1].total_value).slice(0, 10);
+  const maxVal = sorted[0][1].total_value || 1;
+  el.innerHTML = sorted.map(([brand, stats]) => {
+    const pct = ((stats.total_value||0) / maxVal * 100).toFixed(1);
     return `<div class="era-row">
       <span class="era-label">${esc(brand)}</span>
       <div class="era-bar-wrap"><div class="era-bar brand-bar" style="width:${pct}%"></div></div>
-      <span class="era-value">${fmt$(val)}</span>
+      <span class="era-value">${fmt$(stats.total_value)}</span>
     </div>`;
   }).join('');
 }
 
 // ─── Table ────────────────────────────────────────────────────────────────────
 function applyFilters() {
-  const q    = document.getElementById('table-search').value.toLowerCase();
-  const yr   = document.getElementById('filter-year').value;
-  const tm   = document.getElementById('filter-team').value;
-  const conf = document.getElementById('filter-confidence').value;
-  const win  = document.getElementById('filter-winner').value;
+  const q      = document.getElementById('table-search').value.toLowerCase();
+  const yr     = document.getElementById('filter-year').value;
+  const tm     = document.getElementById('filter-team').value;
+  const conf   = document.getElementById('filter-confidence').value;
+  const priced = document.getElementById('filter-priced').value;
 
   filtered = allCards.filter(c => {
-    if (yr   && String(c.year) !== yr)                   return false;
-    if (win  && c.is_winner   !== win)                   return false;
-    if (tm   && c.team        !== tm)                    return false;
-    if (conf && !((c.confidence||'').includes(conf)))    return false;
+    if (yr     && String(c.year) !== yr)                return false;
+    if (tm     && c.team         !== tm)                return false;
+    if (conf   && !((c.confidence||'').includes(conf))) return false;
+    if (priced === 'priced'   && !c.avg_price)          return false;
+    if (priced === 'unpriced' &&  c.avg_price)          return false;
     if (q) {
       if (!`${c.player} ${c.brand} ${c.year} ${c.card_number} ${c.team}`.toLowerCase().includes(q)) return false;
     }
@@ -230,7 +238,7 @@ function getChangePct(c) {
 function sortTable() {
   filtered.sort((a, b) => {
     let av = a[sortCol], bv = b[sortCol];
-    if (['avg_price','purchase_price','roi'].includes(sortCol)) {
+    if (['avg_price','tcdb_price'].includes(sortCol)) {
       av = parseFloat(av)||0; bv = parseFloat(bv)||0;
     } else if (sortCol === 'change_pct') {
       av = getChangePct(a); bv = getChangePct(b);
@@ -248,14 +256,10 @@ function renderTable() {
   const tbody = document.getElementById('cards-tbody');
   set('table-count', `${filtered.length.toLocaleString()} cards`);
   if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="12" class="state-empty">No cards match your filters</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="11" class="state-empty">No cards match your filters</td></tr>`;
     return;
   }
   tbody.innerHTML = filtered.map(c => {
-    const roi    = parseFloat(c.roi);
-    const roiTxt = isNaN(roi) ? '<span class="roi-na">—</span>'
-      : `<span class="${roi>=0?'roi-pos':'roi-neg'}">${roi>=0?'+':''}${roi.toFixed(1)}%</span>`;
-
     const id = cardId(c), hist = priceHistory[id];
     let changeTxt = '<span class="roi-na">—</span>';
     if (hist && hist.length >= 2) {
@@ -274,8 +278,7 @@ function renderTable() {
       <td style="color:#777">${esc(c.card_number||'—')}</td>
       <td style="color:#888;font-size:0.8em">${esc(c.team||'—')}</td>
       <td class="num" style="color:#4CAF50;font-weight:600">${fmt$(c.avg_price)}</td>
-      <td class="num" style="color:#888">${fmt$(c.purchase_price)}</td>
-      <td class="num">${roiTxt}</td>
+      <td class="num" style="color:#888">${fmt$(c.tcdb_price)}</td>
       <td class="num">${changeTxt}</td>
       <td class="spark-cell">${spark}</td>
       <td>${confidenceBadge(c.confidence)}</td>
@@ -318,18 +321,15 @@ function sparkline(prices, w=60, h=22) {
 function openCardModal(card) {
   const id   = cardId(card);
   const hist = priceHistory[id] || [];
-  const pp   = parseFloat(card.purchase_price)||0;
   const cp   = parseFloat(card.avg_price)||0;
-  const roi  = pp ? ((cp-pp)/pp*100) : null;
+  const tp   = parseFloat(card.tcdb_price)||0;
 
   set('modal-card-title', `${card.player} — ${card.year} ${card.brand}`);
   document.getElementById('modal-card-body').innerHTML = `
     <div class="card-detail-grid">
-      <div class="cd-item"><span class="cd-label">Market Value</span><span class="cd-value" style="color:#4CAF50">${fmt$(cp)}</span></div>
-      <div class="cd-item"><span class="cd-label">Paid</span><span class="cd-value">${fmt$(pp||null)}</span></div>
-      <div class="cd-item"><span class="cd-label">ROI</span><span class="cd-value ${roi!=null?(roi>=0?'roi-pos':'roi-neg'):''}">${roi!=null?(roi>=0?'+':'')+roi.toFixed(1)+'%':'—'}</span></div>
+      <div class="cd-item"><span class="cd-label">eBay Market Value</span><span class="cd-value" style="color:#4CAF50">${fmt$(cp||null)}</span></div>
+      <div class="cd-item"><span class="cd-label">TCDB Reference</span><span class="cd-value">${fmt$(tp||null)}</span></div>
       <div class="cd-item"><span class="cd-label">Confidence</span><span class="cd-value">${esc(card.confidence||'—')}</span></div>
-      <div class="cd-item"><span class="cd-label">Scarcity</span><span class="cd-value">${esc(card.scarcity||'—')}</span></div>
       <div class="cd-item"><span class="cd-label">Card #</span><span class="cd-value">${esc(card.card_number||'—')}</span></div>
       <div class="cd-item"><span class="cd-label">Team</span><span class="cd-value">${esc(card.team||'—')}</span></div>
       <div class="cd-item"><span class="cd-label">Updated</span><span class="cd-value">${fmtDate(card.last_updated)}</span></div>
@@ -372,12 +372,20 @@ function cardHistoryChart(hist) {
 
 // ─── Export CSV ───────────────────────────────────────────────────────────────
 function exportCSV() {
-  const headers = ['Player','Year','Brand','Card #','Team','Market Value','Paid','ROI','Confidence','Scarcity','Last Updated'];
-  const rows = filtered.map(c => [
-    c.player, c.year, c.brand, c.card_number||'', c.team||'',
-    c.avg_price||'', c.purchase_price||'', c.roi||'',
-    c.confidence||'', c.scarcity||'', c.last_updated||''
-  ].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const headers = ['Player','Year','Brand','Card #','Team','eBay Value','TCDB Ref','Change %','Confidence','Last Updated'];
+  const rows = filtered.map(c => {
+    const hist = priceHistory[cardId(c)];
+    let changePct = '';
+    if (hist && hist.length >= 2) {
+      const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
+      if (prev && curr) changePct = ((curr-prev)/prev*100).toFixed(1);
+    }
+    return [
+      c.player, c.year, c.brand, c.card_number||'', c.team||'',
+      c.avg_price||'', c.tcdb_price||'', changePct,
+      c.confidence||'', c.last_updated||''
+    ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
+  });
   const csv  = [headers.join(','),...rows].join('\n');
   const blob = new Blob([csv],{type:'text/csv'});
   const url  = URL.createObjectURL(blob);
@@ -391,13 +399,13 @@ function bindUI() {
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-team').addEventListener('change', applyFilters);
   document.getElementById('filter-confidence').addEventListener('change', applyFilters);
-  document.getElementById('filter-winner').addEventListener('change', applyFilters);
+  document.getElementById('filter-priced').addEventListener('change', applyFilters);
 
   document.querySelectorAll('#cards-table th.sortable').forEach(th => {
     th.addEventListener('click', () => {
       const col = th.dataset.col;
       if (sortCol === col) { sortDir = sortDir==='asc'?'desc':'asc'; }
-      else { sortCol = col; sortDir = ['avg_price','change_pct'].includes(col)?'desc':'asc'; }
+      else { sortCol = col; sortDir = ['avg_price','tcdb_price','change_pct'].includes(col)?'desc':'asc'; }
       document.querySelectorAll('#cards-table th').forEach(t=>t.classList.remove('sort-asc','sort-desc'));
       th.classList.add(sortDir==='asc'?'sort-asc':'sort-desc');
       sortTable();
@@ -579,6 +587,6 @@ function showEmpty(msg) {
     const el=document.getElementById(id); if(el) el.innerHTML=`<div class="state-empty">${id==='top-cards-list'?msg:''}</div>`;
   });
   const pc=document.getElementById('portfolio-chart'); if(pc) pc.innerHTML='<div class="state-empty"></div>';
-  const tb=document.getElementById('cards-tbody'); if(tb) tb.innerHTML=`<tr><td colspan="12" class="state-empty">${msg}</td></tr>`;
+  const tb=document.getElementById('cards-tbody'); if(tb) tb.innerHTML=`<tr><td colspan="11" class="state-empty">${msg}</td></tr>`;
   set('last-updated','Never');
 }

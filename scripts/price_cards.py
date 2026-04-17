@@ -55,62 +55,44 @@ FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
 RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player
 TARGET_PLAYER = os.environ.get('TARGET_PLAYER', '').strip().lower()
 
-# ── Column aliases — maps canonical names to common header spellings ───────────
+# ── Column map — matches the actual sheet layout ──────────────────────────────
+# Read columns (A–F):
+#   A=Brand  B=Year  C=Card Number  D=Player  E=Team  F=TCDB Price (reference)
+# Write columns (we never touch H–J which belong to the sheet):
+#   G=Avg eBay Price   K=Median   L=Last Updated   M=Confidence
+#
+# Column aliases let detect_columns() find these by header name if the order
+# ever changes.
+
 COLUMN_ALIASES: dict[str, tuple] = {
-    'BRAND':          ('brand', 'set', 'card set', 'manufacturer', 'series', 'product'),
-    'YEAR':           ('year', 'season', 'card year'),
-    'CARD_NUMBER':    ('card number', 'card #', 'card no', 'number', '#', 'no', 'card_number'),
-    'PLAYER':         ('player', 'player name', 'name', 'athlete', 'subject'),
-    'TEAM':           ('team', 'team name'),
-    'PURCHASE_PRICE': ('purchase price', 'paid', 'cost', 'purchase', 'buy price', 'bought for', 'price paid'),
-    'AVG_PRICE':      ('avg price', 'market value', 'value', 'price', 'avg', 'average price', 'current value'),
-    'COUNT':          ('count', 'data points', 'comps', 'comp count'),
-    'MEDIAN':         ('median', 'median price'),
-    'MIN':            ('min', 'minimum', 'min price'),
-    'MAX':            ('max', 'maximum', 'max price'),
-    'BIN_COUNT':      ('bin count', 'fixed price count', 'buy it now count', 'bin'),
-    'BIN_AVG':        ('bin avg', 'bin average', 'fixed price avg'),
-    'AUCTION_COUNT':  ('auction count', 'auctions'),
-    'AUCTION_AVG':    ('auction avg', 'auction average'),
-    'DEBUG_INFO':     ('debug info', 'debug', 'notes', 'info', 'details'),
-    'CONFIDENCE':     ('confidence', 'confidence level'),
-    'VALUATION_METHOD':('valuation method', 'method', 'source'),
-    'LAST_UPDATED':   ('last updated', 'updated', 'date updated', 'last priced', 'priced'),
-    'SCARCITY':       ('scarcity', 'rarity'),
-    'VALUE_MULTIPLIER':('value multiplier', 'multiplier'),
-    'VOLATILITY':     ('volatility',),
-    'ROI':            ('roi', 'return', 'return on investment'),
-    'UNREALIZED_GAIN':('unrealized gain', 'unrealized gain/loss', 'gain/loss', 'gain loss'),
-    'LIQUIDITY_SCORE':('liquidity score', 'liquidity'),
-    'VALUE_TIER':     ('value tier', 'tier'),
-    'IS_WINNER':      ('is winner', 'winner', 'profit?', 'above cost'),
-    # Extra detail columns — included in search queries when present
-    'VARIATION':      ('variation', 'parallel', 'version', 'insert', 'subset'),
-    'GRADE':          ('grade', 'condition', 'graded'),
-    'ROOKIE':         ('rookie', 'rc', 'rookie card'),
-    'PRINT_RUN':      ('print run', 'numbered', '/'),
+    'BRAND':       ('brand', 'set', 'card set', 'manufacturer', 'series'),
+    'YEAR':        ('year', 'season', 'card year'),
+    'CARD_NUMBER': ('card number', 'card #', 'card no', 'number', '#', 'no'),
+    'PLAYER':      ('player', 'player name', 'name', 'athlete'),
+    'TEAM':        ('team', 'team name'),
+    'TCDB_PRICE':  ('price', 'tcdb price', 'tcdb', 'book price', 'ref price'),
+    'AVG_PRICE':   ('avg ebay price', 'avg price', 'market value', 'ebay price', 'avg'),
+    'MEDIAN':      ('median listed price', 'median price', 'median'),
+    'LAST_UPDATED':('last updated', 'updated', 'last priced'),
+    'CONFIDENCE':  ('confidence', 'confidence level'),
 }
 
-# Fallback hardcoded positions matching the GAS script layout (used when
-# header detection fails for a column)
 C_DEFAULTS = {
     'BRAND': 0, 'YEAR': 1, 'CARD_NUMBER': 2, 'PLAYER': 3, 'TEAM': 4,
-    'PURCHASE_PRICE': 5, 'AVG_PRICE': 6, 'COUNT': 8, 'MEDIAN': 9,
-    'MIN': 10, 'MAX': 11, 'BIN_COUNT': 12, 'BIN_AVG': 13,
-    'AUCTION_COUNT': 14, 'AUCTION_AVG': 15, 'DEBUG_INFO': 16,
-    'CONFIDENCE': 17, 'VALUATION_METHOD': 18, 'LAST_UPDATED': 19,
-    'SCARCITY': 20, 'VALUE_MULTIPLIER': 21, 'VOLATILITY': 22,
-    'ROI': 23, 'UNREALIZED_GAIN': 24, 'LIQUIDITY_SCORE': 25,
-    'VALUE_TIER': 26, 'IS_WINNER': 27,
+    'TCDB_PRICE': 5,    # F — TCDB reference price (read only)
+    'AVG_PRICE': 6,     # G — Avg eBay Price      (we write)
+    # H / I skipped     # H=All Card Data, I=Count (we don't touch)
+    'MEDIAN': 10,       # K — Median              (we write)
+    'LAST_UPDATED': 11, # L — Last Updated        (we write)
+    'CONFIDENCE': 12,   # M — Confidence          (we write)
 }
 
-# C is populated dynamically in main() then used globally
+# C is set dynamically in main() after reading the header row
 C: dict = dict(C_DEFAULTS)
-OUTPUT_START_COL = C['AVG_PRICE'] + 1  # updated after detection
 
 
 def detect_columns(header_row: list) -> dict:
-    """Build column map from the sheet's header row, falling back to defaults."""
+    """Map column names to indices from the sheet header, fall back to defaults."""
     found: dict = {}
     for i, cell in enumerate(header_row):
         h = str(cell).strip().lower()
@@ -118,21 +100,16 @@ def detect_columns(header_row: list) -> dict:
             if h in aliases and canonical not in found:
                 found[canonical] = i
                 break
-
-    # Fill in any missing columns from the hardcoded defaults
     merged = dict(C_DEFAULTS)
     merged.update(found)
-
-    detected = [k for k in found]
-    log.info('Column detection: found %d/%d columns from headers (%s)',
-             len(found), len(C_DEFAULTS), ', '.join(detected) if detected else 'none — using defaults')
+    log.info('Columns detected: %s', {k: v for k, v in merged.items() if k in COLUMN_ALIASES})
     return merged
+
 
 def make_card_id(year, brand, player, card_number='') -> str:
     """Stable identifier that matches the JS cardId() function."""
     raw = f"{year}_{brand}_{player}_{card_number or ''}".lower().replace(' ', '_')
     return re.sub(r'[^a-z0-9_]', '', raw)
-OUTPUT_WIDTH     = C['IS_WINNER'] - C['AVG_PRICE'] + 1  # 22 columns
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -161,22 +138,32 @@ def read_sheet(service) -> list[list]:
 
 
 def write_rows(service, updates: list[dict]):
-    """Batch-write output columns for multiple rows in one API call."""
+    """Batch-write non-contiguous output segments for multiple rows in one API call.
+
+    Each update dict must have:
+      'row'      — 1-based sheet row number
+      'segments' — list of {'col': <0-based col index>, 'values': [...]}
+
+    Segments are written as separate ranges so we never touch columns we
+    don't own (e.g. H = All Card Data, I = Count are left untouched).
+    """
     if not updates:
         return
     data = []
     for u in updates:
-        col_letter = col_index_to_letter(OUTPUT_START_COL)
-        end_letter = col_index_to_letter(OUTPUT_START_COL + len(u['values']) - 1)
-        data.append({
-            'range': f"'{SHEET_NAME}'!{col_letter}{u['row']}:{end_letter}{u['row']}",
-            'values': [u['values']]
-        })
+        for seg in u['segments']:
+            col_1indexed = seg['col'] + 1          # convert 0-based → 1-based
+            start_ltr = col_index_to_letter(col_1indexed)
+            end_ltr   = col_index_to_letter(col_1indexed + len(seg['values']) - 1)
+            data.append({
+                'range':  f"'{SHEET_NAME}'!{start_ltr}{u['row']}:{end_ltr}{u['row']}",
+                'values': [seg['values']],
+            })
     service.values().batchUpdate(
         spreadsheetId=SPREADSHEET_ID,
         body={'valueInputOption': 'USER_ENTERED', 'data': data}
     ).execute()
-    log.info('Wrote %d rows to sheet', len(updates))
+    log.info('Wrote %d rows (%d range segments) to sheet', len(updates), len(data))
 
 
 def col_index_to_letter(col_1indexed: int) -> str:
@@ -508,13 +495,14 @@ def execute_tool(name: str, inputs: dict) -> str:
 def price_with_claude(card: dict) -> Optional[dict]:
     """Call Claude with tool use to price a difficult card."""
     client = get_claude()
+    tcdb_ref = card.get('tcdb_price') or 'unknown'
     desc = (
         f"Year: {card['year']}\n"
         f"Brand: {card['brand']}\n"
         f"Player: {card['player']}\n"
         f"Card Number: {card['card_number'] or 'N/A'}\n"
         f"Team: {card['team'] or 'N/A'}\n"
-        f"Purchase Price: ${card['purchase_price'] or 'unknown'}"
+        f"TCDB Reference Price: ${tcdb_ref}"
     )
     messages = [{'role': 'user', 'content': f'Please price this baseball card:\n\n{desc}'}]
 
@@ -598,16 +586,22 @@ def needs_pricing(row: list, row_index: int) -> bool:
 
 
 def process_card(row: list, row_number: int) -> Optional[dict]:
-    """Price one card. Returns dict of output values or None on failure."""
+    """Price one card.
+
+    Returns a dict with:
+      'row'      — 1-based sheet row number
+      'segments' — non-contiguous write segments for write_rows()
+      'card'     — card data dict for the results JSON
+    """
     def get(col): return (row[col] if col < len(row) else '').strip() if col < len(row) else ''
 
     card = {
-        'year':           get(C['YEAR']),
-        'brand':          get(C['BRAND']),
-        'player':         get(C['PLAYER']),
-        'card_number':    get(C['CARD_NUMBER']).lstrip('#'),
-        'team':           get(C['TEAM']),
-        'purchase_price': get(C['PURCHASE_PRICE']),
+        'year':        get(C['YEAR']),
+        'brand':       get(C['BRAND']),
+        'player':      get(C['PLAYER']),
+        'card_number': get(C['CARD_NUMBER']).lstrip('#'),
+        'team':        get(C['TEAM']),
+        'tcdb_price':  get(C['TCDB_PRICE']),   # F — reference only, we don't write back
     }
 
     label = f"Row {row_number}: {card['year']} {card['brand']} {card['player']}"
@@ -616,7 +610,10 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     # ── Step 1: eBay algorithmic search ───────────────────────────────────────
     query    = f"{card['year']} {card['brand']} {card['player']}"
     items    = ebay_search(query)
-    filtered = filter_items(items, **card)
+    filtered = filter_items(
+        items, card['year'], card['brand'], card['player'],
+        card['card_number'], card['team']
+    )
     result   = weighted_average(filtered)
 
     use_claude = (
@@ -624,7 +621,6 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         or result['price'] >= HIGH_VALUE_THRESH
     )
 
-    valuation_method = 'eBay weighted avg'
     source           = 'eBay active'
     claude_reasoning = ''
 
@@ -635,9 +631,8 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         if cr and cr.get('price', 0) > 0:
             # Blend: Claude wins on confidence, algorithmic wins on data volume
             if cr['confidence'] in ('High',) or result['count'] < LOW_DATA_THRESH:
-                result['price']  = cr['price']
-                result['count']  = cr.get('data_points', result['count'])
-            valuation_method = 'Claude + eBay'
+                result['price'] = cr['price']
+                result['count'] = cr.get('data_points', result['count'])
             source           = ', '.join(cr.get('sources', ['Claude']))
             claude_reasoning = cr.get('reasoning', '')
         else:
@@ -645,9 +640,8 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 
     # ── Step 3: Era cap + floor ────────────────────────────────────────────────
     if result['price'] == 0:
-        fp  = floor_value(card['year'], card['brand'])
+        fp   = floor_value(card['year'], card['brand'])
         conf = 'Floor Value'
-        cap_note = 'No market data'
     else:
         fp, cap_note = era_cap(result['price'], card['year'], card['brand'], result['count'])
         levels = {10: 'Very High', 5: 'High', 3: 'Medium'}
@@ -655,74 +649,32 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         if use_claude and conf in ('Very High', 'High'):
             conf += ' (Claude)'
 
-    # ── Step 4: Derived metrics ────────────────────────────────────────────────
-    fv      = floor_value(card['year'], card['brand'])
-    pp      = float(card['purchase_price']) if card['purchase_price'] else 0
-    scarcity = scarcity_label(result['count'], card['year'])
-    roi      = round((fp - pp) / pp * 100, 1) if pp > 0 else ''
-    unreal   = round(fp - pp, 2)               if pp > 0 else ''
-    liq      = min(result['count'] * 5, 70) + (30 if 'Claude' in source else 10)
-    liq      = min(liq, 100)
-    tier     = 'High' if fp >= 50 else ('Mid' if fp >= 10 else 'Low')
-    winner   = ('Yes' if fp > pp else 'No') if pp > 0 else 'N/A'
-    vmult    = f'{round(fp / fv, 1)}x' if fv else '1.0x'
-
-    bin_items    = [i for i in filtered if i['listing_type'] == 'BIN']
-    auctn_items  = [i for i in filtered if i['listing_type'] == 'Auction']
-    bin_avg      = round(sum(i['price'] for i in bin_items) / len(bin_items), 2) if bin_items else 0
-    auctn_avg    = round(sum(i['price'] for i in auctn_items) / len(auctn_items), 2) if auctn_items else 0
-
-    debug = (
-        f"{result['count']} comps, {source}"
-        f"{', ' + cap_note if cap_note else ''}"
-        f"{', ' + claude_reasoning if claude_reasoning else ''}"
-    )
-
     now_iso = datetime.now(timezone.utc).isoformat()
 
-    # 22 values: columns G through AB
-    values = [
-        round(fp, 2),           # AVG_PRICE       G
-        '',                     # (empty)          H
-        result['count'],        # COUNT            I
-        result['median'],       # MEDIAN           J
-        result['min'],          # MIN              K
-        result['max'],          # MAX              L
-        len(bin_items),         # BIN_COUNT        M
-        bin_avg,                # BIN_AVG          N
-        len(auctn_items),       # AUCTION_COUNT    O
-        auctn_avg,              # AUCTION_AVG      P
-        debug,                  # DEBUG_INFO       Q
-        conf,                   # CONFIDENCE       R
-        valuation_method,       # VALUATION_METHOD S
-        now_iso,                # LAST_UPDATED     T
-        scarcity,               # SCARCITY         U
-        vmult,                  # VALUE_MULTIPLIER V
-        'Stable',               # VOLATILITY       W
-        roi,                    # ROI              X
-        unreal,                 # UNREALIZED_GAIN  Y
-        liq,                    # LIQUIDITY_SCORE  Z
-        tier,                   # VALUE_TIER       AA
-        winner,                 # IS_WINNER        AB
+    # ── Write segments ─────────────────────────────────────────────────────────
+    # Segment 1 : G  — Avg eBay Price  (col index 6)
+    # Segment 2 : K–M — Median / Last Updated / Confidence  (col indices 10-12)
+    # H and I are intentionally skipped.
+    segments = [
+        {'col': C['AVG_PRICE'], 'values': [round(fp, 2)]},
+        {'col': C['MEDIAN'],    'values': [result['median'], now_iso, conf]},
     ]
 
     return {
-        'row':    row_number,
-        'values': values,
+        'row':      row_number,
+        'segments': segments,
         'card': {
-            'player':         card['player'],
-            'year':           card['year'],
-            'brand':          card['brand'],
-            'card_number':    card['card_number'],
-            'team':           card['team'],
-            'avg_price':      round(fp, 2),
-            'purchase_price': pp or None,
-            'confidence':     conf,
-            'scarcity':       scarcity,
-            'roi':            roi,
-            'is_winner':      winner,
-            'last_updated':   now_iso,
-            'card_id':        make_card_id(card['year'], card['brand'], card['player'], card['card_number']),
+            'player':       card['player'],
+            'year':         card['year'],
+            'brand':        card['brand'],
+            'card_number':  card['card_number'],
+            'team':         card['team'],
+            'tcdb_price':   float(card['tcdb_price']) if card['tcdb_price'] else None,
+            'avg_price':    round(fp, 2),
+            'median':       result['median'],
+            'confidence':   conf,
+            'last_updated': now_iso,
+            'card_id':      make_card_id(card['year'], card['brand'], card['player'], card['card_number']),
         }
     }
 
@@ -732,49 +684,43 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
-    """Merge freshly priced cards with existing data to build a full snapshot."""
-    # Index fresh results by row number
+    """Merge freshly priced cards with existing sheet data into a full snapshot."""
     fresh = {r['row']: r['card'] for r in priced_cards}
 
     cards = []
-    for i, row in enumerate(all_rows[1:], start=2):  # skip header
+    for i, row in enumerate(all_rows[1:], start=2):   # skip header row
         def get(col): return (row[col] if col < len(row) else '').strip() if col < len(row) else ''
-        if not get(C['PLAYER']): continue
+        if not get(C['PLAYER']):
+            continue
 
         if i in fresh:
             c = fresh[i]
         else:
-            price = get(C['AVG_PRICE'])
-            pp    = get(C['PURCHASE_PRICE'])
+            price  = get(C['AVG_PRICE'])
+            median = get(C['MEDIAN'])
             c = {
-                'player':         get(C['PLAYER']),
-                'year':           get(C['YEAR']),
-                'brand':          get(C['BRAND']),
-                'card_number':    get(C['CARD_NUMBER']),
-                'team':           get(C['TEAM']),
-                'avg_price':      float(price) if price else None,
-                'purchase_price': float(pp) if pp else None,
-                'confidence':     get(C['CONFIDENCE']),
-                'scarcity':       get(C['SCARCITY']),
-                'roi':            get(C['ROI']),
-                'is_winner':      get(C['IS_WINNER']),
-                'last_updated':   get(C['LAST_UPDATED']),
-                'card_id':        make_card_id(get(C['YEAR']), get(C['BRAND']), get(C['PLAYER']), get(C['CARD_NUMBER'])),
+                'player':       get(C['PLAYER']),
+                'year':         get(C['YEAR']),
+                'brand':        get(C['BRAND']),
+                'card_number':  get(C['CARD_NUMBER']),
+                'team':         get(C['TEAM']),
+                'tcdb_price':   float(get(C['TCDB_PRICE'])) if get(C['TCDB_PRICE']) else None,
+                'avg_price':    float(price)  if price  else None,
+                'median':       float(median) if median else None,
+                'confidence':   get(C['CONFIDENCE']),
+                'last_updated': get(C['LAST_UPDATED']),
+                'card_id':      make_card_id(
+                    get(C['YEAR']), get(C['BRAND']),
+                    get(C['PLAYER']), get(C['CARD_NUMBER'])
+                ),
             }
         cards.append(c)
 
-    priced  = [c for c in cards if c.get('avg_price')]
-    total   = sum(c['avg_price'] for c in priced)
-    winners = sum(1 for c in priced if c.get('is_winner') == 'Yes')
-    unreal  = sum(
-        (c['avg_price'] - c['purchase_price'])
-        for c in priced
-        if c.get('purchase_price') and c['purchase_price'] > 0
-    )
+    priced = [c for c in cards if c.get('avg_price')]
+    total  = sum(c['avg_price'] for c in priced)
+    top25  = sorted(priced, key=lambda c: c['avg_price'], reverse=True)[:25]
 
-    top25 = sorted(priced, key=lambda c: c['avg_price'], reverse=True)[:25]
-
-    # Era grouping
+    # ── Era breakdown ─────────────────────────────────────────────────────────
     def era(y):
         y = int(y or 0)
         if y < 1970: return 'Vintage (pre-1970)'
@@ -786,13 +732,20 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
         if y < 2020: return '2010s'
         return 'Modern (2020+)'
 
-    by_era = {}
+    by_era: dict = {}
     for c in priced:
         e = era(c.get('year', 0))
-        if e not in by_era:
-            by_era[e] = {'count': 0, 'total_value': 0}
-        by_era[e]['count']       += 1
-        by_era[e]['total_value'] += c['avg_price']
+        bucket = by_era.setdefault(e, {'count': 0, 'total_value': 0})
+        bucket['count']       += 1
+        bucket['total_value'] += c['avg_price']
+
+    # ── Brand breakdown ───────────────────────────────────────────────────────
+    by_brand: dict = {}
+    for c in priced:
+        b = c.get('brand') or 'Unknown'
+        bucket = by_brand.setdefault(b, {'count': 0, 'total_value': 0})
+        bucket['count']       += 1
+        bucket['total_value'] += c['avg_price']
 
     return {
         'last_updated':   datetime.now(timezone.utc).isoformat(),
@@ -800,11 +753,10 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
         'cards_priced':   len(priced),
         'total_value':    round(total, 2),
         'avg_value':      round(total / len(priced), 2) if priced else 0,
-        'winners':        winners,
-        'unrealized_gain': round(unreal, 2),
         'top_card_value': round(top25[0]['avg_price'], 2) if top25 else 0,
         'top_cards':      top25,
         'by_era':         by_era,
+        'by_brand':       by_brand,
         'cards':          cards,
     }
 
@@ -847,12 +799,12 @@ def process_batch(batch: list, service) -> list:
             log.info('Rate limit pause…')
             time.sleep(0.5)
     if results:
-        write_rows(service, [{'row': r['row'], 'values': r['values']} for r in results])
+        write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in results])
     return results
 
 
 def main():
-    global C, OUTPUT_START_COL
+    global C
 
     log.info('=== Baseball Card Pricing Agent ===')
     log.info('Mode: %s  |  Batch size: %d  |  Stale threshold: %d days',
@@ -869,7 +821,6 @@ def main():
 
     # ── Dynamic column detection ───────────────────────────────────────────────
     C = detect_columns(rows[0])
-    OUTPUT_START_COL = C['AVG_PRICE'] + 1
 
     # ── Find candidates ────────────────────────────────────────────────────────
     candidates = [
