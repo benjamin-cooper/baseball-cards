@@ -48,6 +48,8 @@ LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
 EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
+MAVIN_SLEEP_MS     = 300         # ms between Mavin requests (be polite)
+MAVIN_MAX_AGE_DAYS = 730         # ignore Mavin sales older than this (2 years)
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
@@ -256,6 +258,126 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
+# Mavin.io — aggregated eBay sold prices
+# ══════════════════════════════════════════════════════════════════════════════
+
+# Months Mavin abbreviates in sale-date strings
+_MONTH_MAP = {m: i+1 for i, m in enumerate(
+    ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec')
+)}
+
+def _parse_mavin_date(raw: str) -> Optional[str]:
+    """Turn 'Jan 2024' or 'Jan 15, 2024' into an ISO date string, or None."""
+    raw = raw.strip().lower()
+    # Try 'mon dd, yyyy'
+    m = re.match(r'([a-z]{3})\s+(\d{1,2}),?\s+(\d{4})', raw)
+    if m:
+        mo, day, yr = _MONTH_MAP.get(m.group(1)), int(m.group(2)), int(m.group(3))
+        if mo:
+            return f'{yr:04d}-{mo:02d}-{day:02d}'
+    # Try 'mon yyyy'
+    m = re.match(r'([a-z]{3})\s+(\d{4})', raw)
+    if m:
+        mo, yr = _MONTH_MAP.get(m.group(1)), int(m.group(2))
+        if mo:
+            return f'{yr:04d}-{mo:02d}-15'   # mid-month estimate
+    return None
+
+
+def fetch_mavin_prices(year: str, brand: str, player: str, card_number: str = '') -> list[dict]:
+    """Scrape recent *sold* prices from Mavin.io.
+
+    Returns items in the same {price, listing_type, end_date, title} format
+    as ebay_search() so they can be merged and passed straight to filter_items()
+    / weighted_average().
+    """
+    query = f"{year} {brand} {player}"
+    if card_number:
+        query += f" {card_number}"
+    url = f"https://mavin.io/search?q={requests.utils.quote(query + ' baseball card')}"
+    try:
+        r = requests.get(
+            url,
+            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},
+            timeout=12
+        )
+        time.sleep(MAVIN_SLEEP_MS / 1000)
+        if r.status_code != 200:
+            log.debug('Mavin %s for "%s"', r.status_code, query)
+            return []
+
+        html = r.text
+
+        # Mavin renders sale rows like:
+        #   <span class="sold-date">Jan 15, 2024</span>
+        #   <span class="price">$2.50</span>
+        #   <span class="item-title">1989 Topps Ken Griffey Jr #1</span>
+        # Extract all (price, date, title) tuples by scanning nearby text blocks.
+
+        # Strategy: find every price tag, then look back ~300 chars for a date.
+        results = []
+        now = datetime.now(timezone.utc)
+
+        # Grab the full text split around dollar-amount patterns
+        for price_m in re.finditer(r'\$(\d{1,4}(?:\.\d{2})?)', html):
+            price_val = float(price_m.group(1))
+            if not (0.25 <= price_val <= 500):
+                continue
+
+            # Look in the surrounding ~600-char window for a sale date
+            window_start = max(0, price_m.start() - 400)
+            window_end   = min(len(html), price_m.end() + 200)
+            window       = html[window_start:window_end]
+
+            # Strip HTML tags for easier parsing
+            window_text = re.sub(r'<[^>]+>', ' ', window)
+            window_text = re.sub(r'\s+', ' ', window_text)
+
+            # Look for a date pattern in the window
+            date_m = re.search(
+                r'(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}'
+                r'|(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{4}',
+                window_text, re.IGNORECASE
+            )
+            iso_date = _parse_mavin_date(date_m.group(0)) if date_m else None
+
+            # Reject if date is too old
+            if iso_date:
+                try:
+                    sale_date = datetime.fromisoformat(iso_date).replace(tzinfo=timezone.utc)
+                    if (now - sale_date).days > MAVIN_MAX_AGE_DAYS:
+                        continue
+                except Exception:
+                    pass
+
+            # Grab nearby title text (used by filter_items for player/year matching)
+            title_m = re.search(r'(?:title|alt)="([^"]{10,120})"', window, re.IGNORECASE)
+            title = title_m.group(1) if title_m else f"{year} {brand} {player}"
+
+            results.append({
+                'price':        price_val,
+                'listing_type': 'Sold',    # real transaction, not an ask
+                'end_date':     iso_date,
+                'title':        title,
+            })
+
+        # Deduplicate near-identical prices (Mavin sometimes shows same sale twice)
+        seen, deduped = set(), []
+        for item in results:
+            key = (round(item['price'], 1), item['end_date'])
+            if key not in seen:
+                seen.add(key)
+                deduped.append(item)
+
+        log.debug('Mavin: %d sold comps for "%s"', len(deduped), query)
+        return deduped[:40]
+
+    except Exception as e:
+        log.debug('Mavin fetch error for "%s": %s', query, e)
+        return []
+
+
+# ══════════════════════════════════════════════════════════════════════════════
 # Filtering & Pricing (port of GAS script logic)
 # ══════════════════════════════════════════════════════════════════════════════
 
@@ -352,8 +474,8 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
     w_sum = t_sum = 0
     for p, age, lt in prices_with_age:
         w = math.exp(-age / half_life_days)
-        if lt == 'Auction':
-            w *= 1.2
+        if lt == 'Sold':     w *= 1.4   # confirmed transaction > active listing
+        elif lt == 'Auction': w *= 1.2  # auction close is also a real price signal
         w_sum += p * w
         t_sum += w
 
@@ -618,21 +740,42 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     label = f"Row {row_number}: {card['year']} {card['brand']} {card['player']}"
     log.info('Pricing %s', label)
 
-    # ── Step 1: eBay algorithmic search ───────────────────────────────────────
-    query    = f"{card['year']} {card['brand']} {card['player']}"
-    items    = ebay_search(query)
-    filtered = filter_items(
-        items, card['year'], card['brand'], card['player'],
+    # ── Step 1: eBay active listings + Mavin sold prices ─────────────────────
+    query = f"{card['year']} {card['brand']} {card['player']}"
+
+    ebay_items  = ebay_search(query)
+    mavin_items = fetch_mavin_prices(
+        card['year'], card['brand'], card['player'], card['card_number']
+    )
+
+    # Filter both sources through the same quality gate
+    ebay_filtered  = filter_items(
+        ebay_items,  card['year'], card['brand'], card['player'],
         card['card_number'], card['team']
     )
-    result   = weighted_average(filtered)
+    mavin_filtered = filter_items(
+        mavin_items, card['year'], card['brand'], card['player'],
+        card['card_number'], card['team']
+    )
+    combined = ebay_filtered + mavin_filtered
+    result   = weighted_average(combined)
+
+    mavin_count = len(mavin_filtered)
+    ebay_count  = len(ebay_filtered)
+
+    # Source label for logging / confidence string
+    if mavin_count and ebay_count:
+        source = f'eBay active ({ebay_count}) + Mavin sold ({mavin_count})'
+    elif mavin_count:
+        source = f'Mavin sold ({mavin_count})'
+    else:
+        source = f'eBay active ({ebay_count})'
 
     use_claude = (
         result['count'] < LOW_DATA_THRESH
         or result['price'] >= HIGH_VALUE_THRESH
     )
 
-    source           = 'eBay active'
     claude_reasoning = ''
 
     # ── Step 2: Claude for difficult / high-value cards ───────────────────────
