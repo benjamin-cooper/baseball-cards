@@ -640,16 +640,22 @@ CLAUDE_TOOLS = [
 
 SYSTEM_PROMPT = """You are an expert baseball card appraiser pricing raw (ungraded) cards for a collector's inventory.
 
-Given a card description, use the search_ebay tool to find comparable recent sales.
-You can also use fetch_page to check sites like:
-- https://mavin.io/search?q=QUERY (aggregated eBay prices)
-- https://www.tcdb.com/Search.cfm?searchterm=QUERY
+Given a card description, gather pricing data from multiple sources using the available tools:
+
+1. search_ebay — find active eBay listings for this exact card
+2. fetch_page — check these sites for sold/market prices:
+   - https://mavin.io/search?q=QUERY  (aggregated eBay sold prices — most reliable)
+   - https://www.tcdb.com/Search.cfm?searchterm=QUERY  (community book values)
+
+If a TCDB Reference Price is provided in the card description, treat it as a starting
+point only — fetch the live TCDB page to verify it hasn't changed, then compare against
+current eBay/Mavin data to arrive at a market-accurate price.
 
 Rules:
 - Price raw/ungraded cards only (ignore PSA/BGS/SGC graded comps)
 - Ignore autographed, lot, reprint, and numbered parallel listings
 - Focus on cards matching the year, brand, player, and card number exactly
-- Weight recent sales more heavily than older ones
+- Weight recent sold prices (Mavin) over active listings (eBay)
 - After gathering data, respond with ONLY this JSON (no markdown):
 
 {
@@ -860,6 +866,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     use_claude = (
         result['count'] < LOW_DATA_THRESH
         or result['price'] >= HIGH_VALUE_THRESH
+        or fallback == 'tcdb'   # stale column F value — ask Claude to verify against live TCDB
     )
 
     claude_reasoning = ''
