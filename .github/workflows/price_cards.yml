@@ -8,8 +8,6 @@ on:
         required: false
         default: '200'
         type: string
-  schedule:
-    - cron: '0 * * * *'   # every hour — disable once all cards are priced
 
 permissions:
   contents: write   # needed to commit pricing_results.json back to the repo
