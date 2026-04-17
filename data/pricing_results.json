@@ -1,9 +1,9 @@
 {
-  "last_updated": "2026-04-17T20:32:50.009917+00:00",
+  "last_updated": "2026-04-17T20:37:28.057884+00:00",
   "total_cards": 4364,
   "cards_priced": 4364,
-  "total_value": 7043.38,
-  "avg_value": 1.61,
+  "total_value": 7052.68,
+  "avg_value": 1.62,
   "top_card_value": 22.48,
   "top_cards": [
     {
@@ -347,7 +347,7 @@
     },
     "Junk Wax (1987\u201394)": {
       "count": 3808,
-      "total_value": 5948.720000000008
+      "total_value": 5958.020000000006
     },
     "Late 90s": {
       "count": 432,
@@ -365,11 +365,11 @@
     },
     "Topps": {
       "count": 1308,
-      "total_value": 2025.570000000001
+      "total_value": 2026.0500000000004
     },
     "Donruss": {
       "count": 1081,
-      "total_value": 1655.2799999999947
+      "total_value": 1655.0199999999945
     },
     "Fleer": {
       "count": 403,
@@ -381,7 +381,7 @@
     },
     "Topps Traded": {
       "count": 30,
-      "total_value": 47.87000000000002
+      "total_value": 51.870000000000005
     },
     "Sportflics": {
       "count": 4,
@@ -417,7 +417,7 @@
     },
     "Bowman": {
       "count": 281,
-      "total_value": 460.49000000000024
+      "total_value": 460.54000000000025
     },
     "Donruss Bonus MVPs": {
       "count": 7,
@@ -433,19 +433,19 @@
     },
     "Topps 1988 All-Star Game Commemorative": {
       "count": 3,
-      "total_value": 2.54
+      "total_value": 5.2700000000000005
     },
     "Topps 1988 Rookies": {
       "count": 2,
-      "total_value": 2.61
+      "total_value": 6.6899999999999995
     },
     "Upper Deck": {
       "count": 151,
-      "total_value": 242.71000000000006
+      "total_value": 242.76000000000008
     },
     "Best Minor League": {
       "count": 12,
-      "total_value": 24.719999999999995
+      "total_value": 22.889999999999997
     },
     "Leaf": {
       "count": 46,
@@ -19020,10 +19020,10 @@
       "card_number": "560",
       "team": "Montreal Expos",
       "tcdb_price": 1.0,
-      "avg_price": 1.68,
+      "avg_price": 1.66,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:52.523436+00:00",
       "card_id": "1989_topps_rock_raines_560"
     },
     {
@@ -19033,10 +19033,10 @@
       "card_number": "560",
       "team": "Montreal Expos",
       "tcdb_price": 1.0,
-      "avg_price": 1.68,
+      "avg_price": 1.66,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:53.696774+00:00",
       "card_id": "1989_topps_rock_raines_560"
     },
     {
@@ -19046,10 +19046,10 @@
       "card_number": "561",
       "team": "New York Yankees",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
+      "avg_price": 1.54,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:54.972824+00:00",
       "card_id": "1989_topps_luis_aguayo_561"
     },
     {
@@ -19059,10 +19059,10 @@
       "card_number": "562",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.08,
-      "avg_price": 1.68,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.64,
+      "median": 1.68,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:56.235245+00:00",
       "card_id": "1989_topps_danny_cox_562"
     },
     {
@@ -19072,10 +19072,10 @@
       "card_number": "562",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.08,
-      "avg_price": 1.68,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.64,
+      "median": 1.68,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:57.431271+00:00",
       "card_id": "1989_topps_danny_cox_562"
     },
     {
@@ -19085,10 +19085,10 @@
       "card_number": "563",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.68,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:58.668313+00:00",
       "card_id": "1989_topps_bill_schroeder_563"
     },
     {
@@ -19098,10 +19098,10 @@
       "card_number": "564",
       "team": "Atlanta Braves",
       "tcdb_price": 0.2,
-      "avg_price": 1.58,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:32:59.927204+00:00",
       "card_id": "1989_topps_russ_nixon_564"
     },
     {
@@ -19111,10 +19111,10 @@
       "card_number": "565",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.52,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:01.130711+00:00",
       "card_id": "1989_topps_jeff_russell_565"
     },
     {
@@ -19124,10 +19124,10 @@
       "card_number": "569",
       "team": "Atlanta Braves",
       "tcdb_price": 0.07,
-      "avg_price": 1.6,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.61,
+      "median": 1.56,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:02.086036+00:00",
       "card_id": "1989_topps_german_jimenez_569"
     },
     {
@@ -19137,10 +19137,10 @@
       "card_number": "574",
       "team": "Cleveland Indians",
       "tcdb_price": 0.1,
-      "avg_price": 1.61,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:03.355213+00:00",
       "card_id": "1989_topps_dave_clark_574"
     },
     {
@@ -19150,10 +19150,10 @@
       "card_number": "574",
       "team": "Cleveland Indians",
       "tcdb_price": 0.1,
-      "avg_price": 1.61,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:04.496251+00:00",
       "card_id": "1989_topps_dave_clark_574"
     },
     {
@@ -19163,10 +19163,10 @@
       "card_number": "574",
       "team": "Cleveland Indians",
       "tcdb_price": 0.1,
-      "avg_price": 1.61,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:05.681324+00:00",
       "card_id": "1989_topps_dave_clark_574"
     },
     {
@@ -19176,10 +19176,10 @@
       "card_number": "577",
       "team": "Minnesota Twins",
       "tcdb_price": 0.05,
-      "avg_price": 1.49,
+      "avg_price": 1.48,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:06.818302+00:00",
       "card_id": "1989_topps_randy_bush_577"
     },
     {
@@ -19191,8 +19191,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.49,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:07.872783+00:00",
       "card_id": "1989_topps_harold_reynolds_580"
     },
     {
@@ -19202,10 +19202,10 @@
       "card_number": "581",
       "team": "Oakland Athletics",
       "tcdb_price": 0.05,
-      "avg_price": 1.6,
+      "avg_price": 1.59,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:08.950182+00:00",
       "card_id": "1989_topps_gene_nelson_581"
     },
     {
@@ -19215,10 +19215,10 @@
       "card_number": "585",
       "team": "Chicago White Sox",
       "tcdb_price": 0.18,
-      "avg_price": 1.41,
+      "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:10.156567+00:00",
       "card_id": "1989_topps_harold_baines_585"
     },
     {
@@ -19228,10 +19228,10 @@
       "card_number": "586",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
+      "avg_price": 1.53,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:11.179768+00:00",
       "card_id": "1989_topps_joe_boever_586"
     },
     {
@@ -19241,10 +19241,10 @@
       "card_number": "589",
       "team": "Houston Astros",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.62,
+      "median": 1.65,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:12.440299+00:00",
       "card_id": "1989_topps_dave_meads_589"
     },
     {
@@ -19254,10 +19254,10 @@
       "card_number": "590",
       "team": "Montreal Expos",
       "tcdb_price": 0.1,
-      "avg_price": 1.41,
+      "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:13.637959+00:00",
       "card_id": "1989_topps_andres_galarraga_590"
     },
     {
@@ -19267,10 +19267,10 @@
       "card_number": "590",
       "team": "Montreal Expos",
       "tcdb_price": 0.1,
-      "avg_price": 1.41,
+      "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:14.855222+00:00",
       "card_id": "1989_topps_andres_galarraga_590"
     },
     {
@@ -19280,10 +19280,10 @@
       "card_number": "591",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.07,
-      "avg_price": 1.51,
+      "avg_price": 1.5,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:15.898944+00:00",
       "card_id": "1989_topps_jeff_musselman_591"
     },
     {
@@ -19293,10 +19293,10 @@
       "card_number": "592",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.66,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.63,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:17.016203+00:00",
       "card_id": "1989_topps_john_cangelosi_592"
     },
     {
@@ -19306,10 +19306,10 @@
       "card_number": "592",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.66,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.63,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:18.227286+00:00",
       "card_id": "1989_topps_john_cangelosi_592"
     },
     {
@@ -19319,10 +19319,10 @@
       "card_number": "592",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.66,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.63,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:19.312712+00:00",
       "card_id": "1989_topps_john_cangelosi_592"
     },
     {
@@ -19332,10 +19332,10 @@
       "card_number": "593",
       "team": "Chicago Cubs",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.59,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:20.497114+00:00",
       "card_id": "1989_topps_drew_hall_593"
     },
     {
@@ -19345,10 +19345,10 @@
       "card_number": "596",
       "team": "Kansas City Royals",
       "tcdb_price": 0.05,
-      "avg_price": 1.49,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.47,
+      "median": 1.48,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:21.565384+00:00",
       "card_id": "1989_topps_kurt_stillwell_596"
     },
     {
@@ -19360,8 +19360,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.66,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:22.704510+00:00",
       "card_id": "1989_topps_dave_dravecky_601"
     },
     {
@@ -19371,10 +19371,10 @@
       "card_number": "602",
       "team": "California Angels",
       "tcdb_price": 0.1,
-      "avg_price": 1.48,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.47,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:23.985831+00:00",
       "card_id": "1989_topps_devon_white_602"
     },
     {
@@ -19384,10 +19384,10 @@
       "card_number": "602",
       "team": "California Angels",
       "tcdb_price": 0.1,
-      "avg_price": 1.48,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.47,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:25.158909+00:00",
       "card_id": "1989_topps_devon_white_602"
     },
     {
@@ -19397,10 +19397,10 @@
       "card_number": "606",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
-      "avg_price": 1.6,
+      "avg_price": 1.58,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:26.298045+00:00",
       "card_id": "1989_topps_rick_dempsey_606"
     },
     {
@@ -19412,8 +19412,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:27.459068+00:00",
       "card_id": "1989_topps_phil_bradley_608"
     },
     {
@@ -19423,10 +19423,10 @@
       "card_number": "612",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.06,
-      "avg_price": 1.58,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.65,
+      "median": 1.65,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:28.597044+00:00",
       "card_id": "1989_topps_dan_quisenberry_612"
     },
     {
@@ -19436,10 +19436,10 @@
       "card_number": "614",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.55,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:29.668789+00:00",
       "card_id": "1989_topps_joe_hesketh_614"
     },
     {
@@ -19449,10 +19449,10 @@
       "card_number": "615",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.18,
-      "avg_price": 1.46,
+      "avg_price": 1.54,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:30.922980+00:00",
       "card_id": "1989_topps_robin_yount_615"
     },
     {
@@ -19462,10 +19462,10 @@
       "card_number": "615",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.18,
-      "avg_price": 1.46,
+      "avg_price": 1.54,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:31.975322+00:00",
       "card_id": "1989_topps_robin_yount_615"
     },
     {
@@ -19475,10 +19475,10 @@
       "card_number": "616",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.6,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:32.960619+00:00",
       "card_id": "1989_topps_steve_rosenberg_616"
     },
     {
@@ -19488,10 +19488,10 @@
       "card_number": "616",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.6,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:34.025200+00:00",
       "card_id": "1989_topps_steve_rosenberg_616"
     },
     {
@@ -19501,10 +19501,10 @@
       "card_number": "623",
       "team": "Minnesota Twins",
       "tcdb_price": 0.08,
-      "avg_price": 1.53,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.5,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:35.135822+00:00",
       "card_id": "1989_topps_fred_toliver_623"
     },
     {
@@ -19514,10 +19514,10 @@
       "card_number": "624",
       "team": "San Diego Padres",
       "tcdb_price": 0.1,
-      "avg_price": 1.61,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:36.188727+00:00",
       "card_id": "1989_topps_jack_mckeon_624"
     },
     {
@@ -19527,10 +19527,10 @@
       "card_number": "624",
       "team": "San Diego Padres",
       "tcdb_price": 0.1,
-      "avg_price": 1.61,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.6,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:37.289217+00:00",
       "card_id": "1989_topps_jack_mckeon_624"
     },
     {
@@ -19540,10 +19540,10 @@
       "card_number": "626",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.13,
-      "avg_price": 1.59,
+      "avg_price": 1.6,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:38.497453+00:00",
       "card_id": "1989_topps_jeff_reed_626"
     },
     {
@@ -19553,10 +19553,10 @@
       "card_number": "628",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.33,
+      "avg_price": 1.31,
       "median": 1.0,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:39.505497+00:00",
       "card_id": "1989_topps_matt_williams_628"
     },
     {
@@ -19566,10 +19566,10 @@
       "card_number": "628",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.33,
+      "avg_price": 1.31,
       "median": 1.0,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:40.567372+00:00",
       "card_id": "1989_topps_matt_williams_628"
     },
     {
@@ -19579,10 +19579,10 @@
       "card_number": "628",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.33,
+      "avg_price": 1.31,
       "median": 1.0,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:41.558647+00:00",
       "card_id": "1989_topps_matt_williams_628"
     },
     {
@@ -19592,10 +19592,10 @@
       "card_number": "628",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.33,
+      "avg_price": 1.31,
       "median": 1.0,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:42.602322+00:00",
       "card_id": "1989_topps_matt_williams_628"
     },
     {
@@ -19605,10 +19605,10 @@
       "card_number": "636",
       "team": "Seattle Mariners",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.62,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:43.658447+00:00",
       "card_id": "1989_topps_bill_wilkinson_636"
     },
     {
@@ -19618,10 +19618,10 @@
       "card_number": "642",
       "team": "Chicago Cubs",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:44.719106+00:00",
       "card_id": "1989_topps_argenis_salazar_642"
     },
     {
@@ -19631,10 +19631,10 @@
       "card_number": "642",
       "team": "Chicago Cubs",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:45.817150+00:00",
       "card_id": "1989_topps_argenis_salazar_642"
     },
     {
@@ -19644,10 +19644,10 @@
       "card_number": "642",
       "team": "Chicago Cubs",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:47.107963+00:00",
       "card_id": "1989_topps_argenis_salazar_642"
     },
     {
@@ -19659,8 +19659,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.46,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:48.219987+00:00",
       "card_id": "1989_topps_jack_morris_645"
     },
     {
@@ -19670,10 +19670,10 @@
       "card_number": "646",
       "team": "Houston Astros",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.54,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:49.205689+00:00",
       "card_id": "1989_topps_kevin_bass_646"
     },
     {
@@ -19683,10 +19683,10 @@
       "card_number": "648",
       "team": "San Diego Padres",
       "tcdb_price": 1.0,
-      "avg_price": 1.49,
-      "median": 1.99,
-      "confidence": "Low (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.42,
+      "median": 1.5,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:33:50.292996+00:00",
       "card_id": "1989_topps_sandy_alomar_jr_648"
     },
     {
@@ -19696,10 +19696,10 @@
       "card_number": "653",
       "team": "Philadelphia Phillies",
       "tcdb_price": 0.05,
-      "avg_price": 1.61,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.59,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:51.310272+00:00",
       "card_id": "1989_topps_tommy_barrett_653"
     },
     {
@@ -19711,8 +19711,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.54,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:33:52.483858+00:00",
       "card_id": "1989_topps_whitey_herzog_654"
     },
     {
@@ -19722,10 +19722,10 @@
       "card_number": "656",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.0,
+      "median": 0.05,
+      "confidence": "Low (TCDB ref)",
+      "last_updated": "2026-04-17T20:34:12.623096+00:00",
       "card_id": "1989_topps_ivan_calderon_656"
     },
     {
@@ -19735,10 +19735,10 @@
       "card_number": "657",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.6,
+      "avg_price": 1.57,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:13.864529+00:00",
       "card_id": "1989_topps_joe_magrane_657"
     },
     {
@@ -19748,10 +19748,10 @@
       "card_number": "660",
       "team": "San Francisco Giants",
       "tcdb_price": 2.25,
-      "avg_price": 1.42,
+      "avg_price": 1.41,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:14.954692+00:00",
       "card_id": "1989_topps_will_clark_660"
     },
     {
@@ -19761,10 +19761,10 @@
       "card_number": "663",
       "team": "Atlanta Braves",
       "tcdb_price": 0.99,
-      "avg_price": 1.42,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.44,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:16.049536+00:00",
       "card_id": "1989_topps_hank_aaron_663"
     },
     {
@@ -19774,10 +19774,10 @@
       "card_number": "664",
       "team": "New York Mets",
       "tcdb_price": 1.25,
-      "avg_price": 1.51,
+      "avg_price": 1.49,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:17.297370+00:00",
       "card_id": "1989_topps_gil_hodges_664"
     },
     {
@@ -19787,10 +19787,10 @@
       "card_number": "664",
       "team": "New York Mets",
       "tcdb_price": 1.25,
-      "avg_price": 1.51,
+      "avg_price": 1.49,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:18.480971+00:00",
       "card_id": "1989_topps_gil_hodges_664"
     },
     {
@@ -19800,10 +19800,10 @@
       "card_number": "666",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.63,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.61,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:19.567860+00:00",
       "card_id": "1989_topps_randy_st_clair_666"
     },
     {
@@ -19813,10 +19813,10 @@
       "card_number": "671",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.53,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:20.794510+00:00",
       "card_id": "1989_topps_jim_gantner_671"
     },
     {
@@ -19826,10 +19826,10 @@
       "card_number": "673",
       "team": "Oakland Athletics",
       "tcdb_price": 0.1,
-      "avg_price": 1.59,
+      "avg_price": 1.6,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:21.997574+00:00",
       "card_id": "1989_topps_don_baylor_673"
     },
     {
@@ -19839,10 +19839,10 @@
       "card_number": "674",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.51,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:22.936868+00:00",
       "card_id": "1989_topps_otis_nixon_674"
     },
     {
@@ -19852,10 +19852,10 @@
       "card_number": "674",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.51,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:24.025765+00:00",
       "card_id": "1989_topps_otis_nixon_674"
     },
     {
@@ -19865,10 +19865,10 @@
       "card_number": "674",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.51,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:25.096026+00:00",
       "card_id": "1989_topps_otis_nixon_674"
     },
     {
@@ -19878,10 +19878,10 @@
       "card_number": "676",
       "team": "San Francisco Giants",
       "tcdb_price": 0.13,
-      "avg_price": 1.49,
+      "avg_price": 1.46,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:26.167729+00:00",
       "card_id": "1989_topps_ernie_riles_676"
     },
     {
@@ -19891,10 +19891,10 @@
       "card_number": "676",
       "team": "San Francisco Giants",
       "tcdb_price": 0.13,
-      "avg_price": 1.49,
+      "avg_price": 1.46,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:27.261776+00:00",
       "card_id": "1989_topps_ernie_riles_676"
     },
     {
@@ -19904,10 +19904,10 @@
       "card_number": "677",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.17,
-      "avg_price": 1.66,
+      "avg_price": 1.67,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:28.269407+00:00",
       "card_id": "1989_topps_dave_schmidt_677"
     },
     {
@@ -19917,10 +19917,10 @@
       "card_number": "678",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.49,
+      "avg_price": 1.48,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:29.270124+00:00",
       "card_id": "1989_topps_dion_james_678"
     },
     {
@@ -19930,10 +19930,10 @@
       "card_number": "679",
       "team": "California Angels",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.57,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:30.291639+00:00",
       "card_id": "1989_topps_willie_fraser_679"
     },
     {
@@ -19943,10 +19943,10 @@
       "card_number": "679",
       "team": "California Angels",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.57,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:31.393229+00:00",
       "card_id": "1989_topps_willie_fraser_679"
     },
     {
@@ -19956,10 +19956,10 @@
       "card_number": "682",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.44,
+      "avg_price": 1.46,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:32.483001+00:00",
       "card_id": "1989_topps_rick_leach_682"
     },
     {
@@ -19969,10 +19969,10 @@
       "card_number": "684",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.59,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:33.571629+00:00",
       "card_id": "1989_topps_dave_johnson_684"
     },
     {
@@ -19982,10 +19982,10 @@
       "card_number": "684",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.59,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:34.675527+00:00",
       "card_id": "1989_topps_dave_johnson_684"
     },
     {
@@ -19995,10 +19995,10 @@
       "card_number": "685",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.18,
-      "avg_price": 1.51,
+      "avg_price": 1.48,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:35.747192+00:00",
       "card_id": "1989_topps_jeff_treadway_685"
     },
     {
@@ -20008,10 +20008,10 @@
       "card_number": "688",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.54,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.48,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:36.850222+00:00",
       "card_id": "1989_topps_zane_smith_688"
     },
     {
@@ -20021,10 +20021,10 @@
       "card_number": "690",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.39,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.41,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:37.902975+00:00",
       "card_id": "1989_topps_doug_jones_690"
     },
     {
@@ -20034,10 +20034,10 @@
       "card_number": "690",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.39,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.41,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:38.943570+00:00",
       "card_id": "1989_topps_doug_jones_690"
     },
     {
@@ -20047,10 +20047,10 @@
       "card_number": "695",
       "team": "Chicago White Sox",
       "tcdb_price": 0.99,
-      "avg_price": 1.38,
+      "avg_price": 1.37,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:39.974953+00:00",
       "card_id": "1989_topps_carlton_fisk_695"
     },
     {
@@ -20060,10 +20060,10 @@
       "card_number": "696",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
+      "avg_price": 1.53,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:41.009861+00:00",
       "card_id": "1989_topps_don_august_696"
     },
     {
@@ -20073,10 +20073,10 @@
       "card_number": "696",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
+      "avg_price": 1.53,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:42.101980+00:00",
       "card_id": "1989_topps_don_august_696"
     },
     {
@@ -20086,10 +20086,10 @@
       "card_number": "703",
       "team": "San Francisco Giants",
       "tcdb_price": 0.05,
-      "avg_price": 1.58,
-      "median": 1.66,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.56,
+      "median": 1.65,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:43.294842+00:00",
       "card_id": "1989_topps_scott_garrelts_703"
     },
     {
@@ -20099,10 +20099,10 @@
       "card_number": "705",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.46,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.49,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:44.322124+00:00",
       "card_id": "1989_topps_terry_kennedy_705"
     },
     {
@@ -20112,10 +20112,10 @@
       "card_number": "706",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
+      "avg_price": 1.57,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:45.484614+00:00",
       "card_id": "1989_topps_pete_incaviglia_706"
     },
     {
@@ -20125,10 +20125,10 @@
       "card_number": "707",
       "team": "Philadelphia Phillies",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:46.538803+00:00",
       "card_id": "1989_topps_steve_jeltz_707"
     },
     {
@@ -20138,10 +20138,10 @@
       "card_number": "711",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.63,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.62,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:47.657951+00:00",
       "card_id": "1989_topps_candy_sierra_711"
     },
     {
@@ -20151,10 +20151,10 @@
       "card_number": "711",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.63,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.62,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:48.628204+00:00",
       "card_id": "1989_topps_candy_sierra_711"
     },
     {
@@ -20164,10 +20164,10 @@
       "card_number": "712",
       "team": "Seattle Mariners",
       "tcdb_price": 0.05,
-      "avg_price": 1.58,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.61,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:49.712192+00:00",
       "card_id": "1989_topps_bill_swift_712"
     },
     {
@@ -20177,10 +20177,10 @@
       "card_number": "715",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.48,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.43,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:50.831848+00:00",
       "card_id": "1989_topps_tony_pena_715"
     },
     {
@@ -20190,10 +20190,10 @@
       "card_number": "715",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.48,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.43,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:51.937202+00:00",
       "card_id": "1989_topps_tony_pena_715"
     },
     {
@@ -20203,10 +20203,10 @@
       "card_number": "718",
       "team": "Chicago Cubs",
       "tcdb_price": 0.18,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.39,
+      "median": 1.49,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:34:52.987999+00:00",
       "card_id": "1989_topps_jamie_moyer_718"
     },
     {
@@ -20216,10 +20216,10 @@
       "card_number": "720",
       "team": "Montreal Expos",
       "tcdb_price": 0.2,
-      "avg_price": 1.46,
+      "avg_price": 1.45,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:54.128967+00:00",
       "card_id": "1989_topps_tim_wallach_720"
     },
     {
@@ -20229,10 +20229,10 @@
       "card_number": "720",
       "team": "Montreal Expos",
       "tcdb_price": 0.2,
-      "avg_price": 1.46,
+      "avg_price": 1.45,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:55.225027+00:00",
       "card_id": "1989_topps_tim_wallach_720"
     },
     {
@@ -20242,10 +20242,10 @@
       "card_number": "726",
       "team": "San Diego Padres",
       "tcdb_price": 0.08,
-      "avg_price": 1.46,
+      "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:56.378765+00:00",
       "card_id": "1989_topps_dickie_thon_726"
     },
     {
@@ -20255,10 +20255,10 @@
       "card_number": "726",
       "team": "San Diego Padres",
       "tcdb_price": 0.08,
-      "avg_price": 1.46,
+      "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:57.423058+00:00",
       "card_id": "1989_topps_dickie_thon_726"
     },
     {
@@ -20268,10 +20268,10 @@
       "card_number": "726",
       "team": "San Diego Padres",
       "tcdb_price": 0.08,
-      "avg_price": 1.46,
+      "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:58.472156+00:00",
       "card_id": "1989_topps_dickie_thon_726"
     },
     {
@@ -20281,10 +20281,10 @@
       "card_number": "727",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.17,
-      "avg_price": 1.57,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/2/2026",
+      "avg_price": 1.54,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:34:59.535158+00:00",
       "card_id": "1989_topps_joe_orsulak_727"
     },
     {
@@ -20294,10 +20294,10 @@
       "card_number": "729",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.21,
+      "median": 1.25,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:35:00.571859+00:00",
       "card_id": "1989_topps_checklist_729"
     },
     {
@@ -20308,9 +20308,9 @@
       "team": "Cincinnati Reds",
       "tcdb_price": 0.18,
       "avg_price": 1.37,
-      "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.48,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:01.664078+00:00",
       "card_id": "1989_topps_danny_jackson_730"
     },
     {
@@ -20320,10 +20320,10 @@
       "card_number": "740",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
+      "avg_price": 1.51,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:03.288056+00:00",
       "card_id": "1989_topps_dan_plesac_740"
     },
     {
@@ -20334,9 +20334,9 @@
       "team": "Chicago Cubs",
       "tcdb_price": 0.1,
       "avg_price": 1.56,
-      "median": 1.62,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.65,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:04.519282+00:00",
       "card_id": "1989_topps_mike_harkey_742"
     },
     {
@@ -20346,10 +20346,10 @@
       "card_number": "743",
       "team": "Detroit Tigers",
       "tcdb_price": 0.05,
-      "avg_price": 1.58,
+      "avg_price": 1.57,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:05.548452+00:00",
       "card_id": "1989_topps_mike_heath_743"
     },
     {
@@ -20359,10 +20359,10 @@
       "card_number": "744",
       "team": "San Francisco Giants",
       "tcdb_price": 0.1,
-      "avg_price": 1.59,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.61,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:06.548265+00:00",
       "card_id": "1989_topps_roger_craig_744"
     },
     {
@@ -20374,8 +20374,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.4,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:07.615565+00:00",
       "card_id": "1989_topps_fred_mcgriff_745"
     },
     {
@@ -20385,10 +20385,10 @@
       "card_number": "748",
       "team": "San Diego Padres",
       "tcdb_price": 0.07,
-      "avg_price": 1.42,
+      "avg_price": 1.41,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:08.823791+00:00",
       "card_id": "1989_topps_jimmy_jones_748"
     },
     {
@@ -20398,10 +20398,10 @@
       "card_number": "749",
       "team": "Houston Astros",
       "tcdb_price": 0.05,
-      "avg_price": 1.51,
+      "avg_price": 1.52,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:09.910228+00:00",
       "card_id": "1989_topps_rafael_ramirez_749"
     },
     {
@@ -20411,10 +20411,10 @@
       "card_number": "754",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.48,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:11.014869+00:00",
       "card_id": "1989_topps_bob_brower_754"
     },
     {
@@ -20424,10 +20424,10 @@
       "card_number": "755",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 1.59,
-      "avg_price": 1.4,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.42,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:12.154452+00:00",
       "card_id": "1989_topps_mike_scioscia_755"
     },
     {
@@ -20437,10 +20437,10 @@
       "card_number": "755",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 1.59,
-      "avg_price": 1.4,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.42,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:13.239062+00:00",
       "card_id": "1989_topps_mike_scioscia_755"
     },
     {
@@ -20452,8 +20452,8 @@
       "tcdb_price": 1.75,
       "avg_price": 1.46,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:14.375422+00:00",
       "card_id": "1989_topps_brady_anderson_757"
     },
     {
@@ -20465,8 +20465,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.5,
       "median": 1.59,
-      "confidence": "High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:35:15.521916+00:00",
       "card_id": "1989_topps_milwaukee_brewers_team_leaders_759"
     },
     {
@@ -20476,10 +20476,10 @@
       "card_number": "761",
       "team": "California Angels",
       "tcdb_price": 1.89,
-      "avg_price": 1.5,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.49,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:16.662778+00:00",
       "card_id": "1989_topps_dante_bichette_761"
     },
     {
@@ -20489,10 +20489,10 @@
       "card_number": "761",
       "team": "California Angels",
       "tcdb_price": 1.89,
-      "avg_price": 1.5,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.49,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:17.705452+00:00",
       "card_id": "1989_topps_dante_bichette_761"
     },
     {
@@ -20503,9 +20503,9 @@
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
       "avg_price": 1.52,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:18.751015+00:00",
       "card_id": "1989_topps_bobby_thigpen_762"
     },
     {
@@ -20516,9 +20516,9 @@
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
       "avg_price": 1.52,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:19.799733+00:00",
       "card_id": "1989_topps_bobby_thigpen_762"
     },
     {
@@ -20528,10 +20528,10 @@
       "card_number": "766",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.58,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.59,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:20.888447+00:00",
       "card_id": "1989_topps_cecilio_guante_766"
     },
     {
@@ -20541,10 +20541,10 @@
       "card_number": "766",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.58,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.59,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:21.930278+00:00",
       "card_id": "1989_topps_cecilio_guante_766"
     },
     {
@@ -20556,8 +20556,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.5,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:22.992447+00:00",
       "card_id": "1989_topps_bill_wegman_768"
     },
     {
@@ -20567,10 +20567,10 @@
       "card_number": "771",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.47,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:24.044642+00:00",
       "card_id": "1989_topps_ron_kittle_771"
     },
     {
@@ -20580,10 +20580,10 @@
       "card_number": "772",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
+      "avg_price": 1.51,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:25.099957+00:00",
       "card_id": "1989_topps_ron_oester_772"
     },
     {
@@ -20593,10 +20593,10 @@
       "card_number": "772",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
+      "avg_price": 1.51,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:26.153632+00:00",
       "card_id": "1989_topps_ron_oester_772"
     },
     {
@@ -20606,10 +20606,10 @@
       "card_number": "774",
       "team": "Baltimore Orioles",
       "tcdb_price": 1.1,
-      "avg_price": 1.52,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.47,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:27.215650+00:00",
       "card_id": "1989_topps_frank_robinson_774"
     },
     {
@@ -20619,10 +20619,10 @@
       "card_number": "776",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.54,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:28.463189+00:00",
       "card_id": "1989_topps_nelson_liriano_776"
     },
     {
@@ -20634,8 +20634,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.61,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:29.677784+00:00",
       "card_id": "1989_topps_ted_power_777"
     },
     {
@@ -20645,10 +20645,10 @@
       "card_number": "778",
       "team": "Atlanta Braves",
       "tcdb_price": 0.18,
-      "avg_price": 1.46,
+      "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:30.652949+00:00",
       "card_id": "1989_topps_bruce_benedict_778"
     },
     {
@@ -20658,10 +20658,10 @@
       "card_number": "779",
       "team": "Texas Rangers",
       "tcdb_price": 0.05,
-      "avg_price": 1.65,
+      "avg_price": 1.66,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:31.728144+00:00",
       "card_id": "1989_topps_craig_mcmurtry_779"
     },
     {
@@ -20671,10 +20671,10 @@
       "card_number": "780",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.15,
-      "avg_price": 1.44,
+      "avg_price": 1.42,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:32.992183+00:00",
       "card_id": "1989_topps_pedro_guerrero_780"
     },
     {
@@ -20684,10 +20684,10 @@
       "card_number": "780",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.15,
-      "avg_price": 1.44,
+      "avg_price": 1.42,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:34.120106+00:00",
       "card_id": "1989_topps_pedro_guerrero_780"
     },
     {
@@ -20697,10 +20697,10 @@
       "card_number": "785",
       "team": "Boston Red Sox",
       "tcdb_price": 0.09,
-      "avg_price": 1.42,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.36,
+      "median": 1.39,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:35.170235+00:00",
       "card_id": "1989_topps_ellis_burks_785"
     },
     {
@@ -20710,10 +20710,10 @@
       "card_number": "785",
       "team": "Boston Red Sox",
       "tcdb_price": 0.09,
-      "avg_price": 1.42,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.36,
+      "median": 1.39,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:36.118335+00:00",
       "card_id": "1989_topps_ellis_burks_785"
     },
     {
@@ -20723,10 +20723,10 @@
       "card_number": "787",
       "team": "New York Mets",
       "tcdb_price": 0.1,
-      "avg_price": 1.5,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.48,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:37.237350+00:00",
       "card_id": "1989_topps_dave_west_787"
     },
     {
@@ -20736,10 +20736,10 @@
       "card_number": "789",
       "team": "Kansas City Royals",
       "tcdb_price": 0.2,
-      "avg_price": 1.45,
+      "avg_price": 1.43,
       "median": 1.34,
-      "confidence": "High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:38.348237+00:00",
       "card_id": "1989_topps_kansas_city_royals_team_leaders_789"
     },
     {
@@ -20749,10 +20749,10 @@
       "card_number": "791",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.68,
-      "median": 1.79,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.66,
+      "median": 1.75,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:39.427819+00:00",
       "card_id": "1989_topps_jim_lindeman_791"
     },
     {
@@ -20762,10 +20762,10 @@
       "card_number": "791",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.68,
-      "median": 1.79,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.66,
+      "median": 1.75,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:35:40.464378+00:00",
       "card_id": "1989_topps_jim_lindeman_791"
     },
     {
@@ -20775,10 +20775,10 @@
       "card_number": "10",
       "team": "Minnesota Twins",
       "tcdb_price": 0.01,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.5,
+      "median": 2.0,
+      "confidence": "High (Claude)",
+      "last_updated": "2026-04-17T20:35:54.031058+00:00",
       "card_id": "1989_topps_1988_allstar_game_commemorative_frank_viola_10"
     },
     {
@@ -20788,10 +20788,10 @@
       "card_number": "11",
       "team": "Boston Red Sox",
       "tcdb_price": 0.11,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.78,
+      "median": 1.99,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:35:55.022445+00:00",
       "card_id": "1989_topps_1988_allstar_game_commemorative_bobby_doerr_11"
     },
     {
@@ -20801,10 +20801,10 @@
       "card_number": "21",
       "team": "New York Mets",
       "tcdb_price": 0.15,
-      "avg_price": 2.04,
-      "median": 2.09,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.99,
+      "median": 1.99,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:35:55.964349+00:00",
       "card_id": "1989_topps_1988_allstar_game_commemorative_doc_gooden_21"
     },
     {
@@ -20814,10 +20814,10 @@
       "card_number": "9",
       "team": "Atlanta Braves",
       "tcdb_price": 1.49,
-      "avg_price": 2.36,
+      "avg_price": 2.53,
       "median": 2.45,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:35:57.004733+00:00",
       "card_id": "1989_topps_1988_rookies_ron_gant_9"
     },
     {
@@ -20827,10 +20827,10 @@
       "card_number": "15",
       "team": "New York Yankees",
       "tcdb_price": 4.0,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "avg_price": 4.16,
+      "median": 4.99,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:35:57.960582+00:00",
       "card_id": "1989_topps_1988_rookies_al_leiter_15"
     },
     {
@@ -20840,10 +20840,10 @@
       "card_number": "4",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.14,
-      "median": 1.28,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.61,
+      "median": 1.49,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:35:59.053610+00:00",
       "card_id": "1989_topps_traded_keith_atherton_4"
     },
     {
@@ -20853,10 +20853,10 @@
       "card_number": "4",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.14,
-      "median": 1.28,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.61,
+      "median": 1.49,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:36:00.135066+00:00",
       "card_id": "1989_topps_traded_keith_atherton_4"
     },
     {
@@ -20866,10 +20866,10 @@
       "card_number": "16",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.5,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.64,
+      "median": 1.68,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:01.132831+00:00",
       "card_id": "1989_topps_traded_jerry_browne_16"
     },
     {
@@ -20879,10 +20879,10 @@
       "card_number": "16",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.5,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.64,
+      "median": 1.68,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:02.202791+00:00",
       "card_id": "1989_topps_traded_jerry_browne_16"
     },
     {
@@ -20892,10 +20892,10 @@
       "card_number": "33",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.61,
-      "median": 1.59,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.62,
+      "median": 1.48,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:03.340823+00:00",
       "card_id": "1989_topps_traded_felix_fermin_33"
     },
     {
@@ -20905,10 +20905,10 @@
       "card_number": "33",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.61,
-      "median": 1.59,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.62,
+      "median": 1.48,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:04.438402+00:00",
       "card_id": "1989_topps_traded_felix_fermin_33"
     },
     {
@@ -20918,10 +20918,10 @@
       "card_number": "88",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 0.99,
-      "median": 0.99,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.65,
+      "median": 1.5,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:36:05.375100+00:00",
       "card_id": "1989_topps_traded_pete_obrien_88"
     },
     {
@@ -20931,10 +20931,10 @@
       "card_number": "88",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 0.99,
-      "median": 0.99,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.65,
+      "median": 1.5,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:36:06.599289+00:00",
       "card_id": "1989_topps_traded_pete_obrien_88"
     },
     {
@@ -20944,10 +20944,10 @@
       "card_number": "91",
       "team": "Cleveland Indians",
       "tcdb_price": 0.06,
-      "avg_price": 0.99,
-      "median": 0.99,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.76,
+      "median": 1.59,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:36:07.656433+00:00",
       "card_id": "1989_topps_traded_jesse_orosco_91"
     },
     {
@@ -20957,10 +20957,10 @@
       "card_number": "91",
       "team": "Cleveland Indians",
       "tcdb_price": 0.06,
-      "avg_price": 0.99,
-      "median": 0.99,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.76,
+      "median": 1.59,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-17T20:36:08.825858+00:00",
       "card_id": "1989_topps_traded_jesse_orosco_91"
     },
     {
@@ -20970,10 +20970,10 @@
       "card_number": "609",
       "team": "Chicago White Sox",
       "tcdb_price": 0.18,
-      "avg_price": 1.5,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.55,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:10.124792+00:00",
       "card_id": "1989_upper_deck_carlton_fisk_609"
     },
     {
@@ -20983,10 +20983,10 @@
       "card_number": "27",
       "team": "Riverside Red Wave",
       "tcdb_price": 0.25,
-      "avg_price": 1.65,
+      "avg_price": 1.64,
       "median": 1.68,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:36:11.109725+00:00",
       "card_id": "1990_best_minor_league_brian_harrison_27"
     },
     {
@@ -20996,10 +20996,10 @@
       "card_number": "28",
       "team": "South Bend White Sox",
       "tcdb_price": 0.28,
-      "avg_price": 3.13,
-      "median": 3.13,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 2.25,
+      "median": 2.25,
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:36:12.155386+00:00",
       "card_id": "1990_best_minor_league_len_brutcher_28"
     },
     {
@@ -21009,10 +21009,10 @@
       "card_number": "29",
       "team": "Memphis Chicks",
       "tcdb_price": 0.18,
-      "avg_price": 1.63,
-      "median": 1.86,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.5,
+      "median": 1.4,
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:36:13.104027+00:00",
       "card_id": "1990_best_minor_league_scott_centala_29"
     },
     {
@@ -21022,10 +21022,10 @@
       "card_number": "31",
       "team": "Burlington Braves",
       "tcdb_price": 0.2,
-      "avg_price": 3.13,
-      "median": 3.13,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 2.4,
+      "median": 3.12,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:14.075467+00:00",
       "card_id": "1990_best_minor_league_pedro_borbon_31"
     },
     {
@@ -21035,10 +21035,10 @@
       "card_number": "33",
       "team": "Clinton Giants",
       "tcdb_price": 0.18,
-      "avg_price": 3.32,
-      "median": 3.13,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 3.49,
+      "median": 3.7,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:15.236870+00:00",
       "card_id": "1990_best_minor_league_clay_bellinger_33"
     },
     {
@@ -21048,10 +21048,10 @@
       "card_number": "35",
       "team": "Charleston Rainbows",
       "tcdb_price": 0.28,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.0,
+      "median": 0.28,
+      "confidence": "Low (TCDB ref)",
+      "last_updated": "2026-04-17T20:36:37.683748+00:00",
       "card_id": "1990_best_minor_league_russ_garside_35"
     },
     {
@@ -21063,8 +21063,8 @@
       "tcdb_price": 0.25,
       "avg_price": 2.5,
       "median": 2.49,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:38.803762+00:00",
       "card_id": "1990_best_minor_league_ron_plemmons_36"
     },
     {
@@ -21074,10 +21074,10 @@
       "card_number": "194",
       "team": "Memphis Chicks",
       "tcdb_price": 0.18,
-      "avg_price": 1.75,
+      "avg_price": 1.45,
       "median": 1.68,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:36:40.690407+00:00",
       "card_id": "1990_best_minor_league_hector_wagner_194"
     },
     {
@@ -21089,8 +21089,8 @@
       "tcdb_price": 0.18,
       "avg_price": 1.81,
       "median": 1.89,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:41.631557+00:00",
       "card_id": "1990_best_minor_league_dave_reis_195"
     },
     {
@@ -21100,10 +21100,10 @@
       "card_number": "197",
       "team": "Huntsville Stars",
       "tcdb_price": 0.35,
-      "avg_price": 1.81,
-      "median": 1.86,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.48,
+      "median": 1.69,
+      "confidence": "High",
+      "last_updated": "2026-04-17T20:36:42.610032+00:00",
       "card_id": "1990_best_minor_league_william_schock_197"
     },
     {
@@ -21113,10 +21113,10 @@
       "card_number": "199",
       "team": "Hagerstown Suns",
       "tcdb_price": 0.3,
-      "avg_price": 2.08,
-      "median": 2.27,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.72,
+      "median": 1.89,
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:43.659273+00:00",
       "card_id": "1990_best_minor_league_mike_eberle_199"
     },
     {
@@ -21126,10 +21126,10 @@
       "card_number": "201",
       "team": "Charleston Wheelers",
       "tcdb_price": 0.2,
-      "avg_price": 1.66,
+      "avg_price": 1.65,
       "median": 1.75,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Medium",
+      "last_updated": "2026-04-17T20:36:44.649464+00:00",
       "card_id": "1990_best_minor_league_raphael_bustamante_201"
     },
     {
@@ -21141,8 +21141,8 @@
       "tcdb_price": 0.18,
       "avg_price": 1.6,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:45.683658+00:00",
       "card_id": "1990_bowman_derek_lilliquist_7"
     },
     {
@@ -21152,10 +21152,10 @@
       "card_number": "63",
       "team": "Houston Astros",
       "tcdb_price": 0.18,
-      "avg_price": 1.73,
-      "median": 1.79,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.7,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:46.737406+00:00",
       "card_id": "1990_bowman_mark_portugal_63"
     },
     {
@@ -21167,8 +21167,8 @@
       "tcdb_price": 0.2,
       "avg_price": 1.59,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:47.719352+00:00",
       "card_id": "1990_bowman_ramon_martinez_88"
     },
     {
@@ -21178,10 +21178,10 @@
       "card_number": "164",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
+      "avg_price": 1.6,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:48.794564+00:00",
       "card_id": "1990_bowman_doug_drabek_164"
     },
     {
@@ -21191,10 +21191,10 @@
       "card_number": "167",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.2,
-      "avg_price": 1.67,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.66,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:49.857463+00:00",
       "card_id": "1990_bowman_scott_ruskin_167"
     },
     {
@@ -21206,8 +21206,8 @@
       "tcdb_price": 0.18,
       "avg_price": 1.65,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:50.798564+00:00",
       "card_id": "1990_bowman_willie_greene_173"
     },
     {
@@ -21217,10 +21217,10 @@
       "card_number": "231",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.56,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.53,
+      "median": 1.67,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:51.917253+00:00",
       "card_id": "1990_bowman_will_clark_231"
     },
     {
@@ -21230,10 +21230,10 @@
       "card_number": "240",
       "team": "San Francisco Giants",
       "tcdb_price": 0.2,
-      "avg_price": 1.55,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.57,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:52.945086+00:00",
       "card_id": "1990_bowman_kevin_bass_240"
     },
     {
@@ -21243,10 +21243,10 @@
       "card_number": "312",
       "team": "Chicago White Sox",
       "tcdb_price": 4.0,
-      "avg_price": 1.61,
+      "avg_price": 1.65,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:54.096090+00:00",
       "card_id": "1990_bowman_sammy_sosa_312"
     },
     {
@@ -21256,10 +21256,10 @@
       "card_number": "410",
       "team": "Minnesota Twins",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.54,
+      "median": 1.51,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:55.151472+00:00",
       "card_id": "1990_bowman_juan_berenguer_410"
     },
     {
@@ -21269,10 +21269,10 @@
       "card_number": "417",
       "team": "Minnesota Twins",
       "tcdb_price": 0.1,
-      "avg_price": 1.66,
+      "avg_price": 1.67,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:56.237191+00:00",
       "card_id": "1990_bowman_gary_gaetti_417"
     },
     {
@@ -21282,10 +21282,10 @@
       "card_number": "437",
       "team": "New York Yankees",
       "tcdb_price": 0.2,
-      "avg_price": 1.57,
+      "avg_price": 1.59,
       "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:57.278456+00:00",
       "card_id": "1990_bowman_mel_hall_437"
     },
     {
@@ -21295,10 +21295,10 @@
       "card_number": "439",
       "team": "New York Yankees",
       "tcdb_price": 0.18,
-      "avg_price": 1.59,
+      "avg_price": 1.6,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:58.419690+00:00",
       "card_id": "1990_bowman_bernie_williams_439"
     },
     {
@@ -21308,10 +21308,10 @@
       "card_number": "440",
       "team": "New York Yankees",
       "tcdb_price": 0.18,
-      "avg_price": 1.68,
+      "avg_price": 1.67,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:36:59.563350+00:00",
       "card_id": "1990_bowman_kevin_maas_440"
     },
     {
@@ -21321,10 +21321,10 @@
       "card_number": "444",
       "team": "New York Yankees",
       "tcdb_price": 0.2,
-      "avg_price": 1.55,
+      "avg_price": 1.56,
       "median": 1.56,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:00.595369+00:00",
       "card_id": "1990_bowman_roberto_kelly_444"
     },
     {
@@ -21334,10 +21334,10 @@
       "card_number": "472",
       "team": "Seattle Mariners",
       "tcdb_price": 0.18,
-      "avg_price": 1.57,
-      "median": 1.67,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.62,
+      "median": 1.68,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:01.654976+00:00",
       "card_id": "1990_bowman_jeffrey_leonard_472"
     },
     {
@@ -21347,10 +21347,10 @@
       "card_number": "523",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.15,
-      "avg_price": 1.7,
-      "median": 1.98,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.67,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:02.686490+00:00",
       "card_id": "1990_bowman_eddie_zosky_523"
     },
     {
@@ -21360,10 +21360,10 @@
       "card_number": "",
       "team": "Detroit Tigers",
       "tcdb_price": 0.1,
-      "avg_price": 1.55,
+      "avg_price": 1.54,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:03.801559+00:00",
       "card_id": "1990_donruss_alan_trammell_"
     },
     {
@@ -21373,10 +21373,10 @@
       "card_number": "4",
       "team": "Seattle Mariners",
       "tcdb_price": 5.0,
-      "avg_price": 1.48,
+      "avg_price": 1.5,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:04.824518+00:00",
       "card_id": "1990_donruss_ken_griffey_jr_4"
     },
     {
@@ -21386,10 +21386,10 @@
       "card_number": "7",
       "team": "Houston Astros",
       "tcdb_price": 0.34,
-      "avg_price": 1.44,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.4,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:06.114469+00:00",
       "card_id": "1990_donruss_jim_deshaies_7"
     },
     {
@@ -21401,8 +21401,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:07.299875+00:00",
       "card_id": "1990_donruss_kelly_gruber_12"
     },
     {
@@ -21412,10 +21412,10 @@
       "card_number": "14",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.1,
-      "avg_price": 1.45,
+      "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:08.451399+00:00",
       "card_id": "1990_donruss_john_franco_14"
     },
     {
@@ -21425,10 +21425,10 @@
       "card_number": "19",
       "team": "Cleveland Indians",
       "tcdb_price": 1.69,
-      "avg_price": 1.51,
-      "median": 1.51,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.5,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:09.580646+00:00",
       "card_id": "1990_donruss_carlos_baerga_19"
     },
     {
@@ -21438,10 +21438,10 @@
       "card_number": "26",
       "team": "San Diego Padres",
       "tcdb_price": 0.75,
-      "avg_price": 1.52,
-      "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.5,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:10.692595+00:00",
       "card_id": "1990_donruss_ed_whitson_26"
     },
     {
@@ -21451,10 +21451,10 @@
       "card_number": "30",
       "team": "San Diego Padres",
       "tcdb_price": 1.5,
-      "avg_price": 1.51,
-      "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.49,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:11.784771+00:00",
       "card_id": "1990_donruss_sandy_alomar_jr_30"
     },
     {
@@ -21464,10 +21464,10 @@
       "card_number": "36",
       "team": "Montreal Expos",
       "tcdb_price": 0.5,
-      "avg_price": 1.5,
+      "avg_price": 1.48,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:12.917216+00:00",
       "card_id": "1990_donruss_marquis_grissom_36"
     },
     {
@@ -21477,10 +21477,10 @@
       "card_number": "39",
       "team": "Atlanta Braves",
       "tcdb_price": 1.35,
-      "avg_price": 1.52,
+      "avg_price": 1.5,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:14.079392+00:00",
       "card_id": "1990_donruss_steve_avery_39"
     },
     {
@@ -21490,10 +21490,10 @@
       "card_number": "45",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.44,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.42,
+      "median": 1.45,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:15.259519+00:00",
       "card_id": "1990_donruss_alex_sanchez_45"
     },
     {
@@ -21503,10 +21503,10 @@
       "card_number": "52",
       "team": "California Angels",
       "tcdb_price": 0.05,
-      "avg_price": 1.45,
-      "median": 1.34,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.42,
+      "median": 1.25,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:16.323964+00:00",
       "card_id": "1990_donruss_claudell_washington_52"
     },
     {
@@ -21516,10 +21516,10 @@
       "card_number": "53",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
+      "avg_price": 1.54,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:17.450835+00:00",
       "card_id": "1990_donruss_juan_samuel_53"
     },
     {
@@ -21529,10 +21529,10 @@
       "card_number": "61",
       "team": "Kansas City Royals",
       "tcdb_price": 0.99,
-      "avg_price": 1.49,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.4,
+      "median": 1.48,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:18.587821+00:00",
       "card_id": "1990_donruss_bo_jackson_61"
     },
     {
@@ -21542,10 +21542,10 @@
       "card_number": "66",
       "team": "Boston Red Sox",
       "tcdb_price": 0.17,
-      "avg_price": 1.43,
+      "avg_price": 1.42,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:19.746242+00:00",
       "card_id": "1990_donruss_mike_greenwell_66"
     },
     {
@@ -21555,10 +21555,10 @@
       "card_number": "67",
       "team": "Oakland Athletics",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.55,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:20.863063+00:00",
       "card_id": "1990_donruss_walt_weiss_67"
     },
     {
@@ -21568,10 +21568,10 @@
       "card_number": "73",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.65,
-      "median": 1.57,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.66,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:21.967826+00:00",
       "card_id": "1990_donruss_joel_skinner_73"
     },
     {
@@ -21581,10 +21581,10 @@
       "card_number": "78",
       "team": "New York Yankees",
       "tcdb_price": 0.05,
-      "avg_price": 1.41,
+      "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:23.057140+00:00",
       "card_id": "1990_donruss_steve_sax_78"
     },
     {
@@ -21594,10 +21594,10 @@
       "card_number": "80",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.05,
-      "avg_price": 1.52,
+      "avg_price": 1.53,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:24.282595+00:00",
       "card_id": "1990_donruss_danny_jackson_80"
     },
     {
@@ -21607,10 +21607,10 @@
       "card_number": "94",
       "team": "California Angels",
       "tcdb_price": 0.09,
-      "avg_price": 1.46,
+      "avg_price": 1.48,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-17T20:37:25.615878+00:00",
       "card_id": "1990_donruss_wally_joyner_94"
     },
     {
@@ -57549,7 +57549,7 @@
   "_portfolio": [
     {
       "date": "2026-04-17",
-      "total_value": 7043.38,
+      "total_value": 7052.68,
       "cards_priced": 4364
     }
   ]
