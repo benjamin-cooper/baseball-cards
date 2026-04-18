@@ -1520,30 +1520,40 @@ def process_card_timed(row: list, row_number: int) -> Optional[dict]:
         signal.signal(signal.SIGALRM, old)
 
 
+SHEET_WRITE_EVERY = 10   # flush to Google Sheets after this many cards priced
+
 def process_batch(batch: list, service) -> list:
     """Price a list of (row_num, row) tuples. Returns result dicts.
-    Raises EbayQuotaExhausted if the daily eBay quota runs out mid-batch
-    (after flushing whatever has been priced so far).
+    Flushes to Google Sheets every SHEET_WRITE_EVERY cards so that a
+    mid-run cancel (SIGTERM / manual cancel) preserves as much progress
+    as possible. Raises EbayQuotaExhausted if the daily quota runs out.
     """
-    results, api_calls = [], 0
+    results, pending, api_calls = [], [], 0
+
+    def _flush():
+        if pending:
+            write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in pending])
+            pending.clear()
+
     for row_num, row in batch:
         try:
             r = process_card_timed(row, row_num)
             if r:
                 results.append(r)
+                pending.append(r)
                 api_calls += 1
+                if len(pending) >= SHEET_WRITE_EVERY:
+                    _flush()
         except EbayQuotaExhausted:
-            # Flush what we have, then re-raise so main() can save+exit cleanly
-            if results:
-                write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in results])
+            _flush()   # save everything priced so far before exiting
             raise
         except Exception as e:
             log.error('Failed row %d: %s', row_num, e)
         if api_calls > 0 and api_calls % 100 == 0:
             log.info('Rate limit pause…')
             time.sleep(0.5)
-    if results:
-        write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in results])
+
+    _flush()   # write any remaining cards
     return results
 
 
