@@ -216,6 +216,14 @@ _ebay_quota_exhausted: bool = False   # set True when eBay confirms daily limit 
 _ebay_suspended: bool = False         # set True when consecutive 429s hit threshold → skip eBay, keep going
 _consecutive_429_cards: int = 0       # cards where every eBay attempt was a 429
 
+# Query-level caches — keyed on query string, value is (timestamp, items).
+# Prevents duplicate API calls when multiple cards share the same query
+# (same player/year/brand, different card number).
+_ebay_cache:  dict[str, tuple[float, list]] = {}
+_mavin_cache: dict[str, tuple[float, list]] = {}
+EBAY_CACHE_TTL  = 600   # 10 minutes
+MAVIN_CACHE_TTL = 600   # 10 minutes
+
 
 def get_ebay_token() -> str:
     global _ebay_token, _ebay_token_expiry
@@ -294,6 +302,14 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     if _ebay_suspended:
         return []
 
+    # Check query cache — skip the API call if we fetched this recently
+    cache_key  = f'{query}|{price_filter or ""}'
+    _now_ts    = time.time()
+    _cached    = _ebay_cache.get(cache_key)
+    if _cached and _now_ts - _cached[0] < EBAY_CACHE_TTL:
+        log.debug('eBay cache hit for "%s"', query)
+        return _cached[1]
+
     token      = get_ebay_token()
     filter_str = f'buyingOptions:{{FIXED_PRICE|AUCTION}},price:[{price_filter or EBAY_PRICE_RANGE}],itemLocationCountry:US'
     params = {
@@ -322,7 +338,10 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
             if r.status_code == 200:
                 _consecutive_429_cards = 0   # successful call — reset streak
                 _ebay_suspended = False       # lift suspension if eBay recovers mid-run
-                return r.json().get('itemSummaries', [])
+                result = r.json().get('itemSummaries', [])
+                if result:                   # don't cache empty results (re-fetch on next call)
+                    _ebay_cache[cache_key] = (time.time(), result)
+                return result
 
             if r.status_code == 429:
                 # Check if this is a daily quota 429 (Retry-After = hours) vs
@@ -416,6 +435,14 @@ def fetch_mavin_prices(year: str, brand: str, player: str, card_number: str = ''
     query = f"{year} {brand} {player}"
     if card_number:
         query += f" {card_number}"
+
+    # Check cache before making a network request
+    _now_ts = time.time()
+    _cached = _mavin_cache.get(query)
+    if _cached and _now_ts - _cached[0] < MAVIN_CACHE_TTL:
+        log.debug('Mavin cache hit for "%s"', query)
+        return _cached[1]
+
     url = f"https://mavin.io/search?q={requests.utils.quote(query + ' baseball card')}"
     try:
         r = requests.get(
@@ -497,7 +524,10 @@ def fetch_mavin_prices(year: str, brand: str, player: str, card_number: str = ''
                 deduped.append(item)
 
         log.debug('Mavin: %d sold comps for "%s"', len(deduped), query)
-        return deduped[:40]
+        result = deduped[:40]
+        if result:   # don't cache empty results
+            _mavin_cache[query] = (time.time(), result)
+        return result
 
     except Exception as e:
         log.debug('Mavin fetch error for "%s": %s', query, e)
@@ -514,6 +544,10 @@ LOT_KW      = ('lot of', 'complete set', 'team set')
 REPRINT_KW  = ('reprint', 'reproduction')
 PARALLEL_KW = ('/1 ', '/2 ', '/3 ', '/4 ', '/5 ', '/10 ', '/25 ', '/50 ')
 MULTI_KW    = (' x2', ' x3', '(2)', '(3)', '(4)')
+PREMIUM_KW  = ('refractor', 'prizm', 'rainbow foil', 'xfractor', 'superfractor',
+               'atomic refractor', 'sepia', 'gold parallel', 'negative refractor')
+INSERT_KW   = ('insert', 'award winners', 'career highlights',
+               'future stars', 'franchise favorites')
 
 
 def _extract_price(item: dict) -> Optional[float]:
@@ -801,8 +835,14 @@ def _brand_in_title(variants: list[str], title_l: str) -> bool:
     return False
 
 
-def _apply_exclusions(title_l: str) -> bool:
-    """Return True if this listing should be excluded."""
+def _apply_exclusions(title_l: str, card_brand_l: str = '') -> bool:
+    """Return True if this listing should be excluded.
+
+    card_brand_l: lowercased brand/set name of the card being priced.
+    Keywords that appear in the card's own brand are skipped so we don't
+    incorrectly filter valid comps (e.g. a Topps Chrome Refractor card
+    should not reject listings containing 'refractor').
+    """
     if any(k in title_l for k in GRADED_KW):   return True
     if any(k in title_l for k in AUTO_KW):      return True
     if any(k in title_l for k in LOT_KW):       return True
@@ -810,6 +850,26 @@ def _apply_exclusions(title_l: str) -> bool:
     if any(k in title_l for k in MULTI_KW):     return True
     if any(k in title_l for k in PARALLEL_KW):  return True
     if re.search(r'/\d{1,3}\b', title_l):       return True
+
+    # Premium parallels — skip check if the card's own brand contains the keyword
+    for k in PREMIUM_KW:
+        if k in title_l and k not in card_brand_l:
+            return True
+
+    # Insert patterns — skip check if the card's own brand contains the keyword
+    for k in INSERT_KW:
+        if k in title_l and k not in card_brand_l:
+            return True
+
+    # Short print / SSP — word-boundary matching to avoid false positives
+    # (e.g. 'sp' inside 'display' or 'especially'); skip if card is itself an SP variant
+    if not re.search(r'\bsp\b', card_brand_l) and not re.search(r'\bssp\b', card_brand_l):
+        if re.search(r'\bsp\b', title_l):    return True
+    if not re.search(r'\bssp\b', card_brand_l):
+        if re.search(r'\bssp\b', title_l):   return True
+    if 'short print' not in card_brand_l and 'short print' in title_l:          return True
+    if 'super short print' not in card_brand_l and 'super short print' in title_l: return True
+
     return False
 
 
@@ -835,7 +895,7 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
         # Team is NOT used as a hard filter — listings routinely omit team names,
         # and players with multi-team careers would lose too many valid comps.
         # _team_variants() is available for Claude prompt enrichment instead.
-        if _apply_exclusions(title_n):                           continue
+        if _apply_exclusions(title_n, brand.lower()):             continue
         if cn_clean and not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_n): continue
 
         results.append({
@@ -848,14 +908,15 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
     return results
 
 
-def filter_items_relaxed(items, year, player) -> list[dict]:
+def filter_items_relaxed(items, year, player, brand: str = '') -> list[dict]:
     """Relaxed filter: player + year only, no card number or brand required.
     Used as a fallback when strict filtering finds fewer than LOW_DATA_THRESH comps.
     Still excludes graded, lots, autos, reprints and parallels.
     """
-    player_vs = _player_name_variants(player)
-    year_s    = str(year)
-    results   = []
+    player_vs    = _player_name_variants(player)
+    year_s       = str(year)
+    card_brand_l = brand.lower()
+    results      = []
 
     for item in items:
         price = _extract_price(item)
@@ -867,7 +928,7 @@ def filter_items_relaxed(items, year, player) -> list[dict]:
 
         if not any(pv in title_n for pv in player_vs): continue
         if year_s not in title_n:                      continue
-        if _apply_exclusions(title_n):                 continue
+        if _apply_exclusions(title_n, card_brand_l):   continue
 
         results.append({
             'price':        price,
@@ -892,7 +953,7 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
             try:
                 age = (now - datetime.fromisoformat(ed.replace('Z', '+00:00'))).days
             except Exception:
-                age = 0
+                continue   # malformed date — can't trust recency weight, skip item
         else:
             age = 0
         prices_with_age.append((item['price'], age, item.get('listing_type', 'BIN')))
@@ -1061,11 +1122,30 @@ Rules:
 }"""
 
 
-def execute_tool(name: str, inputs: dict) -> str:
+def execute_tool(name: str, inputs: dict, card: dict = None) -> str:
     if name == 'search_ebay':
         items = ebay_search(inputs['query'])
         if not items:
             return 'No results found.'
+
+        # Pre-filter through exclusions so Claude doesn't anchor on graded/auto/SSP outliers
+        if card:
+            card_brand_l = card.get('brand', '').lower()
+            filtered = [i for i in items
+                        if not _apply_exclusions((i.get('title', '') or '').lower(), card_brand_l)]
+            items = filtered or items   # fall back to unfiltered if all excluded
+
+        # IQR trim before presenting to Claude
+        prices_raw = [float((i.get('price') or {}).get('value') or 0) for i in items]
+        prices_pos = sorted(p for p in prices_raw if p > 0)
+        if len(prices_pos) >= 4:
+            q1  = prices_pos[len(prices_pos) // 4]
+            q3  = prices_pos[len(prices_pos) * 3 // 4]
+            iqr = q3 - q1
+            lo, hi = max(0.50, q1 - 1.5 * iqr), q3 + 1.5 * iqr
+            trimmed = [i for i, p in zip(items, prices_raw) if lo <= p <= hi]
+            items = trimmed or items
+
         lines = [f'${i.get("price",{}).get("value","?")} — {i.get("title","?")}' for i in items[:20]]
         return '\n'.join(lines)
 
@@ -1085,13 +1165,16 @@ def execute_tool(name: str, inputs: dict) -> str:
 def price_with_claude(card: dict) -> Optional[dict]:
     """Call Claude with tool use to price a difficult card."""
     client = get_claude()
-    tcdb_ref = card.get('tcdb_price') or 'unknown'
+    tcdb_ref     = card.get('tcdb_price') or 'unknown'
+    team_aliases = _team_variants(card.get('team', ''))
+    team_str     = ', '.join(team_aliases) if len(team_aliases) > 1 else (card.get('team') or 'N/A')
     desc = (
         f"Year: {card['year']}\n"
         f"Brand: {card['brand']}\n"
         f"Player: {card['player']}\n"
         f"Card Number: {card['card_number'] or 'N/A'}\n"
         f"Team: {card['team'] or 'N/A'}\n"
+        f"Team aliases (use for comp matching): {team_str}\n"
         f"TCDB Reference Price: ${tcdb_ref}"
     )
     messages = [{'role': 'user', 'content': f'Please price this baseball card:\n\n{desc}'}]
@@ -1111,7 +1194,7 @@ def price_with_claude(card: dict) -> Optional[dict]:
                 tool_results = []
                 for block in resp.content:
                     if block.type == 'tool_use':
-                        result = execute_tool(block.name, block.input)
+                        result = execute_tool(block.name, block.input, card=card)
                         tool_results.append({
                             'type': 'tool_result',
                             'tool_use_id': block.id,
@@ -1251,8 +1334,8 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     # Fires when strict comps are too thin. Gives a market signal even for
     # cards that are rarely listed under an exact card-number search.
     if result['count'] < LOW_DATA_THRESH:
-        relaxed_ebay  = filter_items_relaxed(ebay_items,  card['year'], card['player'])
-        relaxed_mavin = filter_items_relaxed(mavin_items, card['year'], card['player'])
+        relaxed_ebay  = filter_items_relaxed(ebay_items,  card['year'], card['player'], card['brand'])
+        relaxed_mavin = filter_items_relaxed(mavin_items, card['year'], card['player'], card['brand'])
         relaxed_all   = relaxed_ebay + relaxed_mavin
         if len(relaxed_all) >= LOW_DATA_THRESH:
             result   = weighted_average(relaxed_all)
@@ -1533,8 +1616,7 @@ def main():
 
     if not candidates:
         log.info('Nothing to price — exiting.')
-        # Still rebuild the results JSON so the page stays fresh
-        rows = read_sheet(service)
+        # Still rebuild the results JSON so the page stays fresh (rows already in memory)
 
     # ── Run modes ─────────────────────────────────────────────────────────────
     all_results: list = []
@@ -1543,8 +1625,7 @@ def main():
         """Graceful shutdown when eBay quota is exhausted mid-run."""
         log.warning('=== %s ===', reason)
         log.info('Saving progress for %d cards priced so far…', len(all_results))
-        rows_now = read_sheet(service)
-        output   = build_results_json(rows_now, all_results)
+        output = build_results_json(rows, all_results)   # use in-memory rows — no re-read needed
         _save_outputs(output, all_results)
         commit_progress('quota-exhausted')
         log.info('Progress saved. Re-run after eBay quota resets (usually midnight UTC).')
@@ -1561,17 +1642,14 @@ def main():
             except EbayQuotaExhausted as e:
                 _save_and_exit_quota(str(e))
             all_results.extend(chunk_results)
-            rows   = read_sheet(service)
-            output = build_results_json(rows, all_results)
+            output = build_results_json(rows, all_results)   # rows is held in memory — no re-read
             _save_outputs(output, all_results)
-            commit_progress(f'{chunk_start + len(chunk)}/{total}')
     else:
         batch = candidates if RUN_MODE == 'player' else candidates[:BATCH_SIZE]
         try:
             all_results = process_batch(batch, service)
         except EbayQuotaExhausted as e:
             _save_and_exit_quota(str(e))
-        rows = read_sheet(service)
 
     log.info('Processed %d cards total', len(all_results))
 
@@ -1618,7 +1696,7 @@ def _save_outputs(output: dict, results: list):
 
     output['_portfolio'] = price_history['_portfolio']
     with open(RESULTS_FILE, 'w') as f:
-        json.dump(output, f, indent=2, default=str)
+        json.dump(output, f, separators=(',', ':'), default=str)
     log.info('Saved %s (%.0f KB)', RESULTS_FILE, os.path.getsize(RESULTS_FILE) / 1024)
 
 

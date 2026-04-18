@@ -118,7 +118,7 @@
           <button id="btn-export" class="btn-export">⬇ Export CSV</button>
         </div>
 
-        <div class="table-wrapper">
+        <div class="table-wrapper clusterize-scroll" id="table-scroll-area">
           <table id="cards-table">
             <thead>
               <tr>
@@ -135,7 +135,7 @@
                 <th data-col="last_updated" class="sortable">Updated <span class="sort-icon">↕</span></th>
               </tr>
             </thead>
-            <tbody id="cards-tbody"></tbody>
+            <tbody id="cards-tbody" class="clusterize-content"></tbody>
           </table>
         </div>
       </div>
@@ -254,6 +254,7 @@
     </div>
   </div>
 
+  <script src="js/clusterize.min.js"></script>
   <script src="js/pricing.js"></script>
 </body>
 </html>

@@ -282,10 +282,17 @@
   white-space: nowrap;
 }
 
+/* Clusterize needs a fixed-height scroll container to virtualise rows */
 .table-wrapper {
   overflow-x: auto;
+  overflow-y: auto;
+  max-height: 600px;
   border-radius: 8px;
 }
+
+/* Clusterize injects spacer rows — make them invisible */
+.clusterize-extra-row td { border: none !important; padding: 0 !important; }
+.clusterize-keep-parity  { display: none; }
 
 #cards-table {
   width: 100%;
@@ -356,6 +363,13 @@
 .roi-pos { color: #4CAF50; }
 .roi-neg { color: #EF5350; }
 .roi-na  { color: #555; }
+
+/* PER-ROW STALENESS (#9) */
+.age-fresh  { color: #4CAF50 !important; }          /* < 2 days — green */
+.age-recent { color: #666; }                         /* 2–7 days — default/muted */
+.age-aging  { color: #FFB74D !important; }           /* 7–30 days — amber */
+.age-stale  { color: #EF5350 !important; }           /* 30+ days — red */
+.age-never  { color: #444; font-style: italic; }     /* never priced — dark gray */
 
 /* MODALS */
 .modal {

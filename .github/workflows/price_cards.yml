@@ -30,6 +30,10 @@ on:
         default: '0'
         type: string
 
+concurrency:
+  group: pricing
+  cancel-in-progress: false
+
 permissions:
   contents: write
 

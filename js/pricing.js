@@ -20,6 +20,7 @@ let runPollTimer  = null;
 let runTickTimer  = null;
 let runStartTime  = null;
 let activeRunId   = null;   // GitHub Actions run ID, set once the run is found
+let clusterize    = null;   // Clusterize instance for virtual table rendering
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -294,39 +295,62 @@ function sortTable() {
   renderTable();
 }
 
-function renderTable() {
-  const tbody = document.getElementById('cards-tbody');
-  set('table-count', `${filtered.length.toLocaleString()} cards`);
-  if (!filtered.length) {
-    tbody.innerHTML = `<tr><td colspan="11" class="state-empty">No cards match your filters</td></tr>`;
-    return;
-  }
-  tbody.innerHTML = filtered.map(c => {
-    const id = cardId(c), hist = priceHistory[id];
-    let changeTxt = '<span class="roi-na">—</span>';
-    if (hist && hist.length >= 2) {
-      const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
-      if (prev && curr) {
-        const pct = (curr-prev)/prev*100;
-        changeTxt = `<span class="${pct>=0?'roi-pos':'roi-neg'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
-      }
-    }
-    const spark = hist && hist.length >= 2 ? sparkline(hist.map(h => h.price)) : '<span class="no-spark">—</span>';
+// ─── Staleness class (#9) ─────────────────────────────────────────────────────
+function ageClass(lastUpdated) {
+  if (!lastUpdated) return 'age-never';
+  const days = (Date.now() - new Date(lastUpdated)) / (1000 * 60 * 60 * 24);
+  if (days < 2)  return 'age-fresh';
+  if (days < 7)  return 'age-recent';
+  if (days < 30) return 'age-aging';
+  return 'age-stale';
+}
 
-    return `<tr class="card-row" onclick="openCardModal(${safeJson(c)})">
-      <td>${esc(c.player)}</td>
-      <td>${c.year}</td>
-      <td>${esc(c.brand)}</td>
-      <td style="color:#777">${esc(c.card_number||'—')}</td>
-      <td style="color:#888;font-size:0.8em">${esc(c.team||'—')}</td>
-      <td class="num" style="color:#4CAF50;font-weight:600">${fmt$(c.avg_price)}</td>
-      <td class="num" style="color:#888">${fmt$(c.tcdb_price)}</td>
-      <td class="num">${changeTxt}</td>
-      <td class="spark-cell">${spark}</td>
-      <td>${confidenceBadge(c.confidence)}</td>
-      <td style="color:#666;font-size:0.8em">${fmtDate(c.last_updated)}</td>
-    </tr>`;
-  }).join('');
+function buildRowHtml(c) {
+  const id = cardId(c), hist = priceHistory[id];
+  let changeTxt = '<span class="roi-na">—</span>';
+  if (hist && hist.length >= 2) {
+    const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
+    if (prev && curr) {
+      const pct = (curr-prev)/prev*100;
+      changeTxt = `<span class="${pct>=0?'roi-pos':'roi-neg'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
+    }
+  }
+  const spark = hist && hist.length >= 2 ? sparkline(hist.map(h => h.price)) : '<span class="no-spark">—</span>';
+  const ageCls = ageClass(c.last_updated);
+  return `<tr class="card-row" onclick="openCardModal(${safeJson(c)})">
+    <td>${esc(c.player)}</td>
+    <td>${c.year}</td>
+    <td>${esc(c.brand)}</td>
+    <td style="color:#777">${esc(c.card_number||'—')}</td>
+    <td style="color:#888;font-size:0.8em">${esc(c.team||'—')}</td>
+    <td class="num" style="color:#4CAF50;font-weight:600">${fmt$(c.avg_price)}</td>
+    <td class="num" style="color:#888">${fmt$(c.tcdb_price)}</td>
+    <td class="num">${changeTxt}</td>
+    <td class="spark-cell">${spark}</td>
+    <td>${confidenceBadge(c.confidence)}</td>
+    <td class="num ${ageCls}">${fmtDate(c.last_updated)}</td>
+  </tr>`;
+}
+
+function renderTable() {
+  set('table-count', `${filtered.length.toLocaleString()} cards`);
+
+  const emptyRow = `<tr><td colspan="11" class="state-empty">No cards match your filters</td></tr>`;
+  const rows     = filtered.length ? filtered.map(buildRowHtml) : [emptyRow];
+
+  if (clusterize) {
+    clusterize.update(rows);
+  } else {
+    clusterize = new Clusterize({
+      rows,
+      scrollId:   'table-scroll-area',
+      contentId:  'cards-tbody',
+      no_data_text: emptyRow,
+      callbacks: {
+        // re-attach click handlers not needed — we embed onclick in the row HTML
+      }
+    });
+  }
 }
 
 function populateYearFilter(cards) {
