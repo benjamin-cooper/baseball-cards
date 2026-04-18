@@ -180,29 +180,63 @@ function renderEraChart(byEra) {
 }
 
 // ─── Brand Chart ─────────────────────────────────────────────────────────────
+let brandData   = {};   // persisted so the toggle can re-render without refetching
+let brandMode   = 'total';   // 'total' | 'avg'
+
 function renderBrandChart(byBrand, cards) {
-  const el = document.getElementById('brand-chart');
-  // Use pre-computed by_brand from JSON, fall back to computing from cards
-  let entries = Object.entries(byBrand);
-  if (!entries.length) {
-    const map = {};
+  // Build / cache brand data
+  let map = Object.entries(byBrand).length ? byBrand : null;
+  if (!map) {
+    map = {};
     cards.filter(c => c.avg_price).forEach(c => {
-      const b = c.brand||'Unknown';
+      const b = c.brand || 'Unknown';
       if (!map[b]) map[b] = { count: 0, total_value: 0 };
       map[b].count++;
       map[b].total_value += parseFloat(c.avg_price);
     });
-    entries = Object.entries(map);
   }
+  brandData = map;
+  drawBrandChart();
+}
+
+function setBrandMode(mode) {
+  brandMode = mode;
+  document.getElementById('brand-toggle-total').classList.toggle('active', mode === 'total');
+  document.getElementById('brand-toggle-avg').classList.toggle('active', mode === 'avg');
+  drawBrandChart();
+}
+
+function drawBrandChart() {
+  const el = document.getElementById('brand-chart');
+  const entries = Object.entries(brandData);
   if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
-  const sorted = entries.sort((a,b) => b[1].total_value - a[1].total_value).slice(0, 10);
-  const maxVal = sorted[0][1].total_value || 1;
-  el.innerHTML = sorted.map(([brand, stats]) => {
-    const pct = ((stats.total_value||0) / maxVal * 100).toFixed(1);
-    return `<div class="era-row">
-      <span class="era-label">${esc(brand)}</span>
+
+  const withAvg = entries.map(([brand, s]) => ({
+    brand,
+    count:       s.count || 0,
+    total_value: s.total_value || 0,
+    avg_value:   s.count ? (s.total_value / s.count) : 0,
+  }));
+
+  const sorted = [...withAvg]
+    .sort((a, b) => brandMode === 'avg'
+      ? b.avg_value   - a.avg_value
+      : b.total_value - a.total_value)
+    .slice(0, 10);
+
+  const maxVal = sorted[0][brandMode === 'avg' ? 'avg_value' : 'total_value'] || 1;
+
+  el.innerHTML = sorted.map(d => {
+    const barVal   = brandMode === 'avg' ? d.avg_value : d.total_value;
+    const pct      = (barVal / maxVal * 100).toFixed(1);
+    const mainAmt  = fmt$(barVal);
+    const subLabel = brandMode === 'avg'
+      ? `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total</span>`
+      : `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg</span>`;
+    return `<div class="era-row brand-row">
+      <span class="era-label">${esc(d.brand)}</span>
       <div class="era-bar-wrap"><div class="era-bar brand-bar" style="width:${pct}%"></div></div>
-      <span class="era-value">${fmt$(stats.total_value)}</span>
+      <span class="era-value">${mainAmt}${subLabel}</span>
     </div>`;
   }).join('');
 }

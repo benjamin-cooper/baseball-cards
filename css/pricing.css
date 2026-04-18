@@ -593,6 +593,45 @@
 /* BRAND BAR (blue gradient) */
 .brand-bar { background: linear-gradient(90deg, #1565c0, #42a5f5) !important; }
 
+/* BRAND CHART TOGGLE */
+.panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+.panel-header h2 { margin: 0; }
+
+.chart-toggle {
+  display: flex;
+  gap: 4px;
+  background: rgba(255,255,255,0.06);
+  padding: 3px;
+  border-radius: 8px;
+}
+.chart-toggle-btn {
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 0.78em;
+  font-family: inherit;
+  padding: 4px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.chart-toggle-btn:hover  { color: #ccc; }
+.chart-toggle-btn.active {
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+}
+
+/* BRAND ROW — extra height to fit sub-label */
+.brand-row { align-items: flex-start !important; padding: 5px 0 !important; }
+.brand-row .era-value { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
+.brand-sub { font-size: 0.72em; color: #666; white-space: nowrap; }
+
 /* SPARKLINE CELL */
 .spark-cell { padding: 6px 12px !important; vertical-align: middle; }
 .no-spark { color: #444; font-size: 0.8em; }

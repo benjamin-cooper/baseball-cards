@@ -16,7 +16,7 @@ Required environment variables:
   BATCH_SIZE                 - Cards to process per run (default 50)
 """
 
-import os, sys, json, time, base64, re, math, logging
+import os, sys, json, time, base64, re, math, logging, signal
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -50,6 +50,9 @@ EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
 MAVIN_SLEEP_MS     = 300         # ms between Mavin requests (be polite)
 MAVIN_MAX_AGE_DAYS = 730         # ignore Mavin sales older than this (2 years)
+CARD_TIMEOUT_SEC   = 90          # max wall-clock seconds per card before skipping
+SHEETS_RETRIES     = 4           # retry attempts for Google Sheets API calls
+EBAY_RETRIES       = 3           # retry attempts for eBay API calls
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
@@ -172,11 +175,21 @@ def write_rows(service, updates: list[dict]):
                 'range':  f"'{SHEET_NAME}'!{start_ltr}{u['row']}:{end_ltr}{u['row']}",
                 'values': [seg['values']],
             })
-    service.values().batchUpdate(
-        spreadsheetId=SPREADSHEET_ID,
-        body={'valueInputOption': 'USER_ENTERED', 'data': data}
-    ).execute()
-    log.info('Wrote %d rows (%d range segments) to sheet', len(updates), len(data))
+    for attempt in range(SHEETS_RETRIES):
+        try:
+            service.values().batchUpdate(
+                spreadsheetId=SPREADSHEET_ID,
+                body={'valueInputOption': 'USER_ENTERED', 'data': data}
+            ).execute()
+            log.info('Wrote %d rows (%d range segments) to sheet', len(updates), len(data))
+            return
+        except Exception as e:
+            if attempt == SHEETS_RETRIES - 1:
+                raise
+            wait = 2 ** (attempt + 1)   # 2, 4, 8 seconds
+            log.warning('Sheet write error (attempt %d/%d): %s — retrying in %ds',
+                        attempt + 1, SHEETS_RETRIES, e, wait)
+            time.sleep(wait)
 
 
 def col_index_to_letter(col_1indexed: int) -> str:
@@ -228,8 +241,8 @@ def get_ebay_token() -> str:
 # ══════════════════════════════════════════════════════════════════════════════
 
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
-    """Search eBay Browse API, returns list of item dicts."""
-    token  = get_ebay_token()
+    """Search eBay Browse API with retry and rate-limit backoff."""
+    token      = get_ebay_token()
     filter_str = f'buyingOptions:{{FIXED_PRICE|AUCTION}},price:[{price_filter or EBAY_PRICE_RANGE}],itemLocationCountry:US'
     params = {
         'q':            f'{query} baseball',
@@ -238,22 +251,34 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
         'sort':         'price',
         'limit':        '200',
     }
-    try:
-        r = requests.get(
-            'https://api.ebay.com/buy/browse/v1/item_summary/search',
-            headers={
-                'Authorization':          f'Bearer {token}',
-                'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
-            },
-            params=params,
-            timeout=15
-        )
-        time.sleep(EBAY_SLEEP_MS / 1000)
-        if r.status_code == 200:
-            return r.json().get('itemSummaries', [])
-        log.warning('eBay %s for query "%s"', r.status_code, query)
-    except Exception as e:
-        log.warning('eBay search error: %s', e)
+    for attempt in range(EBAY_RETRIES):
+        try:
+            r = requests.get(
+                'https://api.ebay.com/buy/browse/v1/item_summary/search',
+                headers={
+                    'Authorization':           f'Bearer {token}',
+                    'X-EBAY-C-MARKETPLACE-ID': 'EBAY_US',
+                },
+                params=params,
+                timeout=15
+            )
+            time.sleep(EBAY_SLEEP_MS / 1000)
+            if r.status_code == 200:
+                return r.json().get('itemSummaries', [])
+            if r.status_code == 429:
+                wait = 30 * (attempt + 1)   # 30s, 60s, 90s
+                log.warning('eBay rate limited — sleeping %ds (attempt %d/%d)',
+                            wait, attempt + 1, EBAY_RETRIES)
+                time.sleep(wait)
+                token = get_ebay_token()    # refresh token before retry
+                continue
+            log.warning('eBay %s for query "%s"', r.status_code, query)
+            return []
+        except Exception as e:
+            if attempt == EBAY_RETRIES - 1:
+                log.warning('eBay search failed after %d attempts: %s', EBAY_RETRIES, e)
+                return []
+            time.sleep(5 * (attempt + 1))
     return []
 
 
@@ -709,7 +734,8 @@ def price_with_claude(card: dict) -> Optional[dict]:
                 max_tokens=1024,
                 system=SYSTEM_PROMPT,
                 tools=CLAUDE_TOOLS,
-                messages=messages
+                messages=messages,
+                timeout=30,   # 30s per API round — SIGALRM covers the full card
             )
 
             if resp.stop_reason == 'tool_use':
@@ -1036,12 +1062,32 @@ def commit_progress(label: str = ''):
         log.warning('Failed to commit progress: %s', e)
 
 
+class _CardTimeout(Exception):
+    pass
+
+def _card_timeout_handler(signum, frame):
+    raise _CardTimeout()
+
+def process_card_timed(row: list, row_number: int) -> Optional[dict]:
+    """process_card() wrapped in a SIGALRM wall-clock timeout (Linux/macOS only)."""
+    old = signal.signal(signal.SIGALRM, _card_timeout_handler)
+    signal.alarm(CARD_TIMEOUT_SEC)
+    try:
+        return process_card(row, row_number)
+    except _CardTimeout:
+        log.warning('Row %d timed out after %ds — skipping', row_number, CARD_TIMEOUT_SEC)
+        return None
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM, old)
+
+
 def process_batch(batch: list, service) -> list:
     """Price a list of (row_num, row) tuples. Returns result dicts."""
     results, api_calls = [], 0
     for row_num, row in batch:
         try:
-            r = process_card(row, row_num)
+            r = process_card_timed(row, row_num)
             if r:
                 results.append(r)
                 api_calls += 1
