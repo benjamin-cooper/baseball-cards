@@ -1,24 +1,11 @@
 {
-  "last_updated": "2026-04-18T07:04:58.330267+00:00",
+  "last_updated": "2026-04-18T07:09:09.573003+00:00",
   "total_cards": 4364,
   "cards_priced": 4364,
-  "total_value": 7006.5,
-  "avg_value": 1.61,
-  "top_card_value": 22.48,
+  "total_value": 6982.7,
+  "avg_value": 1.6,
+  "top_card_value": 21.87,
   "top_cards": [
-    {
-      "player": "Sandy Alomar, Jr",
-      "year": "1991",
-      "brand": "Jimmy Dean",
-      "card_number": "8",
-      "team": "Cleveland Indians",
-      "tcdb_price": 0.2,
-      "avg_price": 22.48,
-      "median": 22.48,
-      "confidence": "Low (active)",
-      "last_updated": "4/4/2026",
-      "card_id": "1991_jimmy_dean_sandy_alomar_jr_8"
-    },
     {
       "player": "Jim Thome",
       "year": "1998",
@@ -330,6 +317,19 @@
       "confidence": "Very High",
       "last_updated": "2026-04-18T02:30:47.497439+00:00",
       "card_id": "1958_topps_johnny_klippstein_242"
+    },
+    {
+      "player": "Red Faber",
+      "year": "1994",
+      "brand": "Conlon Collection",
+      "card_number": "26",
+      "team": "Chicago White Sox",
+      "tcdb_price": 0.77,
+      "avg_price": 4.07,
+      "median": 4.78,
+      "confidence": "High - Validated (active)",
+      "last_updated": "4/5/2026",
+      "card_id": "1994_conlon_collection_red_faber_26"
     }
   ],
   "by_era": {
@@ -347,7 +347,7 @@
     },
     "Junk Wax (1987\u201394)": {
       "count": 3808,
-      "total_value": 5911.740000000004
+      "total_value": 5887.940000000001
     },
     "Late 90s": {
       "count": 432,
@@ -369,11 +369,11 @@
     },
     "Donruss": {
       "count": 1081,
-      "total_value": 1621.8599999999924
+      "total_value": 1621.7499999999925
     },
     "Fleer": {
       "count": 403,
-      "total_value": 621.4700000000004
+      "total_value": 620.5699999999999
     },
     "Donruss Leaf": {
       "count": 1,
@@ -389,7 +389,7 @@
     },
     "Fleer Update": {
       "count": 27,
-      "total_value": 43.089999999999996
+      "total_value": 42.23
     },
     "Nestle": {
       "count": 1,
@@ -425,7 +425,7 @@
     },
     "Donruss The Rookies": {
       "count": 8,
-      "total_value": 13.49
+      "total_value": 12.860000000000001
     },
     "ProCards Minor League Team Sets": {
       "count": 1,
@@ -449,7 +449,7 @@
     },
     "Leaf": {
       "count": 46,
-      "total_value": 74.21999999999996
+      "total_value": 74.10999999999996
     },
     "Post": {
       "count": 1,
@@ -493,15 +493,15 @@
     },
     "Donruss Bonus Cards": {
       "count": 1,
-      "total_value": 1.44
+      "total_value": 1.45
     },
     "Fleer Ultra": {
       "count": 8,
-      "total_value": 12.96
+      "total_value": 12.969999999999999
     },
     "Jimmy Dean": {
       "count": 2,
-      "total_value": 24.44
+      "total_value": 3.23
     },
     "O-Pee-Chee Premier": {
       "count": 1,
@@ -32020,10 +32020,10 @@
       "card_number": "756",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.25,
-      "avg_price": 1.54,
-      "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:00.488974+00:00",
       "card_id": "1991_donruss_bill_doran_756"
     },
     {
@@ -32033,10 +32033,10 @@
       "card_number": "762",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 1.99,
-      "avg_price": 1.54,
-      "median": 1.51,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.55,
+      "median": 1.59,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:01.590590+00:00",
       "card_id": "1991_donruss_barry_bonds_762"
     },
     {
@@ -32046,10 +32046,10 @@
       "card_number": "764",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.12,
-      "avg_price": 1.64,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.45,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:02.682526+00:00",
       "card_id": "1991_donruss_julio_machado_764"
     },
     {
@@ -32059,10 +32059,10 @@
       "card_number": "768",
       "team": "Detroit Tigers",
       "tcdb_price": 0.1,
-      "avg_price": 1.62,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.63,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:03.883647+00:00",
       "card_id": "1991_donruss_travis_fryman_768"
     },
     {
@@ -32072,10 +32072,10 @@
       "card_number": "10",
       "team": "Kansas City Royals",
       "tcdb_price": 0.25,
-      "avg_price": 1.44,
+      "avg_price": 1.45,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:04.919763+00:00",
       "card_id": "1991_donruss_bonus_cards_bo_jackson_10"
     },
     {
@@ -32085,10 +32085,10 @@
       "card_number": "18",
       "team": "Cleveland Indians",
       "tcdb_price": 0.7,
-      "avg_price": 1.62,
+      "avg_price": 1.66,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:05.984460+00:00",
       "card_id": "1991_donruss_the_rookies_charles_nagy_18"
     },
     {
@@ -32098,10 +32098,10 @@
       "card_number": "32",
       "team": "Cleveland Indians",
       "tcdb_price": 0.18,
-      "avg_price": 1.83,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.68,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:06.941177+00:00",
       "card_id": "1991_donruss_the_rookies_mark_whiten_32"
     },
     {
@@ -32111,10 +32111,10 @@
       "card_number": "45",
       "team": "Cleveland Indians",
       "tcdb_price": 0.18,
-      "avg_price": 1.85,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:07.941034+00:00",
       "card_id": "1991_donruss_the_rookies_denis_boucher_45"
     },
     {
@@ -32124,10 +32124,10 @@
       "card_number": "55",
       "team": "Cleveland Indians",
       "tcdb_price": 0.1,
-      "avg_price": 1.73,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.55,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:08.898831+00:00",
       "card_id": "1991_donruss_the_rookies_reggie_jefferson_55"
     },
     {
@@ -32138,9 +32138,9 @@
       "team": "Oakland Athletics",
       "tcdb_price": 0.15,
       "avg_price": 1.48,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:09.910043+00:00",
       "card_id": "1991_fleer_jose_canseco_"
     },
     {
@@ -32150,10 +32150,10 @@
       "card_number": "2",
       "team": "Oakland Athletics",
       "tcdb_price": 0.53,
-      "avg_price": 1.62,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.68,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:10.889157+00:00",
       "card_id": "1991_fleer_harold_baines_2"
     },
     {
@@ -32163,10 +32163,10 @@
       "card_number": "9",
       "team": "Oakland Athletics",
       "tcdb_price": 0.3,
-      "avg_price": 1.62,
-      "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.6,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:12.026798+00:00",
       "card_id": "1991_fleer_dave_henderson_9"
     },
     {
@@ -32176,10 +32176,10 @@
       "card_number": "13",
       "team": "Oakland Athletics",
       "tcdb_price": 0.05,
-      "avg_price": 1.5,
+      "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:12.988181+00:00",
       "card_id": "1991_fleer_joe_klink_13"
     },
     {
@@ -32189,10 +32189,10 @@
       "card_number": "18",
       "team": "Oakland Athletics",
       "tcdb_price": 0.3,
-      "avg_price": 1.58,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:14.128681+00:00",
       "card_id": "1991_fleer_mike_moore_18"
     },
     {
@@ -32202,10 +32202,10 @@
       "card_number": "18",
       "team": "Oakland Athletics",
       "tcdb_price": 0.3,
-      "avg_price": 1.58,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:15.092936+00:00",
       "card_id": "1991_fleer_mike_moore_18"
     },
     {
@@ -32215,10 +32215,10 @@
       "card_number": "19",
       "team": "Oakland Athletics",
       "tcdb_price": 0.3,
-      "avg_price": 1.54,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.5,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:16.052847+00:00",
       "card_id": "1991_fleer_gene_nelson_19"
     },
     {
@@ -32228,10 +32228,10 @@
       "card_number": "19",
       "team": "Oakland Athletics",
       "tcdb_price": 0.3,
-      "avg_price": 1.54,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.5,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:17.035930+00:00",
       "card_id": "1991_fleer_gene_nelson_19"
     },
     {
@@ -32241,10 +32241,10 @@
       "card_number": "25",
       "team": "Oakland Athletics",
       "tcdb_price": 0.15,
-      "avg_price": 1.56,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:18.091509+00:00",
       "card_id": "1991_fleer_dave_stewart_25"
     },
     {
@@ -32254,10 +32254,10 @@
       "card_number": "27",
       "team": "Oakland Athletics",
       "tcdb_price": 0.1,
-      "avg_price": 1.57,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:19.111718+00:00",
       "card_id": "1991_fleer_bob_welch_27"
     },
     {
@@ -32267,10 +32267,10 @@
       "card_number": "35",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
+      "avg_price": 1.55,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:20.060391+00:00",
       "card_id": "1991_fleer_sid_bream_35"
     },
     {
@@ -32280,10 +32280,10 @@
       "card_number": "38",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:21.158620+00:00",
       "card_id": "1991_fleer_neal_heaton_38"
     },
     {
@@ -32293,10 +32293,10 @@
       "card_number": "38",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.57,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:22.256093+00:00",
       "card_id": "1991_fleer_neal_heaton_38"
     },
     {
@@ -32306,10 +32306,10 @@
       "card_number": "45",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.25,
-      "avg_price": 1.68,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.64,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:23.254458+00:00",
       "card_id": "1991_fleer_bob_patterson_45"
     },
     {
@@ -32319,10 +32319,10 @@
       "card_number": "46",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.3,
-      "avg_price": 1.4,
-      "median": 1.46,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.38,
+      "median": 1.28,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:24.230090+00:00",
       "card_id": "1991_fleer_ted_power_46"
     },
     {
@@ -32332,10 +32332,10 @@
       "card_number": "49",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.41,
-      "median": 1.22,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.43,
+      "median": 1.15,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:25.231576+00:00",
       "card_id": "1991_fleer_don_slaught_49"
     },
     {
@@ -32345,10 +32345,10 @@
       "card_number": "50",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.05,
-      "avg_price": 1.5,
-      "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.48,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:26.213256+00:00",
       "card_id": "1991_fleer_john_smiley_50"
     },
     {
@@ -32359,9 +32359,9 @@
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.17,
       "avg_price": 1.56,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:27.238528+00:00",
       "card_id": "1991_fleer_randy_tomlin_52"
     },
     {
@@ -32373,8 +32373,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.51,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:28.288240+00:00",
       "card_id": "1991_fleer_eric_davis_61"
     },
     {
@@ -32384,10 +32384,10 @@
       "card_number": "62",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.59,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:29.374160+00:00",
       "card_id": "1991_fleer_rob_dibble_62"
     },
     {
@@ -32397,10 +32397,10 @@
       "card_number": "63",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.25,
-      "avg_price": 1.5,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.47,
+      "median": 1.46,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:30.429344+00:00",
       "card_id": "1991_fleer_bill_doran_63"
     },
     {
@@ -32410,10 +32410,10 @@
       "card_number": "66",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.5,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.45,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:31.472088+00:00",
       "card_id": "1991_fleer_billy_hatcher_66"
     },
     {
@@ -32423,10 +32423,10 @@
       "card_number": "69",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.52,
+      "avg_price": 1.61,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:32.466403+00:00",
       "card_id": "1991_fleer_tim_layana_69"
     },
     {
@@ -32436,10 +32436,10 @@
       "card_number": "72",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.55,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:33.524163+00:00",
       "card_id": "1991_fleer_hal_morris_72"
     },
     {
@@ -32449,10 +32449,10 @@
       "card_number": "72",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.55,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:34.693186+00:00",
       "card_id": "1991_fleer_hal_morris_72"
     },
     {
@@ -32462,10 +32462,10 @@
       "card_number": "78",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.72,
-      "median": 1.84,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.67,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:35.721942+00:00",
       "card_id": "1991_fleer_jeff_reed_78"
     },
     {
@@ -32475,10 +32475,10 @@
       "card_number": "81",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.3,
-      "avg_price": 1.5,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.42,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:36.694577+00:00",
       "card_id": "1991_fleer_scott_scudder_81"
     },
     {
@@ -32488,10 +32488,10 @@
       "card_number": "87",
       "team": "Boston Red Sox",
       "tcdb_price": 0.3,
-      "avg_price": 1.52,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.48,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:37.720054+00:00",
       "card_id": "1991_fleer_tom_bolton_87"
     },
     {
@@ -32501,10 +32501,10 @@
       "card_number": "98",
       "team": "Boston Red Sox",
       "tcdb_price": 0.04,
-      "avg_price": 1.41,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.38,
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:38.760518+00:00",
       "card_id": "1991_fleer_daryl_irvine_98"
     },
     {
@@ -32514,10 +32514,10 @@
       "card_number": "99",
       "team": "Boston Red Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.64,
+      "median": 1.57,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:39.777074+00:00",
       "card_id": "1991_fleer_dana_kiecker_99"
     },
     {
@@ -32527,10 +32527,10 @@
       "card_number": "101",
       "team": "Boston Red Sox",
       "tcdb_price": 0.3,
-      "avg_price": 1.52,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.48,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:40.757277+00:00",
       "card_id": "1991_fleer_dennis_lamp_101"
     },
     {
@@ -32540,10 +32540,10 @@
       "card_number": "105",
       "team": "Boston Red Sox",
       "tcdb_price": 0.1,
-      "avg_price": 1.55,
+      "avg_price": 1.53,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:41.716562+00:00",
       "card_id": "1991_fleer_tim_naehring_105"
     },
     {
@@ -32553,10 +32553,10 @@
       "card_number": "109",
       "team": "Boston Red Sox",
       "tcdb_price": 0.1,
-      "avg_price": 1.62,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.6,
+      "median": 1.57,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:42.790947+00:00",
       "card_id": "1991_fleer_jeff_reardon_109"
     },
     {
@@ -32566,10 +32566,10 @@
       "card_number": "112",
       "team": "Boston Red Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
+      "avg_price": 1.55,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:43.814043+00:00",
       "card_id": "1991_fleer_luis_rivera_112"
     },
     {
@@ -32579,10 +32579,10 @@
       "card_number": "112",
       "team": "Boston Red Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
+      "avg_price": 1.55,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:44.821165+00:00",
       "card_id": "1991_fleer_luis_rivera_112"
     },
     {
@@ -32592,10 +32592,10 @@
       "card_number": "120",
       "team": "Chicago White Sox",
       "tcdb_price": 0.3,
-      "avg_price": 1.57,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.55,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:45.870551+00:00",
       "card_id": "1991_fleer_craig_grebeck_120"
     },
     {
@@ -32605,10 +32605,10 @@
       "card_number": "127",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.66,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.66,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:46.946829+00:00",
       "card_id": "1991_fleer_steve_lyons_127"
     },
     {
@@ -32618,10 +32618,10 @@
       "card_number": "131",
       "team": "Chicago White Sox",
       "tcdb_price": 0.15,
-      "avg_price": 1.63,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.59,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:47.982422+00:00",
       "card_id": "1991_fleer_dan_pasqua_131"
     },
     {
@@ -32631,10 +32631,10 @@
       "card_number": "134",
       "team": "Chicago White Sox",
       "tcdb_price": 0.3,
-      "avg_price": 1.57,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.58,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:48.963649+00:00",
       "card_id": "1991_fleer_adam_peterson_134"
     },
     {
@@ -32644,10 +32644,10 @@
       "card_number": "135",
       "team": "Chicago White Sox",
       "tcdb_price": 0.28,
-      "avg_price": 1.54,
+      "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:49.988216+00:00",
       "card_id": "1991_fleer_scott_radinsky_135"
     },
     {
@@ -32657,10 +32657,10 @@
       "card_number": "135",
       "team": "Chicago White Sox",
       "tcdb_price": 0.28,
-      "avg_price": 1.54,
+      "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:50.996580+00:00",
       "card_id": "1991_fleer_scott_radinsky_135"
     },
     {
@@ -32670,10 +32670,10 @@
       "card_number": "140",
       "team": "New York Mets",
       "tcdb_price": 0.3,
-      "avg_price": 1.65,
+      "avg_price": 1.63,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:51.926864+00:00",
       "card_id": "1991_fleer_daryl_boston_140"
     },
     {
@@ -32685,8 +32685,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:53.008420+00:00",
       "card_id": "1991_fleer_john_franco_147"
     },
     {
@@ -32698,8 +32698,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:54.054446+00:00",
       "card_id": "1991_fleer_john_franco_147"
     },
     {
@@ -32711,8 +32711,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.44,
       "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:55.098027+00:00",
       "card_id": "1991_fleer_keith_miller_155"
     },
     {
@@ -32723,9 +32723,9 @@
       "team": "New York Mets",
       "tcdb_price": 0.18,
       "avg_price": 1.51,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:56.152855+00:00",
       "card_id": "1991_fleer_alejandro_pena_158"
     },
     {
@@ -32735,10 +32735,10 @@
       "card_number": "160",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.61,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.57,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:57.138895+00:00",
       "card_id": "1991_fleer_mackey_sasser_160"
     },
     {
@@ -32748,10 +32748,10 @@
       "card_number": "161",
       "team": "New York Mets",
       "tcdb_price": 1.4,
-      "avg_price": 1.46,
+      "avg_price": 1.44,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:58.269497+00:00",
       "card_id": "1991_fleer_darryl_strawberry_161"
     },
     {
@@ -32761,10 +32761,10 @@
       "card_number": "161",
       "team": "New York Mets",
       "tcdb_price": 1.4,
-      "avg_price": 1.46,
+      "avg_price": 1.44,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:05:59.293199+00:00",
       "card_id": "1991_fleer_darryl_strawberry_161"
     },
     {
@@ -32774,10 +32774,10 @@
       "card_number": "162",
       "team": "New York Mets",
       "tcdb_price": 0.28,
-      "avg_price": 1.53,
+      "avg_price": 1.54,
       "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:00.305012+00:00",
       "card_id": "1991_fleer_tim_teufel_162"
     },
     {
@@ -32787,10 +32787,10 @@
       "card_number": "170",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:01.289509+00:00",
       "card_id": "1991_fleer_willie_blair_170"
     },
     {
@@ -32800,10 +32800,10 @@
       "card_number": "173",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.3,
-      "avg_price": 1.59,
+      "avg_price": 1.56,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:02.283146+00:00",
       "card_id": "1991_fleer_junior_felix_173"
     },
     {
@@ -32814,9 +32814,9 @@
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
       "avg_price": 1.68,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:03.458462+00:00",
       "card_id": "1991_fleer_tony_fernandez_174"
     },
     {
@@ -32827,9 +32827,9 @@
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
       "avg_price": 1.49,
-      "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:04.461681+00:00",
       "card_id": "1991_fleer_kelly_gruber_175"
     },
     {
@@ -32839,10 +32839,10 @@
       "card_number": "180",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.3,
-      "avg_price": 1.53,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.25,
+      "median": 0.3,
+      "confidence": "Low (TCDB ref)",
+      "last_updated": "2026-04-18T07:06:23.200883+00:00",
       "card_id": "1991_fleer_fred_mcgriff_180"
     },
     {
@@ -32852,10 +32852,10 @@
       "card_number": "187",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
+      "avg_price": 1.66,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:24.444615+00:00",
       "card_id": "1991_fleer_duane_ward_187"
     },
     {
@@ -32865,10 +32865,10 @@
       "card_number": "187",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
+      "avg_price": 1.66,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:25.490807+00:00",
       "card_id": "1991_fleer_duane_ward_187"
     },
     {
@@ -32878,10 +32878,10 @@
       "card_number": "189",
       "team": "Toronto Blue Jays",
       "tcdb_price": 0.05,
-      "avg_price": 1.64,
-      "median": 1.61,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:26.621987+00:00",
       "card_id": "1991_fleer_mark_whiten_189"
     },
     {
@@ -32891,10 +32891,10 @@
       "card_number": "193",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.63,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.61,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:27.741592+00:00",
       "card_id": "1991_fleer_don_aase_193"
     },
     {
@@ -32904,10 +32904,10 @@
       "card_number": "199",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.3,
-      "avg_price": 1.49,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.46,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:28.826539+00:00",
       "card_id": "1991_fleer_kirk_gibson_199"
     },
     {
@@ -32918,9 +32918,9 @@
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
       "avg_price": 1.69,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.62,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:29.900708+00:00",
       "card_id": "1991_fleer_lenny_harris_204"
     },
     {
@@ -32931,9 +32931,9 @@
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
       "avg_price": 1.69,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.62,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:31.027838+00:00",
       "card_id": "1991_fleer_lenny_harris_204"
     },
     {
@@ -32943,10 +32943,10 @@
       "card_number": "211",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.25,
-      "avg_price": 1.64,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.59,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:32.253298+00:00",
       "card_id": "1991_fleer_stan_javier_211"
     },
     {
@@ -32956,10 +32956,10 @@
       "card_number": "216",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
-      "avg_price": 1.62,
-      "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.58,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:33.406800+00:00",
       "card_id": "1991_fleer_jose_offerman_216"
     },
     {
@@ -32969,10 +32969,10 @@
       "card_number": "217",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.3,
-      "avg_price": 1.61,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.66,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:34.482436+00:00",
       "card_id": "1991_fleer_jim_poole_217"
     },
     {
@@ -32982,10 +32982,10 @@
       "card_number": "218",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
-      "avg_price": 1.46,
-      "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.55,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:35.550441+00:00",
       "card_id": "1991_fleer_juan_samuel_218"
     },
     {
@@ -32996,9 +32996,9 @@
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.05,
       "avg_price": 1.5,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:36.635648+00:00",
       "card_id": "1991_fleer_mike_sharperson_221"
     },
     {
@@ -33008,10 +33008,10 @@
       "card_number": "230",
       "team": "Montreal Expos",
       "tcdb_price": 0.29,
-      "avg_price": 1.61,
+      "avg_price": 1.64,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:37.644938+00:00",
       "card_id": "1991_fleer_tom_foley_230"
     },
     {
@@ -33021,10 +33021,10 @@
       "card_number": "234",
       "team": "Montreal Expos",
       "tcdb_price": 0.3,
-      "avg_price": 1.55,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:38.690884+00:00",
       "card_id": "1991_fleer_marquis_grissom_234"
     },
     {
@@ -33034,10 +33034,10 @@
       "card_number": "236",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
+      "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:39.989161+00:00",
       "card_id": "1991_fleer_drew_hall_236"
     },
     {
@@ -33047,10 +33047,10 @@
       "card_number": "242",
       "team": "Montreal Expos",
       "tcdb_price": 0.05,
-      "avg_price": 1.61,
+      "avg_price": 1.6,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:41.098137+00:00",
       "card_id": "1991_fleer_junior_noboa_242"
     },
     {
@@ -33060,10 +33060,10 @@
       "card_number": "246",
       "team": "Montreal Expos",
       "tcdb_price": 0.3,
-      "avg_price": 1.57,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.46,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:42.211821+00:00",
       "card_id": "1991_fleer_scott_ruskin_246"
     },
     {
@@ -33073,10 +33073,10 @@
       "card_number": "248",
       "team": "Montreal Expos",
       "tcdb_price": 0.3,
-      "avg_price": 1.56,
+      "avg_price": 1.53,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:43.244423+00:00",
       "card_id": "1991_fleer_nelson_santovenia_248"
     },
     {
@@ -33086,10 +33086,10 @@
       "card_number": "249",
       "team": "Montreal Expos",
       "tcdb_price": 0.3,
-      "avg_price": 1.57,
-      "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:44.286525+00:00",
       "card_id": "1991_fleer_dave_schmidt_249"
     },
     {
@@ -33099,10 +33099,10 @@
       "card_number": "250",
       "team": "Montreal Expos",
       "tcdb_price": 0.31,
-      "avg_price": 1.51,
+      "avg_price": 1.47,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:45.417233+00:00",
       "card_id": "1991_fleer_larry_walker_250"
     },
     {
@@ -33112,10 +33112,10 @@
       "card_number": "256",
       "team": "San Francisco Giants",
       "tcdb_price": 0.28,
-      "avg_price": 1.64,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:46.478975+00:00",
       "card_id": "1991_fleer_john_burkett_256"
     },
     {
@@ -33125,10 +33125,10 @@
       "card_number": "256",
       "team": "San Francisco Giants",
       "tcdb_price": 0.28,
-      "avg_price": 1.64,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:47.519102+00:00",
       "card_id": "1991_fleer_john_burkett_256"
     },
     {
@@ -33139,9 +33139,9 @@
       "team": "San Francisco Giants",
       "tcdb_price": 0.3,
       "avg_price": 1.52,
-      "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:48.680914+00:00",
       "card_id": "1991_fleer_gary_carter_258"
     },
     {
@@ -33151,10 +33151,10 @@
       "card_number": "262",
       "team": "San Francisco Giants",
       "tcdb_price": 0.3,
-      "avg_price": 1.59,
-      "median": 1.62,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:49.783019+00:00",
       "card_id": "1991_fleer_scott_garrelts_262"
     },
     {
@@ -33166,8 +33166,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.65,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:50.808073+00:00",
       "card_id": "1991_fleer_rick_parker_269"
     },
     {
@@ -33177,10 +33177,10 @@
       "card_number": "272",
       "team": "San Francisco Giants",
       "tcdb_price": 0.13,
-      "avg_price": 1.64,
-      "median": 1.84,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.59,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:51.876578+00:00",
       "card_id": "1991_fleer_don_robinson_272"
     },
     {
@@ -33190,10 +33190,10 @@
       "card_number": "273",
       "team": "San Francisco Giants",
       "tcdb_price": 0.3,
-      "avg_price": 1.67,
+      "avg_price": 1.64,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:52.972479+00:00",
       "card_id": "1991_fleer_robby_thompson_273"
     },
     {
@@ -33203,10 +33203,10 @@
       "card_number": "301",
       "team": "Texas Rangers",
       "tcdb_price": 0.28,
-      "avg_price": 1.62,
+      "avg_price": 1.6,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:54.138226+00:00",
       "card_id": "1991_fleer_john_russell_301"
     },
     {
@@ -33216,10 +33216,10 @@
       "card_number": "305",
       "team": "California Angels",
       "tcdb_price": 0.99,
-      "avg_price": 1.6,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.58,
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:55.373120+00:00",
       "card_id": "1991_fleer_jim_abbott_305"
     },
     {
@@ -33229,10 +33229,10 @@
       "card_number": "307",
       "team": "California Angels",
       "tcdb_price": 0.1,
-      "avg_price": 1.54,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.52,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:56.487568+00:00",
       "card_id": "1991_fleer_dante_bichette_307"
     },
     {
@@ -33242,10 +33242,10 @@
       "card_number": "312",
       "team": "California Angels",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:57.637555+00:00",
       "card_id": "1991_fleer_mike_fetters_312"
     },
     {
@@ -33255,10 +33255,10 @@
       "card_number": "319",
       "team": "California Angels",
       "tcdb_price": 0.3,
-      "avg_price": 1.42,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.37,
+      "median": 1.29,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:58.786478+00:00",
       "card_id": "1991_fleer_kirk_mccaskill_319"
     },
     {
@@ -33268,10 +33268,10 @@
       "card_number": "319",
       "team": "California Angels",
       "tcdb_price": 0.3,
-      "avg_price": 1.42,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.37,
+      "median": 1.29,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:06:59.832515+00:00",
       "card_id": "1991_fleer_kirk_mccaskill_319"
     },
     {
@@ -33281,10 +33281,10 @@
       "card_number": "327",
       "team": "California Angels",
       "tcdb_price": 0.05,
-      "avg_price": 1.41,
-      "median": 1.28,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.38,
+      "median": 1.19,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:01.085480+00:00",
       "card_id": "1991_fleer_lee_stevens_327"
     },
     {
@@ -33295,9 +33295,9 @@
       "team": "Detroit Tigers",
       "tcdb_price": 0.25,
       "avg_price": 1.5,
-      "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:02.297146+00:00",
       "card_id": "1991_fleer_milt_cuyler_334"
     },
     {
@@ -33308,9 +33308,9 @@
       "team": "Detroit Tigers",
       "tcdb_price": 0.18,
       "avg_price": 1.6,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:04.381990+00:00",
       "card_id": "1991_fleer_chet_lemon_341"
     },
     {
@@ -33322,8 +33322,8 @@
       "tcdb_price": 0.31,
       "avg_price": 1.64,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:06.040094+00:00",
       "card_id": "1991_fleer_jack_morris_343"
     },
     {
@@ -33333,10 +33333,10 @@
       "card_number": "344",
       "team": "Detroit Tigers",
       "tcdb_price": 0.18,
-      "avg_price": 1.55,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:07.110810+00:00",
       "card_id": "1991_fleer_lloyd_moseby_344"
     },
     {
@@ -33346,10 +33346,10 @@
       "card_number": "350",
       "team": "Detroit Tigers",
       "tcdb_price": 0.07,
-      "avg_price": 0.25,
-      "median": null,
-      "confidence": "Floor Value",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.64,
+      "median": 1.55,
+      "confidence": "Low (relaxed)",
+      "last_updated": "2026-04-18T07:07:08.192529+00:00",
       "card_id": "1991_fleer_chet_lemon_350"
     },
     {
@@ -33359,10 +33359,10 @@
       "card_number": "351",
       "team": "Detroit Tigers",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:09.420028+00:00",
       "card_id": "1991_fleer_mike_schwabe_351"
     },
     {
@@ -33372,10 +33372,10 @@
       "card_number": "355",
       "team": "Detroit Tigers",
       "tcdb_price": 0.29,
-      "avg_price": 1.65,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.61,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:10.553649+00:00",
       "card_id": "1991_fleer_alan_trammell_355"
     },
     {
@@ -33385,10 +33385,10 @@
       "card_number": "355",
       "team": "Detroit Tigers",
       "tcdb_price": 0.29,
-      "avg_price": 1.65,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.61,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:11.661647+00:00",
       "card_id": "1991_fleer_alan_trammell_355"
     },
     {
@@ -33398,10 +33398,10 @@
       "card_number": "418",
       "team": "Chicago Cubs",
       "tcdb_price": 0.05,
-      "avg_price": 1.73,
-      "median": 1.83,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.69,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:12.767181+00:00",
       "card_id": "1991_fleer_doug_dascenzo_418"
     },
     {
@@ -33411,10 +33411,10 @@
       "card_number": "419",
       "team": "Chicago Cubs",
       "tcdb_price": 0.25,
-      "avg_price": 1.38,
-      "median": 1.35,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.35,
+      "median": 1.29,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:13.944764+00:00",
       "card_id": "1991_fleer_andre_dawson_419"
     },
     {
@@ -33424,10 +33424,10 @@
       "card_number": "423",
       "team": "Chicago Cubs",
       "tcdb_price": 0.15,
-      "avg_price": 1.66,
+      "avg_price": 1.65,
       "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:15.032665+00:00",
       "card_id": "1991_fleer_mike_harkey_423"
     },
     {
@@ -33437,10 +33437,10 @@
       "card_number": "429",
       "team": "Chicago Cubs",
       "tcdb_price": 0.07,
-      "avg_price": 1.6,
+      "avg_price": 1.59,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:16.565691+00:00",
       "card_id": "1991_fleer_domingo_ramos_429"
     },
     {
@@ -33450,10 +33450,10 @@
       "card_number": "444",
       "team": "Seattle Mariners",
       "tcdb_price": 0.05,
-      "avg_price": 1.51,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.48,
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:17.593977+00:00",
       "card_id": "1991_fleer_greg_briley_444"
     },
     {
@@ -33463,10 +33463,10 @@
       "card_number": "449",
       "team": "Seattle Mariners",
       "tcdb_price": 0.1,
-      "avg_price": 1.58,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.6,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:18.665095+00:00",
       "card_id": "1991_fleer_alvin_davis_449"
     },
     {
@@ -33476,10 +33476,10 @@
       "card_number": "456",
       "team": "Seattle Mariners",
       "tcdb_price": 0.05,
-      "avg_price": 1.43,
-      "median": 1.46,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.4,
+      "median": 1.29,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:19.754945+00:00",
       "card_id": "1991_fleer_jeffrey_leonard_456"
     },
     {
@@ -33489,10 +33489,10 @@
       "card_number": "462",
       "team": "Seattle Mariners",
       "tcdb_price": 0.3,
-      "avg_price": 1.62,
+      "avg_price": 1.63,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:20.930293+00:00",
       "card_id": "1991_fleer_bill_swift_462"
     },
     {
@@ -33502,10 +33502,10 @@
       "card_number": "464",
       "team": "Seattle Mariners",
       "tcdb_price": 0.15,
-      "avg_price": 1.53,
+      "avg_price": 1.56,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:22.012305+00:00",
       "card_id": "1991_fleer_omar_vizquel_464"
     },
     {
@@ -33515,10 +33515,10 @@
       "card_number": "468",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.28,
-      "avg_price": 1.63,
-      "median": 1.79,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.57,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:23.030077+00:00",
       "card_id": "1991_fleer_juan_bell_468"
     },
     {
@@ -33529,9 +33529,9 @@
       "team": "Baltimore Orioles",
       "tcdb_price": 0.1,
       "avg_price": 1.6,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:24.122388+00:00",
       "card_id": "1991_fleer_mike_devereaux_469"
     },
     {
@@ -33541,10 +33541,10 @@
       "card_number": "475",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.31,
-      "avg_price": 1.54,
+      "avg_price": 1.5,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:25.165628+00:00",
       "card_id": "1991_fleer_kevin_hickey_475"
     },
     {
@@ -33554,10 +33554,10 @@
       "card_number": "480",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
+      "avg_price": 1.54,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:26.230461+00:00",
       "card_id": "1991_fleer_ron_kittle_480"
     },
     {
@@ -33567,10 +33567,10 @@
       "card_number": "484",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.29,
-      "avg_price": 1.55,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:27.275184+00:00",
       "card_id": "1991_fleer_randy_milligan_484"
     },
     {
@@ -33580,10 +33580,10 @@
       "card_number": "485",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
+      "avg_price": 1.61,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:28.356509+00:00",
       "card_id": "1991_fleer_john_mitchell_485"
     },
     {
@@ -33594,9 +33594,9 @@
       "team": "Baltimore Orioles",
       "tcdb_price": 0.3,
       "avg_price": 1.49,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:29.458965+00:00",
       "card_id": "1991_fleer_joe_price_488"
     },
     {
@@ -33606,10 +33606,10 @@
       "card_number": "489",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.43,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.42,
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:30.373410+00:00",
       "card_id": "1991_fleer_billy_ripken_489"
     },
     {
@@ -33619,10 +33619,10 @@
       "card_number": "491",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.3,
-      "avg_price": 1.48,
+      "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:31.544298+00:00",
       "card_id": "1991_fleer_curt_schilling_491"
     },
     {
@@ -33632,10 +33632,10 @@
       "card_number": "495",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.54,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.51,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:32.573406+00:00",
       "card_id": "1991_fleer_mark_williamson_495"
     },
     {
@@ -33645,10 +33645,10 @@
       "card_number": "495",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.54,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.51,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:33.572466+00:00",
       "card_id": "1991_fleer_mark_williamson_495"
     },
     {
@@ -33658,10 +33658,10 @@
       "card_number": "498",
       "team": "Houston Astros",
       "tcdb_price": 0.06,
-      "avg_price": 1.6,
+      "avg_price": 1.59,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:34.518846+00:00",
       "card_id": "1991_fleer_eric_anthony_498"
     },
     {
@@ -33671,10 +33671,10 @@
       "card_number": "504",
       "team": "Houston Astros",
       "tcdb_price": 0.3,
-      "avg_price": 1.63,
+      "avg_price": 1.71,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:35.579255+00:00",
       "card_id": "1991_fleer_mark_davidson_504"
     },
     {
@@ -33684,10 +33684,10 @@
       "card_number": "506",
       "team": "Houston Astros",
       "tcdb_price": 0.17,
-      "avg_price": 1.6,
-      "median": 1.61,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.59,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:36.616792+00:00",
       "card_id": "1991_fleer_jim_deshaies_506"
     },
     {
@@ -33697,10 +33697,10 @@
       "card_number": "508",
       "team": "Houston Astros",
       "tcdb_price": 0.17,
-      "avg_price": 1.55,
+      "avg_price": 1.57,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:37.604686+00:00",
       "card_id": "1991_fleer_bill_gullickson_508"
     },
     {
@@ -33710,10 +33710,10 @@
       "card_number": "510",
       "team": "Houston Astros",
       "tcdb_price": 0.07,
-      "avg_price": 1.53,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:38.559026+00:00",
       "card_id": "1991_fleer_brian_meyer_510"
     },
     {
@@ -33723,10 +33723,10 @@
       "card_number": "515",
       "team": "Houston Astros",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
-      "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:39.533888+00:00",
       "card_id": "1991_fleer_mike_scott_515"
     },
     {
@@ -33736,10 +33736,10 @@
       "card_number": "523",
       "team": "San Diego Padres",
       "tcdb_price": 0.79,
-      "avg_price": 1.55,
+      "avg_price": 1.56,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:40.592446+00:00",
       "card_id": "1991_fleer_roberto_alomar_523"
     },
     {
@@ -33749,10 +33749,10 @@
       "card_number": "530",
       "team": "San Diego Padres",
       "tcdb_price": 0.05,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:41.717593+00:00",
       "card_id": "1991_fleer_atlee_hammaker_530"
     },
     {
@@ -33762,10 +33762,10 @@
       "card_number": "532",
       "team": "San Diego Padres",
       "tcdb_price": 0.18,
-      "avg_price": 1.49,
+      "avg_price": 1.5,
       "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:42.722094+00:00",
       "card_id": "1991_fleer_thomas_howard_532"
     },
     {
@@ -33775,10 +33775,10 @@
       "card_number": "540",
       "team": "San Diego Padres",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.55,
+      "median": 1.63,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:43.764424+00:00",
       "card_id": "1991_fleer_bip_roberts_540"
     },
     {
@@ -33788,10 +33788,10 @@
       "card_number": "543",
       "team": "San Diego Padres",
       "tcdb_price": 0.28,
-      "avg_price": 1.58,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:44.748174+00:00",
       "card_id": "1991_fleer_calvin_schiraldi_543"
     },
     {
@@ -33801,10 +33801,10 @@
       "card_number": "552",
       "team": "Kansas City Royals",
       "tcdb_price": 1.27,
-      "avg_price": 1.41,
+      "avg_price": 1.4,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:45.814701+00:00",
       "card_id": "1991_fleer_george_brett_552"
     },
     {
@@ -33814,10 +33814,10 @@
       "card_number": "552",
       "team": "Kansas City Royals",
       "tcdb_price": 1.27,
-      "avg_price": 1.41,
+      "avg_price": 1.4,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:46.730036+00:00",
       "card_id": "1991_fleer_george_brett_552"
     },
     {
@@ -33827,10 +33827,10 @@
       "card_number": "553",
       "team": "Kansas City Royals",
       "tcdb_price": 0.36,
-      "avg_price": 1.53,
+      "avg_price": 1.54,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:47.855631+00:00",
       "card_id": "1991_fleer_jeff_conine_553"
     },
     {
@@ -33840,10 +33840,10 @@
       "card_number": "563",
       "team": "Kansas City Royals",
       "tcdb_price": 0.3,
-      "avg_price": 1.41,
-      "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.37,
+      "median": 1.35,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:49.087081+00:00",
       "card_id": "1991_fleer_brian_mcrae_563"
     },
     {
@@ -33853,10 +33853,10 @@
       "card_number": "563",
       "team": "Kansas City Royals",
       "tcdb_price": 0.3,
-      "avg_price": 1.41,
-      "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.37,
+      "median": 1.35,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:50.183901+00:00",
       "card_id": "1991_fleer_brian_mcrae_563"
     },
     {
@@ -33866,10 +33866,10 @@
       "card_number": "564",
       "team": "Kansas City Royals",
       "tcdb_price": 0.18,
-      "avg_price": 1.55,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.54,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:51.300014+00:00",
       "card_id": "1991_fleer_jeff_montgomery_564"
     },
     {
@@ -33879,10 +33879,10 @@
       "card_number": "571",
       "team": "Kansas City Royals",
       "tcdb_price": 0.05,
-      "avg_price": 1.59,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.6,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:52.389817+00:00",
       "card_id": "1991_fleer_kurt_stillwell_571"
     },
     {
@@ -33892,10 +33892,10 @@
       "card_number": "579",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.28,
-      "avg_price": 1.54,
+      "avg_price": 1.45,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:53.410809+00:00",
       "card_id": "1991_fleer_chuck_crim_579"
     },
     {
@@ -33905,10 +33905,10 @@
       "card_number": "588",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.29,
-      "avg_price": 1.63,
+      "avg_price": 1.64,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:54.445924+00:00",
       "card_id": "1991_fleer_bill_krueger_588"
     },
     {
@@ -33918,10 +33918,10 @@
       "card_number": "589",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.17,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:55.704816+00:00",
       "card_id": "1991_fleer_tim_mcintosh_589"
     },
     {
@@ -33931,10 +33931,10 @@
       "card_number": "589",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.17,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:56.886040+00:00",
       "card_id": "1991_fleer_tim_mcintosh_589"
     },
     {
@@ -33944,10 +33944,10 @@
       "card_number": "589",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.17,
-      "avg_price": 1.53,
+      "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:57.857843+00:00",
       "card_id": "1991_fleer_tim_mcintosh_589"
     },
     {
@@ -33957,10 +33957,10 @@
       "card_number": "591",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.99,
-      "avg_price": 1.45,
+      "avg_price": 1.43,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:07:59.036534+00:00",
       "card_id": "1991_fleer_paul_molitor_591"
     },
     {
@@ -33970,10 +33970,10 @@
       "card_number": "591",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.99,
-      "avg_price": 1.45,
+      "avg_price": 1.43,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:00.150098+00:00",
       "card_id": "1991_fleer_paul_molitor_591"
     },
     {
@@ -33983,10 +33983,10 @@
       "card_number": "592",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.3,
-      "avg_price": 1.65,
-      "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.6,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:01.169438+00:00",
       "card_id": "1991_fleer_jaime_navarro_592"
     },
     {
@@ -33996,10 +33996,10 @@
       "card_number": "595",
       "team": "Milwaukee Brewers",
       "tcdb_price": 0.16,
-      "avg_price": 1.58,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.52,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:02.472506+00:00",
       "card_id": "1991_fleer_ron_robinson_595"
     },
     {
@@ -34009,10 +34009,10 @@
       "card_number": "602",
       "team": "Minnesota Twins",
       "tcdb_price": 1.02,
-      "avg_price": 1.5,
+      "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:03.663236+00:00",
       "card_id": "1991_fleer_rick_aguilera_602"
     },
     {
@@ -34024,8 +34024,8 @@
       "tcdb_price": 0.18,
       "avg_price": 1.5,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:04.802093+00:00",
       "card_id": "1991_fleer_randy_bush_605"
     },
     {
@@ -34035,10 +34035,10 @@
       "card_number": "606",
       "team": "Minnesota Twins",
       "tcdb_price": 0.3,
-      "avg_price": 1.4,
+      "avg_price": 1.41,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:05.988919+00:00",
       "card_id": "1991_fleer_carmen_castillo_606"
     },
     {
@@ -34050,8 +34050,8 @@
       "tcdb_price": 0.29,
       "avg_price": 1.58,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:06.985800+00:00",
       "card_id": "1991_fleer_scott_erickson_608"
     },
     {
@@ -34061,10 +34061,10 @@
       "card_number": "609",
       "team": "Minnesota Twins",
       "tcdb_price": 0.3,
-      "avg_price": 1.61,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.62,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:08.192846+00:00",
       "card_id": "1991_fleer_gary_gaetti_609"
     },
     {
@@ -34074,10 +34074,10 @@
       "card_number": "611",
       "team": "Minnesota Twins",
       "tcdb_price": 0.3,
-      "avg_price": 1.57,
+      "avg_price": 1.61,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:09.332211+00:00",
       "card_id": "1991_fleer_dan_gladden_611"
     },
     {
@@ -34088,9 +34088,9 @@
       "team": "Minnesota Twins",
       "tcdb_price": 0.05,
       "avg_price": 1.51,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:10.376284+00:00",
       "card_id": "1991_fleer_mark_guthrie_612"
     },
     {
@@ -34100,10 +34100,10 @@
       "card_number": "615",
       "team": "Minnesota Twins",
       "tcdb_price": 0.3,
-      "avg_price": 1.65,
-      "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.66,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:11.486628+00:00",
       "card_id": "1991_fleer_gene_larkin_615"
     },
     {
@@ -34113,10 +34113,10 @@
       "card_number": "629",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.15,
-      "avg_price": 1.6,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.52,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:12.495599+00:00",
       "card_id": "1991_fleer_vince_coleman_629"
     },
     {
@@ -34126,10 +34126,10 @@
       "card_number": "635",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.64,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.65,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:13.625439+00:00",
       "card_id": "1991_fleer_ken_hill_635"
     },
     {
@@ -34139,10 +34139,10 @@
       "card_number": "640",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.05,
-      "avg_price": 1.7,
-      "median": 1.64,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.71,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:14.746183+00:00",
       "card_id": "1991_fleer_jose_oquendo_640"
     },
     {
@@ -34152,10 +34152,10 @@
       "card_number": "645",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.15,
-      "avg_price": 1.71,
-      "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.67,
+      "median": 1.51,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:15.740136+00:00",
       "card_id": "1991_fleer_lee_smith_645"
     },
     {
@@ -34165,10 +34165,10 @@
       "card_number": "657",
       "team": "New York Yankees",
       "tcdb_price": 1.0,
-      "avg_price": 1.54,
-      "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.53,
+      "median": 1.53,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:16.716032+00:00",
       "card_id": "1991_fleer_jesse_barfield_657"
     },
     {
@@ -34178,10 +34178,10 @@
       "card_number": "659",
       "team": "New York Yankees",
       "tcdb_price": 0.17,
-      "avg_price": 1.43,
-      "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.42,
+      "median": 1.12,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:17.738263+00:00",
       "card_id": "1991_fleer_chuck_cary_659"
     },
     {
@@ -34191,10 +34191,10 @@
       "card_number": "660",
       "team": "New York Yankees",
       "tcdb_price": 0.05,
-      "avg_price": 1.54,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.56,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:18.730959+00:00",
       "card_id": "1991_fleer_rick_cerone_660"
     },
     {
@@ -34204,10 +34204,10 @@
       "card_number": "661",
       "team": "New York Yankees",
       "tcdb_price": 0.25,
-      "avg_price": 1.48,
+      "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:19.705034+00:00",
       "card_id": "1991_fleer_dave_eiland_661"
     },
     {
@@ -34217,10 +34217,10 @@
       "card_number": "661",
       "team": "New York Yankees",
       "tcdb_price": 0.25,
-      "avg_price": 1.48,
+      "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:20.695439+00:00",
       "card_id": "1991_fleer_dave_eiland_661"
     },
     {
@@ -34230,10 +34230,10 @@
       "card_number": "667",
       "team": "New York Yankees",
       "tcdb_price": 0.29,
-      "avg_price": 1.61,
-      "median": 1.61,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.64,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:21.754625+00:00",
       "card_id": "1991_fleer_jimmy_jones_667"
     },
     {
@@ -34245,8 +34245,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:22.812755+00:00",
       "card_id": "1991_fleer_jim_leyritz_671"
     },
     {
@@ -34256,10 +34256,10 @@
       "card_number": "677",
       "team": "New York Yankees",
       "tcdb_price": 0.3,
-      "avg_price": 1.64,
+      "avg_price": 1.7,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:23.793670+00:00",
       "card_id": "1991_fleer_dave_righetti_677"
     },
     {
@@ -34269,10 +34269,10 @@
       "card_number": "687",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.59,
+      "median": 1.55,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:24.826887+00:00",
       "card_id": "1991_fleer_nick_esasky_687"
     },
     {
@@ -34282,10 +34282,10 @@
       "card_number": "689",
       "team": "Atlanta Braves",
       "tcdb_price": 1.49,
-      "avg_price": 1.57,
-      "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.72,
+      "median": 1.75,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:25.881089+00:00",
       "card_id": "1991_fleer_tom_glavine_689"
     },
     {
@@ -34295,10 +34295,10 @@
       "card_number": "690",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.69,
+      "avg_price": 1.71,
       "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:27.185461+00:00",
       "card_id": "1991_fleer_mark_grant_690"
     },
     {
@@ -34308,10 +34308,10 @@
       "card_number": "699",
       "team": "Atlanta Braves",
       "tcdb_price": 0.3,
-      "avg_price": 1.48,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.45,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:28.192164+00:00",
       "card_id": "1991_fleer_jeff_parrett_699"
     },
     {
@@ -34321,10 +34321,10 @@
       "card_number": "699",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.48,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.45,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:29.224545+00:00",
       "card_id": "1991_fleer_jeff_parrett_699"
     },
     {
@@ -34334,10 +34334,10 @@
       "card_number": "699",
       "team": "Atlanta Braves",
       "tcdb_price": 0.05,
-      "avg_price": 1.48,
-      "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.45,
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:30.231782+00:00",
       "card_id": "1991_fleer_jeff_parrett_699"
     },
     {
@@ -34347,10 +34347,10 @@
       "card_number": "705",
       "team": "Atlanta Braves",
       "tcdb_price": 0.3,
-      "avg_price": 1.67,
+      "avg_price": 1.72,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:31.326175+00:00",
       "card_id": "1991_fleer_mike_stanton_705"
     },
     {
@@ -34360,10 +34360,10 @@
       "card_number": "708",
       "team": "Atlanta Braves",
       "tcdb_price": 0.15,
-      "avg_price": 1.71,
+      "avg_price": 1.6,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:32.408193+00:00",
       "card_id": "1991_fleer_jim_vatcher_708"
     },
     {
@@ -34373,10 +34373,10 @@
       "card_number": "708",
       "team": "Atlanta Braves",
       "tcdb_price": 0.15,
-      "avg_price": 1.71,
+      "avg_price": 1.6,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:33.465399+00:00",
       "card_id": "1991_fleer_jim_vatcher_708"
     },
     {
@@ -34386,10 +34386,10 @@
       "card_number": "79",
       "team": "Chicago White Sox",
       "tcdb_price": 0.18,
-      "avg_price": 1.69,
+      "avg_price": 1.62,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:34.489069+00:00",
       "card_id": "1991_fleer_ultra_dan_pasqua_79"
     },
     {
@@ -34399,10 +34399,10 @@
       "card_number": "111",
       "team": "Cleveland Indians",
       "tcdb_price": 0.2,
-      "avg_price": 1.63,
+      "avg_price": 1.67,
       "median": 1.63,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:35.541832+00:00",
       "card_id": "1991_fleer_ultra_john_farrell_111"
     },
     {
@@ -34412,10 +34412,10 @@
       "card_number": "170",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.17,
-      "avg_price": 1.76,
-      "median": 1.7,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.77,
+      "median": 1.79,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:36.586352+00:00",
       "card_id": "1991_fleer_ultra_mike_sharperson_170"
     },
     {
@@ -34425,10 +34425,10 @@
       "card_number": "253",
       "team": "Oakland Athletics",
       "tcdb_price": 0.15,
-      "avg_price": 1.64,
-      "median": 1.74,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.63,
+      "median": 1.75,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:37.614208+00:00",
       "card_id": "1991_fleer_ultra_terry_steinbach_253"
     },
     {
@@ -34438,10 +34438,10 @@
       "card_number": "321",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.44,
+      "avg_price": 1.48,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:38.694640+00:00",
       "card_id": "1991_fleer_ultra_terry_kennedy_321"
     },
     {
@@ -34453,8 +34453,8 @@
       "tcdb_price": 0.15,
       "avg_price": 1.57,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:39.682077+00:00",
       "card_id": "1991_fleer_ultra_duane_ward_369"
     },
     {
@@ -34464,10 +34464,10 @@
       "card_number": "17",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 2.04,
-      "median": 2.25,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.87,
+      "median": 1.69,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:40.732823+00:00",
       "card_id": "1991_fleer_update_glenallen_hill_17"
     },
     {
@@ -34477,10 +34477,10 @@
       "card_number": "18",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 2.12,
-      "median": 2.25,
-      "confidence": "High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.92,
+      "median": 1.02,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:41.901105+00:00",
       "card_id": "1991_fleer_update_shawn_hillegas_18"
     },
     {
@@ -34490,10 +34490,10 @@
       "card_number": "19",
       "team": "Cleveland Indians",
       "tcdb_price": 0.06,
-      "avg_price": 1.86,
+      "avg_price": 1.47,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:42.898906+00:00",
       "card_id": "1991_fleer_update_mark_lewis_19"
     },
     {
@@ -34503,10 +34503,10 @@
       "card_number": "20",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.74,
-      "median": 1.19,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.85,
+      "median": 1.79,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:44.100041+00:00",
       "card_id": "1991_fleer_update_charles_nagy_20"
     },
     {
@@ -34516,10 +34516,10 @@
       "card_number": "21",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.56,
-      "median": 1.21,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.35,
+      "median": 0.99,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:08:45.124278+00:00",
       "card_id": "1991_fleer_update_mark_whiten_21"
     },
     {
@@ -34529,10 +34529,10 @@
       "card_number": "8",
       "team": "Cleveland Indians",
       "tcdb_price": 0.2,
-      "avg_price": 22.48,
-      "median": 22.48,
-      "confidence": "Low (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.25,
+      "median": 24.72,
+      "confidence": "Very High (Claude)",
+      "last_updated": "2026-04-18T07:09:00.570059+00:00",
       "card_id": "1991_jimmy_dean_sandy_alomar_jr_8"
     },
     {
@@ -34542,10 +34542,10 @@
       "card_number": "12",
       "team": "Kansas City Royals",
       "tcdb_price": 1.49,
-      "avg_price": 1.96,
-      "median": 1.95,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.98,
+      "median": 1.99,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:01.692364+00:00",
       "card_id": "1991_jimmy_dean_george_brett_12"
     },
     {
@@ -34555,10 +34555,10 @@
       "card_number": "167",
       "team": "Montreal Expos",
       "tcdb_price": 0.18,
-      "avg_price": 1.82,
-      "median": 1.98,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.79,
+      "median": 1.79,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:02.691278+00:00",
       "card_id": "1991_leaf_oil_can_boyd_167"
     },
     {
@@ -34568,10 +34568,10 @@
       "card_number": "183",
       "team": "Cincinnati Reds",
       "tcdb_price": 0.18,
-      "avg_price": 1.6,
-      "median": 1.75,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "avg_price": 1.62,
+      "median": 1.58,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:03.849900+00:00",
       "card_id": "1991_leaf_scott_scudder_183"
     },
     {
@@ -34581,10 +34581,10 @@
       "card_number": "188",
       "team": "San Francisco Giants",
       "tcdb_price": 0.18,
-      "avg_price": 1.5,
+      "avg_price": 1.45,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:04.870718+00:00",
       "card_id": "1991_leaf_don_robinson_188"
     },
     {
@@ -34594,10 +34594,10 @@
       "card_number": "193",
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.18,
-      "avg_price": 1.66,
+      "avg_price": 1.62,
       "median": 1.58,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:05.882408+00:00",
       "card_id": "1991_leaf_mike_morgan_193"
     },
     {
@@ -34607,10 +34607,10 @@
       "card_number": "212",
       "team": "St. Louis Cardinals",
       "tcdb_price": 0.18,
-      "avg_price": 1.56,
+      "avg_price": 1.55,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/4/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T07:09:06.927129+00:00",
       "card_id": "1991_leaf_rex_hudler_212"
     },
     {
@@ -57554,7 +57554,7 @@
     },
     {
       "date": "2026-04-18",
-      "total_value": 7006.5,
+      "total_value": 6982.7,
       "cards_priced": 4364
     }
   ]
