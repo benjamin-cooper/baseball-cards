@@ -538,6 +538,25 @@ def _extract_listing_type(item: dict) -> str:
     return 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
 
 
+def _norm_player(name: str) -> str:
+    """Normalise a player name for fuzzy title matching.
+
+    eBay listings consistently omit commas and trailing dots that appear in
+    some sheet entries (e.g. "Sandy Alomar, Jr." → "sandy alomar jr").
+    """
+    return re.sub(r'[,.]', '', name.lower()).strip()
+
+
+def _norm_brand(brand: str) -> str:
+    """Normalise a brand/set name for fuzzy title matching.
+
+    Strip articles that vary between sheet entries and eBay listing titles
+    (e.g. "Donruss The Rookies" → "donruss rookies",
+          "Topps The Kids"       → "topps kids").
+    """
+    return re.sub(r'\bthe\b\s*', '', brand.lower()).strip()
+
+
 def _apply_exclusions(title_l: str) -> bool:
     """Return True if this listing should be excluded."""
     if any(k in title_l for k in GRADED_KW):   return True
@@ -552,9 +571,9 @@ def _apply_exclusions(title_l: str) -> bool:
 
 def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
     """Strict filter: player + year + brand + card number must all match."""
-    player_l = player.lower()
+    player_l = _norm_player(player)   # strips commas/dots: "Sandy Alomar, Jr." → "sandy alomar jr"
     year_s   = str(year)
-    brand_l  = brand.lower()
+    brand_l  = _norm_brand(brand)     # strips articles: "Donruss The Rookies" → "donruss rookies"
     cn_clean = (card_number or '').lstrip('#').strip()
     results  = []
 
@@ -564,7 +583,7 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
             continue
 
         title   = item.get('title', '') or ''
-        title_l = title.lower()
+        title_l = _norm_brand(_norm_player(title))  # normalise the listing title too
 
         if player_l not in title_l: continue
         if year_s   not in title_l: continue
@@ -591,7 +610,7 @@ def filter_items_relaxed(items, year, player) -> list[dict]:
     Used as a fallback when strict filtering finds fewer than LOW_DATA_THRESH comps.
     Still excludes graded, lots, autos, reprints and parallels.
     """
-    player_l = player.lower()
+    player_l = _norm_player(player)
     year_s   = str(year)
     results  = []
 
@@ -601,7 +620,7 @@ def filter_items_relaxed(items, year, player) -> list[dict]:
             continue
 
         title   = item.get('title', '') or ''
-        title_l = title.lower()
+        title_l = _norm_player(title.lower())
 
         if player_l not in title_l: continue
         if year_s   not in title_l: continue
@@ -956,13 +975,16 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 
     # ── Step 1: eBay active listings + Mavin sold prices (strict filter) ────────
     # Fetch both sources in parallel — they're independent I/O calls.
-    query = f"{card['year']} {card['brand']} {card['player']}"
+    # Normalise player name in the query (strip commas/dots) so eBay search works
+    # correctly for names like "Sandy Alomar, Jr." or "Cal Ripken, Jr."
+    query_player = re.sub(r'[,.]', '', card['player']).strip()
+    query = f"{card['year']} {card['brand']} {query_player}"
 
     with ThreadPoolExecutor(max_workers=2) as _pool:
         _ebay_fut  = _pool.submit(ebay_search, query)
         _mavin_fut = _pool.submit(
             fetch_mavin_prices,
-            card['year'], card['brand'], card['player'], card['card_number']
+            card['year'], card['brand'], query_player, card['card_number']
         )
         ebay_items  = _ebay_fut.result()   # re-raises EbayQuotaExhausted if hit
         mavin_items = _mavin_fut.result()
