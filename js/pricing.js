@@ -435,9 +435,15 @@ function exportCSV() {
   URL.revokeObjectURL(url);
 }
 
+// ─── Debounce helper ──────────────────────────────────────────────────────────
+function debounce(fn, delay = 250) {
+  let t;
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+}
+
 // ─── UI Bindings ──────────────────────────────────────────────────────────────
 function bindUI() {
-  document.getElementById('table-search').addEventListener('input', applyFilters);
+  document.getElementById('table-search').addEventListener('input', debounce(applyFilters));
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-team').addEventListener('change', applyFilters);
   document.getElementById('filter-confidence').addEventListener('change', applyFilters);

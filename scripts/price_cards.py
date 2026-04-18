@@ -442,9 +442,14 @@ def fetch_mavin_prices(year: str, brand: str, player: str, card_number: str = ''
                 except Exception:
                     pass
 
-            # Grab nearby title text (used by filter_items for player/year matching)
+            # Grab nearby title text (used by filter_items for player/year matching).
+            # If we can't find a real title we have no way to verify this price
+            # belongs to the correct card, so skip it rather than using a
+            # synthesised fallback title that would always pass filter_items.
             title_m = re.search(r'(?:title|alt)="([^"]{10,120})"', window, re.IGNORECASE)
-            title = title_m.group(1) if title_m else f"{year} {brand} {player}"
+            if not title_m:
+                continue
+            title = title_m.group(1)
 
             results.append({
                 'price':        price_val,
@@ -599,7 +604,9 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
 
     prices = sorted(p for p, _, _ in prices_with_age)
 
-    # IQR outlier removal
+    # IQR outlier removal — save pre-IQR list so we can fall back to it if
+    # the filter removes every item (can happen with very small/uniform sets)
+    pre_iqr = prices_with_age[:]
     if len(prices) >= 4:
         q1 = prices[len(prices) // 4]
         q3 = prices[len(prices) * 3 // 4]
@@ -609,7 +616,7 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
         prices_with_age = [(p, a, lt) for p, a, lt in prices_with_age if lo <= p <= hi]
 
     if not prices_with_age:
-        prices_with_age = [(p, a, lt) for p, a, lt in prices_with_age]
+        prices_with_age = pre_iqr  # IQR removed everything — use raw list
 
     if not prices_with_age:
         return {'price': 0, 'count': 0, 'median': 0, 'min': 0, 'max': 0}
