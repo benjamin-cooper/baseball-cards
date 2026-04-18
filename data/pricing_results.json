@@ -1,8 +1,8 @@
 {
-  "last_updated": "2026-04-18T03:02:06.043473+00:00",
+  "last_updated": "2026-04-18T03:06:26.593117+00:00",
   "total_cards": 4364,
   "cards_priced": 4364,
-  "total_value": 7033.59,
+  "total_value": 7033.56,
   "avg_value": 1.61,
   "top_card_value": 22.48,
   "top_cards": [
@@ -347,7 +347,7 @@
     },
     "Junk Wax (1987\u201394)": {
       "count": 3808,
-      "total_value": 5938.83
+      "total_value": 5938.8
     },
     "Late 90s": {
       "count": 432,
@@ -369,11 +369,11 @@
     },
     "Donruss": {
       "count": 1081,
-      "total_value": 1649.8499999999922
+      "total_value": 1649.9399999999923
     },
     "Fleer": {
       "count": 403,
-      "total_value": 621.5800000000004
+      "total_value": 621.4600000000004
     },
     "Donruss Leaf": {
       "count": 1,
@@ -21620,10 +21620,10 @@
       "card_number": "101",
       "team": "Chicago White Sox",
       "tcdb_price": 1.5,
-      "avg_price": 1.4,
-      "median": 1.34,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.41,
+      "median": 1.43,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:08.359505+00:00",
       "card_id": "1990_donruss_melido_perez_101"
     },
     {
@@ -21635,8 +21635,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.34,
       "median": 1.29,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:09.414610+00:00",
       "card_id": "1990_donruss_bryn_smith_106"
     },
     {
@@ -21648,8 +21648,8 @@
       "tcdb_price": 0.75,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:10.454270+00:00",
       "card_id": "1990_donruss_roberto_alomar_111"
     },
     {
@@ -21661,8 +21661,8 @@
       "tcdb_price": 1.75,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:11.668612+00:00",
       "card_id": "1990_donruss_roberto_alomar_111"
     },
     {
@@ -21674,8 +21674,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.63,
       "median": 1.67,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:12.789886+00:00",
       "card_id": "1990_donruss_jose_rijo_115"
     },
     {
@@ -21687,8 +21687,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:13.758285+00:00",
       "card_id": "1990_donruss_greg_minton_116"
     },
     {
@@ -21700,8 +21700,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.51,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:14.771247+00:00",
       "card_id": "1990_donruss_john_smoltz_121"
     },
     {
@@ -21713,8 +21713,8 @@
       "tcdb_price": 0.17,
       "avg_price": 1.52,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:15.886276+00:00",
       "card_id": "1990_donruss_robby_thompson_140"
     },
     {
@@ -21726,8 +21726,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.57,
       "median": 1.51,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:17.029857+00:00",
       "card_id": "1990_donruss_fred_manrique_165"
     },
     {
@@ -21737,10 +21737,10 @@
       "card_number": "166",
       "team": "Texas Rangers",
       "tcdb_price": 1.0,
-      "avg_price": 1.43,
+      "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:18.239041+00:00",
       "card_id": "1990_donruss_nolan_ryan_166"
     },
     {
@@ -21752,8 +21752,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.59,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:19.369808+00:00",
       "card_id": "1990_donruss_jose_lind_172"
     },
     {
@@ -21765,8 +21765,8 @@
       "tcdb_price": 0.15,
       "avg_price": 1.56,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:20.488494+00:00",
       "card_id": "1990_donruss_kelly_downs_177"
     },
     {
@@ -21778,8 +21778,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:21.588462+00:00",
       "card_id": "1990_donruss_luis_aquino_179"
     },
     {
@@ -21791,8 +21791,8 @@
       "tcdb_price": 1.0,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:22.677348+00:00",
       "card_id": "1990_donruss_don_mattingly_190"
     },
     {
@@ -21804,8 +21804,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:23.721166+00:00",
       "card_id": "1990_donruss_randy_bush_199"
     },
     {
@@ -21817,8 +21817,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.44,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:24.801062+00:00",
       "card_id": "1990_donruss_george_bell_206"
     },
     {
@@ -21830,8 +21830,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:25.874634+00:00",
       "card_id": "1990_donruss_darnell_coles_212"
     },
     {
@@ -21843,8 +21843,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:26.907782+00:00",
       "card_id": "1990_donruss_darnell_coles_212"
     },
     {
@@ -21854,10 +21854,10 @@
       "card_number": "216",
       "team": "Montreal Expos",
       "tcdb_price": 0.19,
-      "avg_price": 1.39,
+      "avg_price": 1.38,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:28.048900+00:00",
       "card_id": "1990_donruss_tim_raines_216"
     },
     {
@@ -21869,8 +21869,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.61,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:29.362266+00:00",
       "card_id": "1990_donruss_kevin_mcreynolds_218"
     },
     {
@@ -21882,8 +21882,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:30.462110+00:00",
       "card_id": "1990_donruss_tim_wallach_220"
     },
     {
@@ -21895,8 +21895,8 @@
       "tcdb_price": 0.15,
       "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:31.565529+00:00",
       "card_id": "1990_donruss_andre_dawson_223"
     },
     {
@@ -21908,8 +21908,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.41,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:32.701441+00:00",
       "card_id": "1990_donruss_rafael_palmeiro_225"
     },
     {
@@ -21921,8 +21921,8 @@
       "tcdb_price": 0.11,
       "avg_price": 1.46,
       "median": 1.57,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:33.810918+00:00",
       "card_id": "1990_donruss_ellis_burks_228"
     },
     {
@@ -21934,8 +21934,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:34.919576+00:00",
       "card_id": "1990_donruss_mark_parent_229"
     },
     {
@@ -21947,8 +21947,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.57,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:35.997826+00:00",
       "card_id": "1990_donruss_john_farrell_232"
     },
     {
@@ -21960,8 +21960,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:37.113020+00:00",
       "card_id": "1990_donruss_bill_doran_236"
     },
     {
@@ -21973,8 +21973,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.45,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:38.282210+00:00",
       "card_id": "1990_donruss_jim_eisenreich_238"
     },
     {
@@ -21986,8 +21986,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:39.454391+00:00",
       "card_id": "1990_donruss_marty_barrett_240"
     },
     {
@@ -21999,8 +21999,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:40.583478+00:00",
       "card_id": "1990_donruss_dave_henderson_243"
     },
     {
@@ -22012,8 +22012,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:41.623523+00:00",
       "card_id": "1990_donruss_gene_harris_247"
     },
     {
@@ -22025,8 +22025,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.47,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:42.705769+00:00",
       "card_id": "1990_donruss_kevin_gross_248"
     },
     {
@@ -22038,8 +22038,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.59,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:43.894832+00:00",
       "card_id": "1990_donruss_steve_rosenberg_253"
     },
     {
@@ -22051,8 +22051,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.57,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:44.910822+00:00",
       "card_id": "1990_donruss_jack_howell_254"
     },
     {
@@ -22064,8 +22064,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:45.982540+00:00",
       "card_id": "1990_donruss_cecil_espy_260"
     },
     {
@@ -22075,10 +22075,10 @@
       "card_number": "266",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.31,
+      "avg_price": 1.33,
       "median": 1.25,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:47.195811+00:00",
       "card_id": "1990_donruss_bobby_thigpen_266"
     },
     {
@@ -22090,8 +22090,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.52,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:48.229869+00:00",
       "card_id": "1990_donruss_gregg_jefferies_270"
     },
     {
@@ -22103,8 +22103,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.59,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:49.215531+00:00",
       "card_id": "1990_donruss_jeff_blauser_271"
     },
     {
@@ -22114,10 +22114,10 @@
       "card_number": "272",
       "team": "Cleveland Indians",
       "tcdb_price": 0.05,
-      "avg_price": 1.55,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.57,
+      "median": 1.5,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:50.441702+00:00",
       "card_id": "1990_donruss_cory_snyder_272"
     },
     {
@@ -22129,8 +22129,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.5,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:51.572273+00:00",
       "card_id": "1990_donruss_tom_foley_274"
     },
     {
@@ -22142,8 +22142,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:52.578399+00:00",
       "card_id": "1990_donruss_don_slaught_277"
     },
     {
@@ -22155,8 +22155,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.48,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:53.734218+00:00",
       "card_id": "1990_donruss_mike_boddicker_280"
     },
     {
@@ -22168,8 +22168,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:54.857206+00:00",
       "card_id": "1990_donruss_ken_dayley_281"
     },
     {
@@ -22181,8 +22181,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:55.993554+00:00",
       "card_id": "1990_donruss_bobby_witt_292"
     },
     {
@@ -22194,8 +22194,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.55,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:57.102495+00:00",
       "card_id": "1990_donruss_tom_gordon_297"
     },
     {
@@ -22207,8 +22207,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:58.126551+00:00",
       "card_id": "1990_donruss_walt_terrell_309"
     },
     {
@@ -22220,8 +22220,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.48,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:02:59.184190+00:00",
       "card_id": "1990_donruss_greg_swindell_310"
     },
     {
@@ -22233,8 +22233,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.48,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:00.248465+00:00",
       "card_id": "1990_donruss_greg_swindell_310"
     },
     {
@@ -22246,8 +22246,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.5,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:01.263635+00:00",
       "card_id": "1990_donruss_dave_righetti_311"
     },
     {
@@ -22259,8 +22259,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:02.667435+00:00",
       "card_id": "1990_donruss_jose_gonzalez_314"
     },
     {
@@ -22272,8 +22272,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:03.773615+00:00",
       "card_id": "1990_donruss_mike_scioscia_316"
     },
     {
@@ -22285,8 +22285,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:05.132594+00:00",
       "card_id": "1990_donruss_doug_jones_320"
     },
     {
@@ -22298,8 +22298,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.48,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:06.221186+00:00",
       "card_id": "1990_donruss_danny_tartabull_322"
     },
     {
@@ -22311,8 +22311,8 @@
       "tcdb_price": 0.11,
       "avg_price": 1.39,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:07.339112+00:00",
       "card_id": "1990_donruss_dave_parker_328"
     },
     {
@@ -22324,8 +22324,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.67,
       "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:08.395602+00:00",
       "card_id": "1990_donruss_tim_burke_334"
     },
     {
@@ -22337,8 +22337,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:09.535135+00:00",
       "card_id": "1990_donruss_pascual_perez_342"
     },
     {
@@ -22350,8 +22350,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.57,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:10.659846+00:00",
       "card_id": "1990_donruss_rich_gedman_346"
     },
     {
@@ -22363,8 +22363,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.47,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:11.736467+00:00",
       "card_id": "1990_donruss_matt_williams_348"
     },
     {
@@ -22376,8 +22376,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:12.798874+00:00",
       "card_id": "1990_donruss_brad_komminsk_350"
     },
     {
@@ -22389,8 +22389,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.6,
       "median": 1.52,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:13.832163+00:00",
       "card_id": "1990_donruss_steve_farr_356"
     },
     {
@@ -22402,8 +22402,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:14.888695+00:00",
       "card_id": "1990_donruss_bob_kipper_362"
     },
     {
@@ -22415,8 +22415,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.31,
       "median": 1.25,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:16.061256+00:00",
       "card_id": "1990_donruss_mike_bielecki_373"
     },
     {
@@ -22428,8 +22428,8 @@
       "tcdb_price": 0.17,
       "avg_price": 1.54,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:17.108020+00:00",
       "card_id": "1990_donruss_rick_mahler_375"
     },
     {
@@ -22441,8 +22441,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.46,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:18.232047+00:00",
       "card_id": "1990_donruss_gregg_olson_377"
     },
     {
@@ -22454,8 +22454,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.42,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:19.273686+00:00",
       "card_id": "1990_donruss_marty_clary_381"
     },
     {
@@ -22467,8 +22467,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:20.325137+00:00",
       "card_id": "1990_donruss_dave_west_387"
     },
     {
@@ -22480,8 +22480,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.46,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:21.369209+00:00",
       "card_id": "1990_donruss_albert_belle_390"
     },
     {
@@ -22493,8 +22493,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.46,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:22.471282+00:00",
       "card_id": "1990_donruss_albert_belle_390"
     },
     {
@@ -22506,8 +22506,8 @@
       "tcdb_price": 0.28,
       "avg_price": 1.62,
       "median": 1.68,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:23.423018+00:00",
       "card_id": "1990_donruss_ken_hill_397"
     },
     {
@@ -22519,8 +22519,8 @@
       "tcdb_price": 0.28,
       "avg_price": 1.49,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:24.467463+00:00",
       "card_id": "1990_donruss_jody_reed_398"
     },
     {
@@ -22532,8 +22532,8 @@
       "tcdb_price": 0.05,
       "avg_price": 2.12,
       "median": 1.99,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Medium",
+      "last_updated": "2026-04-18T03:03:25.453929+00:00",
       "card_id": "1990_donruss_rene_gonzalez_401"
     },
     {
@@ -22545,8 +22545,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.59,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:26.540006+00:00",
       "card_id": "1990_donruss_dennis_rasmussen_420"
     },
     {
@@ -22558,8 +22558,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.57,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:27.671235+00:00",
       "card_id": "1990_donruss_norm_charlton_426"
     },
     {
@@ -22571,8 +22571,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.41,
       "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:28.787849+00:00",
       "card_id": "1990_donruss_mickey_hatcher_439"
     },
     {
@@ -22584,8 +22584,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:29.959213+00:00",
       "card_id": "1990_donruss_rj_reynolds_447"
     },
     {
@@ -22597,8 +22597,8 @@
       "tcdb_price": 0.17,
       "avg_price": 1.55,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:31.112321+00:00",
       "card_id": "1990_donruss_dave_martinez_452"
     },
     {
@@ -22610,8 +22610,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.62,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:32.264511+00:00",
       "card_id": "1990_donruss_otis_nixon_456"
     },
     {
@@ -22623,8 +22623,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.57,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:33.459190+00:00",
       "card_id": "1990_donruss_rich_monteleone_462"
     },
     {
@@ -22636,8 +22636,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.57,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:34.653120+00:00",
       "card_id": "1990_donruss_rich_monteleone_462"
     },
     {
@@ -22649,8 +22649,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:35.797805+00:00",
       "card_id": "1990_donruss_jeff_brantley_466"
     },
     {
@@ -22662,8 +22662,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:36.827208+00:00",
       "card_id": "1990_donruss_jeff_brantley_466"
     },
     {
@@ -22675,8 +22675,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:37.941188+00:00",
       "card_id": "1990_donruss_jeff_brantley_466"
     },
     {
@@ -22688,8 +22688,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:39.060251+00:00",
       "card_id": "1990_donruss_scott_bailes_468"
     },
     {
@@ -22701,8 +22701,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:40.211698+00:00",
       "card_id": "1990_donruss_glenn_wilson_472"
     },
     {
@@ -22714,8 +22714,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.54,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:41.262079+00:00",
       "card_id": "1990_donruss_bill_buckner_474"
     },
     {
@@ -22727,8 +22727,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.51,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:42.509968+00:00",
       "card_id": "1990_donruss_kevin_romine_476"
     },
     {
@@ -22740,8 +22740,8 @@
       "tcdb_price": 0.17,
       "avg_price": 1.37,
       "median": 1.34,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:43.571657+00:00",
       "card_id": "1990_donruss_storm_davis_479"
     },
     {
@@ -22753,8 +22753,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:44.904689+00:00",
       "card_id": "1990_donruss_kevin_mmahat_481"
     },
     {
@@ -22766,8 +22766,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.43,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:46.109017+00:00",
       "card_id": "1990_donruss_omar_vizquel_483"
     },
     {
@@ -22779,8 +22779,8 @@
       "tcdb_price": 0.13,
       "avg_price": 1.45,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:47.146143+00:00",
       "card_id": "1990_donruss_jim_dwyer_484"
     },
     {
@@ -22792,8 +22792,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:48.181022+00:00",
       "card_id": "1990_donruss_dave_anderson_486"
     },
     {
@@ -22805,8 +22805,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:49.387717+00:00",
       "card_id": "1990_donruss_dave_anderson_486"
     },
     {
@@ -22816,10 +22816,10 @@
       "card_number": "488",
       "team": "Pittsburgh Pirates",
       "tcdb_price": 0.1,
-      "avg_price": 1.49,
+      "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:50.620631+00:00",
       "card_id": "1990_donruss_jay_bell_488"
     },
     {
@@ -22831,8 +22831,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:51.583285+00:00",
       "card_id": "1990_donruss_kent_anderson_490"
     },
     {
@@ -22844,8 +22844,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:52.764572+00:00",
       "card_id": "1990_donruss_dave_clark_492"
     },
     {
@@ -22855,10 +22855,10 @@
       "card_number": "496",
       "team": "Texas Rangers",
       "tcdb_price": 0.1,
-      "avg_price": 1.59,
-      "median": 1.67,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.58,
+      "median": 1.6,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:53.843661+00:00",
       "card_id": "1990_donruss_jeff_kunkel_496"
     },
     {
@@ -22870,8 +22870,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:54.856704+00:00",
       "card_id": "1990_donruss_mike_macfarlane_498"
     },
     {
@@ -22883,8 +22883,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.43,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:55.940908+00:00",
       "card_id": "1990_donruss_checklist_500"
     },
     {
@@ -22896,8 +22896,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.63,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:57.127783+00:00",
       "card_id": "1990_donruss_jerry_kutzler_503"
     },
     {
@@ -22909,8 +22909,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.46,
       "median": 1.42,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:58.153897+00:00",
       "card_id": "1990_donruss_curt_young_505"
     },
     {
@@ -22922,8 +22922,8 @@
       "tcdb_price": 0.25,
       "avg_price": 1.39,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:03:59.773449+00:00",
       "card_id": "1990_donruss_mike_stanton_508"
     },
     {
@@ -22935,8 +22935,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.5,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:00.763239+00:00",
       "card_id": "1990_donruss_joe_hesketh_511"
     },
     {
@@ -22948,8 +22948,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.53,
       "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:01.878899+00:00",
       "card_id": "1990_donruss_jeff_peterek_530"
     },
     {
@@ -22961,8 +22961,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:02.980074+00:00",
       "card_id": "1990_donruss_mike_davis_552"
     },
     {
@@ -22974,8 +22974,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:04.082087+00:00",
       "card_id": "1990_donruss_jim_acker_558"
     },
     {
@@ -22987,8 +22987,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.61,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:05.324871+00:00",
       "card_id": "1990_donruss_danny_darwin_561"
     },
     {
@@ -23000,8 +23000,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.53,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:06.541691+00:00",
       "card_id": "1990_donruss_rick_luecken_562"
     },
     {
@@ -23011,10 +23011,10 @@
       "card_number": "566",
       "team": "Seattle Mariners",
       "tcdb_price": 0.05,
-      "avg_price": 1.51,
+      "avg_price": 1.56,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:07.621391+00:00",
       "card_id": "1990_donruss_billy_swift_566"
     },
     {
@@ -23026,8 +23026,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:08.665274+00:00",
       "card_id": "1990_donruss_bill_schroeder_567"
     },
     {
@@ -23039,8 +23039,8 @@
       "tcdb_price": 0.16,
       "avg_price": 1.57,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:09.844881+00:00",
       "card_id": "1990_donruss_donell_nixon_571"
     },
     {
@@ -23052,8 +23052,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.6,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:10.979340+00:00",
       "card_id": "1990_donruss_sid_fernandez_572"
     },
     {
@@ -23065,8 +23065,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.54,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:12.200364+00:00",
       "card_id": "1990_donruss_tommy_greene_576"
     },
     {
@@ -23078,8 +23078,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.54,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:13.180165+00:00",
       "card_id": "1990_donruss_tommy_greene_576"
     },
     {
@@ -23089,10 +23089,10 @@
       "card_number": "581",
       "team": "Seattle Mariners",
       "tcdb_price": 0.17,
-      "avg_price": 1.44,
+      "avg_price": 1.43,
       "median": 1.42,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:14.161016+00:00",
       "card_id": "1990_donruss_scott_bradley_581"
     },
     {
@@ -23104,8 +23104,8 @@
       "tcdb_price": 0.15,
       "avg_price": 1.59,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:15.178189+00:00",
       "card_id": "1990_donruss_lee_mazzilli_584"
     },
     {
@@ -23115,10 +23115,10 @@
       "card_number": "588",
       "team": "Boston Red Sox",
       "tcdb_price": 1.89,
-      "avg_price": 1.48,
+      "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:16.345326+00:00",
       "card_id": "1990_donruss_carl_yastrzemski_588"
     },
     {
@@ -23130,8 +23130,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.47,
       "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:17.429499+00:00",
       "card_id": "1990_donruss_john_moses_590"
     },
     {
@@ -23143,8 +23143,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:18.498350+00:00",
       "card_id": "1990_donruss_tony_castillo_592"
     },
     {
@@ -23156,8 +23156,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:19.670476+00:00",
       "card_id": "1990_donruss_luis_quinones_595"
     },
     {
@@ -23169,8 +23169,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:20.795026+00:00",
       "card_id": "1990_donruss_luis_quinones_595"
     },
     {
@@ -23182,8 +23182,8 @@
       "tcdb_price": 0.03,
       "avg_price": 1.64,
       "median": 1.6,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:21.888478+00:00",
       "card_id": "1990_donruss_gary_redus_597"
     },
     {
@@ -23195,8 +23195,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.48,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:22.826053+00:00",
       "card_id": "1990_donruss_rick_schu_599"
     },
     {
@@ -23208,8 +23208,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.41,
       "median": 1.5,
-      "confidence": "High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:23.949942+00:00",
       "card_id": "1990_donruss_checklist_600"
     },
     {
@@ -23221,8 +23221,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.45,
       "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:25.025504+00:00",
       "card_id": "1990_donruss_terry_kennedy_602"
     },
     {
@@ -23232,10 +23232,10 @@
       "card_number": "606",
       "team": "Chicago White Sox",
       "tcdb_price": 0.05,
-      "avg_price": 1.51,
-      "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.5,
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:26.185662+00:00",
       "card_id": "1990_donruss_donn_pall_606"
     },
     {
@@ -23247,8 +23247,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:27.193345+00:00",
       "card_id": "1990_donruss_curt_wilkerson_608"
     },
     {
@@ -23260,8 +23260,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:28.217899+00:00",
       "card_id": "1990_donruss_rick_leach_613"
     },
     {
@@ -23273,8 +23273,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.57,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:29.326460+00:00",
       "card_id": "1990_donruss_jerry_reed_614"
     },
     {
@@ -23286,8 +23286,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.48,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:30.498367+00:00",
       "card_id": "1990_donruss_manny_lee_620"
     },
     {
@@ -23299,8 +23299,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:31.531573+00:00",
       "card_id": "1990_donruss_mark_guthrie_622"
     },
     {
@@ -23312,8 +23312,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.56,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:32.729384+00:00",
       "card_id": "1990_donruss_les_lancaster_628"
     },
     {
@@ -23325,8 +23325,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:33.813762+00:00",
       "card_id": "1990_donruss_cris_carpenter_634"
     },
     {
@@ -23338,8 +23338,8 @@
       "tcdb_price": 0.04,
       "avg_price": 1.39,
       "median": 1.34,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:34.824176+00:00",
       "card_id": "1990_donruss_brian_holton_635"
     },
     {
@@ -23351,8 +23351,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.6,
       "median": 1.53,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:35.821434+00:00",
       "card_id": "1990_donruss_henry_cotto_644"
     },
     {
@@ -23364,8 +23364,8 @@
       "tcdb_price": 0.05,
       "avg_price": 2.15,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:36.875558+00:00",
       "card_id": "1990_donruss_ray_searage_649"
     },
     {
@@ -23377,8 +23377,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.52,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:37.892175+00:00",
       "card_id": "1990_donruss_alejandro_pena_664"
     },
     {
@@ -23390,8 +23390,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.61,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:39.062022+00:00",
       "card_id": "1990_donruss_ricky_horton_666"
     },
     {
@@ -23403,8 +23403,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.42,
       "median": 1.35,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:40.051076+00:00",
       "card_id": "1990_donruss_tim_leary_670"
     },
     {
@@ -23416,8 +23416,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:41.142591+00:00",
       "card_id": "1990_donruss_calvin_schiraldi_672"
     },
     {
@@ -23427,10 +23427,10 @@
       "card_number": "678",
       "team": "New York Yankees",
       "tcdb_price": 0.05,
-      "avg_price": 1.47,
+      "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:42.102315+00:00",
       "card_id": "1990_donruss_goose_gossage_678"
     },
     {
@@ -23442,8 +23442,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.65,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:43.188520+00:00",
       "card_id": "1990_donruss_xavier_hernandez_682"
     },
     {
@@ -23455,8 +23455,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.58,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:44.453962+00:00",
       "card_id": "1990_donruss_steve_lombardozzi_688"
     },
     {
@@ -23468,8 +23468,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.62,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:45.690135+00:00",
       "card_id": "1990_donruss_chip_hale_690"
     },
     {
@@ -23481,8 +23481,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.45,
       "median": 1.39,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:46.794202+00:00",
       "card_id": "1990_donruss_bonus_mvps_orel_hershiser_5"
     },
     {
@@ -23494,8 +23494,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.45,
       "median": 1.39,
-      "confidence": "Medium (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:47.943125+00:00",
       "card_id": "1990_donruss_bonus_mvps_orel_hershiser_5"
     },
     {
@@ -23507,8 +23507,8 @@
       "tcdb_price": 0.14,
       "avg_price": 1.45,
       "median": 1.52,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:48.909028+00:00",
       "card_id": "1990_donruss_bonus_mvps_alvin_davis_9"
     },
     {
@@ -23520,8 +23520,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.44,
       "median": 1.55,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:50.002366+00:00",
       "card_id": "1990_donruss_bonus_mvps_chili_davis_20"
     },
     {
@@ -23533,8 +23533,8 @@
       "tcdb_price": 0.65,
       "avg_price": 1.57,
       "median": 1.65,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:51.048612+00:00",
       "card_id": "1990_donruss_bonus_mvps_steve_sax_22"
     },
     {
@@ -23546,8 +23546,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Low (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:04:52.248777+00:00",
       "card_id": "1990_donruss_bonus_mvps_eric_davis_23"
     },
     {
@@ -23559,8 +23559,8 @@
       "tcdb_price": 0.8,
       "avg_price": 1.5,
       "median": 1.99,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "confidence": "High (Claude)",
+      "last_updated": "2026-04-18T03:05:06.919923+00:00",
       "card_id": "1990_donruss_the_rookies_sandy_alomar_jr_1"
     },
     {
@@ -23572,8 +23572,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.5,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:08.894570+00:00",
       "card_id": "1990_donruss_the_rookies_kevin_wickander_36"
     },
     {
@@ -23585,8 +23585,8 @@
       "tcdb_price": 1.62,
       "avg_price": 1.96,
       "median": 1.69,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:09.877968+00:00",
       "card_id": "1990_donruss_the_rookies_jeff_shaw_53"
     },
     {
@@ -23598,8 +23598,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.45,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:10.970634+00:00",
       "card_id": "1990_fleer_paul_assenmacher_25"
     },
     {
@@ -23611,8 +23611,8 @@
       "tcdb_price": 0.16,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:12.161214+00:00",
       "card_id": "1990_fleer_mike_bielecki_27"
     },
     {
@@ -23624,8 +23624,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.57,
       "median": 1.65,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:13.256435+00:00",
       "card_id": "1990_fleer_shawon_dunston_30"
     },
     {
@@ -23637,8 +23637,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:14.392689+00:00",
       "card_id": "1990_fleer_joe_girardi_31"
     },
     {
@@ -23648,10 +23648,10 @@
       "card_number": "37",
       "team": "Chicago Cubs",
       "tcdb_price": 1.0,
-      "avg_price": 1.43,
+      "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:15.785379+00:00",
       "card_id": "1990_fleer_greg_maddux_37"
     },
     {
@@ -23661,10 +23661,10 @@
       "card_number": "37",
       "team": "Chicago Cubs",
       "tcdb_price": 1.0,
-      "avg_price": 1.43,
+      "avg_price": 1.44,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:16.772152+00:00",
       "card_id": "1990_fleer_greg_maddux_37"
     },
     {
@@ -23676,8 +23676,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.55,
       "median": 1.51,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:17.860781+00:00",
       "card_id": "1990_fleer_scott_garrelts_56"
     },
     {
@@ -23689,8 +23689,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.49,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:18.875735+00:00",
       "card_id": "1990_fleer_mike_lacoss_59"
     },
     {
@@ -23700,10 +23700,10 @@
       "card_number": "60",
       "team": "San Francisco Giants",
       "tcdb_price": 0.3,
-      "avg_price": 1.52,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.51,
+      "median": 1.44,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:19.993310+00:00",
       "card_id": "1990_fleer_craig_lefferts_60"
     },
     {
@@ -23713,10 +23713,10 @@
       "card_number": "65",
       "team": "San Francisco Giants",
       "tcdb_price": 0.23,
-      "avg_price": 1.35,
-      "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.33,
+      "median": 1.45,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:21.094818+00:00",
       "card_id": "1990_fleer_kevin_mitchell_65"
     },
     {
@@ -23728,8 +23728,8 @@
       "tcdb_price": 0.16,
       "avg_price": 0.15,
       "median": 0.16,
-      "confidence": "Floor Value",
-      "last_updated": "4/3/2026",
+      "confidence": "Low (TCDB ref)",
+      "last_updated": "2026-04-18T03:05:42.875791+00:00",
       "card_id": "1990_fleer_ernie_riles_69"
     },
     {
@@ -23741,8 +23741,8 @@
       "tcdb_price": 0.4,
       "avg_price": 1.45,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:43.864577+00:00",
       "card_id": "1990_fleer_matt_williams_75"
     },
     {
@@ -23754,8 +23754,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.38,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:45.059504+00:00",
       "card_id": "1990_fleer_fred_mcgriff_89"
     },
     {
@@ -23767,8 +23767,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:46.201183+00:00",
       "card_id": "1990_fleer_lloyd_moseby_90"
     },
     {
@@ -23780,8 +23780,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.49,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:47.327800+00:00",
       "card_id": "1990_fleer_rance_mulliniks_91"
     },
     {
@@ -23793,8 +23793,8 @@
       "tcdb_price": 0.07,
       "avg_price": 1.47,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:48.529959+00:00",
       "card_id": "1990_fleer_jose_dejesus_104"
     },
     {
@@ -23806,8 +23806,8 @@
       "tcdb_price": 0.11,
       "avg_price": 1.47,
       "median": 1.55,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:49.587039+00:00",
       "card_id": "1990_fleer_luis_de_los_santos_105"
     },
     {
@@ -23819,8 +23819,8 @@
       "tcdb_price": 1.99,
       "avg_price": 1.35,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:50.707617+00:00",
       "card_id": "1990_fleer_bo_jackson_110"
     },
     {
@@ -23832,8 +23832,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.46,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:51.864193+00:00",
       "card_id": "1990_fleer_tony_armas_126"
     },
     {
@@ -23845,8 +23845,8 @@
       "tcdb_price": 0.65,
       "avg_price": 1.4,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:52.960377+00:00",
       "card_id": "1990_fleer_tony_gwynn_157"
     },
     {
@@ -23858,8 +23858,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.54,
       "median": 1.5,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:53.987699+00:00",
       "card_id": "1990_fleer_ed_whitson_171"
     },
     {
@@ -23869,10 +23869,10 @@
       "card_number": "184",
       "team": "Baltimore Orioles",
       "tcdb_price": 0.1,
-      "avg_price": 1.45,
-      "median": 1.35,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.37,
+      "median": 1.29,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:55.195304+00:00",
       "card_id": "1990_fleer_gregg_olson_184"
     },
     {
@@ -23884,8 +23884,8 @@
       "tcdb_price": 1.0,
       "avg_price": 1.43,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:56.350679+00:00",
       "card_id": "1990_fleer_gary_carter_199"
     },
     {
@@ -23895,10 +23895,10 @@
       "card_number": "202",
       "team": "New York Mets",
       "tcdb_price": 0.05,
-      "avg_price": 1.43,
-      "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "avg_price": 1.42,
+      "median": 1.35,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:57.514528+00:00",
       "card_id": "1990_fleer_kevin_elster_202"
     },
     {
@@ -23910,8 +23910,8 @@
       "tcdb_price": 0.12,
       "avg_price": 1.37,
       "median": 1.25,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:58.733242+00:00",
       "card_id": "1990_fleer_gregg_jefferies_207"
     },
     {
@@ -23923,8 +23923,8 @@
       "tcdb_price": 0.12,
       "avg_price": 1.37,
       "median": 1.25,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:05:59.902099+00:00",
       "card_id": "1990_fleer_gregg_jefferies_207"
     },
     {
@@ -23934,10 +23934,10 @@
       "card_number": "213",
       "team": "New York Mets",
       "tcdb_price": 0.1,
-      "avg_price": 1.46,
+      "avg_price": 1.45,
       "median": 1.4,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:00.960374+00:00",
       "card_id": "1990_fleer_randy_myers_213"
     },
     {
@@ -23948,9 +23948,9 @@
       "team": "Houston Astros",
       "tcdb_price": 0.05,
       "avg_price": 1.49,
-      "median": 1.45,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.4,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:02.141807+00:00",
       "card_id": "1990_fleer_eric_anthony_222"
     },
     {
@@ -23962,8 +23962,8 @@
       "tcdb_price": 0.12,
       "avg_price": 1.53,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:03.408252+00:00",
       "card_id": "1990_fleer_vince_coleman_245"
     },
     {
@@ -23975,8 +23975,8 @@
       "tcdb_price": 0.12,
       "avg_price": 1.53,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:04.433857+00:00",
       "card_id": "1990_fleer_vince_coleman_245"
     },
     {
@@ -23988,8 +23988,8 @@
       "tcdb_price": 0.18,
       "avg_price": 1.57,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:05.514654+00:00",
       "card_id": "1990_fleer_pedro_guerrero_250"
     },
     {
@@ -24001,8 +24001,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.41,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:06.683851+00:00",
       "card_id": "1990_fleer_mike_greenwell_277"
     },
     {
@@ -24014,8 +24014,8 @@
       "tcdb_price": 0.08,
       "avg_price": 1.51,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:07.746303+00:00",
       "card_id": "1990_fleer_jody_reed_284"
     },
     {
@@ -24027,8 +24027,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.48,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:08.928068+00:00",
       "card_id": "1990_fleer_mike_smithson_288"
     },
     {
@@ -24040,8 +24040,8 @@
       "tcdb_price": 0.09,
       "avg_price": 1.56,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:09.994325+00:00",
       "card_id": "1990_fleer_bob_stanley_289"
     },
     {
@@ -24053,8 +24053,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.39,
       "median": 1.31,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:11.064485+00:00",
       "card_id": "1990_fleer_chad_kreuter_303"
     },
     {
@@ -24066,8 +24066,8 @@
       "tcdb_price": 0.16,
       "avg_price": 1.52,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:12.150352+00:00",
       "card_id": "1990_fleer_chuck_crim_319"
     },
     {
@@ -24079,8 +24079,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.51,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:13.135917+00:00",
       "card_id": "1990_fleer_rob_deer_320"
     },
     {
@@ -24092,8 +24092,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.47,
       "median": 1.43,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:14.188716+00:00",
       "card_id": "1990_fleer_darryl_hamilton_325"
     },
     {
@@ -24105,8 +24105,8 @@
       "tcdb_price": 0.3,
       "avg_price": 1.41,
       "median": 1.29,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:15.219090+00:00",
       "card_id": "1990_fleer_bill_krueger_328"
     },
     {
@@ -24118,8 +24118,8 @@
       "tcdb_price": 0.1,
       "avg_price": 1.5,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:16.277893+00:00",
       "card_id": "1990_fleer_dennis_martinez_354"
     },
     {
@@ -24131,8 +24131,8 @@
       "tcdb_price": 0.16,
       "avg_price": 1.5,
       "median": 1.49,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:17.331432+00:00",
       "card_id": "1990_fleer_bryn_smith_361"
     },
     {
@@ -24144,8 +24144,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.54,
       "median": 1.59,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:18.562033+00:00",
       "card_id": "1990_fleer_mike_dyer_372"
     },
     {
@@ -24155,10 +24155,10 @@
       "card_number": "377",
       "team": "Minnesota Twins",
       "tcdb_price": 0.16,
-      "avg_price": 1.45,
+      "avg_price": 1.44,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:19.607192+00:00",
       "card_id": "1990_fleer_brian_harper_377"
     },
     {
@@ -24170,8 +24170,8 @@
       "tcdb_price": 0.06,
       "avg_price": 1.46,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:20.843922+00:00",
       "card_id": "1990_fleer_john_moses_381"
     },
     {
@@ -24183,8 +24183,8 @@
       "tcdb_price": 0.99,
       "avg_price": 1.3,
       "median": 1.3,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:21.812368+00:00",
       "card_id": "1990_fleer_kirby_puckett_383"
     },
     {
@@ -24196,8 +24196,8 @@
       "tcdb_price": 0.05,
       "avg_price": 1.42,
       "median": 1.39,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:22.886094+00:00",
       "card_id": "1990_fleer_mike_davis_391"
     },
     {
@@ -24208,9 +24208,9 @@
       "team": "Los Angeles Dodgers",
       "tcdb_price": 0.45,
       "avg_price": 1.45,
-      "median": 1.44,
-      "confidence": "Very High - Validated (active)",
-      "last_updated": "4/3/2026",
+      "median": 1.49,
+      "confidence": "Very High",
+      "last_updated": "2026-04-18T03:06:23.882230+00:00",
       "card_id": "1990_fleer_ramon_martinez_402"
     },
     {
@@ -57554,7 +57554,7 @@
     },
     {
       "date": "2026-04-18",
-      "total_value": 7033.59,
+      "total_value": 7033.56,
       "cards_priced": 4364
     }
   ]
