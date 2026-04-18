@@ -55,7 +55,6 @@ CARD_TIMEOUT_SEC   = 90          # max wall-clock seconds per card before skippi
 SHEETS_RETRIES     = 4           # retry attempts for Google Sheets API calls
 EBAY_RETRIES       = 3           # retry attempts for eBay API calls
 EBAY_QUOTA_MIN     = 50          # exit gracefully when fewer than this many calls remain
-EBAY_CONSEC_FAIL_MAX = 5         # consecutive all-429 cards before treating as quota exhaustion
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
@@ -212,9 +211,7 @@ def col_index_to_letter(col_1indexed: int) -> str:
 
 _ebay_token: Optional[str] = None
 _ebay_token_expiry: Optional[datetime] = None
-_ebay_quota_exhausted: bool = False   # set True when eBay confirms daily limit via headers → exit
-_ebay_suspended: bool = False         # set True when consecutive 429s hit threshold → skip eBay, keep going
-_consecutive_429_cards: int = 0       # cards where every eBay attempt was a 429
+_ebay_quota_exhausted: bool = False   # set True on any 429 → triggers graceful save+exit
 
 # Query-level caches — keyed on query string, value is (timestamp, items).
 # Prevents duplicate API calls when multiple cards share the same query
@@ -291,21 +288,17 @@ def _check_ebay_quota(headers: dict):
 
 
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
-    """Search eBay Browse API with quota awareness and retry for transient errors."""
-    global _ebay_quota_exhausted, _ebay_suspended, _consecutive_429_cards
+    """Search eBay Browse API. Any 429 triggers an immediate graceful save+exit —
+    there is nothing productive to do while throttled, and waiting wastes runner minutes."""
+    global _ebay_quota_exhausted
 
-    # Hard quota confirmed by eBay headers — don't even try, raise for graceful exit
     if _ebay_quota_exhausted:
         raise EbayQuotaExhausted('eBay quota already exhausted this run.')
 
-    # Soft suspension from consecutive 429s — skip eBay silently, let Mavin/TCDB carry it
-    if _ebay_suspended:
-        return []
-
     # Check query cache — skip the API call if we fetched this recently
-    cache_key  = f'{query}|{price_filter or ""}'
-    _now_ts    = time.time()
-    _cached    = _ebay_cache.get(cache_key)
+    cache_key = f'{query}|{price_filter or ""}'
+    _now_ts   = time.time()
+    _cached   = _ebay_cache.get(cache_key)
     if _cached and _now_ts - _cached[0] < EBAY_CACHE_TTL:
         log.debug('eBay cache hit for "%s"', query)
         return _cached[1]
@@ -336,65 +329,32 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
             _check_ebay_quota(r.headers)
 
             if r.status_code == 200:
-                _consecutive_429_cards = 0   # successful call — reset streak
-                _ebay_suspended = False       # lift suspension if eBay recovers mid-run
                 result = r.json().get('itemSummaries', [])
-                if result:                   # don't cache empty results (re-fetch on next call)
+                if result:   # don't cache empty results (re-fetch on next call)
                     _ebay_cache[cache_key] = (time.time(), result)
                 return result
 
             if r.status_code == 429:
-                # Check if this is a daily quota 429 (Retry-After = hours) vs
-                # a per-minute throttle (Retry-After = seconds)
-                retry_after = r.headers.get('Retry-After')
-                if retry_after:
-                    try:
-                        wait_secs = int(retry_after)
-                        if wait_secs > 300:
-                            _ebay_quota_exhausted = True
-                            raise EbayQuotaExhausted(
-                                f'eBay 429 with Retry-After: {wait_secs}s — daily quota exhausted. '
-                                'Committing progress and exiting.'
-                            )
-                        log.warning('eBay throttled — sleeping %ds (Retry-After)', wait_secs)
-                        time.sleep(wait_secs)
-                        continue
-                    except (ValueError, TypeError):
-                        pass
-                # No Retry-After header — use short backoff for per-minute throttling
-                wait = 30 * (attempt + 1)
-                log.warning('eBay 429 — sleeping %ds (attempt %d/%d)', wait, attempt + 1, EBAY_RETRIES)
-                time.sleep(wait)
-                token = get_ebay_token()
-                continue
+                # Stop immediately — no point sleeping or retrying.
+                # Save progress and exit; re-run tomorrow once quota resets.
+                retry_after = r.headers.get('Retry-After', '?')
+                _ebay_quota_exhausted = True
+                raise EbayQuotaExhausted(
+                    f'eBay 429 (Retry-After: {retry_after}s) — saving progress and exiting. '
+                    'Re-run once eBay quota resets (usually midnight UTC).'
+                )
 
             log.warning('eBay %s for query "%s"', r.status_code, query)
-            _consecutive_429_cards = 0   # non-429 failure — reset streak
             return []
 
         except EbayQuotaExhausted:
-            raise   # propagate up to process_batch → main for graceful save+exit
+            raise   # propagate to process_batch → main for graceful save+exit
         except Exception as e:
             if attempt == EBAY_RETRIES - 1:
                 log.warning('eBay search failed after %d attempts: %s', EBAY_RETRIES, e)
-                _consecutive_429_cards = 0
                 return []
             time.sleep(5 * (attempt + 1))
 
-    # Exhausted all retries — every attempt was a 429 (no successful call, no other error)
-    _consecutive_429_cards += 1
-    log.warning(
-        'eBay 429 on all %d attempts for "%s" — consecutive 429-card streak: %d/%d',
-        EBAY_RETRIES, query, _consecutive_429_cards, EBAY_CONSEC_FAIL_MAX
-    )
-    if _consecutive_429_cards >= EBAY_CONSEC_FAIL_MAX:
-        _ebay_suspended = True
-        log.warning(
-            '=== eBay suspended for this run after %d consecutive throttled cards. '
-            'Continuing with Mavin + TCDB/Claude only. '
-            'Use START_ROW to re-price this window once eBay quota resets. ===',
-            EBAY_CONSEC_FAIL_MAX
-        )
     return []
 
 
