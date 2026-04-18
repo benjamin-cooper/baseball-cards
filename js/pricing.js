@@ -70,11 +70,14 @@ function renderStats(data) {
   set('stat-total-value',  fmt(data.total_value));
   set('stat-cards-priced', data.cards_priced != null ? data.cards_priced.toLocaleString() : '—');
   set('stat-avg-value',    fmt(data.avg_value));
-  set('stat-top-card',     fmt(data.top_card_value));
-  set('stat-total-cards',  data.total_cards != null ? data.total_cards.toLocaleString() : '—');
-  const unpriced = data.total_cards != null && data.cards_priced != null
-    ? (data.total_cards - data.cards_priced).toLocaleString() : '—';
-  set('stat-unpriced', unpriced);
+  set('stat-top-card', fmt(data.top_card_value));
+  // Median: middle value of all priced cards sorted by avg_price
+  const pricedCards = (data.cards || []).filter(c => c.avg_price).map(c => c.avg_price).sort((a,b) => a-b);
+  const mid = Math.floor(pricedCards.length / 2);
+  const median = pricedCards.length
+    ? (pricedCards.length % 2 ? pricedCards[mid] : (pricedCards[mid-1] + pricedCards[mid]) / 2)
+    : null;
+  set('stat-median-value', fmt(median));
 }
 
 function renderTopCards(cards) {
