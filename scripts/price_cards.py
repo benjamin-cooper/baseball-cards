@@ -547,14 +547,258 @@ def _norm_player(name: str) -> str:
     return re.sub(r'[,.]', '', name.lower()).strip()
 
 
-def _norm_brand(brand: str) -> str:
-    """Normalise a brand/set name for fuzzy title matching.
+_PLAYER_NICKNAMES: dict[str, list[str]] = {
+    # Formal → informal
+    'david':      ['dave'],
+    'dave':       ['david'],
+    'michael':    ['mike'],
+    'mike':       ['michael'],
+    'robert':     ['bob', 'rob', 'bobby'],
+    'bob':        ['robert', 'rob'],
+    'rob':        ['robert', 'bob'],
+    'bobby':      ['robert', 'bob'],
+    'william':    ['bill', 'will', 'billy'],
+    'bill':       ['william', 'billy'],
+    'billy':      ['bill', 'william'],
+    'james':      ['jim', 'jimmy'],
+    'jim':        ['james', 'jimmy'],
+    'jimmy':      ['jim', 'james'],
+    'joseph':     ['joe'],
+    'joe':        ['joseph'],
+    'john':       ['johnny'],
+    'johnny':     ['john'],
+    'thomas':     ['tom', 'tommy'],
+    'tom':        ['thomas', 'tommy'],
+    'tommy':      ['tom', 'thomas'],
+    'richard':    ['rick', 'rich', 'ricky', 'dick'],
+    'rick':       ['richard', 'ricky'],
+    'ricky':      ['rick', 'richard'],
+    'rich':       ['richard'],
+    'charles':    ['charlie', 'chuck'],
+    'charlie':    ['charles', 'chuck'],
+    'chuck':      ['charles', 'charlie'],
+    'christopher': ['chris'],
+    'chris':      ['christopher'],
+    'anthony':    ['tony'],
+    'tony':       ['anthony'],
+    'edward':     ['ed', 'eddie'],
+    'ed':         ['edward', 'eddie'],
+    'eddie':      ['ed', 'edward'],
+    'george':     ['georgie'],
+    'kenneth':    ['ken', 'kenny'],
+    'ken':        ['kenneth', 'kenny'],
+    'kenny':      ['ken', 'kenneth'],
+    'lawrence':   ['larry'],
+    'larry':      ['lawrence'],
+    'leonard':    ['lenny', 'len'],
+    'lenny':      ['leonard', 'len'],
+    'nicholas':   ['nick'],
+    'nick':       ['nicholas'],
+    'patrick':    ['pat'],
+    'pat':        ['patrick'],
+    'peter':      ['pete'],
+    'pete':       ['peter'],
+    'randall':    ['randy'],
+    'randy':      ['randall'],
+    'raymond':    ['ray'],
+    'ray':        ['raymond'],
+    'ronald':     ['ron', 'ronnie'],
+    'ron':        ['ronald', 'ronnie'],
+    'stephen':    ['steve', 'stevie'],
+    'steve':      ['stephen', 'steven'],
+    'steven':     ['steve', 'stephen'],
+    'timothy':    ['tim', 'timmy'],
+    'tim':        ['timothy', 'timmy'],
+    'walter':     ['walt'],
+    'walt':       ['walter'],
+    # Baseball-specific common nicknames
+    'cal':        ['calvin'],
+    'calvin':     ['cal'],
+    'chipper':    ['larry'],     # Chipper Jones = Larry Jones
+    'larry':      ['chipper'],
+    'nomar':      ['anthony'],   # Nomar Garciaparra
+    'tino':       ['constantino'],
+    'manny':      ['manuel'],
+    'manuel':     ['manny'],
+    'pedro':      ['peter'],
+    'vlad':       ['vladimir'],
+    'vladimir':   ['vlad'],
+    'pudge':      ['ivan'],      # Ivan Rodriguez
+    'ivan':       ['pudge'],
+    'moose':      ['mike'],      # Mike Mussina
+    'doc':        ['dwight'],    # Dwight Gooden
+    'dwight':     ['doc'],
+}
 
-    Strip articles that vary between sheet entries and eBay listing titles
-    (e.g. "Donruss The Rookies" → "donruss rookies",
-          "Topps The Kids"       → "topps kids").
+
+def _player_name_variants(player: str) -> list[str]:
+    """Return normalised player name variants covering common nicknames.
+
+    The primary normalised form is always first; extras are added when the
+    first name matches a known nickname mapping.
+
+    'David Justice'  → ['david justice', 'dave justice']
+    'Mike Piazza'    → ['mike piazza', 'michael piazza']
     """
-    return re.sub(r'\bthe\b\s*', '', brand.lower()).strip()
+    norm = _norm_player(player)   # "Sandy Alomar, Jr." → "sandy alomar jr"
+    parts = norm.split()
+    if not parts:
+        return [norm]
+
+    first = parts[0]
+    rest  = ' '.join(parts[1:])
+    extras = _PLAYER_NICKNAMES.get(first, [])
+
+    variants = [norm]
+    for alt in extras:
+        v = f"{alt} {rest}".strip()
+        if v not in variants:
+            variants.append(v)
+    return variants
+
+
+def _brand_variants(brand: str) -> list[str]:
+    """Return all acceptable brand aliases for title matching.
+
+    eBay listings abbreviate, vary, or add publisher prefixes to brand names.
+    Returns a list of lowercase strings; ANY one match in a listing title is
+    sufficient to pass the brand check.
+
+    Examples:
+      "Upper Deck"          → ["upper deck", "ud"]
+      "Donruss The Rookies" → ["donruss the rookies", "donruss rookies"]
+      "Allen & Ginter"      → ["allen & ginter", "a&g", "allen ginter", ...]
+    """
+    b = brand.lower()
+    # Always include: the raw name, and the article-stripped form
+    stripped = re.sub(r'\bthe\b\s*', '', b).strip()
+    variants: list[str] = list(dict.fromkeys([b, stripped]))  # deduplicated, original first
+
+    # Abbreviations / publisher aliases  (ported from GAS brand-variant map)
+    if 'upper deck' in b:                       variants += ['ud']
+    if 'stadium club' in b:                     variants += ['sc', 'stadium club']
+    if 'topps chrome' in b:                     variants += ['chrome']
+    if 'bowman chrome' in b:                    variants += ['chrome']
+    if b == 'topps':                            variants += ['topps base', 'topps series']
+    if b == 'donruss':                          variants += ['panini donruss']
+    if 'donruss optic' in b:                    variants += ['optic']
+    if b == 'fleer':                            variants += ['fleer ultra', 'fleer tradition']
+    if 'fleer ultra' in b:                      variants += ['ultra']
+    if 'bowman' in b:                           variants += ['bowman']
+    if 'finest' in b:                           variants += ['finest', 'topps finest']
+    if 'select' in b:                           variants += ['select', 'panini select']
+    if 'prizm' in b:                            variants += ['prizm', 'panini prizm']
+    if 'classics' in b:                         variants += ['panini classics']
+    if 'heritage' in b:                         variants += ['heritage', 'topps heritage']
+    if 'archives' in b:                         variants += ['archives', 'topps archives']
+    if 'gypsy queen' in b:                      variants += ['gq', 'gypsy queen']
+    if 'allen' in b and 'ginter' in b:          variants += ['a&g', 'allen ginter', 'allen and ginter']
+    if 'opening day' in b:                      variants += ['opening day', 'od']
+    if 'big league' in b:                       variants += ['big league']
+    if 'gallery' in b:                          variants += ['gallery']
+    if 'diamond kings' in b:                    variants += ['dk', 'diamond kings']
+    if 'triple threads' in b:                   variants += ['triple threads']
+    if 'tier one' in b:                         variants += ['tier one', 'tier 1']
+    if 'museum' in b:                           variants += ['museum collection', 'museum']
+    if 'tribute' in b:                          variants += ['tribute', 'topps tribute']
+    if 'inception' in b:                        variants += ['inception']
+    if 'sterling' in b:                         variants += ['sterling', 'bowman sterling']
+    if 'clearly authentic' in b:                variants += ['clearly authentic']
+    if 'gold label' in b:                       variants += ['gold label']
+
+    return list(dict.fromkeys(v for v in variants if v))
+
+
+_TEAM_VARIANTS: dict[str, list[str]] = {
+    'yankees':               ['nyy', 'new york yankees', 'ny yankees'],
+    'new york yankees':      ['yankees', 'nyy', 'ny yankees'],
+    'red sox':               ['bos', 'boston red sox', 'redsox', 'boston'],
+    'boston red sox':        ['red sox', 'bos', 'boston'],
+    'dodgers':               ['lad', 'los angeles dodgers', 'la dodgers'],
+    'los angeles dodgers':   ['dodgers', 'lad', 'la dodgers'],
+    'giants':                ['sfg', 'sf giants', 'san francisco giants', 'sf'],
+    'san francisco giants':  ['giants', 'sfg', 'sf giants'],
+    'cubs':                  ['chc', 'chicago cubs'],
+    'chicago cubs':          ['cubs', 'chc'],
+    'white sox':             ['cws', 'chicago white sox', 'chisox'],
+    'chicago white sox':     ['white sox', 'cws', 'chisox'],
+    'cardinals':             ['stl', 'st louis cardinals', 'cards', 'st. louis'],
+    'st. louis cardinals':   ['cardinals', 'stl', 'cards'],
+    'braves':                ['atl', 'atlanta braves', 'atlanta'],
+    'atlanta braves':        ['braves', 'atl', 'atlanta'],
+    'mets':                  ['nym', 'new york mets', 'ny mets'],
+    'new york mets':         ['mets', 'nym', 'ny mets'],
+    'phillies':              ['phi', 'philadelphia phillies', 'philly'],
+    'philadelphia phillies': ['phillies', 'phi', 'philly'],
+    'astros':                ['hou', 'houston astros', 'houston'],
+    'houston astros':        ['astros', 'hou', 'houston'],
+    'rangers':               ['tex', 'texas rangers', 'texas'],
+    'texas rangers':         ['rangers', 'tex', 'texas'],
+    'angels':                ['laa', 'los angeles angels', 'la angels', 'anaheim'],
+    'los angeles angels':    ['angels', 'laa', 'la angels'],
+    'athletics':             ['oak', 'oakland athletics', 'oakland', "a's"],
+    'oakland athletics':     ['athletics', 'oak', "a's"],
+    'mariners':              ['sea', 'seattle mariners', 'seattle'],
+    'seattle mariners':      ['mariners', 'sea', 'seattle'],
+    'padres':                ['sd', 'san diego padres', 'san diego'],
+    'san diego padres':      ['padres', 'sd', 'san diego'],
+    'rockies':               ['col', 'colorado rockies', 'colorado'],
+    'colorado rockies':      ['rockies', 'col', 'colorado'],
+    'diamondbacks':          ['ari', 'arizona diamondbacks', 'dbacks', 'd-backs', 'arizona'],
+    'arizona diamondbacks':  ['diamondbacks', 'ari', 'dbacks'],
+    'marlins':               ['mia', 'miami marlins', 'miami', 'florida marlins'],
+    'miami marlins':         ['marlins', 'mia', 'miami'],
+    'nationals':             ['was', 'washington nationals', 'washington', 'nats'],
+    'washington nationals':  ['nationals', 'was', 'nats'],
+    'orioles':               ['bal', 'baltimore orioles', 'baltimore'],
+    'baltimore orioles':     ['orioles', 'bal', 'baltimore'],
+    'rays':                  ['tb', 'tampa bay rays', 'tampa bay', 'tampa'],
+    'tampa bay rays':        ['rays', 'tb', 'tampa bay'],
+    'blue jays':             ['tor', 'toronto blue jays', 'toronto', 'jays'],
+    'toronto blue jays':     ['blue jays', 'tor', 'toronto'],
+    'twins':                 ['min', 'minnesota twins', 'minnesota'],
+    'minnesota twins':       ['twins', 'min', 'minnesota'],
+    'tigers':                ['det', 'detroit tigers', 'detroit'],
+    'detroit tigers':        ['tigers', 'det', 'detroit'],
+    'indians':               ['cle', 'cleveland indians', 'cleveland', 'guardians'],
+    'guardians':             ['cle', 'cleveland guardians', 'cleveland', 'indians'],
+    'cleveland guardians':   ['guardians', 'cle', 'cleveland'],
+    'cleveland indians':     ['indians', 'cle', 'cleveland', 'guardians'],
+    'royals':                ['kc', 'kansas city royals', 'kansas city'],
+    'kansas city royals':    ['royals', 'kc', 'kansas city'],
+    'brewers':               ['mil', 'milwaukee brewers', 'milwaukee'],
+    'milwaukee brewers':     ['brewers', 'mil', 'milwaukee'],
+    'reds':                  ['cin', 'cincinnati reds', 'cincinnati'],
+    'cincinnati reds':       ['reds', 'cin', 'cincinnati'],
+    'pirates':               ['pit', 'pittsburgh pirates', 'pittsburgh', 'bucs'],
+    'pittsburgh pirates':    ['pirates', 'pit', 'pittsburgh'],
+    'expos':                 ['mtl', 'montreal expos', 'montreal'],
+    'montreal expos':        ['expos', 'mtl', 'montreal'],
+}
+
+def _team_variants(team: str) -> list[str]:
+    """Return all acceptable team aliases for a given team name.
+    Returns an empty list if the team is unknown (team check is skipped).
+    """
+    t = team.lower().strip()
+    extras = _TEAM_VARIANTS.get(t, [])
+    return list(dict.fromkeys([t] + [e.lower() for e in extras]))
+
+
+def _brand_in_title(variants: list[str], title_l: str) -> bool:
+    """Return True if any brand variant appears in the (lowercased) title.
+
+    Short abbreviations (≤3 chars) use word-boundary matching to avoid
+    false positives — e.g. 'ud' should not match inside 'would'.
+    """
+    for v in variants:
+        if len(v) <= 3:
+            if re.search(rf'\b{re.escape(v)}\b', title_l):
+                return True
+        else:
+            if v in title_l:
+                return True
+    return False
 
 
 def _apply_exclusions(title_l: str) -> bool:
@@ -571,11 +815,11 @@ def _apply_exclusions(title_l: str) -> bool:
 
 def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
     """Strict filter: player + year + brand + card number must all match."""
-    player_l = _norm_player(player)   # strips commas/dots: "Sandy Alomar, Jr." → "sandy alomar jr"
-    year_s   = str(year)
-    brand_l  = _norm_brand(brand)     # strips articles: "Donruss The Rookies" → "donruss rookies"
-    cn_clean = (card_number or '').lstrip('#').strip()
-    results  = []
+    player_vs = _player_name_variants(player)  # ["david justice", "dave justice"]
+    year_s    = str(year)
+    brand_vs  = _brand_variants(brand)          # ["upper deck", "ud"]
+    cn_clean  = (card_number or '').lstrip('#').strip()
+    results   = []
 
     for item in items:
         price = _extract_price(item)
@@ -583,17 +827,16 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
             continue
 
         title   = item.get('title', '') or ''
-        title_l = _norm_brand(_norm_player(title))  # normalise the listing title too
+        title_n = _norm_player(title.lower())   # normalise player punctuation in title
 
-        if player_l not in title_l: continue
-        if year_s   not in title_l: continue
-        # Brand must appear in the listing title — prevents e.g. a 1989 Upper Deck
-        # rookie from inflating the value of a common 1989 Topps card of the same player
-        if brand_l and brand_l not in title_l: continue
-        if _apply_exclusions(title_l): continue
-
-        if cn_clean and not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_l):
-            continue
+        if not any(pv in title_n for pv in player_vs):           continue
+        if year_s   not in title_n:                              continue
+        if brand_vs and not _brand_in_title(brand_vs, title_n):  continue
+        # Team is NOT used as a hard filter — listings routinely omit team names,
+        # and players with multi-team careers would lose too many valid comps.
+        # _team_variants() is available for Claude prompt enrichment instead.
+        if _apply_exclusions(title_n):                           continue
+        if cn_clean and not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_n): continue
 
         results.append({
             'price':        price,
@@ -610,9 +853,9 @@ def filter_items_relaxed(items, year, player) -> list[dict]:
     Used as a fallback when strict filtering finds fewer than LOW_DATA_THRESH comps.
     Still excludes graded, lots, autos, reprints and parallels.
     """
-    player_l = _norm_player(player)
-    year_s   = str(year)
-    results  = []
+    player_vs = _player_name_variants(player)
+    year_s    = str(year)
+    results   = []
 
     for item in items:
         price = _extract_price(item)
@@ -620,11 +863,11 @@ def filter_items_relaxed(items, year, player) -> list[dict]:
             continue
 
         title   = item.get('title', '') or ''
-        title_l = _norm_player(title.lower())
+        title_n = _norm_player(title.lower())
 
-        if player_l not in title_l: continue
-        if year_s   not in title_l: continue
-        if _apply_exclusions(title_l): continue
+        if not any(pv in title_n for pv in player_vs): continue
+        if year_s not in title_n:                      continue
+        if _apply_exclusions(title_n):                 continue
 
         results.append({
             'price':        price,
