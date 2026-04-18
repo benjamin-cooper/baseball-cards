@@ -1581,15 +1581,25 @@ def main():
     # ── Run modes ─────────────────────────────────────────────────────────────
     all_results: list = []
 
-    def _save_and_exit_quota(reason: str):
-        """Graceful shutdown when eBay quota is exhausted mid-run."""
+    def _save_and_exit(reason: str, label: str = 'partial'):
+        """Graceful shutdown — saves progress and exits cleanly."""
         log.warning('=== %s ===', reason)
         log.info('Saving progress for %d cards priced so far…', len(all_results))
-        output = build_results_json(rows, all_results)   # use in-memory rows — no re-read needed
+        output = build_results_json(rows, all_results)
         _save_outputs(output, all_results)
-        commit_progress('quota-exhausted')
-        log.info('Progress saved. Re-run after eBay quota resets (usually midnight UTC).')
-        sys.exit(0)   # exit 0 so GitHub Actions marks the step green, not failed
+        commit_progress(label)
+        log.info('Progress saved.')
+        sys.exit(0)
+
+    # Alias kept for call sites that use the old name
+    def _save_and_exit_quota(reason: str):
+        _save_and_exit(reason, 'quota-exhausted')
+
+    # ── SIGTERM handler — fires when GitHub Actions cancels the job ───────────
+    # Register inside main() so the closure captures rows / all_results.
+    def _sigterm_handler(signum, frame):
+        _save_and_exit('SIGTERM received — job cancelled, saving progress', 'cancelled')
+    signal.signal(signal.SIGTERM, _sigterm_handler)
 
     if RUN_MODE == 'full':
         total = len(candidates)
