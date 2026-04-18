@@ -664,10 +664,31 @@ function resetRunModal() {
 
 async function abortRun() {
   const pat = getPAT();
-  if (!activeRunId || !pat) return;
+  if (!pat) return;
   const btn = document.getElementById('btn-abort-run');
   btn.disabled = true; btn.textContent = 'Cancelling…';
   try {
+    // activeRunId is set by the poll timer, which fires every 15s.
+    // If the user clicks Cancel before the first poll, fetch the run ID now.
+    if (!activeRunId) {
+      const r = await fetch(
+        `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?event=workflow_dispatch&per_page=5`,
+        { headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
+      );
+      if (r.ok) {
+        const data = await r.json();
+        const run  = data.workflow_runs?.find(w => new Date(w.created_at).getTime() >= runStartTime - 30_000);
+        if (run) activeRunId = run.id;
+      }
+    }
+
+    if (!activeRunId) {
+      // Run queued but not visible in the API yet — tell the user to retry
+      setRunStatus('error', '⚠️ Run not visible in GitHub yet — wait a moment and try again.');
+      btn.disabled = false; btn.textContent = '⛔ Cancel Run';
+      return;
+    }
+
     await fetch(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${activeRunId}/cancel`,
       { method: 'POST', headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
