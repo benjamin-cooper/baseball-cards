@@ -211,7 +211,8 @@ def col_index_to_letter(col_1indexed: int) -> str:
 
 _ebay_token: Optional[str] = None
 _ebay_token_expiry: Optional[datetime] = None
-_ebay_quota_exhausted: bool = False   # set True when daily limit is hit
+_ebay_quota_exhausted: bool = False   # set True when eBay confirms daily limit via headers → exit
+_ebay_suspended: bool = False         # set True when consecutive 429s hit threshold → skip eBay, keep going
 _consecutive_429_cards: int = 0       # cards where every eBay attempt was a 429
 
 
@@ -282,9 +283,15 @@ def _check_ebay_quota(headers: dict):
 
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     """Search eBay Browse API with quota awareness and retry for transient errors."""
-    global _ebay_quota_exhausted, _consecutive_429_cards
+    global _ebay_quota_exhausted, _ebay_suspended, _consecutive_429_cards
+
+    # Hard quota confirmed by eBay headers — don't even try, raise for graceful exit
     if _ebay_quota_exhausted:
         raise EbayQuotaExhausted('eBay quota already exhausted this run.')
+
+    # Soft suspension from consecutive 429s — skip eBay silently, let Mavin/TCDB carry it
+    if _ebay_suspended:
+        return []
 
     token      = get_ebay_token()
     filter_str = f'buyingOptions:{{FIXED_PRICE|AUCTION}},price:[{price_filter or EBAY_PRICE_RANGE}],itemLocationCountry:US'
@@ -313,6 +320,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
 
             if r.status_code == 200:
                 _consecutive_429_cards = 0   # successful call — reset streak
+                _ebay_suspended = False       # lift suspension if eBay recovers mid-run
                 return r.json().get('itemSummaries', [])
 
             if r.status_code == 429:
@@ -360,10 +368,12 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
         EBAY_RETRIES, query, _consecutive_429_cards, EBAY_CONSEC_FAIL_MAX
     )
     if _consecutive_429_cards >= EBAY_CONSEC_FAIL_MAX:
-        _ebay_quota_exhausted = True
-        raise EbayQuotaExhausted(
-            f'eBay returned 429 on every attempt for {EBAY_CONSEC_FAIL_MAX} consecutive cards '
-            '— treating as sustained quota exhaustion. Saving progress and exiting.'
+        _ebay_suspended = True
+        log.warning(
+            '=== eBay suspended for this run after %d consecutive throttled cards. '
+            'Continuing with Mavin + TCDB/Claude only. '
+            'Use START_ROW to re-price this window once eBay quota resets. ===',
+            EBAY_CONSEC_FAIL_MAX
         )
     return []
 
