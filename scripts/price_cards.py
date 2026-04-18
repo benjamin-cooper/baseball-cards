@@ -17,6 +17,7 @@ Required environment variables:
 """
 
 import os, sys, json, time, base64, re, math, logging, signal
+from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -299,7 +300,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
         'q':            f'{query} baseball',
         'category_ids': EBAY_CATEGORY,
         'filter':       filter_str,
-        'sort':         'price',
+        'sort':         'bestMatch',
         'limit':        '200',
     }
     for attempt in range(EBAY_RETRIES):
@@ -567,6 +568,9 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
 
         if player_l not in title_l: continue
         if year_s   not in title_l: continue
+        # Brand must appear in the listing title — prevents e.g. a 1989 Upper Deck
+        # rookie from inflating the value of a common 1989 Topps card of the same player
+        if brand_l and brand_l not in title_l: continue
         if _apply_exclusions(title_l): continue
 
         if cn_clean and not re.search(rf'#?\b{re.escape(cn_clean)}\b', title_l):
@@ -895,8 +899,9 @@ def needs_pricing(row: list, row_index: int) -> bool:
     if RUN_MODE == 'player' and TARGET_PLAYER:
         return TARGET_PLAYER in player.lower()
 
-    price    = get(C['AVG_PRICE'])
-    last_upd = get(C['LAST_UPDATED'])
+    price      = get(C['AVG_PRICE'])
+    last_upd   = get(C['LAST_UPDATED'])
+    confidence = get(C['CONFIDENCE'])
 
     if STALE_DAYS == 0:
         return True   # force mode — re-price everything regardless
@@ -909,7 +914,17 @@ def needs_pricing(row: list, row_index: int) -> bool:
             lu = datetime.fromisoformat(last_upd.replace('Z', '+00:00'))
             if lu.tzinfo is None:
                 lu = lu.replace(tzinfo=timezone.utc)
-            if (datetime.now(timezone.utc) - lu).days < STALE_DAYS:
+            age_days = (datetime.now(timezone.utc) - lu).days
+
+            # Low-confidence prices go stale faster — re-target after 7 days
+            # regardless of the global STALE_DAYS setting.  These were priced
+            # off TCDB reference or floor values (often due to eBay throttling)
+            # and should be refreshed as soon as market data is available.
+            LOW_CONF = ('low', 'floor value')
+            if any(lc in confidence.lower() for lc in LOW_CONF):
+                if age_days < 7:
+                    return False
+            elif age_days < STALE_DAYS:
                 return False
         except Exception:
             pass
@@ -940,12 +955,17 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     log.info('Pricing %s', label)
 
     # ── Step 1: eBay active listings + Mavin sold prices (strict filter) ────────
+    # Fetch both sources in parallel — they're independent I/O calls.
     query = f"{card['year']} {card['brand']} {card['player']}"
 
-    ebay_items  = ebay_search(query)
-    mavin_items = fetch_mavin_prices(
-        card['year'], card['brand'], card['player'], card['card_number']
-    )
+    with ThreadPoolExecutor(max_workers=2) as _pool:
+        _ebay_fut  = _pool.submit(ebay_search, query)
+        _mavin_fut = _pool.submit(
+            fetch_mavin_prices,
+            card['year'], card['brand'], card['player'], card['card_number']
+        )
+        ebay_items  = _ebay_fut.result()   # re-raises EbayQuotaExhausted if hit
+        mavin_items = _mavin_fut.result()
 
     ebay_filtered  = filter_items(
         ebay_items,  card['year'], card['brand'], card['player'],
