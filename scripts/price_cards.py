@@ -53,6 +53,7 @@ MAVIN_MAX_AGE_DAYS = 730         # ignore Mavin sales older than this (2 years)
 CARD_TIMEOUT_SEC   = 90          # max wall-clock seconds per card before skipping
 SHEETS_RETRIES     = 4           # retry attempts for Google Sheets API calls
 EBAY_RETRIES       = 3           # retry attempts for eBay API calls
+EBAY_QUOTA_MIN     = 50          # exit gracefully when fewer than this many calls remain
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
@@ -208,6 +209,7 @@ def col_index_to_letter(col_1indexed: int) -> str:
 
 _ebay_token: Optional[str] = None
 _ebay_token_expiry: Optional[datetime] = None
+_ebay_quota_exhausted: bool = False   # set True when daily limit is hit
 
 
 def get_ebay_token() -> str:
@@ -240,8 +242,47 @@ def get_ebay_token() -> str:
 # eBay Search
 # ══════════════════════════════════════════════════════════════════════════════
 
+class EbayQuotaExhausted(Exception):
+    """Raised when the eBay daily API quota is exhausted. Triggers a graceful save+exit."""
+    pass
+
+
+def _check_ebay_quota(headers: dict):
+    """Inspect eBay rate-limit headers. Raises EbayQuotaExhausted if the daily
+    limit is spent and the reset is more than 5 minutes away."""
+    global _ebay_quota_exhausted
+    remaining = headers.get('X-RateLimit-Remaining') or headers.get('x-ratelimit-remaining')
+    reset_ts   = headers.get('X-RateLimit-Reset')    or headers.get('x-ratelimit-reset')
+    if remaining is not None:
+        try:
+            rem = int(remaining)
+            log.debug('eBay quota remaining: %d', rem)
+            if rem <= EBAY_QUOTA_MIN:
+                reset_msg = ''
+                if reset_ts:
+                    try:
+                        reset_dt  = datetime.fromtimestamp(int(reset_ts), tz=timezone.utc)
+                        secs_away = (reset_dt - datetime.now(timezone.utc)).total_seconds()
+                        reset_msg = f' — resets in {int(secs_away/3600)}h {int((secs_away%3600)/60)}m'
+                        if secs_away > 300:   # more than 5 min → not worth waiting
+                            _ebay_quota_exhausted = True
+                            raise EbayQuotaExhausted(
+                                f'eBay daily quota exhausted ({rem} calls left{reset_msg}). '
+                                'Committing progress and exiting — re-run after quota resets.'
+                            )
+                    except (ValueError, TypeError):
+                        pass
+                log.warning('eBay quota low: %d calls remaining%s', rem, reset_msg)
+        except (ValueError, TypeError):
+            pass
+
+
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
-    """Search eBay Browse API with retry and rate-limit backoff."""
+    """Search eBay Browse API with quota awareness and retry for transient errors."""
+    global _ebay_quota_exhausted
+    if _ebay_quota_exhausted:
+        raise EbayQuotaExhausted('eBay quota already exhausted this run.')
+
     token      = get_ebay_token()
     filter_str = f'buyingOptions:{{FIXED_PRICE|AUCTION}},price:[{price_filter or EBAY_PRICE_RANGE}],itemLocationCountry:US'
     params = {
@@ -263,17 +304,43 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
                 timeout=15
             )
             time.sleep(EBAY_SLEEP_MS / 1000)
+
+            # Always check quota headers, even on success
+            _check_ebay_quota(r.headers)
+
             if r.status_code == 200:
                 return r.json().get('itemSummaries', [])
+
             if r.status_code == 429:
-                wait = 30 * (attempt + 1)   # 30s, 60s, 90s
-                log.warning('eBay rate limited — sleeping %ds (attempt %d/%d)',
-                            wait, attempt + 1, EBAY_RETRIES)
+                # Check if this is a daily quota 429 (Retry-After = hours) vs
+                # a per-minute throttle (Retry-After = seconds)
+                retry_after = r.headers.get('Retry-After')
+                if retry_after:
+                    try:
+                        wait_secs = int(retry_after)
+                        if wait_secs > 300:
+                            _ebay_quota_exhausted = True
+                            raise EbayQuotaExhausted(
+                                f'eBay 429 with Retry-After: {wait_secs}s — daily quota exhausted. '
+                                'Committing progress and exiting.'
+                            )
+                        log.warning('eBay throttled — sleeping %ds (Retry-After)', wait_secs)
+                        time.sleep(wait_secs)
+                        continue
+                    except (ValueError, TypeError):
+                        pass
+                # No Retry-After header — use short backoff for per-minute throttling
+                wait = 30 * (attempt + 1)
+                log.warning('eBay 429 — sleeping %ds (attempt %d/%d)', wait, attempt + 1, EBAY_RETRIES)
                 time.sleep(wait)
-                token = get_ebay_token()    # refresh token before retry
+                token = get_ebay_token()
                 continue
+
             log.warning('eBay %s for query "%s"', r.status_code, query)
             return []
+
+        except EbayQuotaExhausted:
+            raise   # propagate up to process_batch → main for graceful save+exit
         except Exception as e:
             if attempt == EBAY_RETRIES - 1:
                 log.warning('eBay search failed after %d attempts: %s', EBAY_RETRIES, e)
@@ -1083,7 +1150,10 @@ def process_card_timed(row: list, row_number: int) -> Optional[dict]:
 
 
 def process_batch(batch: list, service) -> list:
-    """Price a list of (row_num, row) tuples. Returns result dicts."""
+    """Price a list of (row_num, row) tuples. Returns result dicts.
+    Raises EbayQuotaExhausted if the daily eBay quota runs out mid-batch
+    (after flushing whatever has been priced so far).
+    """
     results, api_calls = [], 0
     for row_num, row in batch:
         try:
@@ -1091,6 +1161,11 @@ def process_batch(batch: list, service) -> list:
             if r:
                 results.append(r)
                 api_calls += 1
+        except EbayQuotaExhausted:
+            # Flush what we have, then re-raise so main() can save+exit cleanly
+            if results:
+                write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in results])
+            raise
         except Exception as e:
             log.error('Failed row %d: %s', row_num, e)
         if api_calls > 0 and api_calls % 100 == 0:
@@ -1136,28 +1211,39 @@ def main():
     # ── Run modes ─────────────────────────────────────────────────────────────
     all_results: list = []
 
+    def _save_and_exit_quota(reason: str):
+        """Graceful shutdown when eBay quota is exhausted mid-run."""
+        log.warning('=== %s ===', reason)
+        log.info('Saving progress for %d cards priced so far…', len(all_results))
+        rows_now = read_sheet(service)
+        output   = build_results_json(rows_now, all_results)
+        _save_outputs(output, all_results)
+        commit_progress('quota-exhausted')
+        log.info('Progress saved. Re-run after eBay quota resets (usually midnight UTC).')
+        sys.exit(0)   # exit 0 so GitHub Actions marks the step green, not failed
+
     if RUN_MODE == 'full':
-        # Process everything in chunks, committing after each so progress is
-        # saved even if the job hits the 6-hour timeout limit.
         total = len(candidates)
         for chunk_start in range(0, total, FULL_RUN_CHUNK):
             chunk  = candidates[chunk_start:chunk_start + FULL_RUN_CHUNK]
             log.info('--- Chunk %d–%d of %d ---',
                      chunk_start + 1, chunk_start + len(chunk), total)
-            chunk_results = process_batch(chunk, service)
+            try:
+                chunk_results = process_batch(chunk, service)
+            except EbayQuotaExhausted as e:
+                _save_and_exit_quota(str(e))
             all_results.extend(chunk_results)
-
-            # Rebuild JSON with everything priced so far and commit
             rows   = read_sheet(service)
             output = build_results_json(rows, all_results)
             _save_outputs(output, all_results)
             commit_progress(f'{chunk_start + len(chunk)}/{total}')
     else:
-        # Batch or player mode: process once, commit at the end via the
-        # workflow's "Commit pricing results" step.
-        batch       = candidates if RUN_MODE == 'player' else candidates[:BATCH_SIZE]
-        all_results = process_batch(batch, service)
-        rows        = read_sheet(service)
+        batch = candidates if RUN_MODE == 'player' else candidates[:BATCH_SIZE]
+        try:
+            all_results = process_batch(batch, service)
+        except EbayQuotaExhausted as e:
+            _save_and_exit_quota(str(e))
+        rows = read_sheet(service)
 
     log.info('Processed %d cards total', len(all_results))
 
