@@ -204,6 +204,13 @@
         <input type="text" id="input-player" placeholder="e.g. Garrett Anderson" autocomplete="off">
       </div>
 
+      <!-- Start row (shown for all modes) -->
+      <div id="run-opt-start-row">
+        <label>Start at sheet row <input type="number" id="input-start-row" value="0" min="0" max="9999" style="width:64px;display:inline-block;margin:0 4px">
+          <span class="stale-hint" id="start-row-hint">row 0 = start from the beginning</span>
+        </label>
+      </div>
+
       <!-- Stale days + force (shown for batch + full modes) -->
       <div id="run-opt-stale">
         <label>Re-price cards not updated in the last <input type="number" id="input-stale-days" value="30" min="1" max="365" style="width:52px;display:inline-block;margin:0 4px"> days

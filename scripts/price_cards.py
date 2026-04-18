@@ -54,12 +54,14 @@ CARD_TIMEOUT_SEC   = 90          # max wall-clock seconds per card before skippi
 SHEETS_RETRIES     = 4           # retry attempts for Google Sheets API calls
 EBAY_RETRIES       = 3           # retry attempts for eBay API calls
 EBAY_QUOTA_MIN     = 50          # exit gracefully when fewer than this many calls remain
+EBAY_CONSEC_FAIL_MAX = 5         # consecutive all-429 cards before treating as quota exhaustion
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
 
 RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player
 TARGET_PLAYER = os.environ.get('TARGET_PLAYER', '').strip().lower()
+START_ROW     = int(os.environ.get('START_ROW', '0'))  # skip sheet rows below this (0 = no skip)
 
 # ── Column map — matches the actual sheet layout ──────────────────────────────
 # Read columns (A–F):
@@ -210,6 +212,7 @@ def col_index_to_letter(col_1indexed: int) -> str:
 _ebay_token: Optional[str] = None
 _ebay_token_expiry: Optional[datetime] = None
 _ebay_quota_exhausted: bool = False   # set True when daily limit is hit
+_consecutive_429_cards: int = 0       # cards where every eBay attempt was a 429
 
 
 def get_ebay_token() -> str:
@@ -279,7 +282,7 @@ def _check_ebay_quota(headers: dict):
 
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     """Search eBay Browse API with quota awareness and retry for transient errors."""
-    global _ebay_quota_exhausted
+    global _ebay_quota_exhausted, _consecutive_429_cards
     if _ebay_quota_exhausted:
         raise EbayQuotaExhausted('eBay quota already exhausted this run.')
 
@@ -309,6 +312,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
             _check_ebay_quota(r.headers)
 
             if r.status_code == 200:
+                _consecutive_429_cards = 0   # successful call — reset streak
                 return r.json().get('itemSummaries', [])
 
             if r.status_code == 429:
@@ -337,6 +341,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
                 continue
 
             log.warning('eBay %s for query "%s"', r.status_code, query)
+            _consecutive_429_cards = 0   # non-429 failure — reset streak
             return []
 
         except EbayQuotaExhausted:
@@ -344,8 +349,22 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
         except Exception as e:
             if attempt == EBAY_RETRIES - 1:
                 log.warning('eBay search failed after %d attempts: %s', EBAY_RETRIES, e)
+                _consecutive_429_cards = 0
                 return []
             time.sleep(5 * (attempt + 1))
+
+    # Exhausted all retries — every attempt was a 429 (no successful call, no other error)
+    _consecutive_429_cards += 1
+    log.warning(
+        'eBay 429 on all %d attempts for "%s" — consecutive 429-card streak: %d/%d',
+        EBAY_RETRIES, query, _consecutive_429_cards, EBAY_CONSEC_FAIL_MAX
+    )
+    if _consecutive_429_cards >= EBAY_CONSEC_FAIL_MAX:
+        _ebay_quota_exhausted = True
+        raise EbayQuotaExhausted(
+            f'eBay returned 429 on every attempt for {EBAY_CONSEC_FAIL_MAX} consecutive cards '
+            '— treating as sustained quota exhaustion. Saving progress and exiting.'
+        )
     return []
 
 
@@ -851,6 +870,10 @@ def price_with_claude(card: dict) -> Optional[dict]:
 def needs_pricing(row: list, row_index: int) -> bool:
     """Return True if this card should be re-priced given the current RUN_MODE."""
     def get(col): return (row[col].strip() if col < len(row) and row[col] else '')
+
+    # START_ROW: skip everything before the requested starting point
+    if START_ROW > 0 and row_index < START_ROW:
+        return False
 
     player = get(C['PLAYER'])
     year   = get(C['YEAR'])

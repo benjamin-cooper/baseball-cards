@@ -511,6 +511,13 @@ function bindRunModeUI() {
     staleDaysInput.disabled = e.target.checked;
     document.getElementById('stale-hint').textContent = e.target.checked ? '(ignored — forcing all)' : '';
   });
+
+  // Start row hint
+  document.getElementById('input-start-row').addEventListener('input', e => {
+    const v = parseInt(e.target.value, 10);
+    document.getElementById('start-row-hint').textContent =
+      (!v || v <= 0) ? 'row 0 = start from the beginning' : `skipping rows 2–${v - 1}`;
+  });
 }
 
 async function triggerRun() {
@@ -532,7 +539,8 @@ async function triggerRun() {
   btn.disabled = true; btn.textContent = 'Starting…';
   setRunStatus('', '');
 
-  const inputs = { run_mode: mode, batch_size: String(batch), target_player: player, stale_days: stale };
+  const startRow = document.getElementById('input-start-row').value || '0';
+  const inputs = { run_mode: mode, batch_size: String(batch), target_player: player, stale_days: stale, start_row: startRow };
 
   try {
     const res = await fetch(
@@ -625,6 +633,8 @@ function resetRunModal() {
   document.getElementById('input-force').checked = false;
   document.getElementById('input-stale-days').disabled = false;
   document.getElementById('stale-hint').textContent = '';
+  document.getElementById('input-start-row').value = '0';
+  document.getElementById('start-row-hint').textContent = 'row 0 = start from the beginning';
   setRunStatus('','');
 }
 

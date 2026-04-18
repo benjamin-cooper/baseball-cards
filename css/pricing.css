@@ -632,6 +632,20 @@
   color: #fff;
 }
 
+/* START ROW */
+#run-opt-start-row { margin-top: 14px; }
+#run-opt-start-row label { display: block; font-size: 0.88em; color: #aaa; }
+#run-opt-start-row input[type="number"] {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  color: #fff;
+  border-radius: 6px;
+  padding: 3px 6px;
+  font-family: inherit;
+  font-size: 0.95em;
+  text-align: center;
+}
+
 /* STALE DAYS / FORCE */
 #run-opt-stale { margin-top: 14px; }
 #run-opt-stale label { display: block; font-size: 0.88em; color: #aaa; margin-bottom: 8px; }

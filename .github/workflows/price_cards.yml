@@ -24,6 +24,11 @@ on:
         required: false
         default: '30'
         type: string
+      start_row:
+        description: 'Skip sheet rows below this number — use to resume from a specific point (0 = no skip)'
+        required: false
+        default: '0'
+        type: string
 
 permissions:
   contents: write
@@ -63,6 +68,7 @@ jobs:
           BATCH_SIZE:             ${{ github.event.inputs.batch_size }}
           TARGET_PLAYER:         ${{ github.event.inputs.target_player }}
           STALE_DAYS:            ${{ github.event.inputs.stale_days }}
+          START_ROW:             ${{ github.event.inputs.start_row }}
           OUTPUT_JSON:            data/pricing_results.json
         run: python scripts/price_cards.py
 
