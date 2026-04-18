@@ -42,7 +42,7 @@ SPREADSHEET_ID = os.environ.get(
 SHEET_NAME         = 'Pricing Sheet'
 RESULTS_FILE       = 'data/pricing_results.json'
 BATCH_SIZE         = int(os.environ.get('BATCH_SIZE', '200'))
-STALE_DAYS         = 30          # re-price cards older than this
+STALE_DAYS         = int(os.environ.get('STALE_DAYS', '30'))  # re-price cards older than this (0 = force all)
 HIGH_VALUE_THRESH  = 20.0        # use Claude for cards above this price
 LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
@@ -857,6 +857,9 @@ def needs_pricing(row: list, row_index: int) -> bool:
 
     price    = get(C['AVG_PRICE'])
     last_upd = get(C['LAST_UPDATED'])
+
+    if STALE_DAYS == 0:
+        return True   # force mode — re-price everything regardless
 
     if not price or price == '0':
         return True

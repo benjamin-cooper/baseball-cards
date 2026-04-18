@@ -72,10 +72,13 @@ function renderStats(data) {
   set('stat-avg-value',    fmt(data.avg_value));
   set('stat-top-card', fmt(data.top_card_value));
   // Median: middle value of all priced cards sorted by avg_price
-  const pricedCards = (data.cards || []).filter(c => c.avg_price).map(c => c.avg_price).sort((a,b) => a-b);
-  const mid = Math.floor(pricedCards.length / 2);
-  const median = pricedCards.length
-    ? (pricedCards.length % 2 ? pricedCards[mid] : (pricedCards[mid-1] + pricedCards[mid]) / 2)
+  const pricedVals = (data.cards || [])
+    .map(c => parseFloat(c.avg_price))
+    .filter(v => !isNaN(v) && v > 0)
+    .sort((a, b) => a - b);
+  const mid    = Math.floor(pricedVals.length / 2);
+  const median = pricedVals.length
+    ? (pricedVals.length % 2 ? pricedVals[mid] : (pricedVals[mid-1] + pricedVals[mid]) / 2)
     : null;
   set('stat-median-value', fmt(median));
 }
@@ -204,8 +207,9 @@ function renderBrandChart(byBrand, cards) {
 
 function setBrandMode(mode) {
   brandMode = mode;
-  document.getElementById('brand-toggle-total').classList.toggle('active', mode === 'total');
-  document.getElementById('brand-toggle-avg').classList.toggle('active', mode === 'avg');
+  document.querySelectorAll('#brand-toggle .chart-toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
   drawBrandChart();
 }
 
@@ -481,12 +485,25 @@ function saveSettings() {
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
 function bindRunModeUI() {
-  document.querySelectorAll('input[name="run_mode"]').forEach(radio => {
-    radio.addEventListener('change', () => {
-      const mode = document.querySelector('input[name="run_mode"]:checked').value;
-      document.getElementById('run-opt-batch').style.display  = mode === 'batch'  ? '' : 'none';
-      document.getElementById('run-opt-player').style.display = mode === 'player' ? '' : 'none';
-    });
+  // Brand chart toggle
+  document.querySelectorAll('#brand-toggle .chart-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => setBrandMode(btn.dataset.mode));
+  });
+
+  // Run mode radios
+  const updateRunOpts = () => {
+    const mode = document.querySelector('input[name="run_mode"]:checked').value;
+    document.getElementById('run-opt-batch').style.display  = mode === 'batch'  ? '' : 'none';
+    document.getElementById('run-opt-player').style.display = mode === 'player' ? '' : 'none';
+    document.getElementById('run-opt-stale').style.display  = mode === 'player' ? 'none' : '';
+  };
+  document.querySelectorAll('input[name="run_mode"]').forEach(r => r.addEventListener('change', updateRunOpts));
+
+  // Force checkbox disables stale-days input
+  document.getElementById('input-force').addEventListener('change', e => {
+    const staleDaysInput = document.getElementById('input-stale-days');
+    staleDaysInput.disabled = e.target.checked;
+    document.getElementById('stale-hint').textContent = e.target.checked ? '(ignored — forcing all)' : '';
   });
 }
 
@@ -497,6 +514,8 @@ async function triggerRun() {
   const mode   = document.querySelector('input[name="run_mode"]:checked')?.value || 'batch';
   const batch  = document.getElementById('input-batch').value  || '200';
   const player = document.getElementById('input-player').value.trim();
+  const force  = document.getElementById('input-force').checked;
+  const stale  = force ? '0' : (document.getElementById('input-stale-days').value || '30');
 
   if (mode === 'player' && !player) {
     setRunStatus('error', '❌ Enter a player name for Player Target mode.');
@@ -507,7 +526,7 @@ async function triggerRun() {
   btn.disabled = true; btn.textContent = 'Starting…';
   setRunStatus('', '');
 
-  const inputs = { run_mode: mode, batch_size: String(batch), target_player: player };
+  const inputs = { run_mode: mode, batch_size: String(batch), target_player: player, stale_days: stale };
 
   try {
     const res = await fetch(
@@ -597,6 +616,9 @@ function resetRunModal() {
   document.getElementById('run-tracker').classList.add('hidden');
   document.getElementById('btn-abort-run').classList.add('hidden');
   document.getElementById('tracker-bar').style.width='0%';
+  document.getElementById('input-force').checked = false;
+  document.getElementById('input-stale-days').disabled = false;
+  document.getElementById('stale-hint').textContent = '';
   setRunStatus('','');
 }
 

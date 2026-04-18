@@ -84,9 +84,9 @@
         <div class="insights-panel">
           <div class="panel-header">
             <h2>Value by Brand</h2>
-            <div class="chart-toggle">
-              <button class="chart-toggle-btn active" id="brand-toggle-total" onclick="setBrandMode('total')">Total</button>
-              <button class="chart-toggle-btn" id="brand-toggle-avg" onclick="setBrandMode('avg')">Avg / Card</button>
+            <div class="chart-toggle" id="brand-toggle">
+              <button class="chart-toggle-btn active" data-mode="total">Total</button>
+              <button class="chart-toggle-btn" data-mode="avg">Avg / Card</button>
             </div>
           </div>
           <div id="brand-chart" class="era-chart"></div>
@@ -202,6 +202,16 @@
       <div id="run-opt-player" style="display:none">
         <label>Player name or keyword</label>
         <input type="text" id="input-player" placeholder="e.g. Garrett Anderson" autocomplete="off">
+      </div>
+
+      <!-- Stale days + force (shown for batch + full modes) -->
+      <div id="run-opt-stale">
+        <label>Re-price cards not updated in the last <input type="number" id="input-stale-days" value="30" min="1" max="365" style="width:52px;display:inline-block;margin:0 4px"> days
+          <span class="stale-hint" id="stale-hint"></span>
+        </label>
+        <label class="run-force-label">
+          <input type="checkbox" id="input-force"> <strong>Force re-price all</strong> — ignore last-updated date entirely
+        </label>
       </div>
 
       <!-- Live tracker — hidden until run starts -->
