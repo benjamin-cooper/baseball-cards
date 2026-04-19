@@ -46,6 +46,7 @@ BATCH_SIZE         = int(os.environ.get('BATCH_SIZE', '200'))
 STALE_DAYS         = int(os.environ.get('STALE_DAYS', '30'))  # re-price cards older than this (0 = force all)
 HIGH_VALUE_THRESH  = 20.0        # use Claude for cards above this price
 LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
+CLAUDE_MIN_COMPS   = 15          # skip Claude for high-value cards that already have this many comps
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
 EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
@@ -59,7 +60,7 @@ HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
 
-RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player
+RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player | tcdb
 TARGET_PLAYER = os.environ.get('TARGET_PLAYER', '').strip().lower()
 START_ROW     = int(os.environ.get('START_ROW', '0'))  # skip sheet rows below this (0 = no skip)
 
@@ -622,6 +623,40 @@ _PLAYER_NICKNAMES: dict[str, list[str]] = {
     'moose':      ['mike'],      # Mike Mussina
     'doc':        ['dwight'],    # Dwight Gooden
     'dwight':     ['doc'],
+    # More formal ↔ informal pairs common in baseball
+    'ernest':     ['ernie'],          # Ernie Banks, Ernie Riles
+    'ernie':      ['ernest'],
+    'bernard':    ['bernie'],         # Bernie Williams, Bernie Carbo
+    'bernie':     ['bernard'],
+    'henry':      ['hank'],           # Hank Aaron, Hank Blalock
+    'hank':       ['henry'],
+    'reginald':   ['reggie'],         # Reggie Jackson, Reggie Sanders
+    'reggie':     ['reginald'],
+    'frederick':  ['fred', 'freddie'],# Fred McGriff, Freddie Freeman
+    'fred':       ['frederick', 'freddie'],
+    'freddie':    ['fred', 'frederick'],
+    'andrew':     ['andy'],           # Andy Pettitte, Andy Van Slyke
+    'andy':       ['andrew'],
+    'donald':     ['don'],            # Don Mattingly, Don Drysdale
+    'don':        ['donald'],
+    'harold':     ['hal'],            # Hal McRae, Hal Morris
+    'hal':        ['harold'],
+    'albert':     ['al'],             # Al Kaline, Al Leiter
+    'al':         ['albert'],
+    'eugene':     ['gene'],           # Gene Larkin, Gene Mauch
+    'gene':       ['eugene'],
+    'jeffrey':    ['jeff'],           # Jeff Bagwell, Jeff Kent
+    'jeff':       ['jeffrey'],
+    'matthew':    ['matt'],           # Matt Williams, Matt Harvey
+    'matt':       ['matthew'],
+    'vincent':    ['vince'],          # Vince Coleman
+    'vince':      ['vincent'],
+    'daniel':     ['dan'],            # Dan Quisenberry, Dan Plesac
+    'dan':        ['daniel'],
+    'benjamin':   ['ben'],            # Ben Grieve
+    'ben':        ['benjamin'],
+    'alexander':  ['alex'],           # Alex Rodriguez, Alex Fernandez
+    'alex':       ['alexander'],
 }
 
 
@@ -1208,6 +1243,10 @@ def needs_pricing(row: list, row_index: int) -> bool:
     last_upd   = get(C['LAST_UPDATED'])
     confidence = get(C['CONFIDENCE'])
 
+    # TCDB mode: re-price only cards that fell back to TCDB reference pricing
+    if RUN_MODE == 'tcdb':
+        return 'tcdb ref' in confidence.lower()
+
     if STALE_DAYS == 0:
         return True   # force mode — re-price everything regardless
 
@@ -1329,7 +1368,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 
     use_claude = (
         result['count'] < LOW_DATA_THRESH
-        or result['price'] >= HIGH_VALUE_THRESH
+        or (result['price'] >= HIGH_VALUE_THRESH and result['count'] < CLAUDE_MIN_COMPS)
         or fallback == 'tcdb'   # stale column F value — ask Claude to verify against live TCDB
     )
 
@@ -1565,6 +1604,8 @@ def main():
              RUN_MODE.upper(), BATCH_SIZE, STALE_DAYS)
     if RUN_MODE == 'player':
         log.info('Target player: "%s"', TARGET_PLAYER or '(none)')
+    if RUN_MODE == 'tcdb':
+        log.info('Targeting TCDB-fallback cards only (confidence contains "tcdb ref")')
 
     service = get_sheets_service()
     rows    = read_sheet(service)
@@ -1625,7 +1666,7 @@ def main():
             output = build_results_json(rows, all_results)   # rows is held in memory — no re-read
             _save_outputs(output, all_results)
     else:
-        batch = candidates if RUN_MODE == 'player' else candidates[:BATCH_SIZE]
+        batch = candidates if RUN_MODE in ('player', 'tcdb') else candidates[:BATCH_SIZE]
         try:
             all_results = process_batch(batch, service)
         except EbayQuotaExhausted as e:

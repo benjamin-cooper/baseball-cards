@@ -525,7 +525,7 @@ function bindRunModeUI() {
     const mode = document.querySelector('input[name="run_mode"]:checked').value;
     document.getElementById('run-opt-batch').style.display  = mode === 'batch'  ? '' : 'none';
     document.getElementById('run-opt-player').style.display = mode === 'player' ? '' : 'none';
-    document.getElementById('run-opt-stale').style.display  = mode === 'player' ? 'none' : '';
+    document.getElementById('run-opt-stale').style.display  = (mode === 'player' || mode === 'tcdb') ? 'none' : '';
   };
   document.querySelectorAll('input[name="run_mode"]').forEach(r => r.addEventListener('change', updateRunOpts));
 

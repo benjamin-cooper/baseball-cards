@@ -4,11 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       run_mode:
-        description: 'batch = N cards | full = all unpriced | player = target by name'
+        description: 'batch = N cards | full = all unpriced | player = target by name | tcdb = TCDB fallbacks only'
         required: false
         default: 'batch'
         type: choice
-        options: [batch, full, player]
+        options: [batch, full, player, tcdb]
       batch_size:
         description: 'Cards per run (batch mode only)'
         required: false
