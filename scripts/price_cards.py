@@ -1445,7 +1445,8 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
     fresh    = {r['row']: r['card'] for r in priced_cards}
     _existing = existing_by_id or {}
 
-    cards = []
+    cards: list = []
+    seen:  dict = {}   # card_id → card, for deduplication
     for i, row in enumerate(all_rows[1:], start=2):   # skip header row
         def get(col): return (row[col] if col < len(row) else '').strip() if col < len(row) else ''
         player = get(C['PLAYER'])
@@ -1470,7 +1471,20 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
                 'last_updated': _ex.get('last_updated', ''),
                 'card_id':      card_id,
             }
-        cards.append(c)
+        # Deduplicate: keep the entry with the most recent last_updated;
+        # if neither has been priced yet, the first occurrence wins.
+        existing_entry = seen.get(c['card_id'])
+        if existing_entry is None:
+            seen[c['card_id']] = c
+            cards.append(c)
+        else:
+            lu_new = c.get('last_updated', '')
+            lu_old = existing_entry.get('last_updated', '')
+            if lu_new and lu_new > lu_old:
+                # Replace in-place so the cards list stays ordered
+                idx = cards.index(existing_entry)
+                cards[idx] = c
+                seen[c['card_id']] = c
 
     priced = [c for c in cards if c.get('avg_price')]
     total  = sum(c['avg_price'] for c in priced)
