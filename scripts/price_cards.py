@@ -1221,8 +1221,12 @@ def price_with_claude(card: dict) -> Optional[dict]:
 # Card Processing
 # ══════════════════════════════════════════════════════════════════════════════
 
-def needs_pricing(row: list, row_index: int) -> bool:
-    """Return True if this card should be re-priced given the current RUN_MODE."""
+def needs_pricing(row: list, row_index: int, existing_by_id: dict = None) -> bool:
+    """Return True if this card should be re-priced given the current RUN_MODE.
+
+    Pricing metadata (confidence, last_updated, avg_price) is looked up from
+    the existing JSON results — the sheet is treated as read-only card catalog.
+    """
     def get(col): return (row[col].strip() if col < len(row) and row[col] else '')
 
     # START_ROW: skip everything before the requested starting point
@@ -1239,9 +1243,12 @@ def needs_pricing(row: list, row_index: int) -> bool:
     if RUN_MODE == 'player' and TARGET_PLAYER:
         return TARGET_PLAYER in player.lower()
 
-    price      = get(C['AVG_PRICE'])
-    last_upd   = get(C['LAST_UPDATED'])
-    confidence = get(C['CONFIDENCE'])
+    # Look up pricing metadata from JSON (source of truth), fall back to sheet
+    _card_id  = make_card_id(year, brand, player, get(C['CARD_NUMBER']))
+    _existing = (existing_by_id or {}).get(_card_id, {})
+    price      = str(_existing.get('avg_price') or '') or get(C['AVG_PRICE'])
+    last_upd   = _existing.get('last_updated', '') or get(C['LAST_UPDATED'])
+    confidence = _existing.get('confidence', '')    or get(C['CONFIDENCE'])
 
     # TCDB mode: re-price only cards that fell back to TCDB reference pricing
     if RUN_MODE == 'tcdb':
@@ -1280,9 +1287,8 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     """Price one card.
 
     Returns a dict with:
-      'row'      — 1-based sheet row number
-      'segments' — non-contiguous write segments for write_rows()
-      'card'     — card data dict for the results JSON
+      'row'  — 1-based sheet row number
+      'card' — card data dict for the results JSON
     """
     def get(col): return (row[col] if col < len(row) else '').strip() if col < len(row) else ''
 
@@ -1406,18 +1412,8 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 
     now_iso = datetime.now(timezone.utc).isoformat()
 
-    # ── Write segments ─────────────────────────────────────────────────────────
-    # Segment 1 : G  — Avg eBay Price  (col index 6)
-    # Segment 2 : K–M — Median / Last Updated / Confidence  (col indices 10-12)
-    # H and I are intentionally skipped.
-    segments = [
-        {'col': C['AVG_PRICE'], 'values': [round(fp, 2)]},
-        {'col': C['MEDIAN'],    'values': [result['median'], now_iso, conf]},
-    ]
-
     return {
-        'row':      row_number,
-        'segments': segments,
+        'row':  row_number,
         'card': {
             'player':       card['player'],
             'year':         card['year'],
@@ -1438,36 +1434,41 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 # Results JSON (for Further Insights page)
 # ══════════════════════════════════════════════════════════════════════════════
 
-def build_results_json(all_rows: list[list], priced_cards: list[dict]) -> dict:
-    """Merge freshly priced cards with existing sheet data into a full snapshot."""
-    fresh = {r['row']: r['card'] for r in priced_cards}
+def build_results_json(all_rows: list[list], priced_cards: list[dict],
+                       existing_by_id: dict = None) -> dict:
+    """Merge freshly priced cards with existing JSON data into a full snapshot.
+
+    The sheet provides the card catalog (player, year, brand, etc.).
+    Pricing data (avg_price, confidence, last_updated) comes from the JSON —
+    the sheet pricing columns are ignored so the sheet stays read-only.
+    """
+    fresh    = {r['row']: r['card'] for r in priced_cards}
+    _existing = existing_by_id or {}
 
     cards = []
     for i, row in enumerate(all_rows[1:], start=2):   # skip header row
         def get(col): return (row[col] if col < len(row) else '').strip() if col < len(row) else ''
-        if not get(C['PLAYER']):
+        player = get(C['PLAYER'])
+        if not player:
             continue
 
         if i in fresh:
             c = fresh[i]
         else:
-            price  = get(C['AVG_PRICE'])
-            median = get(C['MEDIAN'])
+            card_id = make_card_id(get(C['YEAR']), get(C['BRAND']), player, get(C['CARD_NUMBER']))
+            _ex = _existing.get(card_id, {})
             c = {
-                'player':       get(C['PLAYER']),
+                'player':       player,
                 'year':         get(C['YEAR']),
                 'brand':        get(C['BRAND']),
                 'card_number':  get(C['CARD_NUMBER']),
                 'team':         get(C['TEAM']),
                 'tcdb_price':   parse_price(get(C['TCDB_PRICE'])),
-                'avg_price':    parse_price(price),
-                'median':       parse_price(median),
-                'confidence':   get(C['CONFIDENCE']),
-                'last_updated': get(C['LAST_UPDATED']),
-                'card_id':      make_card_id(
-                    get(C['YEAR']), get(C['BRAND']),
-                    get(C['PLAYER']), get(C['CARD_NUMBER'])
-                ),
+                'avg_price':    _ex.get('avg_price') or 0,
+                'median':       _ex.get('median') or 0,
+                'confidence':   _ex.get('confidence', ''),
+                'last_updated': _ex.get('last_updated', ''),
+                'card_id':      card_id,
             }
         cards.append(c)
 
@@ -1559,32 +1560,20 @@ def process_card_timed(row: list, row_number: int) -> Optional[dict]:
         signal.signal(signal.SIGALRM, old)
 
 
-SHEET_WRITE_EVERY = 10   # flush to Google Sheets after this many cards priced
-
 def process_batch(batch: list, service) -> list:
     """Price a list of (row_num, row) tuples. Returns result dicts.
-    Flushes to Google Sheets every SHEET_WRITE_EVERY cards so that a
-    mid-run cancel (SIGTERM / manual cancel) preserves as much progress
-    as possible. Raises EbayQuotaExhausted if the daily quota runs out.
+    Results are written to JSON only — the sheet is treated as read-only.
+    Raises EbayQuotaExhausted if the daily quota runs out.
     """
-    results, pending, api_calls = [], [], 0
-
-    def _flush():
-        if pending:
-            write_rows(service, [{'row': r['row'], 'segments': r['segments']} for r in pending])
-            pending.clear()
+    results, api_calls = [], 0
 
     for row_num, row in batch:
         try:
             r = process_card_timed(row, row_num)
             if r:
                 results.append(r)
-                pending.append(r)
                 api_calls += 1
-                if len(pending) >= SHEET_WRITE_EVERY:
-                    _flush()
         except EbayQuotaExhausted:
-            _flush()   # save everything priced so far before exiting
             raise
         except Exception as e:
             log.error('Failed row %d: %s', row_num, e)
@@ -1592,7 +1581,6 @@ def process_batch(batch: list, service) -> list:
             log.info('Rate limit pause…')
             time.sleep(0.5)
 
-    _flush()   # write any remaining cards
     return results
 
 
@@ -1617,11 +1605,24 @@ def main():
     # ── Dynamic column detection ───────────────────────────────────────────────
     C = detect_columns(rows[0])
 
+    # ── Load existing pricing results (JSON is the source of truth) ───────────
+    existing_by_id: dict = {}
+    if os.path.exists(RESULTS_FILE):
+        try:
+            with open(RESULTS_FILE) as f:
+                _data = json.load(f)
+            for c in _data.get('cards', []):
+                if c.get('card_id'):
+                    existing_by_id[c['card_id']] = c
+            log.info('Loaded %d existing pricing results from JSON', len(existing_by_id))
+        except Exception as e:
+            log.warning('Could not load existing results JSON: %s', e)
+
     # ── Find candidates ────────────────────────────────────────────────────────
     candidates = [
         (i + 2, row)
         for i, row in enumerate(rows[1:])
-        if needs_pricing(row, i + 2)
+        if needs_pricing(row, i + 2, existing_by_id)
     ]
     log.info('%d / %d cards need pricing', len(candidates), len(rows) - 1)
 
@@ -1636,7 +1637,7 @@ def main():
         """Graceful shutdown — saves progress and exits cleanly."""
         log.warning('=== %s ===', reason)
         log.info('Saving progress for %d cards priced so far…', len(all_results))
-        output = build_results_json(rows, all_results)
+        output = build_results_json(rows, all_results, existing_by_id)
         _save_outputs(output, all_results)
         commit_progress(label)
         log.info('Progress saved.')
@@ -1663,7 +1664,7 @@ def main():
             except EbayQuotaExhausted as e:
                 _save_and_exit_quota(str(e))
             all_results.extend(chunk_results)
-            output = build_results_json(rows, all_results)   # rows is held in memory — no re-read
+            output = build_results_json(rows, all_results, existing_by_id)   # rows is held in memory — no re-read
             _save_outputs(output, all_results)
     else:
         batch = candidates if RUN_MODE in ('player', 'tcdb') else candidates[:BATCH_SIZE]
@@ -1677,7 +1678,7 @@ def main():
     # Final save (full mode already saved incrementally, this is a no-op if
     # nothing changed; batch/player mode saves here for the first time)
     os.makedirs('data', exist_ok=True)
-    output = build_results_json(rows, all_results)
+    output = build_results_json(rows, all_results, existing_by_id)
     _save_outputs(output, all_results)
     log.info('Done. Total value: $%.2f across %d cards', output['total_value'], output['cards_priced'])
 
