@@ -255,22 +255,41 @@ function drawEraChart() {
 }
 
 // ─── Brand Chart ─────────────────────────────────────────────────────────────
-let brandData   = {};   // persisted so the toggle can re-render without refetching
-let brandMode   = 'total';   // 'total' | 'avg'
+let brandData     = {};      // raw sub-brand map: { "Topps Chrome": {count, total_value}, ... }
+let brandMode     = 'total'; // 'total' | 'avg'
+let brandDrilldown = null;   // null = top level, string = parent being drilled into
+
+// Known multi-word parent brands — checked before falling back to first word
+const PARENT_BRAND_LIST = [
+  'Upper Deck', 'Stadium Club', 'SP Authentic', 'SP Legendary',
+  'Leaf Limited', 'Leaf Metal', 'Pacific Crown', 'Pacific Invincible',
+  'Fleer Ultra', 'Fleer Flair', 'Donruss Studio', 'Bowman Chrome',
+];
+
+function parentBrand(brand) {
+  const b = (brand || 'Unknown').trim();
+  for (const p of PARENT_BRAND_LIST) {
+    if (b.toLowerCase().startsWith(p.toLowerCase())) return p;
+  }
+  // Fall back to first word (handles Topps, Fleer, Donruss, Bowman, Score, etc.)
+  return b.split(/[\s\-–]/)[0] || b;
+}
 
 function renderBrandChart(byBrand, cards) {
-  // Build / cache brand data
-  let map = Object.entries(byBrand).length ? byBrand : null;
-  if (!map) {
-    map = {};
-    cards.filter(c => c.avg_price).forEach(c => {
-      const b = c.brand || 'Unknown';
-      if (!map[b]) map[b] = { count: 0, total_value: 0 };
-      map[b].count++;
-      map[b].total_value += parseFloat(c.avg_price);
-    });
-  }
+  // Build raw sub-brand map from cards (always recompute so we have full detail)
+  const map = {};
+  cards.filter(c => c.avg_price).forEach(c => {
+    const b = (c.brand || 'Unknown').trim();
+    if (!map[b]) map[b] = { count: 0, total_value: 0 };
+    map[b].count++;
+    map[b].total_value += parseFloat(c.avg_price);
+  });
+  // Merge in JSON-provided data for any brands not in cards (edge case)
+  Object.entries(byBrand).forEach(([b, s]) => {
+    if (!map[b]) map[b] = s;
+  });
   brandData = map;
+  brandDrilldown = null;
   drawBrandChart();
 }
 
@@ -283,38 +302,86 @@ function setBrandMode(mode) {
 }
 
 function drawBrandChart() {
-  const el = document.getElementById('brand-chart');
-  const entries = Object.entries(brandData);
-  if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+  const el    = document.getElementById('brand-chart');
+  const title = document.getElementById('brand-chart-title');
+  const back  = document.getElementById('btn-brand-back');
 
-  const withAvg = entries.map(([brand, s]) => ({
-    brand,
-    count:       s.count || 0,
-    total_value: s.total_value || 0,
-    avg_value:   s.count ? (s.total_value / s.count) : 0,
-  }));
+  const allEntries = Object.entries(brandData);
+  if (!allEntries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
 
-  const sorted = [...withAvg]
-    .sort((a, b) => brandMode === 'avg'
-      ? b.avg_value   - a.avg_value
-      : b.total_value - a.total_value)
-    .slice(0, 10);
+  let rows, drillable;
 
-  const maxVal = sorted[0][brandMode === 'avg' ? 'avg_value' : 'total_value'] || 1;
+  if (brandDrilldown === null) {
+    // ── Top level: aggregate by parent brand ─────────────────────────────────
+    title.textContent = 'Value by Brand';
+    back.classList.add('hidden');
+    drillable = true;
 
-  el.innerHTML = sorted.map(d => {
-    const barVal   = brandMode === 'avg' ? d.avg_value : d.total_value;
-    const pct      = (barVal / maxVal * 100).toFixed(1);
-    const mainAmt  = fmt$(barVal);
-    const subLabel = brandMode === 'avg'
-      ? `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total</span>`
-      : `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg</span>`;
-    return `<div class="era-row brand-row">
+    const parents = {};
+    allEntries.forEach(([brand, s]) => {
+      const p = parentBrand(brand);
+      if (!parents[p]) parents[p] = { count: 0, total_value: 0, subs: 0 };
+      parents[p].count       += s.count || 0;
+      parents[p].total_value += s.total_value || 0;
+      parents[p].subs++;
+    });
+
+    rows = Object.entries(parents).map(([brand, s]) => ({
+      brand,
+      count:       s.count,
+      total_value: s.total_value,
+      avg_value:   s.count ? s.total_value / s.count : 0,
+      subs:        s.subs,
+    }));
+  } else {
+    // ── Drill-down: show sub-brands for selected parent ───────────────────────
+    title.textContent = brandDrilldown;
+    back.classList.remove('hidden');
+    drillable = false;
+
+    rows = allEntries
+      .filter(([brand]) => parentBrand(brand) === brandDrilldown)
+      .map(([brand, s]) => ({
+        brand,
+        count:       s.count || 0,
+        total_value: s.total_value || 0,
+        avg_value:   s.count ? s.total_value / s.count : 0,
+        subs:        0,
+      }));
+  }
+
+  rows.sort((a, b) => brandMode === 'avg'
+    ? b.avg_value   - a.avg_value
+    : b.total_value - a.total_value);
+  rows = rows.slice(0, 12);
+
+  const maxVal = Math.max(...rows.map(d => brandMode === 'avg' ? d.avg_value : d.total_value), 1);
+
+  el.innerHTML = rows.map(d => {
+    const barVal  = brandMode === 'avg' ? d.avg_value : d.total_value;
+    const pct     = (barVal / maxVal * 100).toFixed(1);
+    const subLine = brandMode === 'avg'
+      ? `${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total`
+      : `${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg`;
+    const drillHint = (drillable && d.subs > 1) ? ' brand-drillable' : '';
+    const drillAttr = (drillable && d.subs > 1) ? `data-parent="${esc(d.brand)}"` : '';
+    return `<div class="era-row brand-row${drillHint}" ${drillAttr}>
       <span class="era-label">${esc(d.brand)}</span>
-      <div class="era-bar-wrap"><div class="era-bar brand-bar" style="width:${pct}%"></div></div>
-      <span class="era-value">${mainAmt}${subLabel}</span>
+      <div class="era-col">
+        <div class="era-bar-wrap"><div class="era-bar brand-bar" style="width:${pct}%"></div></div>
+        <span class="era-sub">${subLine}</span>
+      </div>
+      <span class="era-value">${fmt$(barVal)}</span>
     </div>`;
   }).join('');
+
+  // Drill-down click handlers
+  el.querySelectorAll('.brand-drillable').forEach(row => {
+    row.addEventListener('click', () => {
+      brandDrilldown = row.dataset.parent;
+      drawBrandChart();
+    });
+  });
 }
 
 // ─── Table ────────────────────────────────────────────────────────────────────
@@ -591,9 +658,13 @@ function bindRunModeUI() {
     eraSort = e.target.value;
     drawEraChart();
   });
-  // Brand chart toggle
+  // Brand chart toggle + back button
   document.querySelectorAll('#brand-toggle .chart-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => setBrandMode(btn.dataset.mode));
+  });
+  document.getElementById('btn-brand-back').addEventListener('click', () => {
+    brandDrilldown = null;
+    drawBrandChart();
   });
 
   // Run mode radios
