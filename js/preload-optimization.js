@@ -116,48 +116,7 @@ const dataPreloader = {
 dataPreloader.init();
 
 // ==========================================
-// 2. PROGRESSIVE LOADING
-// ==========================================
-
-// Override the loadData function to use preloaded data
-const originalLoadData = window.loadData;
-if (originalLoadData) {
-    window.loadData = async function() {
-        console.log('📦 Using preloaded data...');
-        
-        try {
-            // Get preloaded data (instant if already loaded)
-            const [networkData, playersData, teamsData, colorsData] = await Promise.all([
-                dataPreloader.get(DATA_URLS.network),
-                dataPreloader.get(DATA_URLS.players),
-                dataPreloader.get(DATA_URLS.teams),
-                dataPreloader.get(DATA_URLS.colors)
-            ]);
-            
-            // Store in global variables (same as original)
-            window.networkData = networkData;
-            window.playersData = playersData;
-            window.teamsData = teamsData;
-            window.teamColorsData = colorsData;
-            
-            // Initialize the app
-            if (typeof initializeApp === 'function') {
-                initializeApp();
-            }
-            
-            console.log('✅ Data loaded from cache');
-            return true;
-            
-        } catch (error) {
-            console.error('❌ Error loading data:', error);
-            alert('Failed to load data. Please refresh the page.');
-            return false;
-        }
-    };
-}
-
-// ==========================================
-// 3. LAZY LOAD IMAGES
+// 2. LAZY LOAD IMAGES
 // ==========================================
 
 // Lazy load images (if you add player photos later)

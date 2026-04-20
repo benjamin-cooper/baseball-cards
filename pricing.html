@@ -31,6 +31,7 @@
       <div class="page-header">
         <h1>Further Insights</h1>
         <p class="subtitle">Market valuations · Collection analytics · Last updated: <span id="last-updated">—</span></p>
+        <p id="run-badge" class="run-badge"></p>
       </div>
 
       <!-- SUMMARY STATS -->
@@ -55,6 +56,23 @@
           <div class="stat-value" id="stat-median-value">—</div>
           <div class="stat-label">Median Card Value</div>
         </div>
+        <div class="stat-card" title="Confidence-weighted total discounts thinly-priced / TCDB-fallback cards">
+          <div class="stat-value" id="stat-weighted">—</div>
+          <div class="stat-label">Weighted Value</div>
+        </div>
+        <div class="stat-card" title="Herfindahl-Hirschman Index. <100 very diversified, >2500 highly concentrated">
+          <div class="stat-value" id="stat-hhi">—</div>
+          <div class="stat-label">Concentration (HHI) · <span id="stat-hhi-interp">—</span></div>
+        </div>
+      </div>
+
+      <!-- DIFF VIEW (biggest movers since last run) -->
+      <div class="insights-panel">
+        <div class="panel-header">
+          <h2>Biggest Changes Since Last Run</h2>
+          <span class="table-count">top 20 by absolute % change</span>
+        </div>
+        <div id="diff-view" class="diff-view"></div>
       </div>
 
       <!-- PORTFOLIO CHART -->
@@ -126,6 +144,7 @@
                 <th data-col="unique" class="ps-num">Unique Cards <span class="sort-icon">↕</span></th>
                 <th data-col="copies" class="ps-num">Total Copies <span class="sort-icon">↕</span></th>
                 <th data-col="avg_price" class="ps-num">Avg Price <span class="sort-icon">↕</span></th>
+                <th data-col="volatility" class="ps-num" title="Std-dev of per-card % changes over recent history">Volatility <span class="sort-icon">↕</span></th>
                 <th class="ps-top">Top Card</th>
               </tr>
             </thead>
@@ -190,7 +209,9 @@
       <h3>Settings</h3>
       <p class="modal-desc">
         Provide a GitHub Personal Access Token with <strong>workflow</strong> scope to trigger
-        pricing runs from this page. Stored only in your browser's localStorage.
+        pricing runs from this page. Stored in this tab only (sessionStorage) &mdash; closing
+        the tab clears the token. Prefer a fine-grained PAT scoped to this repo with
+        <code>actions: write</code> only.
         <a href="https://github.com/settings/tokens/new?scopes=workflow" target="_blank">Create one →</a>
       </p>
       <label>GitHub PAT (workflow scope)</label>

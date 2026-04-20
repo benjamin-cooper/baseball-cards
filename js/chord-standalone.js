@@ -36,7 +36,7 @@ function initChordButton() {
 }
 
 // Auto-initialize when script loads
-console.log('📜 chord-redesigned.js loaded');
+console.log('📜 chord-standalone.js loaded');
 setTimeout(() => {
     console.log('⏰ Starting initialization timer...');
     initChordButton();
