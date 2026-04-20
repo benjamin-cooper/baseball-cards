@@ -1,16 +1,16 @@
 {
-  "timestamp": "2026-04-20T16:47:23.129921+00:00",
+  "timestamp": "2026-04-20T17:29:58.527622+00:00",
   "run_mode": "full",
-  "cards_processed": 1156,
-  "cards_priced": 3809,
-  "total_value": 6287.67,
+  "cards_processed": 600,
+  "cards_priced": 4364,
+  "total_value": 7178.56,
   "api_calls": {
-    "ebay_misses": 1101,
-    "ebay_hits": 75,
-    "claude": 13,
+    "ebay_misses": 529,
+    "ebay_hits": 130,
+    "claude": 3,
     "sheets": 1
   },
-  "cache_hit_rate": 0.064,
+  "cache_hit_rate": 0.197,
   "input_audit": {
     "empty_player": 0,
     "missing_brand": 0,
@@ -18,5 +18,5 @@
     "negative_price": 0
   },
   "errors": [],
-  "duration_seconds": 1034.6
+  "duration_seconds": 468.6
 }
