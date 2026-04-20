@@ -272,6 +272,36 @@ _ebay_cache_hits:     int  = 0
 _ebay_cache_misses:   int  = 0
 
 
+def _slim_item(it: dict) -> dict:
+    """Project an eBay item down to the fields actually read downstream.
+
+    The raw Browse API itemSummaries payload is ~250 KB per query; storing the
+    full payload blew the cache file past GitHub's 100 MB push limit. Only
+    price, title, condition, and listing_type are consumed by the pricing
+    pipeline, so slim to those before persisting.
+    """
+    if not isinstance(it, dict):
+        return {}
+    p = it.get('price') or {}
+    slim = {
+        'price': {'value': p.get('value'), 'currency': p.get('currency')},
+        'title': it.get('title', ''),
+        'condition': it.get('condition'),
+    }
+    # Preserve listing_type — either pre-normalised or derived from buyingOptions
+    # (the downstream helper reads both shapes).
+    if 'listing_type' in it:
+        slim['listing_type'] = it['listing_type']
+    elif it.get('buyingOptions'):
+        slim['buyingOptions'] = it['buyingOptions']
+    # Preserve end date for age-weighted averaging (recency matters).
+    if it.get('end_date'):
+        slim['end_date'] = it['end_date']
+    elif it.get('itemEndDate'):
+        slim['itemEndDate'] = it['itemEndDate']
+    return slim
+
+
 def _load_ebay_persist_cache():
     """Load the on-disk eBay cache once per run. Safe to call repeatedly."""
     global _ebay_persist_cache, _ebay_persist_loaded
@@ -282,6 +312,10 @@ def _load_ebay_persist_cache():
         with open(EBAY_CACHE_FILE) as f:
             raw = json.load(f)
         if isinstance(raw, dict):
+            # Migrate any fat legacy entries to the slim shape on load.
+            for k, v in raw.items():
+                if isinstance(v, dict) and isinstance(v.get('items'), list):
+                    v['items'] = [_slim_item(i) for i in v['items']]
             _ebay_persist_cache = raw
             log.info('Loaded %d persisted eBay cache entries', len(_ebay_persist_cache))
     except (FileNotFoundError, json.JSONDecodeError):
@@ -322,7 +356,7 @@ def _persist_cache_put(key: str, items: list):
     if not items:
         return
     _load_ebay_persist_cache()
-    _ebay_persist_cache[key] = {'ts': time.time(), 'items': items}
+    _ebay_persist_cache[key] = {'ts': time.time(), 'items': [_slim_item(i) for i in items]}
 
 
 def get_ebay_token() -> str:
