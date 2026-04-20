@@ -449,7 +449,7 @@ function drawPlayerStats(query) {
       <td class="ps-player">${esc(r.player)}</td>
       <td class="ps-num">${fmt$(r.total_value)}</td>
       <td class="ps-num">${r.unique.toLocaleString()}</td>
-      <td class="ps-num">${r.copies > r.unique ? `<span title="${r.copies} total rows in sheet">${r.unique} <span class="ps-copies">(${r.copies})</span></span>` : r.unique}</td>
+      <td class="ps-num">${r.copies > r.unique ? `${r.copies.toLocaleString()} <span class="ps-copies" title="${r.copies - r.unique} duplicate row(s) collapsed">(${r.unique} unique)</span>` : r.copies.toLocaleString()}</td>
       <td class="ps-num">${r.avg_price > 0 ? fmt$(r.avg_price) : '—'}</td>
       <td class="ps-top">${r.top_card ? `<span class="ps-top-label">${esc(r.top_card.label)}</span> <span class="ps-top-price">${fmt$(r.top_card.price)}</span>` : '—'}</td>
     </tr>`).join('');
