@@ -110,6 +110,30 @@
         </div>
       </div>
 
+      <!-- PLAYER STATS -->
+      <div class="insights-panel">
+        <div class="panel-header">
+          <h2>Cards by Player</h2>
+          <span id="player-stats-count" class="table-count"></span>
+        </div>
+        <input type="text" id="player-stats-search" class="player-search" placeholder="Search player…" autocomplete="off" style="margin-bottom:12px">
+        <div class="ps-table-wrap">
+          <table id="player-stats-table" class="ps-table">
+            <thead>
+              <tr>
+                <th data-col="player">Player <span class="sort-icon">↕</span></th>
+                <th data-col="total_value" class="ps-num ps-sort-active" data-dir="desc">Total Value <span class="sort-icon">↕</span></th>
+                <th data-col="unique" class="ps-num">Unique Cards <span class="sort-icon">↕</span></th>
+                <th data-col="copies" class="ps-num">Total Copies <span class="sort-icon">↕</span></th>
+                <th data-col="avg_price" class="ps-num">Avg Price <span class="sort-icon">↕</span></th>
+                <th class="ps-top">Top Card</th>
+              </tr>
+            </thead>
+            <tbody id="player-stats-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <!-- FULL TABLE -->
       <div class="table-section">
         <div class="table-controls">

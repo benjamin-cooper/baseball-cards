@@ -39,6 +39,12 @@ async function loadData() {
     if (!r1.ok) throw new Error(`HTTP ${r1.status}`);
     const data = await r1.json();
     priceHistory = r2.ok ? await r2.json() : {};
+    // Count raw copies per player before dedup (includes sheet duplicates)
+    const rawPlayerCounts = {};
+    (data.cards || []).forEach(c => {
+      const p = c.player || '?';
+      rawPlayerCounts[p] = (rawPlayerCounts[p] || 0) + 1;
+    });
     // Deduplicate cards by card_id, keeping the most recently updated entry
     if (Array.isArray(data.cards)) {
       const seen = new Map();
@@ -50,7 +56,7 @@ async function loadData() {
       });
       data.cards = [...seen.values()];
     }
-    render(data);
+    render(data, rawPlayerCounts);
   } catch (e) {
     showEmpty('No pricing data yet. Click ⚡ Update Prices to run the pricing agent.');
   }
@@ -63,7 +69,7 @@ function cardId(c) {
 }
 
 // ─── Render ───────────────────────────────────────────────────────────────────
-function render(data) {
+function render(data, rawPlayerCounts = {}) {
   renderStats(data);
   // Recompute top25 from deduped cards rather than using the pre-baked JSON value
   const top25 = [...(data.cards || [])]
@@ -75,6 +81,7 @@ function render(data) {
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
   renderBrandChart(data.by_brand || {}, data.cards || []);
+  renderPlayerStats(data.cards || [], rawPlayerCounts);
   allCards = data.cards || [];
   populateYearFilter(allCards);
   populateTeamFilter(allCards);
@@ -384,6 +391,92 @@ function drawBrandChart() {
   });
 }
 
+// ─── Player Stats ─────────────────────────────────────────────────────────────
+let playerRows    = [];   // full computed list, re-filtered on search/sort
+let playerSortCol = 'total_value';
+let playerSortDir = -1;   // -1 = desc, 1 = asc
+
+function renderPlayerStats(cards, rawPlayerCounts) {
+  // Build per-player aggregates from deduped cards
+  const map = {};
+  cards.forEach(c => {
+    const p = c.player || '?';
+    if (!map[p]) map[p] = { player: p, unique: 0, total_value: 0, prices: [], top_card: null };
+    const d = map[p];
+    d.unique++;
+    const price = parseFloat(c.avg_price) || 0;
+    if (price > 0) {
+      d.total_value += price;
+      d.prices.push(price);
+      if (!d.top_card || price > d.top_card.price) {
+        d.top_card = { price, label: [c.year, c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' ') };
+      }
+    }
+  });
+
+  playerRows = Object.values(map).map(d => ({
+    ...d,
+    copies:    rawPlayerCounts[d.player] || d.unique,
+    avg_price: d.prices.length ? d.total_value / d.prices.length : 0,
+  }));
+
+  drawPlayerStats('');
+}
+
+function drawPlayerStats(query) {
+  const tbody = document.getElementById('player-stats-tbody');
+  if (!tbody) return;
+
+  const q = query.toLowerCase().trim();
+  let rows = q ? playerRows.filter(r => r.player.toLowerCase().includes(q)) : [...playerRows];
+
+  rows.sort((a, b) => {
+    const av = a[playerSortCol] ?? 0, bv = b[playerSortCol] ?? 0;
+    if (typeof bv === 'string') return playerSortDir * av.localeCompare(bv);
+    return playerSortDir * (bv - av);
+  });
+
+  document.getElementById('player-stats-count').textContent =
+    `${rows.length.toLocaleString()} player${rows.length !== 1 ? 's' : ''}`;
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#555;padding:20px">No players found</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(r => `
+    <tr>
+      <td class="ps-player">${esc(r.player)}</td>
+      <td class="ps-num">${fmt$(r.total_value)}</td>
+      <td class="ps-num">${r.unique.toLocaleString()}</td>
+      <td class="ps-num">${r.copies > r.unique ? `<span title="${r.copies} total rows in sheet">${r.unique} <span class="ps-copies">(${r.copies})</span></span>` : r.unique}</td>
+      <td class="ps-num">${r.avg_price > 0 ? fmt$(r.avg_price) : '—'}</td>
+      <td class="ps-top">${r.top_card ? `<span class="ps-top-label">${esc(r.top_card.label)}</span> <span class="ps-top-price">${fmt$(r.top_card.price)}</span>` : '—'}</td>
+    </tr>`).join('');
+}
+
+function bindPlayerStats() {
+  const search = document.getElementById('player-stats-search');
+  if (search) search.addEventListener('input', e => drawPlayerStats(e.target.value));
+
+  document.querySelectorAll('#player-stats-table th[data-col]').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (playerSortCol === col) {
+        playerSortDir *= -1;
+      } else {
+        playerSortCol = col;
+        playerSortDir = col === 'player' ? 1 : -1;
+      }
+      document.querySelectorAll('#player-stats-table th[data-col]').forEach(t => {
+        t.classList.toggle('ps-sort-active', t.dataset.col === col);
+        if (t.dataset.col === col) t.dataset.dir = playerSortDir === -1 ? 'desc' : 'asc';
+      });
+      drawPlayerStats(document.getElementById('player-stats-search')?.value || '');
+    });
+  });
+}
+
 // ─── Table ────────────────────────────────────────────────────────────────────
 function applyFilters() {
   const q      = document.getElementById('table-search').value.toLowerCase();
@@ -629,6 +722,7 @@ function bindUI() {
   document.getElementById('btn-export').addEventListener('click', exportCSV);
   document.getElementById('btn-close-card').addEventListener('click', () => closeModal('modal-card'));
   bindRunModeUI();
+  bindPlayerStats();
 
   const pat = getPAT();
   if (pat) document.getElementById('input-pat').value = pat;

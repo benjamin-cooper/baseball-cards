@@ -688,6 +688,7 @@
 
 /* ERA ROW — bar + sub-label stacked in a column */
 .era-col { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.era-col .era-bar-wrap { flex: none; width: 100%; }  /* prevent flex-basis:0 collapsing bar height */
 .era-sub  { font-size: 0.7em; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* Panel header controls (sort + toggle side by side) */
@@ -731,6 +732,37 @@
 }
 .btn-brand-back:hover { border-color: #4CAF50; color: #4CAF50; }
 .btn-brand-back.hidden { display: none; }
+
+/* PLAYER STATS TABLE */
+.ps-table-wrap { overflow-x: auto; }
+.ps-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.82em;
+}
+.ps-table thead th {
+  padding: 8px 12px;
+  text-align: left;
+  color: #888;
+  font-weight: 500;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+}
+.ps-table thead th:hover { color: #ccc; }
+.ps-table thead th.ps-sort-active { color: #4CAF50; }
+.ps-table thead th.ps-sort-active .sort-icon::after { content: attr(data-dir); }
+.ps-table tbody tr { border-bottom: 1px solid rgba(255,255,255,0.04); transition: background 0.1s; }
+.ps-table tbody tr:hover { background: rgba(255,255,255,0.04); }
+.ps-table td { padding: 7px 12px; vertical-align: middle; }
+.ps-player { color: #ddd; font-weight: 500; }
+.ps-num { text-align: right; color: #aaa; }
+.ps-num:first-of-type { color: #4CAF50; font-weight: 600; }
+.ps-copies { font-size: 0.85em; color: #555; }
+.ps-top { color: #888; font-size: 0.85em; max-width: 220px; }
+.ps-top-label { color: #777; }
+.ps-top-price { color: #4CAF50; font-weight: 600; margin-left: 4px; }
 
 /* SPARKLINE CELL */
 .spark-cell { padding: 6px 12px !important; vertical-align: middle; }
