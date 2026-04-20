@@ -65,7 +65,12 @@ function cardId(c) {
 // ─── Render ───────────────────────────────────────────────────────────────────
 function render(data) {
   renderStats(data);
-  renderTopCards(data.top_cards || []);
+  // Recompute top25 from deduped cards rather than using the pre-baked JSON value
+  const top25 = [...(data.cards || [])]
+    .filter(c => c.avg_price > 0)
+    .sort((a, b) => b.avg_price - a.avg_price)
+    .slice(0, 25);
+  renderTopCards(top25);
   renderMarketMovers(data.cards || []);
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
