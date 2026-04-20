@@ -17,7 +17,6 @@ Required environment variables:
 """
 
 import os, sys, json, time, base64, re, math, logging, signal
-from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 from typing import Optional
 
@@ -50,8 +49,6 @@ CLAUDE_MIN_COMPS   = 15          # skip Claude for high-value cards that already
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
 EBAY_CATEGORY      = '212'       # Baseball Cards
 EBAY_PRICE_RANGE   = '0.50..500'
-MAVIN_SLEEP_MS     = 300         # ms between Mavin requests (be polite)
-MAVIN_MAX_AGE_DAYS = 730         # ignore Mavin sales older than this (2 years)
 CARD_TIMEOUT_SEC   = 90          # max wall-clock seconds per card before skipping
 SHEETS_RETRIES     = 4           # retry attempts for Google Sheets API calls
 EBAY_RETRIES       = 3           # retry attempts for eBay API calls
@@ -218,9 +215,7 @@ _ebay_quota_exhausted: bool = False   # set True on any 429 → triggers gracefu
 # Prevents duplicate API calls when multiple cards share the same query
 # (same player/year/brand, different card number).
 _ebay_cache:  dict[str, tuple[float, list]] = {}
-_mavin_cache: dict[str, tuple[float, list]] = {}
 EBAY_CACHE_TTL  = 600   # 10 minutes
-MAVIN_CACHE_TTL = 600   # 10 minutes
 
 
 def get_ebay_token() -> str:
@@ -359,140 +354,6 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     return []
 
 
-# ══════════════════════════════════════════════════════════════════════════════
-# Mavin.io — aggregated eBay sold prices
-# ══════════════════════════════════════════════════════════════════════════════
-
-# Months Mavin abbreviates in sale-date strings
-_MONTH_MAP = {m: i+1 for i, m in enumerate(
-    ('jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec')
-)}
-
-def _parse_mavin_date(raw: str) -> Optional[str]:
-    """Turn 'Jan 2024' or 'Jan 15, 2024' into an ISO date string, or None."""
-    raw = raw.strip().lower()
-    # Try 'mon dd, yyyy'
-    m = re.match(r'([a-z]{3})\s+(\d{1,2}),?\s+(\d{4})', raw)
-    if m:
-        mo, day, yr = _MONTH_MAP.get(m.group(1)), int(m.group(2)), int(m.group(3))
-        if mo:
-            return f'{yr:04d}-{mo:02d}-{day:02d}'
-    # Try 'mon yyyy'
-    m = re.match(r'([a-z]{3})\s+(\d{4})', raw)
-    if m:
-        mo, yr = _MONTH_MAP.get(m.group(1)), int(m.group(2))
-        if mo:
-            return f'{yr:04d}-{mo:02d}-15'   # mid-month estimate
-    return None
-
-
-def fetch_mavin_prices(year: str, brand: str, player: str, card_number: str = '') -> list[dict]:
-    """Scrape recent *sold* prices from Mavin.io.
-
-    Returns items in the same {price, listing_type, end_date, title} format
-    as ebay_search() so they can be merged and passed straight to filter_items()
-    / weighted_average().
-    """
-    query = f"{year} {brand} {player}"
-    if card_number:
-        query += f" {card_number}"
-
-    # Check cache before making a network request
-    _now_ts = time.time()
-    _cached = _mavin_cache.get(query)
-    if _cached and _now_ts - _cached[0] < MAVIN_CACHE_TTL:
-        log.debug('Mavin cache hit for "%s"', query)
-        return _cached[1]
-
-    url = f"https://mavin.io/search?q={requests.utils.quote(query + ' baseball card')}"
-    try:
-        r = requests.get(
-            url,
-            headers={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'},
-            timeout=12
-        )
-        time.sleep(MAVIN_SLEEP_MS / 1000)
-        if r.status_code != 200:
-            log.debug('Mavin %s for "%s"', r.status_code, query)
-            return []
-
-        html = r.text
-
-        # Mavin renders sale rows like:
-        #   <span class="sold-date">Jan 15, 2024</span>
-        #   <span class="price">$2.50</span>
-        #   <span class="item-title">1989 Topps Ken Griffey Jr #1</span>
-        # Extract all (price, date, title) tuples by scanning nearby text blocks.
-
-        # Strategy: find every price tag, then look back ~300 chars for a date.
-        results = []
-        now = datetime.now(timezone.utc)
-
-        # Grab the full text split around dollar-amount patterns
-        for price_m in re.finditer(r'\$(\d{1,4}(?:\.\d{2})?)', html):
-            price_val = float(price_m.group(1))
-            if not (0.25 <= price_val <= 500):
-                continue
-
-            # Look in the surrounding ~600-char window for a sale date
-            window_start = max(0, price_m.start() - 400)
-            window_end   = min(len(html), price_m.end() + 200)
-            window       = html[window_start:window_end]
-
-            # Strip HTML tags for easier parsing
-            window_text = re.sub(r'<[^>]+>', ' ', window)
-            window_text = re.sub(r'\s+', ' ', window_text)
-
-            # Look for a date pattern in the window
-            date_m = re.search(
-                r'(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{1,2},?\s+\d{4}'
-                r'|(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\.?\s+\d{4}',
-                window_text, re.IGNORECASE
-            )
-            iso_date = _parse_mavin_date(date_m.group(0)) if date_m else None
-
-            # Reject if date is too old
-            if iso_date:
-                try:
-                    sale_date = datetime.fromisoformat(iso_date).replace(tzinfo=timezone.utc)
-                    if (now - sale_date).days > MAVIN_MAX_AGE_DAYS:
-                        continue
-                except Exception:
-                    pass
-
-            # Grab nearby title text (used by filter_items for player/year matching).
-            # If we can't find a real title we have no way to verify this price
-            # belongs to the correct card, so skip it rather than using a
-            # synthesised fallback title that would always pass filter_items.
-            title_m = re.search(r'(?:title|alt)="([^"]{10,120})"', window, re.IGNORECASE)
-            if not title_m:
-                continue
-            title = title_m.group(1)
-
-            results.append({
-                'price':        price_val,
-                'listing_type': 'Sold',    # real transaction, not an ask
-                'end_date':     iso_date,
-                'title':        title,
-            })
-
-        # Deduplicate near-identical prices (Mavin sometimes shows same sale twice)
-        seen, deduped = set(), []
-        for item in results:
-            key = (round(item['price'], 1), item['end_date'])
-            if key not in seen:
-                seen.add(key)
-                deduped.append(item)
-
-        log.debug('Mavin: %d sold comps for "%s"', len(deduped), query)
-        result = deduped[:40]
-        if result:   # don't cache empty results
-            _mavin_cache[query] = (time.time(), result)
-        return result
-
-    except Exception as e:
-        log.debug('Mavin fetch error for "%s": %s', query, e)
-        return []
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -522,12 +383,12 @@ def _extract_price(item: dict) -> Optional[float]:
 
 
 def _extract_end_date(item: dict) -> Optional[str]:
-    """Pull end/sale date from either eBay or Mavin item format."""
+    """Pull end/sale date from an eBay item dict."""
     return item.get('end_date') or item.get('itemEndDate')
 
 
 def _extract_listing_type(item: dict) -> str:
-    """Prefer the pre-set listing_type (Mavin sets 'Sold'); fall back to eBay buyingOptions."""
+    """Prefer the pre-set listing_type; fall back to eBay buyingOptions."""
     if 'listing_type' in item:
         return item['listing_type']
     return 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
@@ -1077,7 +938,7 @@ CLAUDE_TOOLS = [
     },
     {
         'name': 'fetch_page',
-        'description': 'Fetch a web page and return its text content. Use for TCDB, Mavin, or other pricing sites.',
+        'description': 'Fetch a web page and return its text content. Use for TCDB or other pricing sites.',
         'input_schema': {
             'type': 'object',
             'properties': {
@@ -1093,19 +954,18 @@ SYSTEM_PROMPT = """You are an expert baseball card appraiser pricing raw (ungrad
 Given a card description, gather pricing data from multiple sources using the available tools:
 
 1. search_ebay — find active eBay listings for this exact card
-2. fetch_page — check these sites for sold/market prices:
-   - https://mavin.io/search?q=QUERY  (aggregated eBay sold prices — most reliable)
-   - https://www.tcdb.com/Search.cfm?searchterm=QUERY  (community book values)
+2. fetch_page — check TCDB for community book values:
+   - https://www.tcdb.com/Search.cfm?searchterm=QUERY
 
 If a TCDB Reference Price is provided in the card description, treat it as a starting
 point only — fetch the live TCDB page to verify it hasn't changed, then compare against
-current eBay/Mavin data to arrive at a market-accurate price.
+current eBay data to arrive at a market-accurate price.
 
 Rules:
 - Price raw/ungraded cards only (ignore PSA/BGS/SGC graded comps)
 - Ignore autographed, lot, reprint, and numbered parallel listings
 - Focus on cards matching the year, brand, player, and card number exactly
-- Weight recent sold prices (Mavin) over active listings (eBay)
+- Weight recent sold/completed listings over active asking prices
 - After gathering data, respond with ONLY this JSON (no markdown):
 
 {
@@ -1304,49 +1164,31 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     label = f"Row {row_number}: {card['year']} {card['brand']} {card['player']}"
     log.info('Pricing %s', label)
 
-    # ── Step 1: eBay active listings + Mavin sold prices (strict filter) ────────
-    # Fetch both sources in parallel — they're independent I/O calls.
+    # ── Step 1: eBay listings (strict filter) ────────────────────────────────────
     # Normalise player name in the query (strip commas/dots) so eBay search works
     # correctly for names like "Sandy Alomar, Jr." or "Cal Ripken, Jr."
     query_player = re.sub(r'[,.]', '', card['player']).strip()
     query = f"{card['year']} {card['brand']} {query_player}"
 
-    with ThreadPoolExecutor(max_workers=2) as _pool:
-        _ebay_fut  = _pool.submit(ebay_search, query)
-        _mavin_fut = _pool.submit(
-            fetch_mavin_prices,
-            card['year'], card['brand'], query_player, card['card_number']
-        )
-        ebay_items  = _ebay_fut.result()   # re-raises EbayQuotaExhausted if hit
-        mavin_items = _mavin_fut.result()
+    ebay_items = ebay_search(query)   # raises EbayQuotaExhausted if daily limit hit
 
-    ebay_filtered  = filter_items(
-        ebay_items,  card['year'], card['brand'], card['player'],
+    ebay_filtered = filter_items(
+        ebay_items, card['year'], card['brand'], card['player'],
         card['card_number'], card['team']
     )
-    mavin_filtered = filter_items(
-        mavin_items, card['year'], card['brand'], card['player'],
-        card['card_number'], card['team']
-    )
-    combined = ebay_filtered + mavin_filtered
-    result   = weighted_average(combined)
-
-    ebay_count  = len(ebay_filtered)
-    mavin_count = len(mavin_filtered)
-    fallback    = None   # tracks which fallback tier was used
+    result     = weighted_average(ebay_filtered)
+    ebay_count = len(ebay_filtered)
+    fallback   = None   # tracks which fallback tier was used
 
     # ── Step 1b: Relaxed filter — player + year only, no card number/brand ────
     # Fires when strict comps are too thin. Gives a market signal even for
     # cards that are rarely listed under an exact card-number search.
     if result['count'] < LOW_DATA_THRESH:
-        relaxed_ebay  = filter_items_relaxed(ebay_items,  card['year'], card['player'], card['brand'])
-        relaxed_mavin = filter_items_relaxed(mavin_items, card['year'], card['player'], card['brand'])
-        relaxed_all   = relaxed_ebay + relaxed_mavin
-        if len(relaxed_all) >= LOW_DATA_THRESH:
-            result   = weighted_average(relaxed_all)
-            fallback = 'relaxed'
-            ebay_count  = len(relaxed_ebay)
-            mavin_count = len(relaxed_mavin)
+        relaxed_ebay = filter_items_relaxed(ebay_items, card['year'], card['player'], card['brand'])
+        if len(relaxed_ebay) >= LOW_DATA_THRESH:
+            result     = weighted_average(relaxed_ebay)
+            fallback   = 'relaxed'
+            ebay_count = len(relaxed_ebay)
             log.info('  → Relaxed filter: %d comps', result['count'])
 
     # ── Step 1c: TCDB reference price ─────────────────────────────────────────
@@ -1362,12 +1204,6 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
     # Source label for logging
     if fallback == 'tcdb':
         source = 'TCDB reference'
-    elif mavin_count and ebay_count:
-        source = f'eBay ({ebay_count}) + Mavin sold ({mavin_count})'
-        if fallback == 'relaxed': source += ' [relaxed]'
-    elif mavin_count:
-        source = f'Mavin sold ({mavin_count})'
-        if fallback == 'relaxed': source += ' [relaxed]'
     else:
         source = f'eBay ({ebay_count})'
         if fallback == 'relaxed': source += ' [relaxed]'
