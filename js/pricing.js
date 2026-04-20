@@ -187,17 +187,46 @@ function renderPortfolioChart(portfolio) {
 }
 
 // ─── Era Chart ────────────────────────────────────────────────────────────────
+let eraData = {};
+let eraMode = 'total';   // 'total' | 'avg'
+
 function renderEraChart(byEra) {
+  eraData = byEra;
+  drawEraChart();
+}
+
+function setEraMode(mode) {
+  eraMode = mode;
+  document.querySelectorAll('#era-toggle .chart-toggle-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.mode === mode);
+  });
+  drawEraChart();
+}
+
+function drawEraChart() {
   const el = document.getElementById('era-chart');
-  const entries = Object.entries(byEra).sort((a, b) => a[0].localeCompare(b[0]));
+  const entries = Object.entries(eraData).sort((a, b) => a[0].localeCompare(b[0]));
   if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
-  const maxVal = Math.max(...entries.map(([,v]) => v.total_value || 0), 1);
-  el.innerHTML = entries.map(([era, stats]) => {
-    const pct = ((stats.total_value||0) / maxVal * 100).toFixed(1);
+
+  const withAvg = entries.map(([era, s]) => ({
+    era,
+    count:       s.count || 0,
+    total_value: s.total_value || 0,
+    avg_value:   s.count ? (s.total_value / s.count) : 0,
+  }));
+
+  const maxVal = Math.max(...withAvg.map(d => eraMode === 'avg' ? d.avg_value : d.total_value), 1);
+
+  el.innerHTML = withAvg.map(d => {
+    const barVal  = eraMode === 'avg' ? d.avg_value : d.total_value;
+    const pct     = (barVal / maxVal * 100).toFixed(1);
+    const subLabel = eraMode === 'avg'
+      ? `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total</span>`
+      : `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg</span>`;
     return `<div class="era-row">
-      <span class="era-label">${esc(era)}</span>
+      <span class="era-label">${esc(d.era)}</span>
       <div class="era-bar-wrap"><div class="era-bar" style="width:${pct}%"></div></div>
-      <span class="era-value">${fmt$(stats.total_value)}</span>
+      <span class="era-value">${fmt$(barVal)}${subLabel}</span>
     </div>`;
   }).join('');
 }
@@ -531,6 +560,10 @@ function saveSettings() {
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
 function bindRunModeUI() {
+  // Era chart toggle
+  document.querySelectorAll('#era-toggle .chart-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => setEraMode(btn.dataset.mode));
+  });
   // Brand chart toggle
   document.querySelectorAll('#brand-toggle .chart-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => setBrandMode(btn.dataset.mode));

@@ -78,7 +78,13 @@
       <!-- ERA + BRAND CHARTS -->
       <div class="insights-grid">
         <div class="insights-panel">
-          <h2>Value by Era</h2>
+          <div class="panel-header">
+            <h2>Value by Era</h2>
+            <div class="chart-toggle" id="era-toggle">
+              <button class="chart-toggle-btn active" data-mode="total">Total</button>
+              <button class="chart-toggle-btn" data-mode="avg">Avg / Card</button>
+            </div>
+          </div>
           <div id="era-chart" class="era-chart"></div>
         </div>
         <div class="insights-panel">
