@@ -39,6 +39,17 @@ async function loadData() {
     if (!r1.ok) throw new Error(`HTTP ${r1.status}`);
     const data = await r1.json();
     priceHistory = r2.ok ? await r2.json() : {};
+    // Deduplicate cards by card_id, keeping the most recently updated entry
+    if (Array.isArray(data.cards)) {
+      const seen = new Map();
+      data.cards.forEach(c => {
+        const prev = seen.get(c.card_id);
+        if (!prev || (c.last_updated && (!prev.last_updated || c.last_updated > prev.last_updated))) {
+          seen.set(c.card_id, c);
+        }
+      });
+      data.cards = [...seen.values()];
+    }
     render(data);
   } catch (e) {
     showEmpty('No pricing data yet. Click ⚡ Update Prices to run the pricing agent.');
