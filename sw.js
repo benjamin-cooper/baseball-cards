@@ -1,16 +1,18 @@
 // Service Worker for Baseball Network Visualization
 // Provides offline support and faster loading
 
-const CACHE_NAME = 'baseball-network-v1';
+const CACHE_NAME = 'baseball-network-v2';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
+    '/pricing.html',
     '/css/style.css',
+    '/css/pricing.css',
     '/js/app.js',
     '/js/filters.js',
     '/js/network.js',
     '/js/export.js',
-    '/js/chord-redesigned.js',
+    '/js/pricing.js',
     '/js/keyboard.js',
     '/js/history.js',
     '/js/url-state.js',
@@ -25,7 +27,11 @@ const DATA_FILES = [
     '/data/network_data.json',
     '/data/players.json',
     '/data/teams.json',
-    '/data/team_colors.json'
+    '/data/team_colors.json',
+    '/data/pricing_results.json',
+    '/data/pricing_summary.json',
+    '/data/price_history.json',
+    '/data/run_metadata.json'
 ];
 
 // Install event - cache assets

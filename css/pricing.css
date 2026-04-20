@@ -914,3 +914,81 @@
   transition: background 0.2s;
 }
 .card-link:hover { background: rgba(76,175,80,0.2); }
+
+/* ─── Phase 4.1 — tiered delta block in card-detail modal ─────────────── */
+.card-detail-tiers {
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 10px;
+}
+.cd-tiers-title {
+  font-size: 0.72em;
+  color: #777;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+.cd-tiers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.cd-tier {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px;
+  background: rgba(255,255,255,0.04);
+  border-radius: 8px;
+}
+.cd-tier-label { font-size: 0.7em; color: #888; text-transform: uppercase; letter-spacing: 0.04em; }
+.cd-tier-value { font-size: 0.95em; font-weight: 600; color: #ddd; }
+.cd-tier.delta-up  .cd-tier-value { color: #4CAF50; }
+.cd-tier.delta-down .cd-tier-value { color: #EF5350; }
+
+/* ─── Phase 4.2 — diff view list ──────────────────────────────────────── */
+.diff-view {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 420px;
+  overflow-y: auto;
+}
+.diff-row {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 10px;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 6px;
+  align-items: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.diff-row:hover { background: rgba(255,255,255,0.08); }
+.diff-name { font-weight: 500; color: #ddd; }
+.diff-meta { color: #888; font-size: 0.82em; margin-left: 6px; }
+.diff-prev { color: #aaa; font-size: 0.88em; font-variant-numeric: tabular-nums; }
+.diff-delta { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
+.delta-up   { color: #4CAF50; }
+.delta-down { color: #EF5350; }
+
+/* ─── Phase 3.3 — sparkline lazy placeholder (hydrated on scroll) ─────── */
+span.sparkline:empty {
+  display: inline-block;
+  width: 60px;
+  height: 22px;
+}
+
+/* ─── Run metadata badge ──────────────────────────────────────────────── */
+.run-badge {
+  margin: 6px 0 0;
+  font-size: 0.82em;
+  color: #888;
+  font-variant-numeric: tabular-nums;
+}
+.run-badge:empty { display: none; }
+
+/* ─── Phase 4.4 — player-stats volatility column ──────────────────────── */
+.ps-vol { color: #bbb; font-variant-numeric: tabular-nums; }

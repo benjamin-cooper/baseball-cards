@@ -9,18 +9,34 @@ const REPO_NAME   = 'baseball-cards';
 const WORKFLOW_ID = 'price_cards.yml';
 const DATA_URL    = 'data/pricing_results.json';
 const HISTORY_URL = 'data/price_history.json';
+const SUMMARY_URL = 'data/pricing_summary.json';
+const METADATA_URL = 'data/run_metadata.json';
+
+// Clients-side ETag cache of the large results JSON. Stored as a single
+// localStorage key; cleared automatically on 24-hour hard-cap.
+const CACHE_KEY_ETAG = 'results_etag';
+const CACHE_KEY_BODY = 'results_body';
+const CACHE_KEY_TS   = 'results_cached_at';
+const CACHE_HARD_CAP = 24 * 60 * 60 * 1000;   // 24 h
+
+const POLL_MAX_TICKS = 40;   // 15s × 40 = 10 min hard cap on run polling
+const FETCH_RETRY_MAX = 2;
 
 // ─── State ────────────────────────────────────────────────────────────────────
 let allCards      = [];
 let filtered      = [];
 let priceHistory  = {};
+let summary       = null;   // pricing_summary.json (precomputed aggregates)
+let runMetadata   = null;   // run_metadata.json (API-call counts, errors)
 let sortCol       = 'avg_price';
 let sortDir       = 'desc';
 let runPollTimer  = null;
 let runTickTimer  = null;
 let runStartTime  = null;
+let runPollTicks  = 0;
 let activeRunId   = null;   // GitHub Actions run ID, set once the run is found
 let clusterize    = null;   // Clusterize instance for virtual table rendering
+let cardById      = new Map();   // card_id → card (for delegated click lookup)
 
 // ─── Boot ─────────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -29,36 +45,106 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ─── Data Loading ─────────────────────────────────────────────────────────────
+//
+// Two-stage load: fetch the small pricing_summary.json first for a fast first
+// paint of headline stats + player table, then hydrate the full results JSON
+// (with ETag-based localStorage caching for repeat visits).
+// ─────────────────────────────────────────────────────────────────────────────
+
+async function fetchWithRetry(url, opts = {}, retries = FETCH_RETRY_MAX) {
+  let lastErr;
+  for (let i = 0; i <= retries; i++) {
+    try {
+      const res = await fetch(url, opts);
+      if (!res.ok && res.status >= 500 && i < retries) {
+        await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)));
+        continue;
+      }
+      return res;
+    } catch (e) {
+      lastErr = e;
+      if (i < retries) await new Promise(r => setTimeout(r, 500 * Math.pow(2, i)));
+    }
+  }
+  throw lastErr || new Error(`fetch failed: ${url}`);
+}
+
+async function loadResultsWithETagCache() {
+  const cachedBody = localStorage.getItem(CACHE_KEY_BODY);
+  const cachedEtag = localStorage.getItem(CACHE_KEY_ETAG);
+  const cachedTs   = parseInt(localStorage.getItem(CACHE_KEY_TS) || '0', 10);
+  const fresh      = cachedBody && Date.now() - cachedTs < CACHE_HARD_CAP;
+
+  const headers = {};
+  if (cachedEtag && fresh) headers['If-None-Match'] = cachedEtag;
+
+  const res = await fetchWithRetry(`${DATA_URL}?t=${Date.now()}`, { headers });
+  if (res.status === 304 && cachedBody) {
+    try { return JSON.parse(cachedBody); } catch { /* fall through */ }
+  }
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const text = await res.text();
+  const etag = res.headers.get('ETag');
+  try {
+    if (etag) localStorage.setItem(CACHE_KEY_ETAG, etag);
+    localStorage.setItem(CACHE_KEY_BODY, text);
+    localStorage.setItem(CACHE_KEY_TS, String(Date.now()));
+  } catch { /* localStorage full — ignore */ }
+  return JSON.parse(text);
+}
+
 async function loadData() {
   try {
     const t = Date.now();
-    const [r1, r2] = await Promise.all([
-      fetch(`${DATA_URL}?t=${t}`),
-      fetch(`${HISTORY_URL}?t=${t}`)
+
+    // Stage 1: small summary sidecar — fast first paint.
+    try {
+      const rs = await fetchWithRetry(`${SUMMARY_URL}?t=${t}`);
+      if (rs.ok) summary = await rs.json();
+    } catch { /* optional — fall back to client-side calc */ }
+
+    // Kick off metadata fetch in parallel (non-blocking).
+    fetchWithRetry(`${METADATA_URL}?t=${t}`).then(r => r.ok ? r.json() : null).then(m => {
+      if (m) { runMetadata = m; renderRunBadge(m); }
+    }).catch(() => {});
+
+    // Stage 2: full results + history.
+    const [data, r2] = await Promise.all([
+      loadResultsWithETagCache(),
+      fetchWithRetry(`${HISTORY_URL}?t=${t}`)
     ]);
-    if (!r1.ok) throw new Error(`HTTP ${r1.status}`);
-    const data = await r1.json();
     priceHistory = r2.ok ? await r2.json() : {};
-    // Count raw copies per player before dedup (includes sheet duplicates)
+
+    // Raw player copies before any dedup (used by player table copy count).
     const rawPlayerCounts = {};
     (data.cards || []).forEach(c => {
       const p = c.player || '?';
       rawPlayerCounts[p] = (rawPlayerCounts[p] || 0) + 1;
     });
-    // Deduplicate cards by card_id, keeping the most recently updated entry
-    if (Array.isArray(data.cards)) {
-      const seen = new Map();
-      data.cards.forEach(c => {
-        const prev = seen.get(c.card_id);
-        if (!prev || (c.last_updated && (!prev.last_updated || c.last_updated > prev.last_updated))) {
-          seen.set(c.card_id, c);
-        }
-      });
-      data.cards = [...seen.values()];
-    }
+
+    // Dev-only drift check: verify a handful of card IDs line up with the
+    // Python-generated history keys. Silent in release, warns in console.
+    driftCheck(data.cards || []);
+
     render(data, rawPlayerCounts);
   } catch (e) {
+    console.error('loadData failed:', e);
     showEmpty('No pricing data yet. Click ⚡ Update Prices to run the pricing agent.');
+  }
+}
+
+function driftCheck(cards) {
+  if (!cards.length || !Object.keys(priceHistory).length) return;
+  const sample = [];
+  for (let i = 0; i < Math.min(5, cards.length); i++) {
+    sample.push(cards[Math.floor(Math.random() * cards.length)]);
+  }
+  let misses = 0;
+  sample.forEach(c => {
+    if (c.card_id && !priceHistory[c.card_id]) misses++;
+  });
+  if (misses >= 3) {
+    console.warn('[drift] Possible cardId drift — ' + misses + '/' + sample.length + ' sampled cards have no history row.');
   }
 }
 
@@ -68,25 +154,147 @@ function cardId(c) {
     .toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
 }
 
+// ─── Shared pct-change helper (Phase 3.1) ─────────────────────────────────────
+// Returns the latest-vs-previous % change for a card, or null if history is thin.
+function pctChange(cOrId) {
+  const id = typeof cOrId === 'string' ? cOrId : (cOrId.card_id || cardId(cOrId));
+  const h  = priceHistory[id];
+  if (!h || h.length < 2) return null;
+  const prev = h[h.length - 2].price;
+  const curr = h[h.length - 1].price;
+  return prev ? (curr - prev) / prev * 100 : null;
+}
+
+// ─── Tiered % change over N days (Phase 4.1) ──────────────────────────────────
+// Finds the nearest history snapshot at least `days` days old and returns the
+// abs/pct change from that point to the current value. Null if no such point.
+function pctChangeOver(c, days) {
+  const id   = c.card_id || cardId(c);
+  const h    = priceHistory[id];
+  if (!h || h.length < 2) return null;
+  const now  = Date.now();
+  const curr = h[h.length - 1].price;
+  if (!curr) return null;
+  for (let i = h.length - 2; i >= 0; i--) {
+    const t = new Date(h[i].date).getTime();
+    if (!isNaN(t) && (now - t) >= days * 86400_000) {
+      const prev = h[i].price;
+      if (!prev) return null;
+      return {
+        pct: (curr - prev) / prev * 100,
+        abs: curr - prev,
+        fromDate: h[i].date,
+      };
+    }
+  }
+  return null;
+}
+
 // ─── Render ───────────────────────────────────────────────────────────────────
 function render(data, rawPlayerCounts = {}) {
   renderStats(data);
-  // Recompute top25 from deduped cards rather than using the pre-baked JSON value
-  const top25 = [...(data.cards || [])]
-    .filter(c => c.avg_price > 0)
-    .sort((a, b) => b.avg_price - a.avg_price)
-    .slice(0, 25);
+  renderPortfolioStats(data);   // HHI + confidence-weighted total (Phase 4.3 + 4.5)
+  // Top 25 from deduped cards (Python dedups; the field in data.top_cards is now authoritative).
+  const top25 = (data.top_cards && data.top_cards.length)
+    ? data.top_cards
+    : [...(data.cards || [])]
+        .filter(c => c.avg_price > 0)
+        .sort((a, b) => b.avg_price - a.avg_price)
+        .slice(0, 25);
   renderTopCards(top25);
   renderMarketMovers(data.cards || []);
+  renderDiffView(data.cards || []);   // Phase 4.2
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
   renderBrandChart(data.by_brand || {}, data.cards || []);
   renderPlayerStats(data.cards || [], rawPlayerCounts);
   allCards = data.cards || [];
+  // Rebuild the card lookup map for the delegated table click handler.
+  cardById = new Map(allCards.filter(c => c.card_id).map(c => [c.card_id, c]));
   populateYearFilter(allCards);
   populateTeamFilter(allCards);
   applyFilters();
   set('last-updated', data.last_updated ? new Date(data.last_updated).toLocaleString() : '—');
+}
+
+// ─── Portfolio-level insight cards (HHI + weighted total) ─────────────────────
+function renderPortfolioStats(data) {
+  const hhiEl = document.getElementById('stat-hhi');
+  const wtEl  = document.getElementById('stat-weighted');
+  if (!hhiEl && !wtEl) return;   // HTML not updated yet; skip
+
+  let hhi = summary && summary.hhi;
+  let weighted = summary && summary.weighted_total;
+
+  // Fallback compute if the summary sidecar is missing.
+  if (hhi == null || weighted == null) {
+    const priced = (data.cards || []).filter(c => c.avg_price > 0);
+    const total  = priced.reduce((s, c) => s + c.avg_price, 0) || 1;
+    if (hhi == null) {
+      hhi = Math.round(priced.reduce((s, c) => s + Math.pow(c.avg_price / total, 2), 0) * 10000 * 10) / 10;
+    }
+    if (weighted == null) {
+      const weightFor = conf => {
+        const lc = (conf || '').toLowerCase();
+        if (lc.includes('very high')) return 1.0;
+        if (lc.includes('high'))      return 0.8;
+        if (lc.includes('medium'))    return 0.6;
+        if (lc.includes('low'))       return 0.4;
+        if (lc.includes('tcdb') || lc.includes('floor')) return 0.3;
+        return 0.5;
+      };
+      weighted = Math.round(priced.reduce((s, c) => s + c.avg_price * weightFor(c.confidence), 0) * 100) / 100;
+    }
+  }
+  if (hhiEl) hhiEl.textContent = hhi != null ? hhi.toLocaleString() : '—';
+  if (wtEl)  wtEl.textContent  = weighted != null ? '$' + weighted.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
+
+  const interpEl = document.getElementById('stat-hhi-interp');
+  if (interpEl && hhi != null) {
+    let label;
+    if (hhi < 100)      label = 'very diversified';
+    else if (hhi < 500) label = 'diversified';
+    else if (hhi < 1500) label = 'moderate concentration';
+    else if (hhi < 2500) label = 'concentrated';
+    else                 label = 'highly concentrated';
+    interpEl.textContent = label;
+  }
+}
+
+// ─── Run metadata badge ────────────────────────────────────────────────────────
+function renderRunBadge(m) {
+  const el = document.getElementById('run-badge');
+  if (!el || !m) return;
+  const api = m.api_calls || {};
+  const hits = api.ebay_hits || 0, misses = api.ebay_misses || 0;
+  el.textContent = `Last run: ${m.cards_priced || 0}/${m.cards_processed || 0} cards • ${misses} eBay calls • ${hits} cache hits • ${api.claude || 0} Claude calls`;
+}
+
+// ─── Diff view (Phase 4.2) ─────────────────────────────────────────────────────
+function renderDiffView(cards) {
+  const el = document.getElementById('diff-view');
+  if (!el) return;
+  const items = cards.map(c => {
+    const p = pctChange(c);
+    if (p == null) return null;
+    const id = c.card_id || cardId(c);
+    const h = priceHistory[id];
+    const prev = h[h.length - 2].price, curr = h[h.length - 1].price;
+    return { c, pct: p, prev, curr, abs: curr - prev };
+  }).filter(Boolean).sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct)).slice(0, 20);
+
+  if (!items.length) {
+    el.innerHTML = '<div class="state-empty">Run the agent at least twice to see a diff view</div>';
+    return;
+  }
+  el.innerHTML = items.map(({ c, pct, prev, curr, abs }) => {
+    const up = pct >= 0, sign = up ? '+' : '';
+    return `<div class="diff-row" data-card-id="${esc(c.card_id || cardId(c))}">
+      <span class="diff-name">${esc(c.player)} <span class="diff-meta">${c.year} ${esc(c.brand)}</span></span>
+      <span class="diff-prev">${fmt$(prev)} → ${fmt$(curr)}</span>
+      <span class="diff-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${fmt$(abs)} (${sign}${pct.toFixed(1)}%)</span>
+    </div>`;
+  }).join('');
 }
 
 function renderStats(data) {
@@ -111,7 +319,7 @@ function renderTopCards(cards) {
   const el = document.getElementById('top-cards-list');
   if (!cards.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
   el.innerHTML = cards.map((c, i) => `
-    <div class="top-card-row" onclick="openCardModal(${safeJson(c)})">
+    <div class="top-card-row" data-card-id="${esc(c.card_id || cardId(c))}">
       <span class="top-card-rank">${i + 1}</span>
       <span class="top-card-name" title="${esc(c.player)} — ${esc(c.brand)}">${esc(c.player)}</span>
       <span class="top-card-year">${c.year}</span>
@@ -124,13 +332,9 @@ function renderMarketMovers(cards) {
   const el = document.getElementById('market-movers');
   const movers = cards
     .map(c => {
-      const id  = cardId(c);
-      const h   = priceHistory[id];
-      if (!h || h.length < 2) return null;
-      const prev = h[h.length - 2].price;
-      const curr = parseFloat(c.avg_price);
-      if (!prev || !curr) return null;
-      return { ...c, prev_price: prev, delta: curr - prev, pct: (curr - prev) / prev * 100 };
+      const pct = pctChange(c);
+      if (pct == null) return null;
+      return { card: c, pct };
     })
     .filter(Boolean)
     .sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct))
@@ -140,16 +344,16 @@ function renderMarketMovers(cards) {
     el.innerHTML = '<div class="state-empty">Run the agent at least twice to see movers</div>';
     return;
   }
-  el.innerHTML = movers.map(c => {
-    const up = c.pct >= 0, sign = up ? '+' : '';
+  el.innerHTML = movers.map(({ card: c, pct }) => {
+    const up = pct >= 0, sign = up ? '+' : '';
     return `
-      <div class="mover-row" onclick="openCardModal(${safeJson(c)})">
+      <div class="mover-row" data-card-id="${esc(c.card_id || cardId(c))}">
         <div class="mover-info">
           <span class="mover-name">${esc(c.player)}</span>
           <span class="mover-meta">${c.year} ${esc(c.brand)}</span>
         </div>
         <span class="mover-price">${fmt$(c.avg_price)}</span>
-        <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${c.pct.toFixed(1)}%</span>
+        <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${pct.toFixed(1)}%</span>
       </div>`;
   }).join('');
 }
@@ -414,10 +618,17 @@ function renderPlayerStats(cards, rawPlayerCounts) {
     }
   });
 
+  // Phase 4.4: pull server-precomputed volatility when present.
+  const volByPlayer = {};
+  if (summary && Array.isArray(summary.player_stats)) {
+    summary.player_stats.forEach(s => { if (s && s.player != null) volByPlayer[s.player] = s.volatility; });
+  }
+
   playerRows = Object.values(map).map(d => ({
     ...d,
-    copies:    rawPlayerCounts[d.player] || d.unique,
-    avg_price: d.prices.length ? d.total_value / d.prices.length : 0,
+    copies:     rawPlayerCounts[d.player] || d.unique,
+    avg_price:  d.prices.length ? d.total_value / d.prices.length : 0,
+    volatility: volByPlayer[d.player] != null ? volByPlayer[d.player] : null,
   }));
 
   drawPlayerStats('');
@@ -440,9 +651,11 @@ function drawPlayerStats(query) {
     `${rows.length.toLocaleString()} player${rows.length !== 1 ? 's' : ''}`;
 
   if (!rows.length) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#555;padding:20px">No players found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#555;padding:20px">No players found</td></tr>`;
     return;
   }
+
+  const fmtVol = v => (v == null || !isFinite(v)) ? '—' : (v * 100).toFixed(1) + '%';
 
   tbody.innerHTML = rows.map(r => `
     <tr>
@@ -451,6 +664,7 @@ function drawPlayerStats(query) {
       <td class="ps-num">${r.unique.toLocaleString()}</td>
       <td class="ps-num">${r.copies.toLocaleString()}</td>
       <td class="ps-num">${r.avg_price > 0 ? fmt$(r.avg_price) : '—'}</td>
+      <td class="ps-num ps-vol" title="Std-dev of per-card % change over recent history">${fmtVol(r.volatility)}</td>
       <td class="ps-top">${r.top_card ? `<span class="ps-top-label">${esc(r.top_card.label)}</span> <span class="ps-top-price">${fmt$(r.top_card.price)}</span>` : '—'}</td>
     </tr>`).join('');
 }
@@ -534,18 +748,18 @@ function ageClass(lastUpdated) {
 }
 
 function buildRowHtml(c) {
-  const id = cardId(c), hist = priceHistory[id];
-  let changeTxt = '<span class="roi-na">—</span>';
-  if (hist && hist.length >= 2) {
-    const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
-    if (prev && curr) {
-      const pct = (curr-prev)/prev*100;
-      changeTxt = `<span class="${pct>=0?'roi-pos':'roi-neg'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
-    }
-  }
-  const spark = hist && hist.length >= 2 ? sparkline(hist.map(h => h.price)) : '<span class="no-spark">—</span>';
+  const id   = c.card_id || cardId(c);
+  const pct  = pctChange(c);
+  const changeTxt = pct == null
+    ? '<span class="roi-na">—</span>'
+    : `<span class="${pct>=0?'roi-pos':'roi-neg'}">${pct>=0?'+':''}${pct.toFixed(1)}%</span>`;
+  // Lazy sparkline: render placeholder; fill when row enters the Clusterize buffer.
+  const hist = priceHistory[id];
+  const spark = hist && hist.length >= 2
+    ? `<span class="sparkline" data-card-id="${esc(id)}"></span>`
+    : '<span class="no-spark">—</span>';
   const ageCls = ageClass(c.last_updated);
-  return `<tr class="card-row" onclick="openCardModal(${safeJson(c)})">
+  return `<tr class="card-row" data-card-id="${esc(id)}">
     <td>${esc(c.player)}</td>
     <td>${c.year}</td>
     <td>${esc(c.brand)}</td>
@@ -558,6 +772,16 @@ function buildRowHtml(c) {
     <td>${confidenceBadge(c.confidence)}</td>
     <td class="num ${ageCls}">${fmtDate(c.last_updated)}</td>
   </tr>`;
+}
+
+function hydrateVisibleSparklines() {
+  const table = document.getElementById('cards-tbody');
+  if (!table) return;
+  table.querySelectorAll('span.sparkline[data-card-id]:empty').forEach(span => {
+    const id = span.dataset.cardId;
+    const h  = priceHistory[id];
+    if (h && h.length >= 2) span.innerHTML = sparkline(h.map(r => r.price));
+  });
 }
 
 function renderTable() {
@@ -575,10 +799,15 @@ function renderTable() {
       contentId:  'cards-tbody',
       no_data_text: emptyRow,
       callbacks: {
-        // re-attach click handlers not needed — we embed onclick in the row HTML
+        // Fill the sparkline <span>s only when a row enters the viewport buffer.
+        clusterChanged: hydrateVisibleSparklines,
       }
     });
   }
+  hydrateVisibleSparklines();
+  // Reset scroll so filtered results start at the top.
+  const scroller = document.getElementById('table-scroll-area');
+  if (scroller) scroller.scrollTop = 0;
 }
 
 function populateYearFilter(cards) {
@@ -619,6 +848,17 @@ function openCardModal(card) {
   const tp   = parseFloat(card.tcdb_price)||0;
 
   set('modal-card-title', `${card.player} — ${card.year} ${card.brand}`);
+
+  // Phase 4.1: tiered deltas.
+  const tier = [7, 30, 365].map(days => {
+    const d = pctChangeOver(card, days);
+    const label = days === 365 ? 'YoY' : `${days}d`;
+    if (!d) return `<div class="cd-tier"><span class="cd-tier-label">${label}</span><span class="cd-tier-value">—</span></div>`;
+    const up = d.pct >= 0, sign = up ? '+' : '';
+    return `<div class="cd-tier ${up ? 'delta-up' : 'delta-down'}"><span class="cd-tier-label">${label}</span>
+      <span class="cd-tier-value">${sign}${fmt$(d.abs)} (${sign}${d.pct.toFixed(1)}%)</span></div>`;
+  }).join('');
+
   document.getElementById('modal-card-body').innerHTML = `
     <div class="card-detail-grid">
       <div class="cd-item"><span class="cd-label">eBay Market Value</span><span class="cd-value" style="color:#4CAF50">${fmt$(cp||null)}</span></div>
@@ -627,6 +867,10 @@ function openCardModal(card) {
       <div class="cd-item"><span class="cd-label">Card #</span><span class="cd-value">${esc(card.card_number||'—')}</span></div>
       <div class="cd-item"><span class="cd-label">Team</span><span class="cd-value">${esc(card.team||'—')}</span></div>
       <div class="cd-item"><span class="cd-label">Updated</span><span class="cd-value">${fmtDate(card.last_updated)}</span></div>
+    </div>
+    <div class="card-detail-tiers">
+      <div class="cd-tiers-title">Price change</div>
+      <div class="cd-tiers">${tier}</div>
     </div>
     ${hist.length >= 2 ? cardHistoryChart(hist) : '<div class="state-empty" style="padding:18px 0">History appears after 2+ runs for this card</div>'}
     <div class="card-detail-links">
@@ -668,15 +912,11 @@ function cardHistoryChart(hist) {
 function exportCSV() {
   const headers = ['Player','Year','Brand','Card #','Team','eBay Value','TCDB Ref','Change %','Confidence','Last Updated'];
   const rows = filtered.map(c => {
-    const hist = priceHistory[cardId(c)];
-    let changePct = '';
-    if (hist && hist.length >= 2) {
-      const prev = hist[hist.length-2].price, curr = parseFloat(c.avg_price);
-      if (prev && curr) changePct = ((curr-prev)/prev*100).toFixed(1);
-    }
+    const pct = pctChange(c);
     return [
       c.player, c.year, c.brand, c.card_number||'', c.team||'',
-      c.avg_price||'', c.tcdb_price||'', changePct,
+      c.avg_price||'', c.tcdb_price||'',
+      pct == null ? '' : pct.toFixed(1),
       c.confidence||'', c.last_updated||''
     ].map(v => `"${String(v||'').replace(/"/g,'""')}"`).join(',');
   });
@@ -689,13 +929,27 @@ function exportCSV() {
 
 // ─── Debounce helper ──────────────────────────────────────────────────────────
 function debounce(fn, delay = 250) {
+  // Slower debounce on slow connections for less jank while typing.
+  const effectiveDelay = (navigator.connection && /2g|slow/i.test(navigator.connection.effectiveType || ''))
+    ? delay + 150 : delay;
   let t;
-  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), delay); };
+  return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), effectiveDelay); };
+}
+
+// ─── Delegated card-open handler ──────────────────────────────────────────────
+function bindCardClickDelegation() {
+  document.addEventListener('click', e => {
+    const row = e.target.closest('[data-card-id]');
+    if (!row) return;
+    const id = row.dataset.cardId;
+    const card = cardById.get(id);
+    if (card) openCardModal(card);
+  });
 }
 
 // ─── UI Bindings ──────────────────────────────────────────────────────────────
 function bindUI() {
-  document.getElementById('table-search').addEventListener('input', debounce(applyFilters));
+  document.getElementById('table-search').addEventListener('input', debounce(applyFilters, 350));
   document.getElementById('filter-year').addEventListener('change', applyFilters);
   document.getElementById('filter-team').addEventListener('change', applyFilters);
   document.getElementById('filter-confidence').addEventListener('change', applyFilters);
@@ -723,6 +977,7 @@ function bindUI() {
   document.getElementById('btn-close-card').addEventListener('click', () => closeModal('modal-card'));
   bindRunModeUI();
   bindPlayerStats();
+  bindCardClickDelegation();
 
   const pat = getPAT();
   if (pat) document.getElementById('input-pat').value = pat;
@@ -739,7 +994,7 @@ function openSettings() {
 }
 function saveSettings() {
   const pat = document.getElementById('input-pat').value.trim();
-  if (pat) { localStorage.setItem('gh_pat', pat); closeModal('modal-settings'); }
+  if (pat) { sessionStorage.setItem('gh_pat', pat); closeModal('modal-settings'); }
 }
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
@@ -800,6 +1055,23 @@ async function triggerRun() {
     return;
   }
 
+  // Input validation (Phase 3.6).
+  const batchN = parseInt(batch, 10);
+  if (isNaN(batchN) || batchN < 10 || batchN > 500) {
+    setRunStatus('error', '❌ Batch size must be between 10 and 500.');
+    return;
+  }
+  const staleN = parseInt(document.getElementById('input-stale-days').value || '30', 10);
+  if (!force && (isNaN(staleN) || staleN < 1 || staleN > 365)) {
+    setRunStatus('error', '❌ Stale days must be between 1 and 365.');
+    return;
+  }
+  const startN = parseInt(document.getElementById('input-start-row').value || '0', 10);
+  if (isNaN(startN) || startN < 0 || startN > 10000) {
+    setRunStatus('error', '❌ Start row must be between 0 and 10,000.');
+    return;
+  }
+
   const btn = document.getElementById('btn-confirm-run');
   btn.disabled = true; btn.textContent = 'Starting…';
   setRunStatus('', '');
@@ -808,7 +1080,7 @@ async function triggerRun() {
   const inputs = { run_mode: mode, batch_size: String(batch), target_player: player, stale_days: stale, start_row: startRow };
 
   try {
-    const res = await fetch(
+    const res = await fetchWithRetry(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/workflows/${WORKFLOW_ID}/dispatches`,
       { method:'POST',
         headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json',
@@ -850,6 +1122,7 @@ function updateTracker(status, conclusion, elapsedSec) {
 
 function startRunPoll(pat) {
   stopRunPoll();
+  runPollTicks = 0;
   runTickTimer = setInterval(() => {
     if (!runStartTime) return;
     const e = Math.floor((Date.now()-runStartTime)/1000);
@@ -858,8 +1131,15 @@ function startRunPoll(pat) {
   }, 1000);
 
   runPollTimer = setInterval(async () => {
+    // Hard cap the poller so runaway/stuck runs don't spin forever.
+    runPollTicks += 1;
+    if (runPollTicks > POLL_MAX_TICKS) {
+      stopRunPoll();
+      setRunStatus('error', '⚠️ Stopped watching after 10 min — check GitHub Actions directly.');
+      return;
+    }
     try {
-      const r = await fetch(
+      const r = await fetchWithRetry(
         `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?event=workflow_dispatch&per_page=5`,
         { headers:{ 'Authorization':`Bearer ${pat}`, 'Accept':'application/vnd.github+json' } }
       );
@@ -912,7 +1192,7 @@ async function abortRun() {
     // activeRunId is set by the poll timer, which fires every 15s.
     // If the user clicks Cancel before the first poll, fetch the run ID now.
     if (!activeRunId) {
-      const r = await fetch(
+      const r = await fetchWithRetry(
         `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs?event=workflow_dispatch&per_page=5`,
         { headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
       );
@@ -930,7 +1210,7 @@ async function abortRun() {
       return;
     }
 
-    await fetch(
+    await fetchWithRetry(
       `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/actions/runs/${activeRunId}/cancel`,
       { method: 'POST', headers: { 'Authorization': `Bearer ${pat}`, 'Accept': 'application/vnd.github+json' } }
     );
@@ -950,7 +1230,12 @@ function setRunStatus(type, msg) {
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-function getPAT()        { return localStorage.getItem('gh_pat')||''; }
+function getPAT()        {
+  // Migrate legacy localStorage token to sessionStorage once, then clear the persistent copy.
+  const legacy = localStorage.getItem('gh_pat');
+  if (legacy) { sessionStorage.setItem('gh_pat', legacy); localStorage.removeItem('gh_pat'); }
+  return sessionStorage.getItem('gh_pat') || '';
+}
 function openModal(id)   { document.getElementById(id).classList.remove('hidden'); }
 function closeModal(id)  { document.getElementById(id).classList.add('hidden'); }
 function set(id, val)    { const el=document.getElementById(id); if(el) el.textContent=val; }

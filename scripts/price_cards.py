@@ -43,7 +43,7 @@ SHEET_NAME         = 'Pricing Sheet'
 RESULTS_FILE       = 'data/pricing_results.json'
 BATCH_SIZE         = int(os.environ.get('BATCH_SIZE', '200'))
 STALE_DAYS         = int(os.environ.get('STALE_DAYS', '30'))  # re-price cards older than this (0 = force all)
-HIGH_VALUE_THRESH  = 20.0        # use Claude for cards above this price
+HIGH_VALUE_THRESH  = 10.0        # use Claude for cards above this price (lowered from $20 to widen the tighter-refresh band)
 LOW_DATA_THRESH    = 3           # use Claude if fewer than this many comps
 CLAUDE_MIN_COMPS   = 15          # skip Claude for high-value cards that already have this many comps
 EBAY_SLEEP_MS      = 100         # ms between eBay API calls
@@ -56,6 +56,11 @@ EBAY_QUOTA_MIN     = 50          # exit gracefully when fewer than this many cal
 HISTORY_FILE       = 'data/price_history.json'
 HISTORY_MAX        = 24          # snapshots per card (≈2 years of monthly runs)
 FULL_RUN_CHUNK     = 200         # cards per incremental commit in full mode
+EBAY_CACHE_FILE    = 'data/ebay_cache.json'
+EBAY_CACHE_PERSIST_TTL = 24 * 3600   # 24 h — skip the eBay call entirely if result is fresher than this
+EBAY_CACHE_PRUNE_DAYS  = 7           # drop persisted entries older than this on save
+RUN_METADATA_FILE  = 'data/run_metadata.json'
+SUMMARY_FILE       = 'data/pricing_summary.json'
 
 RUN_MODE      = os.environ.get('RUN_MODE', 'batch').lower()   # batch | full | player | tcdb
 TARGET_PLAYER = os.environ.get('TARGET_PLAYER', '').strip().lower()
@@ -127,6 +132,48 @@ def parse_price(val: str) -> Optional[float]:
         return float(cleaned) if cleaned else None
     except ValueError:
         return None
+
+
+def audit_input_rows(rows: list[list]) -> dict:
+    """Scan the sheet for data-entry issues. LOG ONLY — never filters rows.
+    Returns counts so the run_metadata can surface them for the owner."""
+    if len(rows) < 2:
+        return {'empty_player': 0, 'missing_brand': 0, 'bad_year': 0, 'negative_price': 0}
+    def get(r, col): return (r[col].strip() if col < len(r) and r[col] else '')
+
+    empty_player = missing_brand = bad_year = negative_price = 0
+    now_year = datetime.now(timezone.utc).year
+    for i, row in enumerate(rows[1:], start=2):
+        player = get(row, C['PLAYER'])
+        year   = get(row, C['YEAR'])
+        brand  = get(row, C['BRAND'])
+        tcdb   = get(row, C['TCDB_PRICE'])
+        if not player:
+            empty_player += 1
+            log.warning('Input row %d has no player name', i)
+        if not brand:
+            missing_brand += 1
+            log.warning('Input row %d (%s) has no brand', i, player or '?')
+        if year:
+            try:
+                y = int(year)
+                if y < 1850 or y > now_year + 1:
+                    bad_year += 1
+                    log.warning('Input row %d (%s) has out-of-range year "%s"', i, player or '?', year)
+            except ValueError:
+                bad_year += 1
+                log.warning('Input row %d (%s) has non-numeric year "%s"', i, player or '?', year)
+        if tcdb:
+            p = parse_price(tcdb)
+            if p is not None and p < 0:
+                negative_price += 1
+                log.warning('Input row %d (%s) has negative TCDB price %s', i, player or '?', tcdb)
+    return {
+        'empty_player':  empty_player,
+        'missing_brand': missing_brand,
+        'bad_year':      bad_year,
+        'negative_price': negative_price,
+    }
 
 
 # ══════════════════════════════════════════════════════════════════════════════
@@ -215,7 +262,67 @@ _ebay_quota_exhausted: bool = False   # set True on any 429 → triggers gracefu
 # Prevents duplicate API calls when multiple cards share the same query
 # (same player/year/brand, different card number).
 _ebay_cache:  dict[str, tuple[float, list]] = {}
-EBAY_CACHE_TTL  = 600   # 10 minutes
+EBAY_CACHE_TTL  = 600   # 10 minutes (in-memory fast-path)
+
+# Persistent disk cache — survives across GHA runs. Skips eBay entirely when a
+# recent result is already on disk. Counters power run_metadata telemetry.
+_ebay_persist_cache: dict[str, dict] = {}   # {cache_key: {'ts': float, 'items': list}}
+_ebay_persist_loaded: bool = False
+_ebay_cache_hits:     int  = 0
+_ebay_cache_misses:   int  = 0
+
+
+def _load_ebay_persist_cache():
+    """Load the on-disk eBay cache once per run. Safe to call repeatedly."""
+    global _ebay_persist_cache, _ebay_persist_loaded
+    if _ebay_persist_loaded:
+        return
+    _ebay_persist_loaded = True
+    try:
+        with open(EBAY_CACHE_FILE) as f:
+            raw = json.load(f)
+        if isinstance(raw, dict):
+            _ebay_persist_cache = raw
+            log.info('Loaded %d persisted eBay cache entries', len(_ebay_persist_cache))
+    except (FileNotFoundError, json.JSONDecodeError):
+        _ebay_persist_cache = {}
+
+
+def _save_ebay_persist_cache():
+    """Write the eBay cache to disk, pruning entries older than EBAY_CACHE_PRUNE_DAYS."""
+    if not _ebay_persist_loaded:
+        return
+    try:
+        os.makedirs('data', exist_ok=True)
+        cutoff = time.time() - EBAY_CACHE_PRUNE_DAYS * 86400
+        pruned = {k: v for k, v in _ebay_persist_cache.items()
+                  if isinstance(v, dict) and v.get('ts', 0) >= cutoff}
+        with open(EBAY_CACHE_FILE, 'w') as f:
+            json.dump(pruned, f, separators=(',', ':'))
+        log.info('Saved eBay cache: %d entries (%.0f KB), hits=%d misses=%d',
+                 len(pruned), os.path.getsize(EBAY_CACHE_FILE) / 1024,
+                 _ebay_cache_hits, _ebay_cache_misses)
+    except Exception as e:
+        log.warning('Failed to save eBay cache: %s', e)
+
+
+def _persist_cache_get(key: str) -> Optional[list]:
+    """Return cached items if fresher than EBAY_CACHE_PERSIST_TTL, else None."""
+    _load_ebay_persist_cache()
+    entry = _ebay_persist_cache.get(key)
+    if not entry:
+        return None
+    if time.time() - entry.get('ts', 0) >= EBAY_CACHE_PERSIST_TTL:
+        return None
+    return entry.get('items')
+
+
+def _persist_cache_put(key: str, items: list):
+    """Store items in the on-disk cache. No-op on empty items to force re-fetch next time."""
+    if not items:
+        return
+    _load_ebay_persist_cache()
+    _ebay_persist_cache[key] = {'ts': time.time(), 'items': items}
 
 
 def get_ebay_token() -> str:
@@ -286,18 +393,28 @@ def _check_ebay_quota(headers: dict):
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     """Search eBay Browse API. Any 429 triggers an immediate graceful save+exit —
     there is nothing productive to do while throttled, and waiting wastes runner minutes."""
-    global _ebay_quota_exhausted
+    global _ebay_quota_exhausted, _ebay_cache_hits, _ebay_cache_misses
 
     if _ebay_quota_exhausted:
         raise EbayQuotaExhausted('eBay quota already exhausted this run.')
 
-    # Check query cache — skip the API call if we fetched this recently
+    # 1. In-memory cache — same-run duplicate queries
     cache_key = f'{query}|{price_filter or ""}'
     _now_ts   = time.time()
     _cached   = _ebay_cache.get(cache_key)
     if _cached and _now_ts - _cached[0] < EBAY_CACHE_TTL:
-        log.debug('eBay cache hit for "%s"', query)
+        log.debug('eBay cache hit (mem) for "%s"', query)
+        _ebay_cache_hits += 1
         return _cached[1]
+
+    # 2. Persistent cache — skip eBay entirely if a fresh result is on disk
+    persisted = _persist_cache_get(cache_key)
+    if persisted is not None:
+        log.debug('eBay cache hit (disk) for "%s"', query)
+        _ebay_cache[cache_key] = (_now_ts, persisted)   # warm in-memory
+        _ebay_cache_hits += 1
+        return persisted
+    _ebay_cache_misses += 1
 
     token      = get_ebay_token()
     filter_str = f'buyingOptions:{{FIXED_PRICE|AUCTION}},price:[{price_filter or EBAY_PRICE_RANGE}],itemLocationCountry:US'
@@ -328,6 +445,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
                 result = r.json().get('itemSummaries', [])
                 if result:   # don't cache empty results (re-fetch on next call)
                     _ebay_cache[cache_key] = (time.time(), result)
+                    _persist_cache_put(cache_key, result)
                 return result
 
             if r.status_code == 429:
@@ -854,6 +972,144 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
     }
 
 
+# ══════════════════════════════════════════════════════════════════════════════
+# Optional free pricing sources (Phase 6.1 + 6.2) — opt-in via env flags.
+# Both are cached aggressively so they don't add material API volume.
+# ══════════════════════════════════════════════════════════════════════════════
+
+PRICECHARTING_ENABLED = os.environ.get('PRICECHARTING_ENABLED', '').lower() in ('1', 'true', 'yes')
+PRICECHARTING_CACHE   = 'data/pricecharting_cache.csv'
+PRICECHARTING_MAX_AGE = 7 * 86400   # refresh weekly
+
+HUNDRED_THIRTY_POINT_ENABLED = os.environ.get('HUNDRED_THIRTY_POINT_ENABLED', '').lower() in ('1', 'true', 'yes')
+HTP_CACHE_FILE   = 'data/130point_cache.json'
+HTP_CACHE_TTL    = 7 * 86400
+HTP_MIN_COMPS    = 5
+HTP_RATE_LIMIT_S = 5
+
+_pricecharting_map: Optional[dict] = None
+_htp_cache: Optional[dict]         = None
+_htp_last_ts: float                = 0.0
+
+
+def _load_pricecharting_map() -> dict:
+    """Lazy-load the PriceCharting reference CSV into {(year, brand, player): price}.
+    Refreshes weekly. Returns {} if disabled or unreachable."""
+    global _pricecharting_map
+    if _pricecharting_map is not None:
+        return _pricecharting_map
+    if not PRICECHARTING_ENABLED:
+        _pricecharting_map = {}
+        return _pricecharting_map
+    try:
+        need_refresh = (
+            not os.path.exists(PRICECHARTING_CACHE)
+            or (time.time() - os.path.getmtime(PRICECHARTING_CACHE)) > PRICECHARTING_MAX_AGE
+        )
+        if need_refresh:
+            url = os.environ.get('PRICECHARTING_CSV_URL', '')
+            if not url:
+                log.warning('PriceCharting enabled but PRICECHARTING_CSV_URL not set — skipping')
+                _pricecharting_map = {}
+                return _pricecharting_map
+            r = requests.get(url, timeout=30)
+            r.raise_for_status()
+            os.makedirs('data', exist_ok=True)
+            with open(PRICECHARTING_CACHE, 'wb') as f:
+                f.write(r.content)
+            log.info('PriceCharting CSV refreshed (%d bytes)', len(r.content))
+        import csv
+        _pricecharting_map = {}
+        with open(PRICECHARTING_CACHE, newline='', encoding='utf-8', errors='replace') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                key = (
+                    str(row.get('year', '')).strip(),
+                    str(row.get('brand', '') or row.get('set', '')).strip().lower(),
+                    str(row.get('player', '') or row.get('name', '')).strip().lower(),
+                )
+                price = parse_price(row.get('loose-price') or row.get('price') or '')
+                if all(key) and price:
+                    _pricecharting_map[key] = price
+        log.info('Loaded %d PriceCharting reference prices', len(_pricecharting_map))
+    except Exception as e:
+        log.warning('PriceCharting load failed: %s', e)
+        _pricecharting_map = {}
+    return _pricecharting_map
+
+
+def pricecharting_lookup(card: dict) -> Optional[float]:
+    """Return a PriceCharting reference price or None."""
+    m = _load_pricecharting_map()
+    if not m:
+        return None
+    key = (str(card.get('year', '')).strip(),
+           str(card.get('brand', '')).strip().lower(),
+           str(card.get('player', '')).strip().lower())
+    return m.get(key)
+
+
+def _load_htp_cache():
+    global _htp_cache
+    if _htp_cache is not None:
+        return _htp_cache
+    try:
+        with open(HTP_CACHE_FILE) as f:
+            _htp_cache = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        _htp_cache = {}
+    return _htp_cache
+
+
+def _save_htp_cache():
+    if _htp_cache is None:
+        return
+    try:
+        os.makedirs('data', exist_ok=True)
+        with open(HTP_CACHE_FILE, 'w') as f:
+            json.dump(_htp_cache, f, separators=(',', ':'))
+    except Exception as e:
+        log.warning('Failed to save 130point cache: %s', e)
+
+
+def htp_sold_comps(card: dict) -> list[float]:
+    """Fetch 130point sold comps for high-value cards. Cached 7 days per query.
+    Returns a list of sale prices, or [] if disabled/empty/failed."""
+    global _htp_last_ts
+    if not HUNDRED_THIRTY_POINT_ENABLED:
+        return []
+    cache = _load_htp_cache()
+    q = f"{card.get('year', '')} {card.get('brand', '')} {card.get('player', '')} {card.get('card_number', '')}".strip().lower()
+    entry = cache.get(q)
+    if entry and time.time() - entry.get('ts', 0) < HTP_CACHE_TTL:
+        return entry.get('prices', [])
+    # Polite rate limit.
+    delta = time.time() - _htp_last_ts
+    if delta < HTP_RATE_LIMIT_S:
+        time.sleep(HTP_RATE_LIMIT_S - delta)
+    _htp_last_ts = time.time()
+    try:
+        r = requests.get(
+            'https://130point.com/sales/',
+            params={'q': q},
+            timeout=20,
+            headers={'User-Agent': 'baseball-cards-pricing-agent/1.0 (+github.com/benjamin-cooper/baseball-cards)'},
+        )
+        if r.status_code != 200:
+            log.info('130point returned %s for "%s"', r.status_code, q)
+            cache[q] = {'ts': time.time(), 'prices': []}
+            _save_htp_cache()
+            return []
+        prices = re.findall(r'\$(\d+(?:\.\d{1,2})?)', r.text)
+        nums = [float(p) for p in prices if 1.0 <= float(p) <= 5000.0]
+        cache[q] = {'ts': time.time(), 'prices': nums}
+        _save_htp_cache()
+        return nums
+    except Exception as e:
+        log.warning('130point fetch failed for "%s": %s', q, e)
+        return []
+
+
 def floor_value(year: str, brand: str) -> float:
     """Minimum value for a card with no market data at all.
     This is a true last resort — prefer TCDB reference or relaxed eBay comps first.
@@ -1017,8 +1273,12 @@ def execute_tool(name: str, inputs: dict, card: dict = None) -> str:
     return 'Unknown tool.'
 
 
+_claude_call_count = 0
+
 def price_with_claude(card: dict) -> Optional[dict]:
     """Call Claude with tool use to price a difficult card."""
+    global _claude_call_count
+    _claude_call_count += 1
     client = get_claude()
     tcdb_ref     = card.get('tcdb_price') or 'unknown'
     team_aliases = _team_variants(card.get('team', ''))
@@ -1127,20 +1387,32 @@ def needs_pricing(row: list, row_index: int, existing_by_id: dict = None) -> boo
                 lu = lu.replace(tzinfo=timezone.utc)
             age_days = (datetime.now(timezone.utc) - lu).days
 
-            # Low-confidence prices go stale faster — re-target after 7 days
-            # regardless of the global STALE_DAYS setting.  These were priced
-            # off TCDB reference or floor values (often due to eBay throttling)
-            # and should be refreshed as soon as market data is available.
-            LOW_CONF = ('low', 'floor value')
-            if any(lc in confidence.lower() for lc in LOW_CONF):
-                if age_days < 7:
-                    return False
-            elif age_days < STALE_DAYS:
+            threshold = _freshness_threshold_days(price, confidence)
+            if age_days < threshold:
                 return False
         except Exception:
             pass
 
     return True
+
+
+def _freshness_threshold_days(price_str, confidence: str) -> int:
+    """How many days a card's price can be reused before we re-price it.
+    Cheap commons refresh slowly, high-value cards refresh weekly. TCDB fallbacks
+    and low-confidence rows refresh sooner because they lack real market data."""
+    try:
+        price = float(price_str) if price_str else 0.0
+    except (TypeError, ValueError):
+        price = 0.0
+    conf_lc = (confidence or '').lower()
+    if 'tcdb' in conf_lc or 'floor' in conf_lc:
+        return 14
+    if 'low' in conf_lc:
+        return 7
+    if price < 1.0:  return 60
+    if price < 5.0:  return 30
+    if price < HIGH_VALUE_THRESH: return 14   # $5–$10
+    return 7                                  # ≥ HIGH_VALUE_THRESH = refresh weekly
 
 
 def process_card(row: list, row_number: int) -> Optional[dict]:
@@ -1191,6 +1463,37 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             ebay_count = len(relaxed_ebay)
             log.info('  → Relaxed filter: %d comps', result['count'])
 
+    # ── Step 1c-1: PriceCharting (Phase 6.1) ──────────────────────────────────
+    # Cross-check / supplement when eBay data is thin. Zero per-card API cost —
+    # the weekly-cached CSV has already been loaded once.
+    if result['count'] < LOW_DATA_THRESH:
+        pc_price = pricecharting_lookup(card)
+        if pc_price and pc_price > 0:
+            log.info('  → PriceCharting reference: $%.2f', pc_price)
+            if result['count'] == 0:
+                result = {'price': pc_price, 'count': 1, 'median': pc_price,
+                          'min': pc_price, 'max': pc_price}
+                fallback = 'pricecharting'
+            else:
+                # Blend with the existing (thin) eBay data.
+                result['price'] = round((result['price'] + pc_price) / 2, 2)
+
+    # ── Step 1c-2: 130point sold comps (Phase 6.2) ────────────────────────────
+    # Only fire for high-value cards where we'd otherwise call Claude.
+    if (result.get('price', 0) >= HIGH_VALUE_THRESH
+            and result['count'] < CLAUDE_MIN_COMPS
+            and HUNDRED_THIRTY_POINT_ENABLED):
+        htp_prices = htp_sold_comps(card)
+        if len(htp_prices) >= HTP_MIN_COMPS:
+            # Feed 130point prices through weighted_average for IQR outlier removal.
+            synthetic = [{'price': p, 'listing_type': 'Sold', 'end_date': None}
+                         for p in htp_prices]
+            htp_result = weighted_average(synthetic)
+            if htp_result.get('count', 0) >= HTP_MIN_COMPS:
+                log.info('  → 130point: %d sold comps $%.2f', htp_result['count'], htp_result['price'])
+                result = htp_result
+                fallback = '130point'
+
     # ── Step 1c: TCDB reference price ─────────────────────────────────────────
     # If both filters still come up empty but TCDB has a value, use it as our
     # estimate rather than jumping straight to a generic floor.
@@ -1213,6 +1516,9 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         or (result['price'] >= HIGH_VALUE_THRESH and result['count'] < CLAUDE_MIN_COMPS)
         or fallback == 'tcdb'   # stale column F value — ask Claude to verify against live TCDB
     )
+    # Phase 6.2: skip Claude when 130point already gave us enough comps.
+    if fallback == '130point' and result['count'] >= HTP_MIN_COMPS:
+        use_claude = False
 
     claude_reasoning = ''
 
@@ -1270,6 +1576,137 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 # Results JSON (for Further Insights page)
 # ══════════════════════════════════════════════════════════════════════════════
 
+# Phase 6.3/6.4/6.5/6.6 — post-processing improvements that cost zero API calls.
+#   6.3 Bayesian smoothing: for cards with thin eBay data, blend the raw price
+#       with player-level and set-level priors.
+#   6.4 Median-of-last-3-runs: replace avg_price with median(current, prev-1,
+#       prev-2) to smooth day-to-day noise.
+#   6.5 TCDB anomaly floor: if the new price is <30% of the sheet-provided TCDB
+#       reference (column F), floor it at 50% of TCDB ref.
+#   6.6 Confidence recalibration: promote/demote confidence using recent
+#       volatility from price_history.
+
+SMOOTHING_K = 5   # strength of Bayesian smoothing (higher = trust prior more)
+ANOMALY_DROP_RATIO = 0.3      # trigger if new_price < 30% of TCDB ref
+ANOMALY_FLOOR_FRAC  = 0.5     # floor at 50% of TCDB ref
+
+def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
+    """Mutate the cards list in place with Phase 6.3–6.6 adjustments.
+
+    Only cards priced in this run are candidates; historical entries are
+    left alone so we don't rewrite portfolio history retroactively."""
+    fresh_ids = {r['card']['card_id'] for r in priced_this_run if r.get('card')}
+    if not fresh_ids:
+        return
+
+    # Load price history for median-of-3 + volatility.
+    try:
+        with open(HISTORY_FILE) as f:
+            history = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        history = {}
+
+    # Precompute player and set means for Bayesian prior.
+    from collections import defaultdict
+    player_sums  = defaultdict(lambda: [0.0, 0])
+    set_sums     = defaultdict(lambda: [0.0, 0])
+    for c in cards:
+        p = c.get('avg_price', 0)
+        if p and p > 0:
+            pl = c.get('player') or ''
+            st = f"{c.get('year') or ''}_{c.get('brand') or ''}"
+            player_sums[pl][0] += p; player_sums[pl][1] += 1
+            set_sums[st][0]    += p; set_sums[st][1]    += 1
+
+    for c in cards:
+        if c.get('card_id') not in fresh_ids:
+            continue
+        raw_price = c.get('avg_price', 0) or 0
+        if raw_price <= 0:
+            continue
+        raw_count = _extract_count_from_confidence(c.get('confidence', ''))
+
+        # 6.3 Bayesian smoothing (only for thin data).
+        if raw_count < LOW_DATA_THRESH:
+            pl = c.get('player') or ''
+            st = f"{c.get('year') or ''}_{c.get('brand') or ''}"
+            p_total, p_n = player_sums.get(pl, [0.0, 0])
+            s_total, s_n = set_sums.get(st,    [0.0, 0])
+            # Exclude self from the prior.
+            p_n = max(0, p_n - 1); p_total = max(0.0, p_total - raw_price)
+            s_n = max(0, s_n - 1); s_total = max(0.0, s_total - raw_price)
+            p_mean = p_total / p_n if p_n else 0
+            s_mean = s_total / s_n if s_n else 0
+            if p_n + s_n:
+                prior = (p_mean * p_n * 2 + s_mean * s_n) / (p_n * 2 + s_n)
+                if prior > 0:
+                    w_raw = raw_count / (raw_count + SMOOTHING_K)
+                    smoothed = w_raw * raw_price + (1 - w_raw) * prior
+                    c['smoothed_price'] = round(smoothed, 2)
+
+        # 6.4 Median-of-last-3-runs smoothing.
+        hist = history.get(c.get('card_id'), [])
+        recent_prices = [h.get('price') for h in hist[-2:] if isinstance(h.get('price'), (int, float))]
+        recent_prices.append(raw_price)
+        if len(recent_prices) >= 2:
+            med = _median(recent_prices)
+            # Only apply if the raw is a >25% outlier vs the median of recent runs.
+            if med and abs(raw_price - med) / med > 0.25:
+                c['avg_price'] = round(med, 2)
+                log.info('  → Median-of-runs smoothing: %s $%.2f → $%.2f',
+                         c['card_id'], raw_price, med)
+
+        # 6.5 TCDB anomaly floor (column F reference).
+        tcdb_ref = c.get('tcdb_price')
+        try:
+            tcdb_ref_f = float(tcdb_ref) if tcdb_ref else 0.0
+        except (TypeError, ValueError):
+            tcdb_ref_f = 0.0
+        if tcdb_ref_f > 0 and c['avg_price'] < ANOMALY_DROP_RATIO * tcdb_ref_f:
+            floored = round(ANOMALY_FLOOR_FRAC * tcdb_ref_f, 2)
+            log.warning('  → TCDB floor: %s priced $%.2f, TCDB ref $%.2f → floor $%.2f',
+                        c['card_id'], c['avg_price'], tcdb_ref_f, floored)
+            c['avg_price'] = floored
+            conf = c.get('confidence', '')
+            if 'anomaly' not in conf.lower():
+                c['confidence'] = 'Low (anomaly floored)'
+
+        # 6.6 Confidence recalibration from recent volatility.
+        _recalibrate_confidence(c, hist)
+
+
+def _extract_count_from_confidence(conf: str) -> int:
+    """Heuristic: infer the comp count from the confidence label."""
+    lc = (conf or '').lower()
+    if 'very high' in lc: return 12
+    if 'high'      in lc: return 7
+    if 'medium'    in lc: return 4
+    if 'low'       in lc: return 2
+    return 0
+
+
+def _recalibrate_confidence(c: dict, hist: list):
+    """Promote/demote confidence using volatility of the last few runs."""
+    prices = [h.get('price') for h in hist[-10:] if isinstance(h.get('price'), (int, float))]
+    if len(prices) < 3:
+        return
+    med = _median(prices)
+    if not med:
+        return
+    sd = _stddev(prices)
+    cov = sd / med if med else 0
+    conf = c.get('confidence', '')
+    lc = conf.lower()
+    # Demote if recent volatility is extreme (>40% of median)
+    if cov > 0.4 and 'high' in lc and 'very high' not in lc:
+        c['confidence'] = 'Medium (volatile)'
+    elif cov > 0.6 and 'very high' in lc:
+        c['confidence'] = 'High (volatile)'
+    # Promote if 10+ runs of low volatility
+    elif len(prices) >= 10 and cov < 0.05 and lc.startswith('medium'):
+        c['confidence'] = 'High (stable)'
+
+
 def build_results_json(all_rows: list[list], priced_cards: list[dict],
                        existing_by_id: dict = None) -> dict:
     """Merge freshly priced cards with existing JSON data into a full snapshot.
@@ -1321,6 +1758,9 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
                 idx = cards.index(existing_entry)
                 cards[idx] = c
                 seen[c['card_id']] = c
+
+    # ── Algorithmic smoothing + anomaly floor + confidence recalibration ─────
+    _apply_smoothing_and_floor(cards, priced_cards)
 
     priced = [c for c in cards if c.get('avg_price')]
     total  = sum(c['avg_price'] for c in priced)
@@ -1377,7 +1817,12 @@ def commit_progress(label: str = ''):
     try:
         subprocess.run(['git', 'config', 'user.name',  'github-actions[bot]'], check=True)
         subprocess.run(['git', 'config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], check=True)
-        subprocess.run(['git', 'add', RESULTS_FILE, HISTORY_FILE], check=True)
+        add_files = [RESULTS_FILE, HISTORY_FILE]
+        for extra in (EBAY_CACHE_FILE, RUN_METADATA_FILE, SUMMARY_FILE,
+                      PRICECHARTING_CACHE, HTP_CACHE_FILE):
+            if os.path.exists(extra):
+                add_files.append(extra)
+        subprocess.run(['git', 'add', *add_files], check=True)
         diff = subprocess.run(['git', 'diff', '--cached', '--quiet'])
         if diff.returncode != 0:
             msg = f'chore: pricing progress [{label}]' if label else 'chore: pricing progress'
@@ -1410,6 +1855,8 @@ def process_card_timed(row: list, row_number: int) -> Optional[dict]:
         signal.signal(signal.SIGALRM, old)
 
 
+_run_errors: list = []   # accumulated for run_metadata.json
+
 def process_batch(batch: list, service) -> list:
     """Price a list of (row_num, row) tuples. Returns result dicts.
     Results are written to JSON only — the sheet is treated as read-only.
@@ -1427,6 +1874,7 @@ def process_batch(batch: list, service) -> list:
             raise
         except Exception as e:
             log.error('Failed row %d: %s', row_num, e)
+            _run_errors.append({'row': row_num, 'error': str(e)[:200]})
         if api_calls > 0 and api_calls % 100 == 0:
             log.info('Rate limit pause…')
             time.sleep(0.5)
@@ -1435,7 +1883,9 @@ def process_batch(batch: list, service) -> list:
 
 
 def main():
-    global C
+    global C, _run_start_ts, _input_audit
+
+    _run_start_ts = time.time()
 
     log.info('=== Baseball Card Pricing Agent ===')
     log.info('Mode: %s  |  Batch size: %d  |  Stale threshold: %d days',
@@ -1454,6 +1904,9 @@ def main():
 
     # ── Dynamic column detection ───────────────────────────────────────────────
     C = detect_columns(rows[0])
+
+    # ── Input audit (log-only, does not skip rows) ─────────────────────────────
+    _input_audit = audit_input_rows(rows)
 
     # ── Load existing pricing results (JSON is the source of truth) ───────────
     existing_by_id: dict = {}
@@ -1533,6 +1986,164 @@ def main():
     log.info('Done. Total value: $%.2f across %d cards', output['total_value'], output['cards_priced'])
 
 
+# Run-wide telemetry — populated by main() / process_batch() for run_metadata.json.
+_run_start_ts: float = 0.0
+_input_audit:  dict  = {}
+
+
+def _write_run_metadata(output: dict, results: list):
+    """Emit data/run_metadata.json summarising the run for the frontend badge."""
+    try:
+        duration = round(time.time() - _run_start_ts, 1) if _run_start_ts else None
+        meta = {
+            'timestamp':         datetime.now(timezone.utc).isoformat(),
+            'run_mode':          RUN_MODE,
+            'cards_processed':   len(results),
+            'cards_priced':      output.get('cards_priced', 0),
+            'total_value':       output.get('total_value', 0),
+            'api_calls': {
+                'ebay_misses':  _ebay_cache_misses,
+                'ebay_hits':    _ebay_cache_hits,
+                'claude':       _claude_call_count,
+                'sheets':       1,   # single read + optional batch write
+            },
+            'cache_hit_rate':    round(_ebay_cache_hits / (_ebay_cache_hits + _ebay_cache_misses), 3)
+                                  if (_ebay_cache_hits + _ebay_cache_misses) else 0.0,
+            'input_audit':       _input_audit,
+            'errors':            _run_errors[:50],   # cap to keep file small
+            'duration_seconds':  duration,
+        }
+        with open(RUN_METADATA_FILE, 'w') as f:
+            json.dump(meta, f, indent=2, default=str)
+        log.info('Wrote %s', RUN_METADATA_FILE)
+    except Exception as e:
+        log.warning('Failed to write run metadata: %s', e)
+
+
+# ── Frontend summary sidecar ─────────────────────────────────────────────────
+# The frontend used to recompute player stats / era buckets / HHI / volatility
+# on every filter change. Precomputing once here lets the dashboard do a fast
+# first paint from a small JSON file, then hydrate the full card list lazily.
+# ─────────────────────────────────────────────────────────────────────────────
+
+# Maps confidence strings to a discount weight for Phase 4.5 portfolio total.
+_CONF_WEIGHT = {
+    'very high': 1.0,
+    'high':      0.8,
+    'medium':    0.6,
+    'low':       0.4,
+    'tcdb':      0.3,
+    'floor':     0.3,
+}
+
+def _conf_weight(conf: str) -> float:
+    lc = (conf or '').lower()
+    for k, w in _CONF_WEIGHT.items():
+        if k in lc:
+            return w
+    return 0.5
+
+
+def _median(values: list[float]) -> float:
+    if not values:
+        return 0.0
+    s = sorted(values)
+    n = len(s)
+    mid = n // 2
+    return s[mid] if n % 2 else (s[mid - 1] + s[mid]) / 2
+
+
+def _stddev(values: list[float]) -> float:
+    if len(values) < 2:
+        return 0.0
+    mean = sum(values) / len(values)
+    var  = sum((v - mean) ** 2 for v in values) / (len(values) - 1)
+    return math.sqrt(var)
+
+
+def _write_summary_sidecar(output: dict):
+    """Emit data/pricing_summary.json — small precomputed aggregate the frontend
+    loads first for fast initial paint, before hydrating the full cards list."""
+    try:
+        cards  = [c for c in output.get('cards', []) if c.get('avg_price')]
+        priced = [c for c in cards if c.get('avg_price', 0) > 0]
+        prices = [c['avg_price'] for c in priced]
+
+        # Load history for volatility + market-mover calcs.
+        try:
+            with open(HISTORY_FILE) as f:
+                history = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            history = {}
+
+        # Per-card % change over the most recent pair of snapshots.
+        pct_change: dict = {}
+        for c in priced:
+            h = history.get(c.get('card_id'), [])
+            if len(h) >= 2 and h[-2].get('price'):
+                pct_change[c['card_id']] = (h[-1]['price'] - h[-2]['price']) / h[-2]['price'] * 100.0
+
+        # Player stats (total value, card count, copy count, avg, volatility).
+        from collections import defaultdict
+        player_agg = defaultdict(lambda: {'total': 0.0, 'unique': 0, 'copies': 0, 'pct_changes': []})
+        for c in priced:
+            p = c.get('player') or 'Unknown'
+            a = player_agg[p]
+            a['total']  += c['avg_price']
+            a['unique'] += 1
+            a['copies'] += c.get('quantity', 1) or 1
+            if c['card_id'] in pct_change:
+                a['pct_changes'].append(pct_change[c['card_id']])
+        player_stats = []
+        for p, a in player_agg.items():
+            player_stats.append({
+                'player':     p,
+                'total':      round(a['total'], 2),
+                'unique':     a['unique'],
+                'copies':     a['copies'],
+                'avg':        round(a['total'] / a['unique'], 2) if a['unique'] else 0,
+                'volatility': round(_stddev(a['pct_changes']), 2),
+            })
+        player_stats.sort(key=lambda r: r['total'], reverse=True)
+
+        # HHI — portfolio concentration (0..10000).
+        total = sum(prices) or 1
+        hhi = round(sum((p / total) ** 2 for p in prices) * 10000, 1)
+
+        # Confidence-weighted total.
+        weighted_total = round(sum(c['avg_price'] * _conf_weight(c.get('confidence', ''))
+                                   for c in priced), 2)
+
+        # Market movers (already pre-sorted by delta magnitude).
+        movers = sorted(
+            ({'card_id': cid, 'pct': round(v, 2)} for cid, v in pct_change.items()),
+            key=lambda m: abs(m['pct']),
+            reverse=True
+        )[:40]
+
+        summary = {
+            'last_updated':    output.get('last_updated'),
+            'total_cards':     output.get('total_cards'),
+            'cards_priced':    output.get('cards_priced'),
+            'total_value':     output.get('total_value'),
+            'avg_value':       output.get('avg_value'),
+            'median_value':    round(_median(prices), 2),
+            'top_card_value':  output.get('top_card_value'),
+            'hhi':             hhi,
+            'weighted_total':  weighted_total,
+            'by_era':          output.get('by_era'),
+            'by_brand':        output.get('by_brand'),
+            'player_stats':    player_stats,
+            'market_movers':   movers,
+            'top_25_ids':      [c.get('card_id') for c in output.get('top_cards', [])[:25]],
+        }
+        with open(SUMMARY_FILE, 'w') as f:
+            json.dump(summary, f, separators=(',', ':'), default=str)
+        log.info('Wrote %s (%.0f KB)', SUMMARY_FILE, os.path.getsize(SUMMARY_FILE) / 1024)
+    except Exception as e:
+        log.warning('Failed to write summary sidecar: %s', e)
+
+
 def _save_outputs(output: dict, results: list):
     """Write pricing_results.json and price_history.json."""
     os.makedirs('data', exist_ok=True)
@@ -1570,6 +2181,11 @@ def _save_outputs(output: dict, results: list):
     with open(RESULTS_FILE, 'w') as f:
         json.dump(output, f, separators=(',', ':'), default=str)
     log.info('Saved %s (%.0f KB)', RESULTS_FILE, os.path.getsize(RESULTS_FILE) / 1024)
+
+    # Persist eBay cache + run metadata + summary sidecar.
+    _save_ebay_persist_cache()
+    _write_run_metadata(output, results)
+    _write_summary_sidecar(output)
 
 
 if __name__ == '__main__':

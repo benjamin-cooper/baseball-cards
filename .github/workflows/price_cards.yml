@@ -63,17 +63,24 @@ jobs:
       # ── Run pricing agent ────────────────────────────────────────────────────
       - name: Run pricing agent
         env:
-          ANTHROPIC_API_KEY:      ${{ secrets.ANTHROPIC_API_KEY }}
-          EBAY_APP_ID:            ${{ secrets.EBAY_APP_ID }}
-          EBAY_CLIENT_SECRET:     ${{ secrets.EBAY_CLIENT_SECRET }}
-          GOOGLE_CREDENTIALS_JSON: ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
-          SPREADSHEET_ID:         ${{ secrets.SPREADSHEET_ID }}
-          RUN_MODE:               ${{ github.event.inputs.run_mode }}
-          BATCH_SIZE:             ${{ github.event.inputs.batch_size }}
-          TARGET_PLAYER:         ${{ github.event.inputs.target_player }}
-          STALE_DAYS:            ${{ github.event.inputs.stale_days }}
-          START_ROW:             ${{ github.event.inputs.start_row }}
-          OUTPUT_JSON:            data/pricing_results.json
+          ANTHROPIC_API_KEY:         ${{ secrets.ANTHROPIC_API_KEY }}
+          EBAY_APP_ID:               ${{ secrets.EBAY_APP_ID }}
+          EBAY_CLIENT_SECRET:        ${{ secrets.EBAY_CLIENT_SECRET }}
+          GOOGLE_CREDENTIALS_JSON:   ${{ secrets.GOOGLE_CREDENTIALS_JSON }}
+          SPREADSHEET_ID:            ${{ secrets.SPREADSHEET_ID }}
+          RUN_MODE:                  ${{ github.event.inputs.run_mode }}
+          BATCH_SIZE:                ${{ github.event.inputs.batch_size }}
+          TARGET_PLAYER:             ${{ github.event.inputs.target_player }}
+          STALE_DAYS:                ${{ github.event.inputs.stale_days }}
+          START_ROW:                 ${{ github.event.inputs.start_row }}
+          OUTPUT_JSON:               data/pricing_results.json
+          # Opt-in supplemental pricing sources (Phase 6).
+          # 130point: no config needed — ships with a 7 day per-query cache + 5 s rate limit.
+          HUNDRED_THIRTY_POINT_ENABLED: '1'
+          # PriceCharting: set PRICECHARTING_CSV_URL in repo secrets to the weekly CSV export URL.
+          # Without the URL the script logs a warning and skips this source cleanly.
+          PRICECHARTING_ENABLED:     '1'
+          PRICECHARTING_CSV_URL:     ${{ secrets.PRICECHARTING_CSV_URL }}
         run: python scripts/price_cards.py
 
       # ── Commit results ───────────────────────────────────────────────────────
@@ -82,8 +89,20 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/pricing_results.json data/price_history.json
-          # Only commit if files actually changed
+          # Track all outputs written by the pricing agent, including the new
+          # summary sidecar, run metadata and the persistent caches. Any file
+          # that doesn't exist on this run is silently skipped.
+          for f in \
+            data/pricing_results.json \
+            data/price_history.json \
+            data/pricing_summary.json \
+            data/run_metadata.json \
+            data/ebay_cache.json \
+            data/130point_cache.json \
+            data/pricecharting_cache.csv
+          do
+            [ -f "$f" ] && git add "$f"
+          done
           if git diff --cached --quiet; then
             echo "No changes — skipping commit"
           else
