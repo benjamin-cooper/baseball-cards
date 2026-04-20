@@ -194,9 +194,17 @@ function pctChangeOver(c, days) {
 function render(data, rawPlayerCounts = {}) {
   renderStats(data);
   // Top 25 — every row is a distinct physical card; no dedup.
+  // Dedupe by card_id for display only — two physical copies of the same card
+  // both count toward the total but should appear once in ranked lists.
+  const uniqueCards = [...(data.cards || [])
+    .reduce((m, c) => {
+      const id = c.card_id || cardId(c);
+      if (!m.has(id) || c.avg_price > m.get(id).avg_price) m.set(id, c);
+      return m;
+    }, new Map()).values()];
   const top25 = (data.top_cards && data.top_cards.length)
     ? data.top_cards
-    : [...(data.cards || [])]
+    : uniqueCards
         .filter(c => c.avg_price > 0)
         .sort((a, b) => b.avg_price - a.avg_price)
         .slice(0, 25);
@@ -262,7 +270,15 @@ function renderTopCards(cards) {
 // ─── Market Movers ────────────────────────────────────────────────────────────
 function renderMarketMovers(cards) {
   const el = document.getElementById('market-movers');
-  const movers = cards
+  // Dedupe by card_id — show each unique card once even if owned as duplicates.
+  const seen = new Set();
+  const unique = cards.filter(c => {
+    const id = c.card_id || cardId(c);
+    if (seen.has(id)) return false;
+    seen.add(id);
+    return true;
+  });
+  const movers = unique
     .map(c => {
       const pct = pctChange(c);
       if (pct == null) return null;
