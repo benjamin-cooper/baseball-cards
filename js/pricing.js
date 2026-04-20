@@ -115,36 +115,12 @@ async function loadData() {
     ]);
     priceHistory = r2.ok ? await r2.json() : {};
 
-    // Raw player copies before any dedup (used by player table copy count).
+    // Build per-player copy counts — every row is a distinct physical card.
     const rawPlayerCounts = {};
     (data.cards || []).forEach(c => {
       const p = c.player || '?';
       rawPlayerCounts[p] = (rawPlayerCounts[p] || 0) + 1;
     });
-
-    // Safety-net dedup by card_id. Python dedupes too, but an older
-    // pricing_results.json written before that landed can still ship dupes.
-    if (Array.isArray(data.cards)) {
-      const seen = new Map();
-      for (const c of data.cards) {
-        const id = c.card_id || cardId(c);
-        const prev = seen.get(id);
-        if (!prev) { seen.set(id, c); continue; }
-        // Prefer the row with a real price; tie-break on last_updated.
-        const prevPriced = parseFloat(prev.avg_price) > 0;
-        const currPriced = parseFloat(c.avg_price)    > 0;
-        if (currPriced && !prevPriced) { seen.set(id, c); continue; }
-        if (currPriced === prevPriced) {
-          const pt = Date.parse(prev.last_updated || 0) || 0;
-          const ct = Date.parse(c.last_updated    || 0) || 0;
-          if (ct > pt) seen.set(id, c);
-        }
-      }
-      data.cards = Array.from(seen.values());
-      // Force Top 25 to recompute from deduped cards — precomputed top_cards
-      // in the payload may still carry dupes from older runs.
-      data.top_cards = null;
-    }
 
     // Dev-only drift check: verify a handful of card IDs line up with the
     // Python-generated history keys. Silent in release, warns in console.
@@ -217,8 +193,7 @@ function pctChangeOver(c, days) {
 // ─── Render ───────────────────────────────────────────────────────────────────
 function render(data, rawPlayerCounts = {}) {
   renderStats(data);
-  renderPortfolioStats(data);   // HHI + confidence-weighted total (Phase 4.3 + 4.5)
-  // Top 25 from deduped cards (Python dedups; the field in data.top_cards is now authoritative).
+  // Top 25 — every row is a distinct physical card; no dedup.
   const top25 = (data.top_cards && data.top_cards.length)
     ? data.top_cards
     : [...(data.cards || [])]
@@ -238,50 +213,6 @@ function render(data, rawPlayerCounts = {}) {
   populateTeamFilter(allCards);
   applyFilters();
   set('last-updated', data.last_updated ? new Date(data.last_updated).toLocaleString() : '—');
-}
-
-// ─── Portfolio-level insight cards (HHI + weighted total) ─────────────────────
-function renderPortfolioStats(data) {
-  const hhiEl = document.getElementById('stat-hhi');
-  const wtEl  = document.getElementById('stat-weighted');
-  if (!hhiEl && !wtEl) return;   // HTML not updated yet; skip
-
-  let hhi = summary && summary.hhi;
-  let weighted = summary && summary.weighted_total;
-
-  // Fallback compute if the summary sidecar is missing.
-  if (hhi == null || weighted == null) {
-    const priced = (data.cards || []).filter(c => c.avg_price > 0);
-    const total  = priced.reduce((s, c) => s + c.avg_price, 0) || 1;
-    if (hhi == null) {
-      hhi = Math.round(priced.reduce((s, c) => s + Math.pow(c.avg_price / total, 2), 0) * 10000 * 10) / 10;
-    }
-    if (weighted == null) {
-      const weightFor = conf => {
-        const lc = (conf || '').toLowerCase();
-        if (lc.includes('very high')) return 1.0;
-        if (lc.includes('high'))      return 0.8;
-        if (lc.includes('medium'))    return 0.6;
-        if (lc.includes('low'))       return 0.4;
-        if (lc.includes('tcdb') || lc.includes('floor')) return 0.3;
-        return 0.5;
-      };
-      weighted = Math.round(priced.reduce((s, c) => s + c.avg_price * weightFor(c.confidence), 0) * 100) / 100;
-    }
-  }
-  if (hhiEl) hhiEl.textContent = hhi != null ? hhi.toLocaleString() : '—';
-  if (wtEl)  wtEl.textContent  = weighted != null ? '$' + weighted.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
-
-  const interpEl = document.getElementById('stat-hhi-interp');
-  if (interpEl && hhi != null) {
-    let label;
-    if (hhi < 100)      label = 'very diversified';
-    else if (hhi < 500) label = 'diversified';
-    else if (hhi < 1500) label = 'moderate concentration';
-    else if (hhi < 2500) label = 'concentrated';
-    else                 label = 'highly concentrated';
-    interpEl.textContent = label;
-  }
 }
 
 // ─── Run metadata badge ────────────────────────────────────────────────────────
