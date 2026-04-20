@@ -122,6 +122,30 @@ async function loadData() {
       rawPlayerCounts[p] = (rawPlayerCounts[p] || 0) + 1;
     });
 
+    // Safety-net dedup by card_id. Python dedupes too, but an older
+    // pricing_results.json written before that landed can still ship dupes.
+    if (Array.isArray(data.cards)) {
+      const seen = new Map();
+      for (const c of data.cards) {
+        const id = c.card_id || cardId(c);
+        const prev = seen.get(id);
+        if (!prev) { seen.set(id, c); continue; }
+        // Prefer the row with a real price; tie-break on last_updated.
+        const prevPriced = parseFloat(prev.avg_price) > 0;
+        const currPriced = parseFloat(c.avg_price)    > 0;
+        if (currPriced && !prevPriced) { seen.set(id, c); continue; }
+        if (currPriced === prevPriced) {
+          const pt = Date.parse(prev.last_updated || 0) || 0;
+          const ct = Date.parse(c.last_updated    || 0) || 0;
+          if (ct > pt) seen.set(id, c);
+        }
+      }
+      data.cards = Array.from(seen.values());
+      // Force Top 25 to recompute from deduped cards — precomputed top_cards
+      // in the payload may still carry dupes from older runs.
+      data.top_cards = null;
+    }
+
     // Dev-only drift check: verify a handful of card IDs line up with the
     // Python-generated history keys. Silent in release, warns in console.
     driftCheck(data.cards || []);
@@ -203,7 +227,6 @@ function render(data, rawPlayerCounts = {}) {
         .slice(0, 25);
   renderTopCards(top25);
   renderMarketMovers(data.cards || []);
-  renderDiffView(data.cards || []);   // Phase 4.2
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
   renderBrandChart(data.by_brand || {}, data.cards || []);
@@ -270,33 +293,6 @@ function renderRunBadge(m) {
   el.textContent = `Last run: ${m.cards_priced || 0}/${m.cards_processed || 0} cards • ${misses} eBay calls • ${hits} cache hits • ${api.claude || 0} Claude calls`;
 }
 
-// ─── Diff view (Phase 4.2) ─────────────────────────────────────────────────────
-function renderDiffView(cards) {
-  const el = document.getElementById('diff-view');
-  if (!el) return;
-  const items = cards.map(c => {
-    const p = pctChange(c);
-    if (p == null) return null;
-    const id = c.card_id || cardId(c);
-    const h = priceHistory[id];
-    const prev = h[h.length - 2].price, curr = h[h.length - 1].price;
-    return { c, pct: p, prev, curr, abs: curr - prev };
-  }).filter(Boolean).sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct)).slice(0, 20);
-
-  if (!items.length) {
-    el.innerHTML = '<div class="state-empty">Run the agent at least twice to see a diff view</div>';
-    return;
-  }
-  el.innerHTML = items.map(({ c, pct, prev, curr, abs }) => {
-    const up = pct >= 0, sign = up ? '+' : '';
-    return `<div class="diff-row" data-card-id="${esc(c.card_id || cardId(c))}">
-      <span class="diff-name">${esc(c.player)} <span class="diff-meta">${c.year} ${esc(c.brand)}</span></span>
-      <span class="diff-prev">${fmt$(prev)} → ${fmt$(curr)}</span>
-      <span class="diff-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${fmt$(abs)} (${sign}${pct.toFixed(1)}%)</span>
-    </div>`;
-  }).join('');
-}
-
 function renderStats(data) {
   const fmt = n => n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   set('stat-total-value',  fmt(data.total_value));
@@ -318,13 +314,18 @@ function renderStats(data) {
 function renderTopCards(cards) {
   const el = document.getElementById('top-cards-list');
   if (!cards.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
-  el.innerHTML = cards.map((c, i) => `
+  el.innerHTML = cards.map((c, i) => {
+    const sub = [c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' · ');
+    return `
     <div class="top-card-row" data-card-id="${esc(c.card_id || cardId(c))}">
       <span class="top-card-rank">${i + 1}</span>
-      <span class="top-card-name" title="${esc(c.player)} — ${esc(c.brand)}">${esc(c.player)}</span>
+      <span class="top-card-name" title="${esc(c.player)} — ${esc(c.brand)}${c.card_number ? ' #' + esc(c.card_number) : ''}">
+        ${esc(c.player)} <span class="top-card-sub">${esc(sub)}</span>
+      </span>
       <span class="top-card-year">${c.year}</span>
       <span class="top-card-price">${fmt$(c.avg_price)}</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
 // ─── Market Movers ────────────────────────────────────────────────────────────
@@ -346,11 +347,12 @@ function renderMarketMovers(cards) {
   }
   el.innerHTML = movers.map(({ card: c, pct }) => {
     const up = pct >= 0, sign = up ? '+' : '';
+    const meta = [c.year, c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' ');
     return `
       <div class="mover-row" data-card-id="${esc(c.card_id || cardId(c))}">
         <div class="mover-info">
           <span class="mover-name">${esc(c.player)}</span>
-          <span class="mover-meta">${c.year} ${esc(c.brand)}</span>
+          <span class="mover-meta">${esc(meta)}</span>
         </div>
         <span class="mover-price">${fmt$(c.avg_price)}</span>
         <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${pct.toFixed(1)}%</span>
