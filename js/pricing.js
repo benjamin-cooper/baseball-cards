@@ -189,6 +189,12 @@ function renderPortfolioChart(portfolio) {
 // ─── Era Chart ────────────────────────────────────────────────────────────────
 let eraData = {};
 let eraMode = 'total';   // 'total' | 'avg'
+let eraSort = 'chron';   // 'chron' | 'total' | 'avg' | 'count'
+
+const ERA_ORDER = [
+  'Vintage (pre-1970)', '1970s', 'Early 80s', 'Junk Wax (1987\u201394)',
+  'Late 90s', '2000s', '2010s', 'Modern (2020+)'
+];
 
 function renderEraChart(byEra) {
   eraData = byEra;
@@ -205,28 +211,45 @@ function setEraMode(mode) {
 
 function drawEraChart() {
   const el = document.getElementById('era-chart');
-  const entries = Object.entries(eraData).sort((a, b) => a[0].localeCompare(b[0]));
+  const entries = Object.entries(eraData);
   if (!entries.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
 
-  const withAvg = entries.map(([era, s]) => ({
+  let rows = entries.map(([era, s]) => ({
     era,
     count:       s.count || 0,
     total_value: s.total_value || 0,
     avg_value:   s.count ? (s.total_value / s.count) : 0,
   }));
 
-  const maxVal = Math.max(...withAvg.map(d => eraMode === 'avg' ? d.avg_value : d.total_value), 1);
+  // Sort
+  if (eraSort === 'chron') {
+    rows.sort((a, b) => {
+      const ai = ERA_ORDER.indexOf(a.era), bi = ERA_ORDER.indexOf(b.era);
+      return (ai === -1 ? 99 : ai) - (bi === -1 ? 99 : bi);
+    });
+  } else if (eraSort === 'total') {
+    rows.sort((a, b) => b.total_value - a.total_value);
+  } else if (eraSort === 'avg') {
+    rows.sort((a, b) => b.avg_value - a.avg_value);
+  } else if (eraSort === 'count') {
+    rows.sort((a, b) => b.count - a.count);
+  }
 
-  el.innerHTML = withAvg.map(d => {
+  const maxVal = Math.max(...rows.map(d => eraMode === 'avg' ? d.avg_value : d.total_value), 1);
+
+  el.innerHTML = rows.map(d => {
     const barVal  = eraMode === 'avg' ? d.avg_value : d.total_value;
     const pct     = (barVal / maxVal * 100).toFixed(1);
-    const subLabel = eraMode === 'avg'
-      ? `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total</span>`
-      : `<span class="brand-sub">${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg</span>`;
+    const sub     = eraMode === 'avg'
+      ? `${d.count.toLocaleString()} cards · ${fmt$(d.total_value)} total`
+      : `${d.count.toLocaleString()} cards · ${fmt$(d.avg_value)} avg`;
     return `<div class="era-row">
       <span class="era-label">${esc(d.era)}</span>
-      <div class="era-bar-wrap"><div class="era-bar" style="width:${pct}%"></div></div>
-      <span class="era-value">${fmt$(barVal)}${subLabel}</span>
+      <div class="era-col">
+        <div class="era-bar-wrap"><div class="era-bar" style="width:${pct}%"></div></div>
+        <span class="era-sub">${sub}</span>
+      </div>
+      <span class="era-value">${fmt$(barVal)}</span>
     </div>`;
   }).join('');
 }
@@ -560,9 +583,13 @@ function saveSettings() {
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
 function bindRunModeUI() {
-  // Era chart toggle
+  // Era chart toggle + sort
   document.querySelectorAll('#era-toggle .chart-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => setEraMode(btn.dataset.mode));
+  });
+  document.getElementById('era-sort').addEventListener('change', e => {
+    eraSort = e.target.value;
+    drawEraChart();
   });
   // Brand chart toggle
   document.querySelectorAll('#brand-toggle .chart-toggle-btn').forEach(btn => {

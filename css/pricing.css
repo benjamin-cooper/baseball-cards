@@ -686,6 +686,23 @@
 }
 .run-force-label input[type="checkbox"] { accent-color: #4CAF50; width: 14px; height: 14px; }
 
+/* ERA ROW — bar + sub-label stacked in a column */
+.era-col { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.era-sub  { font-size: 0.7em; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* Panel header controls (sort + toggle side by side) */
+.panel-header-controls { display: flex; align-items: center; gap: 8px; }
+.chart-sort-select {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: #ccc;
+  font-size: 0.72em;
+  padding: 3px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.chart-sort-select:focus { outline: none; border-color: #4CAF50; }
+
 /* BRAND ROW — extra height to fit sub-label */
 .brand-row { align-items: flex-start !important; padding: 5px 0 !important; }
 .brand-row .era-value { display: flex; flex-direction: column; align-items: flex-end; gap: 1px; }
