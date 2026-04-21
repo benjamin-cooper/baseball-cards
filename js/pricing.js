@@ -196,18 +196,18 @@ function render(data, rawPlayerCounts = {}) {
   // Top 25 — every row is a distinct physical card; no dedup.
   // Dedupe by card_id for display only — two physical copies of the same card
   // both count toward the total but should appear once in ranked lists.
+  // Always recompute from cards so the precomputed top_cards list (which may
+  // have been built before this dedup logic existed) doesn't sneak dupes in.
   const uniqueCards = [...(data.cards || [])
     .reduce((m, c) => {
       const id = c.card_id || cardId(c);
       if (!m.has(id) || c.avg_price > m.get(id).avg_price) m.set(id, c);
       return m;
     }, new Map()).values()];
-  const top25 = (data.top_cards && data.top_cards.length)
-    ? data.top_cards
-    : uniqueCards
-        .filter(c => c.avg_price > 0)
-        .sort((a, b) => b.avg_price - a.avg_price)
-        .slice(0, 25);
+  const top25 = uniqueCards
+    .filter(c => c.avg_price > 0)
+    .sort((a, b) => b.avg_price - a.avg_price)
+    .slice(0, 25);
   renderTopCards(top25);
   renderMarketMovers(data.cards || []);
   renderPortfolioChart(data._portfolio || []);

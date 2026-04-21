@@ -1786,7 +1786,14 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
 
     priced = [c for c in cards if c.get('avg_price')]
     total  = sum(c['avg_price'] for c in priced)
-    top25  = sorted(priced, key=lambda c: c['avg_price'], reverse=True)[:25]
+    # Dedupe by card_id for ranked display only — two physical copies of the
+    # same card both count toward total but should appear once in Top 25.
+    _seen_ids: dict = {}
+    for c in priced:
+        cid = c.get('card_id', '')
+        if cid not in _seen_ids or c['avg_price'] > _seen_ids[cid]['avg_price']:
+            _seen_ids[cid] = c
+    top25  = sorted(_seen_ids.values(), key=lambda c: c['avg_price'], reverse=True)[:25]
 
     # ── Era breakdown ─────────────────────────────────────────────────────────
     def era(y):
