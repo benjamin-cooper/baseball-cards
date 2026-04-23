@@ -550,13 +550,15 @@ let playerSortCol = 'total_value';
 let playerSortDir = -1;   // -1 = desc, 1 = asc
 
 function renderPlayerStats(cards, rawPlayerCounts) {
-  // Build per-player aggregates from deduped cards
+  // unique  = distinct card_id values (different card designs)
+  // copies  = total sheet rows including physical duplicates of the same card
   const map = {};
   cards.forEach(c => {
     const p = c.player || '?';
-    if (!map[p]) map[p] = { player: p, unique: 0, total_value: 0, prices: [], top_card: null };
+    if (!map[p]) map[p] = { player: p, seenIds: new Set(), copies: 0, total_value: 0, prices: [], top_card: null };
     const d = map[p];
-    d.unique++;
+    d.copies++;
+    d.seenIds.add(c.card_id || cardId(c));
     const price = parseFloat(c.avg_price) || 0;
     if (price > 0) {
       d.total_value += price;
@@ -575,7 +577,8 @@ function renderPlayerStats(cards, rawPlayerCounts) {
 
   playerRows = Object.values(map).map(d => ({
     ...d,
-    copies:     rawPlayerCounts[d.player] || d.unique,
+    unique:     d.seenIds.size,
+    copies:     d.copies,
     avg_price:  d.prices.length ? d.total_value / d.prices.length : 0,
     volatility: volByPlayer[d.player] != null ? volByPlayer[d.player] : null,
   }));
