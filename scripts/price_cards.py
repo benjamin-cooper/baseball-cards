@@ -368,21 +368,31 @@ def get_ebay_token() -> str:
     secret = os.environ['EBAY_CLIENT_SECRET']
     creds  = base64.b64encode(f'{app_id}:{secret}'.encode()).decode()
 
-    r = requests.post(
-        'https://api.ebay.com/identity/v1/oauth2/token',
-        headers={
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': f'Basic {creds}'
-        },
-        data='grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope',
-        timeout=15
-    )
-    r.raise_for_status()
-    data = r.json()
-    _ebay_token        = data['access_token']
-    _ebay_token_expiry = datetime.now(timezone.utc) + timedelta(seconds=data['expires_in'] - 60)
-    log.info('eBay token refreshed')
-    return _ebay_token
+    # Retry with exponential backoff — a transient DNS/network blip on the
+    # GHA runner can fail the token fetch and kill the entire run.
+    for attempt in range(4):
+        try:
+            r = requests.post(
+                'https://api.ebay.com/identity/v1/oauth2/token',
+                headers={
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Authorization': f'Basic {creds}'
+                },
+                data='grant_type=client_credentials&scope=https%3A%2F%2Fapi.ebay.com%2Foauth%2Fapi_scope',
+                timeout=15
+            )
+            r.raise_for_status()
+            data = r.json()
+            _ebay_token        = data['access_token']
+            _ebay_token_expiry = datetime.now(timezone.utc) + timedelta(seconds=data['expires_in'] - 60)
+            log.info('eBay token refreshed')
+            return _ebay_token
+        except Exception as e:
+            if attempt == 3:
+                raise
+            wait = 2 ** attempt   # 1s, 2s, 4s
+            log.warning('eBay token fetch failed (attempt %d/4): %s — retrying in %ds', attempt + 1, e, wait)
+            time.sleep(wait)
 
 
 # ══════════════════════════════════════════════════════════════════════════════
