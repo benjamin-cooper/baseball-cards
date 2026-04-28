@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-04-27T15:42:08.812685+00:00",
+  "timestamp": "2026-04-28T23:35:31.268309+00:00",
   "run_mode": "full",
   "cards_processed": 4364,
   "cards_priced": 4364,
-  "total_value": 7173.73,
+  "total_value": 7156.05,
   "api_calls": {
     "ebay_misses": 3816,
     "ebay_hits": 594,
-    "claude": 25,
+    "claude": 28,
     "sheets": 1
   },
   "cache_hit_rate": 0.135,
@@ -18,5 +18,5 @@
     "negative_price": 0
   },
   "errors": [],
-  "duration_seconds": 3211.9
+  "duration_seconds": 3274.7
 }
