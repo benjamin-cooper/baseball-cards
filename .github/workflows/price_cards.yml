@@ -108,5 +108,8 @@ jobs:
           else
             TIMESTAMP=$(date -u '+%Y-%m-%d %H:%M UTC')
             git commit -m "chore: update pricing results [${TIMESTAMP}]"
+            # Rebase onto remote before pushing — the remote may have advanced
+            # while the pricing run was in progress (e.g. local code pushes).
+            git pull --rebase origin main
             git push
           fi
