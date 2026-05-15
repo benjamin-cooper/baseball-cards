@@ -765,6 +765,28 @@
 .ps-top-label { color: #777; }
 .ps-top-price { color: #4CAF50; font-weight: 600; margin-left: 4px; }
 
+/* PLAYER STATS PAGINATION */
+.ps-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 12px 0 4px;
+}
+.ps-page-btn {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: #aaa;
+  padding: 5px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85em;
+  transition: background 0.15s, color 0.15s;
+}
+.ps-page-btn:hover:not(:disabled) { background: rgba(255,255,255,0.12); color: #eee; }
+.ps-page-btn:disabled { opacity: 0.3; cursor: default; }
+.ps-page-info { color: #666; font-size: 0.85em; }
+
 /* SPARKLINE CELL */
 .spark-cell { padding: 6px 12px !important; vertical-align: middle; }
 .no-spark { color: #444; font-size: 0.8em; }

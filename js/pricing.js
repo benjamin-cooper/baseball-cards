@@ -548,6 +548,8 @@ function drawBrandChart() {
 let playerRows    = [];   // full computed list, re-filtered on search/sort
 let playerSortCol = 'total_value';
 let playerSortDir = -1;   // -1 = desc, 1 = asc
+let playerPage    = 0;    // current page index (0-based)
+const PLAYER_PAGE_SIZE = 10;
 
 function renderPlayerStats(cards, rawPlayerCounts) {
   // unique  = distinct card_id values (different card designs)
@@ -586,7 +588,7 @@ function renderPlayerStats(cards, rawPlayerCounts) {
   drawPlayerStats('');
 }
 
-function drawPlayerStats(query) {
+function drawPlayerStats(query, resetPage = false) {
   const tbody = document.getElementById('player-stats-tbody');
   if (!tbody) return;
 
@@ -599,17 +601,26 @@ function drawPlayerStats(query) {
     return playerSortDir * (bv - av);
   });
 
+  if (resetPage) playerPage = 0;
+
+  const total      = rows.length;
+  const totalPages = Math.max(1, Math.ceil(total / PLAYER_PAGE_SIZE));
+  playerPage       = Math.min(playerPage, totalPages - 1);
+  const start      = playerPage * PLAYER_PAGE_SIZE;
+  const pageRows   = rows.slice(start, start + PLAYER_PAGE_SIZE);
+
   document.getElementById('player-stats-count').textContent =
-    `${rows.length.toLocaleString()} player${rows.length !== 1 ? 's' : ''}`;
+    `${total.toLocaleString()} player${total !== 1 ? 's' : ''}`;
 
   if (!rows.length) {
     tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;color:#555;padding:20px">No players found</td></tr>`;
+    renderPlayerPagination(0, 0, 0);
     return;
   }
 
   const fmtVol = v => (v == null || !isFinite(v)) ? '—' : (v * 100).toFixed(1) + '%';
 
-  tbody.innerHTML = rows.map(r => `
+  tbody.innerHTML = pageRows.map(r => `
     <tr>
       <td class="ps-player">${esc(r.player)}</td>
       <td class="ps-num">${fmt$(r.total_value)}</td>
@@ -619,11 +630,44 @@ function drawPlayerStats(query) {
       <td class="ps-num ps-vol" title="Std-dev of per-card % change over recent history">${fmtVol(r.volatility)}</td>
       <td class="ps-top">${r.top_card ? `<span class="ps-top-label">${esc(r.top_card.label)}</span> <span class="ps-top-price">${fmt$(r.top_card.price)}</span>` : '—'}</td>
     </tr>`).join('');
+
+  renderPlayerPagination(playerPage, totalPages, total);
+}
+
+function renderPlayerPagination(page, totalPages, total) {
+  let el = document.getElementById('player-stats-pagination');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'player-stats-pagination';
+    el.className = 'ps-pagination';
+    const wrap = document.querySelector('.ps-table-wrap');
+    if (wrap) wrap.after(el);
+  }
+
+  if (totalPages <= 1) { el.innerHTML = ''; return; }
+
+  const start = page * PLAYER_PAGE_SIZE + 1;
+  const end   = Math.min((page + 1) * PLAYER_PAGE_SIZE, total);
+
+  el.innerHTML = `
+    <button class="ps-page-btn" id="ps-prev" ${page === 0 ? 'disabled' : ''}>← Prev</button>
+    <span class="ps-page-info">${start}–${end} of ${total.toLocaleString()}</span>
+    <button class="ps-page-btn" id="ps-next" ${page >= totalPages - 1 ? 'disabled' : ''}>Next →</button>
+  `;
+
+  el.querySelector('#ps-prev')?.addEventListener('click', () => {
+    playerPage--;
+    drawPlayerStats(document.getElementById('player-stats-search')?.value || '');
+  });
+  el.querySelector('#ps-next')?.addEventListener('click', () => {
+    playerPage++;
+    drawPlayerStats(document.getElementById('player-stats-search')?.value || '');
+  });
 }
 
 function bindPlayerStats() {
   const search = document.getElementById('player-stats-search');
-  if (search) search.addEventListener('input', e => drawPlayerStats(e.target.value));
+  if (search) search.addEventListener('input', e => drawPlayerStats(e.target.value, true));
 
   document.querySelectorAll('#player-stats-table th[data-col]').forEach(th => {
     th.addEventListener('click', () => {
@@ -638,7 +682,7 @@ function bindPlayerStats() {
         t.classList.toggle('ps-sort-active', t.dataset.col === col);
         if (t.dataset.col === col) t.dataset.dir = playerSortDir === -1 ? 'desc' : 'asc';
       });
-      drawPlayerStats(document.getElementById('player-stats-search')?.value || '');
+      drawPlayerStats(document.getElementById('player-stats-search')?.value || '', true);
     });
   });
 }
