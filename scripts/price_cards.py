@@ -1339,7 +1339,7 @@ def price_with_claude(card: dict) -> Optional[dict]:
     messages = [{'role': 'user', 'content': f'Please price this baseball card:\n\n{desc}'}]
 
     try:
-        for _ in range(6):   # max tool-use rounds
+        for _ in range(3):   # max tool-use rounds (1 tool call + 1 follow-up is enough)
             resp = client.messages.create(
                 model='claude-sonnet-4-5',
                 max_tokens=1024,
@@ -1555,10 +1555,17 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         source = f'eBay ({ebay_count})'
         if fallback == 'relaxed': source += ' [relaxed]'
 
+    # Multi-player combo cards (name contains " / ") rarely have eBay listings
+    # and Claude can't find comps either — skip straight to floor/TCDB value.
+    is_multi_player = '/' in card.get('player', '')
+
     use_claude = (
-        result['count'] < LOW_DATA_THRESH
-        or (result['price'] >= HIGH_VALUE_THRESH and result['count'] < CLAUDE_MIN_COMPS)
-        or fallback == 'tcdb'   # stale column F value — ask Claude to verify against live TCDB
+        not is_multi_player
+        and (
+            result['count'] < LOW_DATA_THRESH
+            or (result['price'] >= HIGH_VALUE_THRESH and result['count'] < CLAUDE_MIN_COMPS)
+            or fallback == 'tcdb'   # stale column F value — ask Claude to verify against live TCDB
+        )
     )
     # Phase 6.2: skip Claude when 130point already gave us enough comps.
     if fallback == '130point' and result['count'] >= HTP_MIN_COMPS:
