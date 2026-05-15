@@ -740,7 +740,16 @@
   width: 100%;
   border-collapse: collapse;
   font-size: 0.82em;
+  table-layout: fixed;
 }
+/* Column widths — fixed so layout never shifts on sort */
+.ps-table colgroup col:nth-child(1) { width: auto; }       /* Player — takes remaining space */
+.ps-table colgroup col:nth-child(2) { width: 110px; }      /* Total Value */
+.ps-table colgroup col:nth-child(3) { width: 110px; }      /* Unique Cards */
+.ps-table colgroup col:nth-child(4) { width: 110px; }      /* Total Copies */
+.ps-table colgroup col:nth-child(5) { width: 95px; }       /* Avg Price */
+.ps-table colgroup col:nth-child(6) { width: 90px; }       /* Volatility */
+.ps-table colgroup col:nth-child(7) { width: 220px; }      /* Top Card */
 .ps-table thead th {
   padding: 8px 12px;
   text-align: left;
