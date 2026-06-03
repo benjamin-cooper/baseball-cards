@@ -1002,19 +1002,6 @@ span.sparkline:empty {
 /* ─── Phase 4.4 — player-stats volatility column ──────────────────────── */
 .ps-vol { color: #bbb; font-variant-numeric: tabular-nums; }
 
-/* ─── Coverage stat chip ──────────────────────────────────────────────── */
-.stat-coverage-pct { font-size: 0.55em; color: #888; font-weight: 400; display: block; margin-top: 2px; }
-.stat-pct-badge {
-  display: inline-block;
-  background: rgba(76,175,80,0.18);
-  color: #66BB6A;
-  font-size: 0.95em;
-  font-weight: 600;
-  padding: 1px 6px;
-  border-radius: 10px;
-  margin-left: 2px;
-}
-
 /* ─── Top-card copies label ───────────────────────────────────────────── */
 .top-card-copies { font-size: 0.78em; color: #888; margin-left: 3px; }
 

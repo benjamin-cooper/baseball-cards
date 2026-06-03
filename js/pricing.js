@@ -236,16 +236,6 @@ function renderStats(data) {
   const fmt = n => n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   set('stat-total-value',  fmt(data.total_value));
 
-  // Coverage: priced / total — show both numbers and a % badge
-  const priced = data.cards_priced ?? 0;
-  const total  = data.total_cards  ?? (data.cards || []).length;
-  const pct    = total > 0 ? Math.round(priced / total * 100) : null;
-  const covEl  = document.getElementById('stat-cards-priced');
-  if (covEl) {
-    covEl.innerHTML = priced.toLocaleString() +
-      (pct != null ? `<span class="stat-coverage-pct"> / ${total.toLocaleString()} <span class="stat-pct-badge">${pct}%</span></span>` : '');
-  }
-
   set('stat-avg-value',    fmt(data.avg_value));
   set('stat-top-card', fmt(data.top_card_value));
   // Median: middle value of all priced cards sorted by avg_price
