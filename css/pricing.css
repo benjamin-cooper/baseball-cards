@@ -1001,3 +1001,42 @@ span.sparkline:empty {
 
 /* ─── Phase 4.4 — player-stats volatility column ──────────────────────── */
 .ps-vol { color: #bbb; font-variant-numeric: tabular-nums; }
+
+/* ─── Coverage stat chip ──────────────────────────────────────────────── */
+.stat-coverage-pct { font-size: 0.55em; color: #888; font-weight: 400; display: block; margin-top: 2px; }
+.stat-pct-badge {
+  display: inline-block;
+  background: rgba(76,175,80,0.18);
+  color: #66BB6A;
+  font-size: 0.95em;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  margin-left: 2px;
+}
+
+/* ─── Top-card copies label ───────────────────────────────────────────── */
+.top-card-copies { font-size: 0.78em; color: #888; margin-left: 3px; }
+
+/* ─── Portfolio chart tooltip ─────────────────────────────────────────── */
+.port-wrap { position: relative; }
+.port-tooltip {
+  position: absolute;
+  background: rgba(15,32,39,0.95);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 8px;
+  padding: 8px 12px;
+  pointer-events: none;
+  font-size: 0.8em;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+  z-index: 10;
+}
+.port-tip-date { color: #888; font-size: 0.85em; margin-bottom: 5px; }
+.port-tip-row  { display: flex; align-items: center; gap: 6px; color: #ddd; margin: 2px 0; }
+.port-tip-dot  { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+/* ─── Player stats row click hint ─────────────────────────────────────── */
+.ps-row-clickable { cursor: pointer; }
+.ps-row-clickable:hover td { background: rgba(76,175,80,0.07) !important; }
+.ps-row-clickable:hover .ps-player { color: #4CAF50; }

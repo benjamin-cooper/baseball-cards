@@ -208,7 +208,7 @@ function render(data, rawPlayerCounts = {}) {
     .filter(c => c.avg_price > 0)
     .sort((a, b) => b.avg_price - a.avg_price)
     .slice(0, 25);
-  renderTopCards(top25);
+  renderTopCards(uniqueCards, data.cards || []);
   renderMarketMovers(data.cards || []);
   renderPortfolioChart(data._portfolio || []);
   renderEraChart(data.by_era || {});
@@ -235,7 +235,17 @@ function renderRunBadge(m) {
 function renderStats(data) {
   const fmt = n => n != null ? '$' + Number(n).toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}) : '—';
   set('stat-total-value',  fmt(data.total_value));
-  set('stat-cards-priced', data.cards_priced != null ? data.cards_priced.toLocaleString() : '—');
+
+  // Coverage: priced / total — show both numbers and a % badge
+  const priced = data.cards_priced ?? 0;
+  const total  = data.total_cards  ?? (data.cards || []).length;
+  const pct    = total > 0 ? Math.round(priced / total * 100) : null;
+  const covEl  = document.getElementById('stat-cards-priced');
+  if (covEl) {
+    covEl.innerHTML = priced.toLocaleString() +
+      (pct != null ? `<span class="stat-coverage-pct"> / ${total.toLocaleString()} <span class="stat-pct-badge">${pct}%</span></span>` : '');
+  }
+
   set('stat-avg-value',    fmt(data.avg_value));
   set('stat-top-card', fmt(data.top_card_value));
   // Median: middle value of all priced cards sorted by avg_price
@@ -250,26 +260,57 @@ function renderStats(data) {
   set('stat-median-value', fmt(median));
 }
 
-function renderTopCards(cards) {
+let top25Mode = 'card';   // 'card' = per-card value | 'total' = copies × price
+let top25AllCards = [];   // full deduped + with copy counts
+
+function renderTopCards(uniqueCards, allCards) {
+  // Build copy-count map so we can compute total holdings value
+  const copyCounts = {};
+  allCards.forEach(c => {
+    const id = c.card_id || cardId(c);
+    copyCounts[id] = (copyCounts[id] || 0) + 1;
+  });
+  top25AllCards = uniqueCards.map(c => {
+    const id = c.card_id || cardId(c);
+    return { ...c, _copies: copyCounts[id] || 1 };
+  });
+  drawTop25();
+}
+
+function drawTop25() {
   const el = document.getElementById('top-cards-list');
-  if (!cards.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+  if (!top25AllCards.length) { el.innerHTML = '<div class="state-empty">No data yet</div>'; return; }
+
+  const cards = [...top25AllCards]
+    .filter(c => c.avg_price > 0)
+    .sort((a, b) => {
+      const av = top25Mode === 'total' ? a.avg_price * a._copies : a.avg_price;
+      const bv = top25Mode === 'total' ? b.avg_price * b._copies : b.avg_price;
+      return bv - av;
+    })
+    .slice(0, 25);
+
   el.innerHTML = cards.map((c, i) => {
-    const sub = [c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' · ');
+    const sub       = [c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' · ');
+    const dispVal   = top25Mode === 'total' ? c.avg_price * c._copies : c.avg_price;
+    const copiesTxt = (top25Mode === 'total' && c._copies > 1) ? ` <span class="top-card-copies">×${c._copies}</span>` : '';
     return `
     <div class="top-card-row" data-card-id="${esc(c.card_id || cardId(c))}">
       <span class="top-card-rank">${i + 1}</span>
       <span class="top-card-name" title="${esc(c.player)} — ${esc(c.brand)}${c.card_number ? ' #' + esc(c.card_number) : ''}">
-        ${esc(c.player)} <span class="top-card-sub">${esc(sub)}</span>
+        ${esc(c.player)} <span class="top-card-sub">${esc(sub)}</span>${copiesTxt}
       </span>
       <span class="top-card-year">${c.year}</span>
-      <span class="top-card-price">${fmt$(c.avg_price)}</span>
+      <span class="top-card-price">${fmt$(dispVal)}</span>
     </div>`;
   }).join('');
 }
 
 // ─── Market Movers ────────────────────────────────────────────────────────────
+let moversMode = '$';    // '$' = sort by absolute dollar change | '%' = sort by pct
+let moversData = [];     // cached so we can re-sort without re-computing
+
 function renderMarketMovers(cards) {
-  const el = document.getElementById('market-movers');
   // Dedupe by card_id — show each unique card once even if owned as duplicates.
   const seen = new Set();
   const unique = cards.filter(c => {
@@ -278,23 +319,41 @@ function renderMarketMovers(cards) {
     seen.add(id);
     return true;
   });
-  const movers = unique
-    .map(c => {
-      const pct = pctChange(c);
-      if (pct == null) return null;
-      return { card: c, pct };
-    })
-    .filter(Boolean)
-    .sort((a, b) => Math.abs(b.pct) - Math.abs(a.pct))
-    .slice(0, 10);
 
-  if (!movers.length) {
+  moversData = unique
+    .map(c => {
+      const id   = c.card_id || cardId(c);
+      const h    = priceHistory[id];
+      if (!h || h.length < 2) return null;
+      const prev = h[h.length - 2].price;
+      const curr = parseFloat(c.avg_price);
+      if (!prev || !curr) return null;
+      return { card: c, pct: (curr - prev) / prev * 100, abs: curr - prev };
+    })
+    .filter(Boolean);
+
+  drawMovers();
+}
+
+function drawMovers() {
+  const el = document.getElementById('market-movers');
+  if (!moversData.length) {
     el.innerHTML = '<div class="state-empty">Run the agent at least twice to see movers</div>';
     return;
   }
-  el.innerHTML = movers.map(({ card: c, pct }) => {
-    const up = pct >= 0, sign = up ? '+' : '';
+
+  const sorted = [...moversData]
+    .sort((a, b) => moversMode === '$'
+      ? Math.abs(b.abs) - Math.abs(a.abs)
+      : Math.abs(b.pct) - Math.abs(a.pct))
+    .slice(0, 10);
+
+  el.innerHTML = sorted.map(({ card: c, pct, abs }) => {
+    const up   = pct >= 0, sign = up ? '+' : '';
     const meta = [c.year, c.brand, c.card_number ? `#${c.card_number}` : ''].filter(Boolean).join(' ');
+    const deltaLabel = moversMode === '$'
+      ? `${sign}${fmt$(abs)} (${sign}${pct.toFixed(1)}%)`
+      : `${sign}${pct.toFixed(1)}% (${sign}${fmt$(abs)})`;
     return `
       <div class="mover-row" data-card-id="${esc(c.card_id || cardId(c))}">
         <div class="mover-info">
@@ -302,29 +361,57 @@ function renderMarketMovers(cards) {
           <span class="mover-meta">${esc(meta)}</span>
         </div>
         <span class="mover-price">${fmt$(c.avg_price)}</span>
-        <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${sign}${pct.toFixed(1)}%</span>
+        <span class="mover-delta ${up ? 'delta-up' : 'delta-down'}">${deltaLabel}</span>
       </div>`;
   }).join('');
 }
 
 // ─── Portfolio Chart ──────────────────────────────────────────────────────────
+let _portfolioData = [];   // cached for resize / tooltip
+
 function renderPortfolioChart(portfolio) {
+  _portfolioData = portfolio || [];
   const el = document.getElementById('portfolio-chart');
-  if (!portfolio || portfolio.length < 2) {
+  if (!_portfolioData || _portfolioData.length < 2) {
     el.innerHTML = '<div class="state-empty">Portfolio trend will appear after 2+ pricing runs</div>';
     return;
   }
-  const W = Math.max(el.offsetWidth || 600, 300), H = 150;
+  drawPortfolioChart();
+}
+
+function drawPortfolioChart() {
+  const el = document.getElementById('portfolio-chart');
+  const portfolio = _portfolioData;
+  if (!portfolio || portfolio.length < 2) return;
+
+  const W = Math.max(el.offsetWidth || 600, 300), H = 160;
   const P = { t: 16, r: 16, b: 28, l: 70 };
   const pw = W - P.l - P.r, ph = H - P.t - P.b;
-  const vals = portfolio.map(p => p.total_value);
-  const minV = Math.min(...vals) * 0.93, maxV = Math.max(...vals) * 1.07;
-  const xS   = i => P.l + (i / (portfolio.length - 1)) * pw;
-  const yS   = v => P.t + ph - ((v - minV) / ((maxV - minV) || 1)) * ph;
-  const poly = portfolio.map((p, i) => `${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ');
-  const area = `M${xS(0).toFixed(1)},${(P.t+ph).toFixed(1)} ` +
+
+  const vals  = portfolio.map(p => p.total_value);
+  const minV  = Math.min(...vals) * 0.93, maxV = Math.max(...vals) * 1.07;
+  const xS    = i => P.l + (i / (portfolio.length - 1)) * pw;
+  const yS    = v => P.t + ph - ((v - minV) / ((maxV - minV) || 1)) * ph;
+  const poly  = portfolio.map((p, i) => `${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ');
+  const area  = `M${xS(0).toFixed(1)},${(P.t+ph).toFixed(1)} ` +
     portfolio.map((p, i) => `L${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ') +
     ` L${xS(portfolio.length-1).toFixed(1)},${(P.t+ph).toFixed(1)} Z`;
+
+  // Card count line (right axis, scaled independently)
+  const hasCounts   = portfolio.some(p => p.cards_priced != null);
+  const countPts    = hasCounts ? portfolio.map(p => p.cards_priced ?? 0) : [];
+  const minC        = hasCounts ? Math.min(...countPts) * 0.93 : 0;
+  const maxC        = hasCounts ? Math.max(...countPts) * 1.07 : 1;
+  const yC          = v => P.t + ph - ((v - minC) / ((maxC - minC) || 1)) * ph;
+  const countPolyPts = hasCounts
+    ? portfolio.map((p, i) => `${xS(i).toFixed(1)},${yC(p.cards_priced ?? 0).toFixed(1)}`).join(' ')
+    : '';
+  const countLine = hasCounts
+    ? `<polyline points="${countPolyPts}" fill="none" stroke="#42a5f5" stroke-width="1.5" stroke-dasharray="4 3" stroke-linejoin="round" opacity="0.7"/>`
+    : '';
+  const countLegend = hasCounts
+    ? `<line x1="${W-90}" y1="${P.t+4}" x2="${W-78}" y2="${P.t+4}" stroke="#42a5f5" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
+       <text x="${W-74}" y="${P.t+8}" class="chart-label" fill="#42a5f5" opacity="0.7">cards priced</text>` : '';
 
   const yLabels = [minV, (minV+maxV)/2, maxV].map(v =>
     `<text x="${P.l-8}" y="${yS(v)+4}" text-anchor="end" class="chart-label">${fmt$(v)}</text>`
@@ -334,16 +421,86 @@ function renderPortfolioChart(portfolio) {
     `<text x="${xS(i).toFixed(1)}" y="${H-4}" text-anchor="middle" class="chart-label">${fmtDateShort(portfolio[i].date)}</text>`
   ).join('');
 
-  el.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
-    <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="#4CAF50" stop-opacity="0.02"/>
-    </linearGradient></defs>
-    ${yLabels}${xLabels}
-    <path d="${area}" fill="url(#pg)"/>
-    <polyline points="${poly}" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/>
-    ${portfolio.map((p,i) => `<circle cx="${xS(i).toFixed(1)}" cy="${yS(p.total_value).toFixed(1)}" r="3.5" fill="#4CAF50"/>`).join('')}
-  </svg>`;
+  // Dots — skip if too many points (>20) to avoid visual clutter
+  const showDots = portfolio.length <= 20;
+  const dots = showDots
+    ? portfolio.map((p,i) => `<circle class="port-dot" cx="${xS(i).toFixed(1)}" cy="${yS(p.total_value).toFixed(1)}" r="3.5" fill="#4CAF50" data-i="${i}"/>`).join('')
+    : '';
+
+  // Invisible hover overlay — one rect per data point for easy mouse targeting
+  const hoverRects = portfolio.map((p, i) => {
+    const x0 = i === 0                    ? P.l           : (xS(i-1) + xS(i)) / 2;
+    const x1 = i === portfolio.length - 1 ? P.l + pw      : (xS(i) + xS(i+1)) / 2;
+    return `<rect class="port-hover-rect" x="${x0.toFixed(1)}" y="${P.t}" width="${(x1-x0).toFixed(1)}" height="${ph}" fill="transparent" data-i="${i}" style="cursor:crosshair"/>`;
+  }).join('');
+
+  el.innerHTML = `
+    <div class="port-wrap" style="position:relative">
+      <svg id="port-svg" width="100%" height="${H}" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+        <defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#4CAF50" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="#4CAF50" stop-opacity="0.02"/>
+        </linearGradient></defs>
+        ${yLabels}${xLabels}
+        <path d="${area}" fill="url(#pg)"/>
+        <polyline points="${poly}" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/>
+        ${countLine}${countLegend}
+        ${dots}
+        <!-- crosshair line (hidden until hover) -->
+        <line id="port-crosshair" x1="0" y1="${P.t}" x2="0" y2="${P.t+ph}" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 3" display="none"/>
+        <!-- hover dot highlight -->
+        <circle id="port-hover-dot" r="5" fill="#4CAF50" stroke="#fff" stroke-width="1.5" display="none"/>
+        ${hoverRects}
+      </svg>
+      <div id="port-tooltip" class="port-tooltip" style="display:none"></div>
+    </div>`;
+
+  // Wire hover events
+  el.querySelectorAll('.port-hover-rect').forEach(rect => {
+    rect.addEventListener('mouseenter', e => showPortTooltip(parseInt(e.target.dataset.i), W, P, xS, yS, yC, hasCounts));
+    rect.addEventListener('mouseleave', hidePortTooltip);
+  });
+}
+
+function showPortTooltip(i, W, P, xS, yS, yC, hasCounts) {
+  const p         = _portfolioData[i];
+  if (!p) return;
+  const crosshair = document.getElementById('port-crosshair');
+  const dot       = document.getElementById('port-hover-dot');
+  const tip       = document.getElementById('port-tooltip');
+  const svg       = document.getElementById('port-svg');
+  if (!crosshair || !dot || !tip || !svg) return;
+
+  const cx = xS(i).toFixed(1);
+  const cy = yS(p.total_value).toFixed(1);
+  crosshair.setAttribute('x1', cx); crosshair.setAttribute('x2', cx);
+  crosshair.removeAttribute('display');
+  dot.setAttribute('cx', cx); dot.setAttribute('cy', cy);
+  dot.removeAttribute('display');
+
+  // Position tooltip — flip to left side when near right edge
+  const svgW    = svg.getBoundingClientRect().width || W;
+  const xPx     = (parseFloat(cx) / W) * svgW;
+  const nearRight = xPx > svgW * 0.6;
+  const countLine = hasCounts && p.cards_priced != null
+    ? `<div class="port-tip-row"><span class="port-tip-dot" style="background:#42a5f5"></span>${p.cards_priced.toLocaleString()} cards priced</div>` : '';
+  tip.innerHTML = `
+    <div class="port-tip-date">${fmtDateShort(p.date)}</div>
+    <div class="port-tip-row"><span class="port-tip-dot" style="background:#4CAF50"></span>${fmt$(p.total_value)}</div>
+    ${countLine}`;
+  tip.style.display  = 'block';
+  tip.style.left     = nearRight ? '' : `${xPx + 12}px`;
+  tip.style.right    = nearRight ? `${svgW - xPx + 8}px` : '';
+  tip.style.top      = '8px';
+}
+
+function hidePortTooltip() {
+  const crosshair = document.getElementById('port-crosshair');
+  const dot       = document.getElementById('port-hover-dot');
+  const tip       = document.getElementById('port-tooltip');
+  if (crosshair) crosshair.setAttribute('display', 'none');
+  if (dot)       dot.setAttribute('display', 'none');
+  if (tip)       tip.style.display = 'none';
 }
 
 // ─── Era Chart ────────────────────────────────────────────────────────────────
@@ -513,7 +670,8 @@ function drawBrandChart() {
   rows.sort((a, b) => brandMode === 'avg'
     ? b.avg_value   - a.avg_value
     : b.total_value - a.total_value);
-  rows = rows.slice(0, 12);
+  // Cap top-level at 12 to avoid overload; show all sub-brands on drill-down
+  if (brandDrilldown === null) rows = rows.slice(0, 12);
 
   const maxVal = Math.max(...rows.map(d => brandMode === 'avg' ? d.avg_value : d.total_value), 1);
 
@@ -621,7 +779,7 @@ function drawPlayerStats(query, resetPage = false) {
   const fmtVol = v => (v == null || !isFinite(v)) ? '—' : (v * 100).toFixed(1) + '%';
 
   tbody.innerHTML = pageRows.map(r => `
-    <tr>
+    <tr class="ps-row-clickable" data-player="${esc(r.player)}" title="Click to filter full table to ${esc(r.player)}">
       <td class="ps-player">${esc(r.player)}</td>
       <td class="ps-num">${fmt$(r.total_value)}</td>
       <td class="ps-num">${r.unique.toLocaleString()}</td>
@@ -630,6 +788,19 @@ function drawPlayerStats(query, resetPage = false) {
       <td class="ps-num ps-vol" title="Std-dev of per-card % change over recent history">${fmtVol(r.volatility)}</td>
       <td class="ps-top">${r.top_card ? `<span class="ps-top-label">${esc(r.top_card.label)}</span> <span class="ps-top-price">${fmt$(r.top_card.price)}</span>` : '—'}</td>
     </tr>`).join('');
+
+  // Click a row → filter the main table to that player and scroll to it
+  tbody.querySelectorAll('.ps-row-clickable').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const player = tr.dataset.player;
+      const searchEl = document.getElementById('table-search');
+      if (searchEl) {
+        searchEl.value = player;
+        applyFilters();
+        document.querySelector('.table-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
 
   renderPlayerPagination(playerPage, totalPages, total);
 }
@@ -871,7 +1042,8 @@ function openCardModal(card) {
     ${hist.length >= 2 ? cardHistoryChart(hist) : '<div class="state-empty" style="padding:18px 0">History appears after 2+ runs for this card</div>'}
     <div class="card-detail-links">
       <a href="https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(card.year+' '+card.brand+' '+card.player+' baseball')}&_sacat=212" target="_blank" class="card-link">🔍 Search eBay</a>
-      <a href="https://mavin.io/search?q=${encodeURIComponent(card.year+' '+card.brand+' '+card.player)}" target="_blank" class="card-link">📊 Mavin Prices</a>
+      <a href="https://130point.com/sales/?s=${encodeURIComponent(card.year+' '+card.brand+' '+card.player)}" target="_blank" class="card-link">📊 Sold Prices</a>
+      <a href="https://www.tcdb.com/Search.cfm/ct/1?SearchType=3&SearchString=${encodeURIComponent(card.player)}" target="_blank" class="card-link">📋 TCDB</a>
     </div>`;
   openModal('modal-card');
 }
@@ -995,6 +1167,24 @@ function saveSettings() {
 
 // ─── GitHub Actions Trigger + Live Tracker ────────────────────────────────────
 function bindRunModeUI() {
+  // Top 25 toggle
+  document.querySelectorAll('#top25-toggle .chart-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      top25Mode = btn.dataset.mode;
+      document.querySelectorAll('#top25-toggle .chart-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === top25Mode));
+      drawTop25();
+    });
+  });
+
+  // Market movers toggle
+  document.querySelectorAll('#movers-toggle .chart-toggle-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      moversMode = btn.dataset.mode;
+      document.querySelectorAll('#movers-toggle .chart-toggle-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === moversMode));
+      drawMovers();
+    });
+  });
+
   // Era chart toggle + sort
   document.querySelectorAll('#era-toggle .chart-toggle-btn').forEach(btn => {
     btn.addEventListener('click', () => setEraMode(btn.dataset.mode));
@@ -1103,16 +1293,20 @@ async function triggerRun() {
 }
 
 function updateTracker(status, conclusion, elapsedSec) {
-  const pct = Math.min((elapsedSec/600)*100, 95).toFixed(1);
+  // Progress: pulse slowly while queued/running — don't pretend we know duration
+  const pct = status === 'completed' ? 100
+    : status === 'queued'      ? Math.min(elapsedSec * 2, 8)   // creep to 8% while queued
+    : Math.min(8 + (elapsedSec / 30), 90);                     // crawl slowly once running
   const m   = Math.floor(elapsedSec/60), s = String(elapsedSec%60).padStart(2,'0');
+  const elapsed = elapsedSec >= 60 ? `${m}m ${s}s` : `${elapsedSec}s`;
   set('tracker-icon',  { queued:'⏳', in_progress:'🔄', completed: conclusion==='success'?'✅':'❌' }[status]||'⏳');
   set('tracker-label', {
-    queued:      'Queued on GitHub…',
-    in_progress: `Running — ${m}m ${s}s  (est. ~10 min)`,
-    completed:   conclusion==='success' ? `Done in ${m}m ${s}s — refreshing…` : `Failed after ${m}m ${s}s`
+    queued:      `Queued on GitHub… (${elapsed})`,
+    in_progress: `Running — ${elapsed} elapsed`,
+    completed:   conclusion==='success' ? `Done in ${elapsed} — refreshing…` : `Failed after ${elapsed}`
   }[status] || status);
   const bar = document.getElementById('tracker-bar');
-  bar.style.width      = status==='completed' ? '100%' : pct+'%';
+  bar.style.width      = pct.toFixed(1) + '%';
   bar.style.background = conclusion==='failure' ? '#EF5350' : 'linear-gradient(90deg,#2e7d32,#4CAF50)';
 }
 

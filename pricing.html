@@ -44,6 +44,7 @@
           <div class="stat-value" id="stat-cards-priced">—</div>
           <div class="stat-label">Cards Priced</div>
         </div>
+
         <div class="stat-card">
           <div class="stat-value" id="stat-avg-value">—</div>
           <div class="stat-label">Avg Card Value</div>
@@ -67,11 +68,23 @@
       <!-- TOP CARDS + MARKET MOVERS -->
       <div class="insights-grid">
         <div class="insights-panel">
-          <h2>Top 25 Most Valuable</h2>
+          <div class="panel-header">
+            <h2>Top 25 Most Valuable</h2>
+            <div class="chart-toggle" id="top25-toggle">
+              <button class="chart-toggle-btn active" data-mode="card">Per Card</button>
+              <button class="chart-toggle-btn" data-mode="total">Total Holdings</button>
+            </div>
+          </div>
           <div id="top-cards-list" class="top-cards-list"></div>
         </div>
         <div class="insights-panel">
-          <h2>Market Movers</h2>
+          <div class="panel-header">
+            <h2>Market Movers</h2>
+            <div class="chart-toggle" id="movers-toggle">
+              <button class="chart-toggle-btn active" data-mode="$">$ Change</button>
+              <button class="chart-toggle-btn" data-mode="%">% Change</button>
+            </div>
+          </div>
           <div id="market-movers" class="market-movers"></div>
         </div>
       </div>
