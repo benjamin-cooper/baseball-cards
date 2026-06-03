@@ -379,29 +379,18 @@ function drawPortfolioChart() {
   const pw = W - P.l - P.r, ph = H - P.t - P.b;
 
   const vals  = portfolio.map(p => p.total_value);
-  const minV  = Math.min(...vals) * 0.93, maxV = Math.max(...vals) * 1.07;
+  const rawMin = Math.min(...vals), rawMax = Math.max(...vals);
+  // Tight y-axis: pad by 5% of the actual range so small moves are visible.
+  // Fall back to ±5% of the value when all points are identical (flat line).
+  const spread = rawMax - rawMin || rawMax * 0.05 || 1;
+  const minV  = rawMin - spread * 0.05;
+  const maxV  = rawMax + spread * 0.05;
   const xS    = i => P.l + (i / (portfolio.length - 1)) * pw;
   const yS    = v => P.t + ph - ((v - minV) / ((maxV - minV) || 1)) * ph;
   const poly  = portfolio.map((p, i) => `${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ');
   const area  = `M${xS(0).toFixed(1)},${(P.t+ph).toFixed(1)} ` +
     portfolio.map((p, i) => `L${xS(i).toFixed(1)},${yS(p.total_value).toFixed(1)}`).join(' ') +
     ` L${xS(portfolio.length-1).toFixed(1)},${(P.t+ph).toFixed(1)} Z`;
-
-  // Card count line (right axis, scaled independently)
-  const hasCounts   = portfolio.some(p => p.cards_priced != null);
-  const countPts    = hasCounts ? portfolio.map(p => p.cards_priced ?? 0) : [];
-  const minC        = hasCounts ? Math.min(...countPts) * 0.93 : 0;
-  const maxC        = hasCounts ? Math.max(...countPts) * 1.07 : 1;
-  const yC          = v => P.t + ph - ((v - minC) / ((maxC - minC) || 1)) * ph;
-  const countPolyPts = hasCounts
-    ? portfolio.map((p, i) => `${xS(i).toFixed(1)},${yC(p.cards_priced ?? 0).toFixed(1)}`).join(' ')
-    : '';
-  const countLine = hasCounts
-    ? `<polyline points="${countPolyPts}" fill="none" stroke="#42a5f5" stroke-width="1.5" stroke-dasharray="4 3" stroke-linejoin="round" opacity="0.7"/>`
-    : '';
-  const countLegend = hasCounts
-    ? `<line x1="${W-90}" y1="${P.t+4}" x2="${W-78}" y2="${P.t+4}" stroke="#42a5f5" stroke-width="1.5" stroke-dasharray="4 3" opacity="0.7"/>
-       <text x="${W-74}" y="${P.t+8}" class="chart-label" fill="#42a5f5" opacity="0.7">cards priced</text>` : '';
 
   const yLabels = [minV, (minV+maxV)/2, maxV].map(v =>
     `<text x="${P.l-8}" y="${yS(v)+4}" text-anchor="end" class="chart-label">${fmt$(v)}</text>`
@@ -434,7 +423,6 @@ function drawPortfolioChart() {
         ${yLabels}${xLabels}
         <path d="${area}" fill="url(#pg)"/>
         <polyline points="${poly}" fill="none" stroke="#4CAF50" stroke-width="2" stroke-linejoin="round"/>
-        ${countLine}${countLegend}
         ${dots}
         <!-- crosshair line (hidden until hover) -->
         <line id="port-crosshair" x1="0" y1="${P.t}" x2="0" y2="${P.t+ph}" stroke="rgba(255,255,255,0.2)" stroke-width="1" stroke-dasharray="3 3" display="none"/>
@@ -447,12 +435,12 @@ function drawPortfolioChart() {
 
   // Wire hover events
   el.querySelectorAll('.port-hover-rect').forEach(rect => {
-    rect.addEventListener('mouseenter', e => showPortTooltip(parseInt(e.target.dataset.i), W, P, xS, yS, yC, hasCounts));
+    rect.addEventListener('mouseenter', e => showPortTooltip(parseInt(e.target.dataset.i), W, P, xS, yS));
     rect.addEventListener('mouseleave', hidePortTooltip);
   });
 }
 
-function showPortTooltip(i, W, P, xS, yS, yC, hasCounts) {
+function showPortTooltip(i, W, P, xS, yS) {
   const p         = _portfolioData[i];
   if (!p) return;
   const crosshair = document.getElementById('port-crosshair');
@@ -469,15 +457,12 @@ function showPortTooltip(i, W, P, xS, yS, yC, hasCounts) {
   dot.removeAttribute('display');
 
   // Position tooltip — flip to left side when near right edge
-  const svgW    = svg.getBoundingClientRect().width || W;
-  const xPx     = (parseFloat(cx) / W) * svgW;
+  const svgW     = svg.getBoundingClientRect().width || W;
+  const xPx      = (parseFloat(cx) / W) * svgW;
   const nearRight = xPx > svgW * 0.6;
-  const countLine = hasCounts && p.cards_priced != null
-    ? `<div class="port-tip-row"><span class="port-tip-dot" style="background:#42a5f5"></span>${p.cards_priced.toLocaleString()} cards priced</div>` : '';
   tip.innerHTML = `
     <div class="port-tip-date">${fmtDateShort(p.date)}</div>
-    <div class="port-tip-row"><span class="port-tip-dot" style="background:#4CAF50"></span>${fmt$(p.total_value)}</div>
-    ${countLine}`;
+    <div class="port-tip-row"><span class="port-tip-dot" style="background:#4CAF50"></span>${fmt$(p.total_value)}</div>`;
   tip.style.display  = 'block';
   tip.style.left     = nearRight ? '' : `${xPx + 12}px`;
   tip.style.right    = nearRight ? `${svgW - xPx + 8}px` : '';
