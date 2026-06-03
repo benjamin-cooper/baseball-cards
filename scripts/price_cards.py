@@ -1575,6 +1575,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         use_claude = False
 
     claude_reasoning = ''
+    claude_overrode  = False   # set True when Claude supplies a real price
 
     # ── Step 2: Claude for difficult / high-value cards ───────────────────────
     if use_claude:
@@ -1587,6 +1588,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
                 result['count'] = cr.get('data_points', result['count'])
             source           = ', '.join(cr.get('sources', ['Claude']))
             claude_reasoning = cr.get('reasoning', '')
+            claude_overrode  = True
         else:
             log.info('  → Claude returned no result, keeping algorithmic')
 
@@ -1596,7 +1598,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         conf = 'Floor Value'
     else:
         fp, cap_note = era_cap(result['price'], card['year'], card['brand'], result['count'])
-        if fallback == 'tcdb':
+        if fallback == 'tcdb' and not claude_overrode:
             conf = 'Low (TCDB ref)'
         elif fallback == 'relaxed':
             conf = 'Low (relaxed)'
