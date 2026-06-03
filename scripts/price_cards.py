@@ -863,6 +863,9 @@ def _apply_exclusions(title_l: str, card_brand_l: str = '') -> bool:
     """
     if any(k in title_l for k in GRADED_KW):   return True
     if any(k in title_l for k in AUTO_KW):      return True
+    # Standalone "auto" at a word boundary = autograph shorthand on eBay.
+    # Use word-boundary match to avoid false hits on "automatic" etc.
+    if re.search(r'\bauto\b', title_l):         return True
     if any(k in title_l for k in LOT_KW):       return True
     if any(k in title_l for k in REPRINT_KW):   return True
     if any(k in title_l for k in MULTI_KW):     return True
@@ -1341,7 +1344,7 @@ def price_with_claude(card: dict) -> Optional[dict]:
     try:
         for _ in range(3):   # max tool-use rounds (1 tool call + 1 follow-up is enough)
             resp = client.messages.create(
-                model='claude-sonnet-4-5',
+                model='claude-sonnet-4-7',
                 max_tokens=1024,
                 system=SYSTEM_PROMPT,
                 tools=CLAUDE_TOOLS,
