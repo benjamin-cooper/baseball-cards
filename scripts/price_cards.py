@@ -555,6 +555,13 @@ def _extract_listing_type(item: dict) -> str:
     return 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
 
 
+def _extract_best_offer(item: dict) -> bool:
+    """True if the listing accepts Best Offer — the asking price on these
+    tends to overstate the eventual transaction price (buyers negotiate
+    down), so weighted_average() applies a modest discount for them."""
+    return 'BEST_OFFER' in (item.get('buyingOptions') or [])
+
+
 def _norm_player(name: str) -> str:
     """Normalise a player name for fuzzy title matching.
 
@@ -923,6 +930,7 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
             'price':        price,
             'listing_type': _extract_listing_type(item),
             'end_date':     _extract_end_date(item),
+            'best_offer':   _extract_best_offer(item),
             'title':        title,
         })
 
@@ -955,14 +963,25 @@ def filter_items_relaxed(items, year, player, brand: str = '') -> list[dict]:
             'price':        price,
             'listing_type': _extract_listing_type(item),
             'end_date':     _extract_end_date(item),
+            'best_offer':   _extract_best_offer(item),
             'title':        title,
         })
 
     return results
 
 
+BEST_OFFER_DISCOUNT = 0.10   # haircut applied to Best-Offer-enabled asking prices
+
 def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
-    """Recency-weighted average with IQR outlier removal."""
+    """Recency-weighted average with IQR outlier removal.
+
+    Best-Offer-enabled listings get a modest price haircut before anything
+    else runs (IQR bounds, median, weighting) — the asking price on a
+    negotiable listing systematically overstates what it actually sells for,
+    since that's the point of enabling offers. Applying it here means every
+    downstream stat (median, min/max, the final weighted price) reflects the
+    same "believed true price," not just the final average.
+    """
     if not items:
         return {'price': 0, 'count': 0, 'median': 0, 'min': 0, 'max': 0}
 
@@ -977,7 +996,10 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
                 continue   # malformed date — can't trust recency weight, skip item
         else:
             age = 0
-        prices_with_age.append((item['price'], age, item.get('listing_type', 'BIN')))
+        price = item['price']
+        if item.get('best_offer'):
+            price = round(price * (1 - BEST_OFFER_DISCOUNT), 2)
+        prices_with_age.append((price, age, item.get('listing_type', 'BIN')))
 
     prices = sorted(p for p, _, _ in prices_with_age)
 
