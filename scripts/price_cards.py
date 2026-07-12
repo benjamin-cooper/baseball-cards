@@ -526,7 +526,6 @@ GRADED_KW   = ('psa', 'bgs', 'sgc', 'graded')
 AUTO_KW     = ('autograph', 'signed', '/auto', 'on-card auto')
 LOT_KW      = ('lot of', 'complete set', 'team set')
 REPRINT_KW  = ('reprint', 'reproduction')
-PARALLEL_KW = ('/1 ', '/2 ', '/3 ', '/4 ', '/5 ', '/10 ', '/25 ', '/50 ')
 MULTI_KW    = (' x2', ' x3', '(2)', '(3)', '(4)')
 PREMIUM_KW  = ('refractor', 'prizm', 'rainbow foil', 'xfractor', 'superfractor',
                'atomic refractor', 'sepia', 'gold parallel', 'negative refractor')
@@ -869,7 +868,8 @@ def _apply_exclusions(title_l: str, card_brand_l: str = '') -> bool:
     if any(k in title_l for k in LOT_KW):       return True
     if any(k in title_l for k in REPRINT_KW):   return True
     if any(k in title_l for k in MULTI_KW):     return True
-    if any(k in title_l for k in PARALLEL_KW):  return True
+    # Serial-numbered parallels ("/199", "/25", etc.) — covers the full range,
+    # so no separate keyword list of specific denominations is needed.
     if re.search(r'/\d{1,3}\b', title_l):       return True
 
     # Premium parallels — skip check if the card's own brand contains the keyword
@@ -1182,6 +1182,49 @@ def floor_value(year: str, brand: str) -> float:
     return 0.75
 
 
+def era(year) -> str:
+    """Coarse era bucket for a card year. Shared by the era breakdown chart
+    and the Bayesian smoothing prior (player + era grouping)."""
+    y = int(year or 0)
+    if y < 1970: return 'Vintage (pre-1970)'
+    if y < 1980: return '1970s'
+    if y < 1987: return 'Early 80s'
+    if y < 1995: return 'Junk Wax (1987–94)'
+    if y < 2000: return 'Late 90s'
+    if y < 2010: return '2000s'
+    if y < 2020: return '2010s'
+    return 'Modern (2020+)'
+
+
+# Flagship base-set names — anything else is treated as an insert/subset/parallel
+# for Bayesian-prior grouping purposes. Not exhaustive; unmatched brands fall
+# through to 'insert', which is the safer default (most brand strings in this
+# collection ARE named subsets, not plain base sets).
+_BASE_SET_BRANDS = {
+    'topps', 'donruss', 'fleer', 'upper deck', 'score', 'bowman',
+    'pacific', 'leaf', 'pinnacle', 'stadium club', 'studio',
+}
+
+def card_type_tag(brand: str) -> str:
+    """Coarse card-type classification from the brand/set name text.
+
+    There's no dedicated 'rookie'/'error'/'all-star' field in the sheet and
+    no player debut-year data to determine true rookie status — this is a
+    text-based approximation used only to refine which comps get pooled
+    together for Bayesian-prior smoothing, not a hard pricing filter.
+    """
+    b = (brand or '').lower()
+    if any(k in b for k in ('rated rookie', 'rookie', 'draft pick', 'first year')):
+        return 'rookie'
+    if any(k in b for k in ('all-star', 'all star')):
+        return 'all_star'
+    if any(k in b for k in ('error', 'variation', 'misprint')):
+        return 'error'
+    if b.strip() in _BASE_SET_BRANDS:
+        return 'base'
+    return 'insert'
+
+
 def scarcity_label(count: int, year: str) -> str:
     y = int(year or 0)
     if count == 0: return 'Unicorn'
@@ -1286,12 +1329,17 @@ def execute_tool(name: str, inputs: dict, card: dict = None) -> str:
         if not items:
             return 'No results found.'
 
-        # Pre-filter through exclusions so Claude doesn't anchor on graded/auto/SSP outliers
+        # Pre-filter through exclusions so Claude doesn't anchor on graded/auto/SSP outliers.
+        # Unlike the algorithmic path, we do NOT fall back to the unfiltered list when
+        # everything gets excluded — if every listing is graded/auto, there are no clean
+        # comps to show Claude, and silently handing back auto/graded prices would let it
+        # anchor on inflated numbers for a card that has no real raw-card market.
         if card:
             card_brand_l = card.get('brand', '').lower()
-            filtered = [i for i in items
-                        if not _apply_exclusions((i.get('title', '') or '').lower(), card_brand_l)]
-            items = filtered or items   # fall back to unfiltered if all excluded
+            items = [i for i in items
+                     if not _apply_exclusions((i.get('title', '') or '').lower(), card_brand_l)]
+            if not items:
+                return 'No clean (non-graded/non-autograph/non-parallel) results found.'
 
         # IQR trim before presenting to Claude
         prices_raw = [float((i.get('price') or {}).get('value') or 0) for i in items]
@@ -1304,7 +1352,16 @@ def execute_tool(name: str, inputs: dict, card: dict = None) -> str:
             trimmed = [i for i, p in zip(items, prices_raw) if lo <= p <= hi]
             items = trimmed or items
 
-        lines = [f'${i.get("price",{}).get("value","?")} — {i.get("title","?")}' for i in items[:20]]
+        # Surface listing type + end date so Claude can actually follow the
+        # system prompt's instruction to weight sold/completed listings over
+        # active asking prices — without this it has no way to tell them apart.
+        lines = []
+        for i in items[:20]:
+            price   = i.get('price', {}).get('value', '?')
+            ltype   = _extract_listing_type(i)
+            end     = _extract_end_date(i)
+            end_str = f', ended {end[:10]}' if end else ''
+            lines.append(f'${price} — [{ltype}{end_str}] {i.get("title","?")}')
         return '\n'.join(lines)
 
     elif name == 'fetch_page':
@@ -1622,6 +1679,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             'avg_price':    round(fp, 2),
             'median':       result['median'],
             'confidence':   conf,
+            'comp_count':   result['count'],
             'last_updated': now_iso,
             'card_id':      make_card_id(card['year'], card['brand'], card['player'], card['card_number']),
         }
@@ -1633,8 +1691,12 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 # ══════════════════════════════════════════════════════════════════════════════
 
 # Phase 6.3/6.4/6.5/6.6 — post-processing improvements that cost zero API calls.
-#   6.3 Bayesian smoothing: for cards with thin eBay data, blend the raw price
-#       with player-level and set-level priors.
+#   6.3 Bayesian smoothing: for cards with thin eBay data (<LOW_DATA_THRESH
+#       comps), blend the raw price toward comparable cards. Four grouping
+#       tiers (exact set, player+era+type, player+era, player career-wide)
+#       are blended by specificity — see _PRIOR_TIER_WEIGHTS — so a sparse
+#       exact-set match still gets diluted by broader player-level signal,
+#       and an empty exact-set match falls back cleanly to the next tier.
 #   6.4 Median-of-last-3-runs: replace avg_price with median(current, prev-1,
 #       prev-2) to smooth day-to-day noise.
 #   6.5 TCDB anomaly floor: if the new price is <30% of the sheet-provided TCDB
@@ -1645,6 +1707,35 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
 SMOOTHING_K = 5   # strength of Bayesian smoothing (higher = trust prior more)
 ANOMALY_DROP_RATIO = 0.3      # trigger if new_price < 30% of TCDB ref
 ANOMALY_FLOOR_FRAC  = 0.5     # floor at 50% of TCDB ref
+
+# Bayesian-prior tier weights — most specific comparable group dominates the
+# blend when it has data; sparser/broader tiers fill in what's missing.
+# (mean, n, weight) tuples are combined as a weighted average of n*weight.
+_PRIOR_TIER_WEIGHTS = {
+    'set':               4.0,   # exact year + brand
+    'player_era_type':   3.0,   # same player, same era bucket, same card-type tag
+    'player_era':        2.0,   # same player, same era bucket
+    'player':            1.0,   # same player, career-wide — broadest fallback
+}
+
+
+def _resolve_comp_count(c: dict) -> int:
+    """Prefer the real comp count persisted at pricing time; fall back to a
+    confidence-label heuristic for cards priced before comp_count existed."""
+    cc = c.get('comp_count')
+    if isinstance(cc, int):
+        return cc
+    return _extract_count_from_confidence(c.get('confidence', ''))
+
+
+def _weighted_prior(tiers: dict) -> float:
+    """Blend {name: (mean, n)} tiers into one prior using _PRIOR_TIER_WEIGHTS.
+    Tiers with n=0 contribute nothing — the blend automatically falls back
+    to whichever tiers actually have data."""
+    num = sum(mean * n * _PRIOR_TIER_WEIGHTS[name] for name, (mean, n) in tiers.items() if n > 0)
+    den = sum(n * _PRIOR_TIER_WEIGHTS[name] for name, (mean, n) in tiers.items() if n > 0)
+    return num / den if den else 0.0
+
 
 def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
     """Mutate the cards list in place with Phase 6.3–6.6 adjustments.
@@ -1662,17 +1753,24 @@ def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
     except (FileNotFoundError, json.JSONDecodeError):
         history = {}
 
-    # Precompute player and set means for Bayesian prior.
+    # Precompute mean/count for each Bayesian-prior grouping tier.
     from collections import defaultdict
-    player_sums  = defaultdict(lambda: [0.0, 0])
-    set_sums     = defaultdict(lambda: [0.0, 0])
+    set_sums    = defaultdict(lambda: [0.0, 0])   # (year, brand)
+    pet_sums    = defaultdict(lambda: [0.0, 0])   # (player, era, type)
+    pe_sums     = defaultdict(lambda: [0.0, 0])   # (player, era)
+    player_sums = defaultdict(lambda: [0.0, 0])   # (player,)
     for c in cards:
         p = c.get('avg_price', 0)
         if p and p > 0:
-            pl = c.get('player') or ''
-            st = f"{c.get('year') or ''}_{c.get('brand') or ''}"
-            player_sums[pl][0] += p; player_sums[pl][1] += 1
-            set_sums[st][0]    += p; set_sums[st][1]    += 1
+            pl   = c.get('player') or ''
+            yr   = c.get('year') or ''
+            br   = c.get('brand') or ''
+            era_b  = era(yr)
+            type_t = card_type_tag(br)
+            set_sums[f"{yr}_{br}"][0]         += p; set_sums[f"{yr}_{br}"][1]         += 1
+            pet_sums[(pl, era_b, type_t)][0]  += p; pet_sums[(pl, era_b, type_t)][1]  += 1
+            pe_sums[(pl, era_b)][0]           += p; pe_sums[(pl, era_b)][1]           += 1
+            player_sums[pl][0]                += p; player_sums[pl][1]               += 1
 
     for c in cards:
         if c.get('card_id') not in fresh_ids:
@@ -1680,37 +1778,59 @@ def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
         raw_price = c.get('avg_price', 0) or 0
         if raw_price <= 0:
             continue
-        raw_count = _extract_count_from_confidence(c.get('confidence', ''))
+        raw_count = _resolve_comp_count(c)
 
-        # 6.3 Bayesian smoothing (only for thin data).
+        # 6.3 Bayesian smoothing (only for thin data) — blend the raw price
+        # toward comparable cards, favoring the most specific group available.
         if raw_count < LOW_DATA_THRESH:
-            pl = c.get('player') or ''
-            st = f"{c.get('year') or ''}_{c.get('brand') or ''}"
-            p_total, p_n = player_sums.get(pl, [0.0, 0])
-            s_total, s_n = set_sums.get(st,    [0.0, 0])
-            # Exclude self from the prior.
-            p_n = max(0, p_n - 1); p_total = max(0.0, p_total - raw_price)
-            s_n = max(0, s_n - 1); s_total = max(0.0, s_total - raw_price)
-            p_mean = p_total / p_n if p_n else 0
-            s_mean = s_total / s_n if s_n else 0
-            if p_n + s_n:
-                prior = (p_mean * p_n * 2 + s_mean * s_n) / (p_n * 2 + s_n)
-                if prior > 0:
-                    w_raw = raw_count / (raw_count + SMOOTHING_K)
-                    smoothed = w_raw * raw_price + (1 - w_raw) * prior
-                    c['smoothed_price'] = round(smoothed, 2)
+            pl, yr, br = c.get('player') or '', c.get('year') or '', c.get('brand') or ''
+            era_b, type_t = era(yr), card_type_tag(br)
 
-        # 6.4 Median-of-last-3-runs smoothing.
+            def _excl_self(sums: dict, key) -> tuple[float, int]:
+                total, n = sums.get(key, [0.0, 0])
+                n     = max(0, n - 1)
+                total = max(0.0, total - raw_price)
+                return (total / n if n else 0.0), n
+
+            tiers = {
+                'set':             _excl_self(set_sums, f"{yr}_{br}"),
+                'player_era_type': _excl_self(pet_sums, (pl, era_b, type_t)),
+                'player_era':      _excl_self(pe_sums,  (pl, era_b)),
+                'player':          _excl_self(player_sums, pl),
+            }
+            prior = _weighted_prior(tiers)
+            bayesian_applied = False
+            if prior > 0:
+                w_raw = raw_count / (raw_count + SMOOTHING_K)
+                smoothed = w_raw * raw_price + (1 - w_raw) * prior
+                c['smoothed_price'] = round(smoothed, 2)
+                if abs(smoothed - raw_price) > 0.01:
+                    log.info('  → Bayesian smoothing: %s $%.2f → $%.2f (prior $%.2f)',
+                             c['card_id'], raw_price, smoothed, prior)
+                    c['avg_price'] = round(smoothed, 2)
+                    bayesian_applied = True
+        else:
+            bayesian_applied = False
+
+        # 6.4 Median-of-last-3-runs smoothing — guards against a single-run
+        # fluke for cards with enough comps that 6.3 didn't touch them.
+        # Skipped when Bayesian smoothing just fired: for thin-data cards the
+        # price history is often *itself* a run of the same noisy raw reading
+        # (no comparable-card signal was available on those earlier runs
+        # either), so comparing a freshly cross-sectionally-corrected price
+        # against that contaminated history would just revert the fix.
         hist = history.get(c.get('card_id'), [])
-        recent_prices = [h.get('price') for h in hist[-2:] if isinstance(h.get('price'), (int, float))]
-        recent_prices.append(raw_price)
-        if len(recent_prices) >= 2:
-            med = _median(recent_prices)
-            # Only apply if the raw is a >25% outlier vs the median of recent runs.
-            if med and abs(raw_price - med) / med > 0.25:
-                c['avg_price'] = round(med, 2)
-                log.info('  → Median-of-runs smoothing: %s $%.2f → $%.2f',
-                         c['card_id'], raw_price, med)
+        if not bayesian_applied:
+            current_price = c.get('avg_price', 0) or 0
+            recent_prices = [h.get('price') for h in hist[-2:] if isinstance(h.get('price'), (int, float))]
+            recent_prices.append(current_price)
+            if len(recent_prices) >= 2:
+                med = _median(recent_prices)
+                # Only apply if the current price is a >25% outlier vs recent runs.
+                if med and abs(current_price - med) / med > 0.25:
+                    c['avg_price'] = round(med, 2)
+                    log.info('  → Median-of-runs smoothing: %s $%.2f → $%.2f',
+                             c['card_id'], current_price, med)
 
         # 6.5 TCDB anomaly floor (column F reference).
         tcdb_ref = c.get('tcdb_price')
@@ -1796,6 +1916,7 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
                 'avg_price':    _ex.get('avg_price') or 0,
                 'median':       _ex.get('median') or 0,
                 'confidence':   _ex.get('confidence', ''),
+                'comp_count':   _ex.get('comp_count'),
                 'last_updated': _ex.get('last_updated', ''),
                 'card_id':      card_id,
             }
@@ -1818,17 +1939,6 @@ def build_results_json(all_rows: list[list], priced_cards: list[dict],
     top25  = sorted(_seen_ids.values(), key=lambda c: c['avg_price'], reverse=True)[:25]
 
     # ── Era breakdown ─────────────────────────────────────────────────────────
-    def era(y):
-        y = int(y or 0)
-        if y < 1970: return 'Vintage (pre-1970)'
-        if y < 1980: return '1970s'
-        if y < 1987: return 'Early 80s'
-        if y < 1995: return 'Junk Wax (1987–94)'
-        if y < 2000: return 'Late 90s'
-        if y < 2010: return '2000s'
-        if y < 2020: return '2010s'
-        return 'Modern (2020+)'
-
     by_era: dict = {}
     for c in priced:
         e = era(c.get('year', 0))
@@ -2078,13 +2188,16 @@ def _write_run_metadata(output: dict, results: list):
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Maps confidence strings to a discount weight for Phase 4.5 portfolio total.
+# Checked in this order (most-specific first) since e.g. "Low (TCDB ref)"
+# contains both "low" and "tcdb" — the intended, more-discounted tag must
+# win, so it has to be tested before the generic "low" substring.
 _CONF_WEIGHT = {
+    'tcdb':      0.3,
+    'floor':     0.3,
     'very high': 1.0,
     'high':      0.8,
     'medium':    0.6,
     'low':       0.4,
-    'tcdb':      0.3,
-    'floor':     0.3,
 }
 
 def _conf_weight(conf: str) -> float:
@@ -2135,14 +2248,16 @@ def _write_summary_sidecar(output: dict):
                 pct_change[c['card_id']] = (h[-1]['price'] - h[-2]['price']) / h[-2]['price'] * 100.0
 
         # Player stats (total value, card count, copy count, avg, volatility).
+        # 'unique' = distinct card_id values (different card designs).
+        # 'copies' = every physical row, including duplicate copies of the same card.
         from collections import defaultdict
-        player_agg = defaultdict(lambda: {'total': 0.0, 'unique': 0, 'copies': 0, 'pct_changes': []})
+        player_agg = defaultdict(lambda: {'total': 0.0, 'card_ids': set(), 'copies': 0, 'pct_changes': []})
         for c in priced:
             p = c.get('player') or 'Unknown'
             a = player_agg[p]
             a['total']  += c['avg_price']
-            a['unique'] += 1
-            a['copies'] += c.get('quantity', 1) or 1
+            a['card_ids'].add(c.get('card_id') or '')
+            a['copies'] += 1
             if c['card_id'] in pct_change:
                 a['pct_changes'].append(pct_change[c['card_id']])
         player_stats = []
@@ -2150,9 +2265,9 @@ def _write_summary_sidecar(output: dict):
             player_stats.append({
                 'player':     p,
                 'total':      round(a['total'], 2),
-                'unique':     a['unique'],
+                'unique':     len(a['card_ids']),
                 'copies':     a['copies'],
-                'avg':        round(a['total'] / a['unique'], 2) if a['unique'] else 0,
+                'avg':        round(a['total'] / a['copies'], 2) if a['copies'] else 0,
                 'volatility': round(_stddev(a['pct_changes']), 2),
             })
         player_stats.sort(key=lambda r: r['total'], reverse=True)
