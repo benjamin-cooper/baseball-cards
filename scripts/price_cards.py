@@ -1463,9 +1463,15 @@ def needs_pricing(row: list, row_index: int, existing_by_id: dict = None) -> boo
     if not player or not year or not brand:
         return False
 
-    # Player mode: force re-price any card whose player matches the target
+    # Player mode: force re-price cards matching the target — EXACT name match
+    # (case-insensitive), not substring. A substring match would let "Griffey"
+    # sweep in every distinct real person sharing that surname (this collection
+    # has both "Ken Griffey Jr" and "Ken Griffey Sr" as separate players), and
+    # even a full name like "Ken Griffey" would substring-match both of those
+    # rows since neither "Jr"/"Sr" gets excluded from a substring check. Exact
+    # match means you always retarget exactly the player you typed, no more.
     if RUN_MODE == 'player' and TARGET_PLAYER:
-        return TARGET_PLAYER in player.lower()
+        return TARGET_PLAYER == player.lower().strip()
 
     # Look up pricing metadata from JSON (source of truth), fall back to sheet
     _card_id  = make_card_id(year, brand, player, get(C['CARD_NUMBER']))

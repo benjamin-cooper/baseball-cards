@@ -15,7 +15,7 @@ on:
         default: '200'
         type: string
       target_player:
-        description: 'Player name or keyword to re-price (player mode only)'
+        description: 'Exact player name to re-price, must match your sheet exactly (player mode only)'
         required: false
         default: ''
         type: string

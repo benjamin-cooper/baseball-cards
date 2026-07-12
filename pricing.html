@@ -245,7 +245,7 @@
           <input type="radio" name="run_mode" value="player">
           <span class="run-mode-label">
             <strong>Player Target</strong>
-            <span class="run-mode-desc">Re-price all cards matching a player name or keyword</span>
+            <span class="run-mode-desc">Re-price all cards for one exact player name — won't match similarly-named players</span>
           </span>
         </label>
         <label class="run-mode-option">
@@ -265,8 +265,8 @@
 
       <!-- Player input (shown for player mode) -->
       <div id="run-opt-player" style="display:none">
-        <label>Player name or keyword</label>
-        <input type="text" id="input-player" placeholder="e.g. Garrett Anderson" autocomplete="off">
+        <label>Exact player name (must match your sheet exactly, case-insensitive)</label>
+        <input type="text" id="input-player" placeholder="e.g. Ken Griffey Jr" autocomplete="off">
       </div>
 
       <!-- Start row (shown for all modes) -->
