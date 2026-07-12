@@ -434,6 +434,26 @@ def _check_ebay_quota(headers: dict):
             pass
 
 
+_debug_raw_item_logged = False
+
+def _debug_log_raw_item_once(items: list[dict]):
+    """One-time diagnostic: dump every field eBay's raw item_summary response
+    actually returns for the first live result of a run. We only extract
+    end_date/itemEndDate downstream (_extract_end_date), and cached data shows
+    that's populated on <2% of comps — recency weighting is effectively inert
+    for eBay-sourced data. This checks whether the RAW (pre-slim) response has
+    any other usable date-ish field we're just not looking at. Safe to remove
+    once checked — logs once per run, no extra API calls, no behavior change."""
+    global _debug_raw_item_logged
+    if _debug_raw_item_logged or not items:
+        return
+    _debug_raw_item_logged = True
+    sample = items[0]
+    date_ish = {k: v for k, v in sample.items() if 'date' in k.lower() or 'time' in k.lower()}
+    log.info('[debug] Raw eBay item_summary top-level keys: %s', sorted(sample.keys()))
+    log.info('[debug] Date/time-ish fields found: %s', date_ish or '(none)')
+
+
 def ebay_search(query: str, price_filter: str = None) -> list[dict]:
     """Search eBay Browse API. Any 429 triggers an immediate graceful save+exit —
     there is nothing productive to do while throttled, and waiting wastes runner minutes."""
@@ -487,6 +507,7 @@ def ebay_search(query: str, price_filter: str = None) -> list[dict]:
 
             if r.status_code == 200:
                 result = r.json().get('itemSummaries', [])
+                _debug_log_raw_item_once(result)
                 if result:   # don't cache empty results (re-fetch on next call)
                     _ebay_cache[cache_key] = (time.time(), result)
                     _persist_cache_put(cache_key, result)
