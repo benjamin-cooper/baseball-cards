@@ -1655,13 +1655,19 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
         conf = 'Floor Value'
     else:
         fp, cap_note = era_cap(result['price'], card['year'], card['brand'], result['count'])
+        levels = {10: 'Very High', 5: 'High', 3: 'Medium'}
         if fallback == 'tcdb' and not claude_overrode:
             conf = 'Low (TCDB ref)'
         elif fallback == 'relaxed':
-            conf = 'Low (relaxed)'
+            # Relaxed matching (year+player only, no brand/card-number match) is
+            # a looser filter, not automatically a low comp count — a relaxed
+            # search can turn up plenty of listings. Scale the tier with the
+            # actual count like the strict path does, just keep the '(relaxed)'
+            # tag so it's clear these comps weren't matched on brand/card #.
+            tier = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
+            conf = f'{tier} (relaxed)'
         else:
-            levels = {10: 'Very High', 5: 'High', 3: 'Medium'}
-            conf   = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
+            conf = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
         if use_claude and 'Low' not in conf:
             conf += ' (Claude)'
 
