@@ -1020,13 +1020,9 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
 
 
 # ══════════════════════════════════════════════════════════════════════════════
-# Optional free pricing sources (Phase 6.1 + 6.2) — opt-in via env flags.
-# Both are cached aggressively so they don't add material API volume.
+# Optional free pricing source — opt-in via env flag.
+# Cached aggressively so it doesn't add material API volume.
 # ══════════════════════════════════════════════════════════════════════════════
-
-PRICECHARTING_ENABLED = os.environ.get('PRICECHARTING_ENABLED', '').lower() in ('1', 'true', 'yes')
-PRICECHARTING_CACHE   = 'data/pricecharting_cache.csv'
-PRICECHARTING_MAX_AGE = 7 * 86400   # refresh weekly
 
 HUNDRED_THIRTY_POINT_ENABLED = os.environ.get('HUNDRED_THIRTY_POINT_ENABLED', '').lower() in ('1', 'true', 'yes')
 HTP_CACHE_FILE   = 'data/130point_cache.json'
@@ -1034,66 +1030,8 @@ HTP_CACHE_TTL    = 7 * 86400
 HTP_MIN_COMPS    = 5
 HTP_RATE_LIMIT_S = 5
 
-_pricecharting_map: Optional[dict] = None
 _htp_cache: Optional[dict]         = None
 _htp_last_ts: float                = 0.0
-
-
-def _load_pricecharting_map() -> dict:
-    """Lazy-load the PriceCharting reference CSV into {(year, brand, player): price}.
-    Refreshes weekly. Returns {} if disabled or unreachable."""
-    global _pricecharting_map
-    if _pricecharting_map is not None:
-        return _pricecharting_map
-    if not PRICECHARTING_ENABLED:
-        _pricecharting_map = {}
-        return _pricecharting_map
-    try:
-        need_refresh = (
-            not os.path.exists(PRICECHARTING_CACHE)
-            or (time.time() - os.path.getmtime(PRICECHARTING_CACHE)) > PRICECHARTING_MAX_AGE
-        )
-        if need_refresh:
-            url = os.environ.get('PRICECHARTING_CSV_URL', '')
-            if not url:
-                log.warning('PriceCharting enabled but PRICECHARTING_CSV_URL not set — skipping')
-                _pricecharting_map = {}
-                return _pricecharting_map
-            r = requests.get(url, timeout=30)
-            r.raise_for_status()
-            os.makedirs('data', exist_ok=True)
-            with open(PRICECHARTING_CACHE, 'wb') as f:
-                f.write(r.content)
-            log.info('PriceCharting CSV refreshed (%d bytes)', len(r.content))
-        import csv
-        _pricecharting_map = {}
-        with open(PRICECHARTING_CACHE, newline='', encoding='utf-8', errors='replace') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                key = (
-                    str(row.get('year', '')).strip(),
-                    str(row.get('brand', '') or row.get('set', '')).strip().lower(),
-                    str(row.get('player', '') or row.get('name', '')).strip().lower(),
-                )
-                price = parse_price(row.get('loose-price') or row.get('price') or '')
-                if all(key) and price:
-                    _pricecharting_map[key] = price
-        log.info('Loaded %d PriceCharting reference prices', len(_pricecharting_map))
-    except Exception as e:
-        log.warning('PriceCharting load failed: %s', e)
-        _pricecharting_map = {}
-    return _pricecharting_map
-
-
-def pricecharting_lookup(card: dict) -> Optional[float]:
-    """Return a PriceCharting reference price or None."""
-    m = _load_pricecharting_map()
-    if not m:
-        return None
-    key = (str(card.get('year', '')).strip(),
-           str(card.get('brand', '')).strip().lower(),
-           str(card.get('player', '')).strip().lower())
-    return m.get(key)
 
 
 def _load_htp_cache():
@@ -1573,22 +1511,7 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             ebay_count = len(relaxed_ebay)
             log.info('  → Relaxed filter: %d comps', result['count'])
 
-    # ── Step 1c-1: PriceCharting (Phase 6.1) ──────────────────────────────────
-    # Cross-check / supplement when eBay data is thin. Zero per-card API cost —
-    # the weekly-cached CSV has already been loaded once.
-    if result['count'] < LOW_DATA_THRESH:
-        pc_price = pricecharting_lookup(card)
-        if pc_price and pc_price > 0:
-            log.info('  → PriceCharting reference: $%.2f', pc_price)
-            if result['count'] == 0:
-                result = {'price': pc_price, 'count': 1, 'median': pc_price,
-                          'min': pc_price, 'max': pc_price}
-                fallback = 'pricecharting'
-            else:
-                # Blend with the existing (thin) eBay data.
-                result['price'] = round((result['price'] + pc_price) / 2, 2)
-
-    # ── Step 1c-2: 130point sold comps (Phase 6.2) ────────────────────────────
+    # ── Step 1c: 130point sold comps (Phase 6.2) ──────────────────────────────
     # Only fire for high-value cards where we'd otherwise call Claude.
     if (result.get('price', 0) >= HIGH_VALUE_THRESH
             and result['count'] < CLAUDE_MIN_COMPS
@@ -2004,8 +1927,7 @@ def commit_progress(label: str = ''):
         subprocess.run(['git', 'config', 'user.name',  'github-actions[bot]'], check=True)
         subprocess.run(['git', 'config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], check=True)
         add_files = [RESULTS_FILE, HISTORY_FILE]
-        for extra in (EBAY_CACHE_FILE, RUN_METADATA_FILE, SUMMARY_FILE,
-                      PRICECHARTING_CACHE, HTP_CACHE_FILE):
+        for extra in (EBAY_CACHE_FILE, RUN_METADATA_FILE, SUMMARY_FILE, HTP_CACHE_FILE):
             if os.path.exists(extra):
                 add_files.append(extra)
         subprocess.run(['git', 'add', *add_files], check=True)

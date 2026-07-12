@@ -77,13 +77,9 @@ jobs:
           STALE_DAYS:                ${{ github.event.inputs.stale_days }}
           START_ROW:                 ${{ github.event.inputs.start_row }}
           OUTPUT_JSON:               data/pricing_results.json
-          # Opt-in supplemental pricing sources (Phase 6).
+          # Opt-in supplemental pricing source.
           # 130point: no config needed — ships with a 7 day per-query cache + 5 s rate limit.
           HUNDRED_THIRTY_POINT_ENABLED: '1'
-          # PriceCharting: set PRICECHARTING_CSV_URL in repo secrets to the weekly CSV export URL.
-          # Without the URL the script logs a warning and skips this source cleanly.
-          PRICECHARTING_ENABLED:     '1'
-          PRICECHARTING_CSV_URL:     ${{ secrets.PRICECHARTING_CSV_URL }}
         run: python scripts/price_cards.py
 
       # ── Commit results ───────────────────────────────────────────────────────
@@ -101,8 +97,7 @@ jobs:
             data/pricing_summary.json \
             data/run_metadata.json \
             data/ebay_cache.json \
-            data/130point_cache.json \
-            data/pricecharting_cache.csv
+            data/130point_cache.json
           do
             [ -f "$f" ] && git add "$f"
           done
