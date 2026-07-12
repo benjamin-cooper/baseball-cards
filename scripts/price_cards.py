@@ -1780,9 +1780,18 @@ def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
             continue
         raw_count = _resolve_comp_count(c)
 
-        # 6.3 Bayesian smoothing (only for thin data) — blend the raw price
-        # toward comparable cards, favoring the most specific group available.
-        if raw_count < LOW_DATA_THRESH:
+        # 6.3 Bayesian smoothing (only for thin *market* data) — blend the raw
+        # price toward comparable cards, favoring the most specific group
+        # available. Deliberately excludes TCDB-reference and Floor-Value
+        # cards: those have ZERO real eBay comps, so their price isn't a noisy
+        # small sample to denoise — it's a book value or era-based default,
+        # and is often a genuinely-accurate low number for a common card that
+        # just happens to share a player with a more collectible set. Pulling
+        # it toward that player's other, unrelated cards would introduce a
+        # systematic upward bias on exactly the cards that should stay cheap.
+        conf_lc = (c.get('confidence') or '').lower()
+        is_non_market_fallback = 'tcdb' in conf_lc or conf_lc == 'floor value'
+        if raw_count < LOW_DATA_THRESH and raw_count > 0 and not is_non_market_fallback:
             pl, yr, br = c.get('player') or '', c.get('year') or '', c.get('brand') or ''
             era_b, type_t = era(yr), card_type_tag(br)
 
@@ -1802,15 +1811,19 @@ def _apply_smoothing_and_floor(cards: list[dict], priced_this_run: list[dict]):
             bayesian_applied = False
             if prior > 0:
                 w_raw = raw_count / (raw_count + SMOOTHING_K)
-                smoothed = w_raw * raw_price + (1 - w_raw) * prior
-                c['smoothed_price'] = round(smoothed, 2)
+                smoothed = round(w_raw * raw_price + (1 - w_raw) * prior, 2)
                 if abs(smoothed - raw_price) > 0.01:
                     log.info('  → Bayesian smoothing: %s $%.2f → $%.2f (prior $%.2f)',
                              c['card_id'], raw_price, smoothed, prior)
-                    c['avg_price'] = round(smoothed, 2)
+                    c['avg_price'] = smoothed
                     bayesian_applied = True
         else:
             bayesian_applied = False
+        # Clear any stale smoothed_price left over from an older code version —
+        # avg_price is now always the smoothed value when smoothing applied,
+        # so a separate field would either duplicate it or (if not refreshed
+        # this run) dangerously disagree with it.
+        c.pop('smoothed_price', None)
 
         # 6.4 Median-of-last-3-runs smoothing — guards against a single-run
         # fluke for cards with enough comps that 6.3 didn't touch them.
