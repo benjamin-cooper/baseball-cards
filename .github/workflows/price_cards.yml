@@ -63,6 +63,18 @@ jobs:
       - name: Install dependencies
         run: pip install -r scripts/requirements.txt
 
+      # ── eBay query cache ─────────────────────────────────────────────────────
+      # Lives in the Actions cache, NOT in git: the file was ~97 MB (GitHub's push
+      # limit is 100 MB) and every run committed another copy to history. Entries
+      # expire after 24 h anyway, so this only matters for same-day re-runs.
+      - name: Restore eBay cache
+        uses: actions/cache/restore@v4
+        with:
+          path: data/ebay_cache.json
+          key: ebay-cache-${{ github.run_id }}
+          restore-keys: |
+            ebay-cache-
+
       # ── Run pricing agent ────────────────────────────────────────────────────
       - name: Run pricing agent
         env:
@@ -82,6 +94,13 @@ jobs:
           HUNDRED_THIRTY_POINT_ENABLED: '1'
         run: python scripts/price_cards.py
 
+      - name: Save eBay cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data/ebay_cache.json
+          key: ebay-cache-${{ github.run_id }}
+
       # ── Commit results ───────────────────────────────────────────────────────
       - name: Commit pricing results
         if: success() || cancelled()
@@ -96,7 +115,6 @@ jobs:
             data/price_history.json \
             data/pricing_summary.json \
             data/run_metadata.json \
-            data/ebay_cache.json \
             data/130point_cache.json
           do
             [ -f "$f" ] && git add "$f"

@@ -1,0 +1,4 @@
+# eBay query cache lives in the GitHub Actions cache (see price_cards.yml), not git
+data/ebay_cache.json
+__pycache__/
+.DS_Store

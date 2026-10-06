@@ -41,8 +41,7 @@ baseball-cards/
 │   ├── pricing_summary.json     ← Precomputed sidecar (~5 KB, read first on load)
 │   ├── price_history.json       ← Time-series of per-card prices
 │   ├── run_metadata.json        ← Last run stats (calls, cache hits, duration)
-│   ├── ebay_cache.json          ← Persistent 24 h eBay-query cache
-│   ├── pricecharting_cache.csv  ← Weekly PriceCharting reference (optional)
+│   ├── ebay_cache.json          ← 24 h eBay-query cache (gitignored; kept in the Actions cache)
 │   └── 130point_cache.json      ← Cached 130point sold comps (optional)
 └── scripts/
     ├── price_cards.py           ← Pricing agent (nightly + on-demand)

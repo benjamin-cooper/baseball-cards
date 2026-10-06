@@ -277,17 +277,23 @@ def _slim_item(it: dict) -> dict:
 
     The raw Browse API itemSummaries payload is ~250 KB per query; storing the
     full payload blew the cache file past GitHub's 100 MB push limit. Only
-    price, title, condition, and listing_type are consumed by the pricing
-    pipeline, so slim to those before persisting.
+    price, title, buyingOptions and the listing-creation date are consumed by
+    the pricing pipeline, so slim to those before persisting. (condition and
+    currency used to be kept but nothing ever read them.)
     """
     if not isinstance(it, dict):
         return {}
     p = it.get('price') or {}
     slim = {
-        'price': {'value': p.get('value'), 'currency': p.get('currency')},
+        'price': {'value': p.get('value')},
         'title': it.get('title', ''),
-        'condition': it.get('condition'),
     }
+    # Listing creation date (YYYY-MM-DD). eBay's raw item_summary carries
+    # itemCreationDate / itemOriginDate; we previously only looked for an end
+    # date, which active listings don't have, so listing age was never used.
+    created = it.get('created') or (it.get('itemCreationDate') or it.get('itemOriginDate') or '')[:10]
+    if created:
+        slim['created'] = created
     # Preserve listing_type — either pre-normalised or derived from buyingOptions
     # (the downstream helper reads both shapes).
     if 'listing_type' in it:
@@ -574,6 +580,13 @@ def _extract_listing_type(item: dict) -> str:
     if 'listing_type' in item:
         return item['listing_type']
     return 'Auction' if 'AUCTION' in (item.get('buyingOptions') or []) else 'BIN'
+
+
+def _extract_created(item: dict) -> Optional[str]:
+    """Listing creation date as YYYY-MM-DD (from the persisted slim item or a raw item)."""
+    return (item.get('created')
+            or (item.get('itemCreationDate') or item.get('itemOriginDate') or '')[:10]
+            or None)
 
 
 def _extract_best_offer(item: dict) -> bool:
@@ -952,6 +965,7 @@ def filter_items(items, year, brand, player, card_number, team) -> list[dict]:
             'listing_type': _extract_listing_type(item),
             'end_date':     _extract_end_date(item),
             'best_offer':   _extract_best_offer(item),
+            'created':      _extract_created(item),
             'title':        title,
         })
 
@@ -985,6 +999,7 @@ def filter_items_relaxed(items, year, player, brand: str = '') -> list[dict]:
             'listing_type': _extract_listing_type(item),
             'end_date':     _extract_end_date(item),
             'best_offer':   _extract_best_offer(item),
+            'created':      _extract_created(item),
             'title':        title,
         })
 
@@ -992,6 +1007,15 @@ def filter_items_relaxed(items, year, player, brand: str = '') -> list[dict]:
 
 
 BEST_OFFER_DISCOUNT = 0.10   # haircut applied to Best-Offer-enabled asking prices
+
+# SHADOW MODE: listing-age weighting is computed alongside the real price and
+# only *reported* (run_metadata.json -> shadow_recency), never applied. eBay's raw
+# item_summary has itemCreationDate (found via the one-time debug log in the Aug 4
+# run) but we only ever read an end date, so listing age was unused. Active
+# listings that have sat for years are asks that never cleared, so down-weighting
+# them may pull prices toward what actually sells — but that's a guess until the
+# shadow numbers say how much it would move totals.
+LISTING_AGE_HALF_LIFE_SHADOW = 180
 
 def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
     """Recency-weighted average with IQR outlier removal.
@@ -1020,9 +1044,16 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
         price = item['price']
         if item.get('best_offer'):
             price = round(price * (1 - BEST_OFFER_DISCOUNT), 2)
-        prices_with_age.append((price, age, item.get('listing_type', 'BIN')))
+        listing_age = None
+        created = item.get('created')
+        if created:
+            try:
+                listing_age = max(0, (now - datetime.fromisoformat(created).replace(tzinfo=timezone.utc)).days)
+            except Exception:
+                listing_age = None
+        prices_with_age.append((price, age, item.get('listing_type', 'BIN'), listing_age))
 
-    prices = sorted(p for p, _, _ in prices_with_age)
+    prices = sorted(p for p, *_ in prices_with_age)
 
     # IQR outlier removal — save pre-IQR list so we can fall back to it if
     # the filter removes every item (can happen with very small/uniform sets)
@@ -1033,7 +1064,7 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
         iqr = q3 - q1
         mult = 2.0 if len(prices) < 5 else 1.5
         lo, hi = max(0.50, q1 - mult * iqr), q3 + mult * iqr
-        prices_with_age = [(p, a, lt) for p, a, lt in prices_with_age if lo <= p <= hi]
+        prices_with_age = [t for t in prices_with_age if lo <= t[0] <= hi]
 
     if not prices_with_age:
         prices_with_age = pre_iqr  # IQR removed everything — use raw list
@@ -1041,15 +1072,23 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
     if not prices_with_age:
         return {'price': 0, 'count': 0, 'median': 0, 'min': 0, 'max': 0}
 
-    w_sum = t_sum = 0
-    for p, age, lt in prices_with_age:
+    known_ages = sorted(la for *_, la in prices_with_age if la is not None)
+    median_la  = known_ages[len(known_ages) // 2] if known_ages else None
+    have_dates = len(known_ages) >= 0.6 * len(prices_with_age)
+
+    w_sum = t_sum = aw_sum = at_sum = 0
+    for p, age, lt, la in prices_with_age:
         w = math.exp(-age / half_life_days)
         if lt == 'Sold':     w *= 1.4   # confirmed transaction > active listing
         elif lt == 'Auction': w *= 1.2  # auction close is also a real price signal
         w_sum += p * w
         t_sum += w
+        if have_dates:   # shadow only — see LISTING_AGE_HALF_LIFE_SHADOW
+            aw = w * math.exp(-(la if la is not None else median_la) / LISTING_AGE_HALF_LIFE_SHADOW)
+            aw_sum += p * aw
+            at_sum += aw
 
-    clean_prices = sorted(p for p, _, _ in prices_with_age)
+    clean_prices = sorted(p for p, *_ in prices_with_age)
     mid = len(clean_prices) // 2
     median = clean_prices[mid] if clean_prices else 0
 
@@ -1059,6 +1098,8 @@ def weighted_average(items: list[dict], half_life_days: float = 45) -> dict:
         'median': round(median, 2),
         'min':    round(clean_prices[0], 2),
         'max':    round(clean_prices[-1], 2),
+        'aged_price':          round(aw_sum / at_sum, 2) if at_sum else None,
+        'median_listing_age':  median_la if have_dates else None,
     }
 
 
@@ -1359,10 +1400,20 @@ def execute_tool(name: str, inputs: dict, card: dict = None) -> str:
 
 
 _claude_call_count = 0
+_shadow_rows: list = []   # (price, aged_price, median_listing_age, comp_count) per eBay-priced card
+_claude_failures   = 0
+_claude_disabled   = False   # set on a model-not-found / auth error so we stop burning calls
+
+# Override with CLAUDE_MODEL env var. A bad ID 404s on every call and (because
+# price_with_claude swallows errors) silently turns the whole Claude step into
+# a no-op — see _claude_disabled below, which now fails loudly instead.
+CLAUDE_MODEL = os.environ.get('CLAUDE_MODEL', 'claude-sonnet-5-5')
 
 def price_with_claude(card: dict) -> Optional[dict]:
     """Call Claude with tool use to price a difficult card."""
-    global _claude_call_count
+    global _claude_call_count, _claude_failures, _claude_disabled
+    if _claude_disabled:
+        return None
     _claude_call_count += 1
     client = get_claude()
     tcdb_ref     = card.get('tcdb_price') or 'unknown'
@@ -1382,7 +1433,7 @@ def price_with_claude(card: dict) -> Optional[dict]:
     try:
         for _ in range(3):   # max tool-use rounds (1 tool call + 1 follow-up is enough)
             resp = client.messages.create(
-                model='claude-sonnet-4-7',
+                model=CLAUDE_MODEL,
                 max_tokens=1024,
                 system=SYSTEM_PROMPT,
                 tools=CLAUDE_TOOLS,
@@ -1417,7 +1468,14 @@ def price_with_claude(card: dict) -> Optional[dict]:
                 break
 
     except Exception as e:
+        _claude_failures += 1
         log.error('Claude error for %s %s %s: %s', card['year'], card['brand'], card['player'], e)
+        # A 404 (bad model ID) or 401/403 (bad key) will fail identically on every
+        # card — stop calling and record it so run_metadata.json shows the problem.
+        if any(code in str(e) for code in ('not_found_error', 'authentication_error', 'permission_error')):
+            _claude_disabled = True
+            _run_errors.append({'row': None, 'error': f'Claude disabled for rest of run: {str(e)[:160]}'})
+            log.error('Claude disabled for the rest of this run (model=%s) — fix CLAUDE_MODEL / API key', CLAUDE_MODEL)
 
     return None
 
@@ -1642,6 +1700,12 @@ def process_card(row: list, row_number: int) -> Optional[dict]:
             conf = next((v for k, v in levels.items() if result['count'] >= k), 'Low')
         if use_claude and 'Low' not in conf:
             conf += ' (Claude)'
+
+    # Shadow listing-age stats — only cards still priced straight from eBay comps
+    # (a TCDB/130point/Claude replacement result carries no aged_price).
+    if result.get('aged_price') and not claude_overrode:
+        _shadow_rows.append((result['price'], result['aged_price'],
+                             result.get('median_listing_age'), result['count']))
 
     now_iso = datetime.now(timezone.utc).isoformat()
 
@@ -1970,7 +2034,7 @@ def commit_progress(label: str = ''):
         subprocess.run(['git', 'config', 'user.name',  'github-actions[bot]'], check=True)
         subprocess.run(['git', 'config', 'user.email', 'github-actions[bot]@users.noreply.github.com'], check=True)
         add_files = [RESULTS_FILE, HISTORY_FILE]
-        for extra in (EBAY_CACHE_FILE, RUN_METADATA_FILE, SUMMARY_FILE, HTP_CACHE_FILE):
+        for extra in (RUN_METADATA_FILE, SUMMARY_FILE, HTP_CACHE_FILE):   # not EBAY_CACHE_FILE: Actions cache, not git
             if os.path.exists(extra):
                 add_files.append(extra)
         subprocess.run(['git', 'add', *add_files], check=True)
@@ -2142,6 +2206,28 @@ _run_start_ts: float = 0.0
 _input_audit:  dict  = {}
 
 
+def _shadow_recency_summary() -> dict:
+    """What listing-age weighting WOULD have done this run (not applied). Compares
+    the sum of real prices vs age-weighted prices across eBay-priced cards."""
+    rows = _shadow_rows
+    if not rows:
+        return {'cards': 0}
+    real  = sum(r[0] for r in rows)
+    aged  = sum(r[1] for r in rows)
+    ages  = sorted(r[2] for r in rows if r[2] is not None)
+    ratios = sorted((r[1] / r[0]) for r in rows if r[0] > 0)
+    pick = lambda xs, q: xs[min(len(xs) - 1, int(len(xs) * q))] if xs else None
+    return {
+        'cards':               len(rows),
+        'half_life_days':      LISTING_AGE_HALF_LIFE_SHADOW,
+        'sum_real':            round(real, 2),
+        'sum_aged':            round(aged, 2),
+        'pct_change':          round((aged - real) / real * 100, 2) if real else None,
+        'per_card_ratio_p10_p50_p90': [round(pick(ratios, q), 3) for q in (0.10, 0.50, 0.90)],
+        'median_listing_age_days_p25_p50_p75': [pick(ages, q) for q in (0.25, 0.50, 0.75)],
+    }
+
+
 def _write_run_metadata(output: dict, results: list):
     """Emit data/run_metadata.json summarising the run for the frontend badge."""
     try:
@@ -2163,6 +2249,8 @@ def _write_run_metadata(output: dict, results: list):
             'input_audit':       _input_audit,
             'errors':            _run_errors[:50],   # cap to keep file small
             'duration_seconds':  duration,
+            'claude_failures':   _claude_failures,
+            'shadow_recency':    _shadow_recency_summary(),
         }
         with open(RUN_METADATA_FILE, 'w') as f:
             json.dump(meta, f, indent=2, default=str)
